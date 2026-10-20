@@ -114,3 +114,62 @@ export const TASTE_DOMAINS = [
   { key: "videogame", type: "urn:entity:videogame", label: "Games" },
   { key: "person", type: "urn:entity:person", label: "People" },
 ] as const
+
+/**
+ * Claude (plan §4.5, claude-api skill): one model, tuned by effort per role. Opus 5.5's thinking is
+ * always on; effort is the lever (its default is medium, so every role sets it explicitly).
+ */
+export const CLAUDE = {
+  model: "claude-opus-5-5",
+  /** Never the shell's ANTHROPIC_BASE_URL (the desktop app sets one for itself). */
+  baseUrl: "https://api.anthropic.com",
+  /** Refusals route to a fallback model on the server ("default" picks it by category). */
+  fallbackBeta: "server-side-fallback-2026-07-01",
+  effort: {
+    extract: "low",
+    classify: "low",
+    draft: "medium",
+    plan: "high",
+    agent: "high",
+  },
+  maxTokens: {
+    extract: 16_000,
+    draft: 16_000,
+    agent: 64_000,
+  },
+  timeoutMs: 10 * 60 * 1000,
+} as const
+
+export type ClaudeRole = keyof typeof CLAUDE.effort
+
+/** Reading a pasted website (F1). Credits: map 1, scrape 1 per page (Firecrawl billing docs). */
+export const SITE = {
+  mapLimit: 60,
+  /** Pages read besides the home page, picked by what they're likely to say. */
+  extraPages: 5,
+  scrapeTimeoutMs: 45_000,
+  /** Characters of page text sent for extraction (long menus are trimmed, not dropped). */
+  maxCharsPerPage: 12_000,
+  /** The page paths most likely to hold facts, best first. */
+  pageHints: [
+    "about",
+    "menu",
+    "contact",
+    "location",
+    "visit",
+    "find-us",
+    "events",
+    "whats-on",
+    "programme",
+    "program",
+    "shop",
+    "products",
+    "collections",
+    "story",
+    "team",
+    "press",
+  ],
+  /** Nominatim's usage policy: an identifying agent, at most one request a second, cached. */
+  geocoderUrl: "https://nominatim.openstreetmap.org/search",
+  geocoderAgent: "Najimi/0.1 (growth agent for places; https://github.com)",
+} as const

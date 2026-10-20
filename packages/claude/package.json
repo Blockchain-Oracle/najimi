@@ -1,0 +1,24 @@
+{
+  "name": "@najimi/claude",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "0.135.0",
+    "@najimi/config": "workspace:*",
+    "@najimi/db": "workspace:*",
+    "@najimi/env": "workspace:*",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@najimi/typescript-config": "workspace:*",
+    "@types/node": "catalog:",
+    "typescript": "catalog:"
+  }
+}

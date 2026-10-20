@@ -2,6 +2,7 @@ import { migrateDatabase } from "@najimi/db/migrate"
 import { boss, type Payload, QUEUES } from "@najimi/jobs"
 import { emit, setRunStatus } from "@najimi/live"
 import { closeInterruptedRuns } from "./interrupted"
+import { businessSetup } from "./jobs/business-setup"
 
 /*
  * The worker: every slow job runs here, never inside a web request (plan §4.6). It applies the
@@ -29,6 +30,16 @@ async function main() {
         await new Promise((resolve) => setTimeout(resolve, STEP_PAUSE_MS))
       }
       await setRunStatus(runId, "done")
+    },
+  )
+
+  await queues.work<Payload<"businessSetup">>(
+    QUEUES.businessSetup.name,
+    { localConcurrency: 3 },
+    async ([job]) => {
+      if (!job) return
+      const { businessId, runId } = QUEUES.businessSetup.payload.parse(job.data)
+      await businessSetup(businessId, runId)
     },
   )
 

@@ -23,6 +23,8 @@ export const env = createEnv({
     /** Qloo hackathon key: server-side only, never in a bundle, repo or recording. */
     QLOO_API_KEY: z.string().min(1).optional(),
     ANTHROPIC_API_KEY: z.string().min(1).optional(),
+    /** Overrides the Claude API address (a proxy); never read from the shell's ANTHROPIC_BASE_URL. */
+    NAJIMI_CLAUDE_BASE_URL: z.url().optional(),
     FIRECRAWL_API_KEY: z.string().min(1).optional(),
 
     /** Lets the deployed app's live pipe be checked from outside (S00); unset = dev only. */

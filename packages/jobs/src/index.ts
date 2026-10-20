@@ -16,6 +16,16 @@ export const QUEUES = {
     options: { retryLimit: 0, expireInSeconds: 5 * 60 },
     send: { heartbeatSeconds: HEARTBEAT_SECONDS },
   },
+  /**
+   * Reading a pasted business (F1, F2, F5): its site, what it says about itself, where it is, and
+   * who it is in Qloo. Not retried: a half-done read would pay Firecrawl and Claude twice.
+   */
+  businessSetup: {
+    name: "business-setup",
+    payload: z.object({ businessId: z.uuid(), runId: z.uuid() }),
+    options: { retryLimit: 0, expireInSeconds: 15 * 60 },
+    send: { heartbeatSeconds: HEARTBEAT_SECONDS },
+  },
 } as const
 
 export type QueueName = keyof typeof QUEUES

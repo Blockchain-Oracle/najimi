@@ -10,6 +10,7 @@
     "typecheck": "next typegen && tsc --noEmit"
   },
   "dependencies": {
+    "@najimi/claude": "workspace:*",
     "@najimi/config": "workspace:*",
     "@najimi/db": "workspace:*",
     "@najimi/env": "workspace:*",
@@ -21,6 +22,7 @@
     "@tanstack/react-query": "catalog:",
     "better-auth": "catalog:",
     "drizzle-orm": "catalog:",
+    "lucide-react": "catalog:",
     "motion": "catalog:",
     "next": "catalog:",
     "react": "catalog:",

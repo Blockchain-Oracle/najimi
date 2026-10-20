@@ -1,5 +1,5 @@
 import { APP } from "@najimi/config"
-import { PasteForm } from "@/components/paste-form"
+import { StartForm } from "@/components/start-form"
 
 export default function Landing() {
   return (
@@ -19,7 +19,7 @@ export default function Landing() {
           Paste your website. Najimi asks Qloo who your people are — what else they love and where
           they are — then goes and gets them, one approval at a time.
         </p>
-        <PasteForm />
+        <StartForm />
       </section>
     </main>
   )
