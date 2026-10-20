@@ -1,0 +1,77 @@
+# Production stack (e.g. on Coolify): every app service built from this repository's Dockerfiles,
+# with Postgres beside them.
+#
+#   docker compose -f infra/compose.prod.yaml up -d --build
+#
+# Variables come from ../.env when it exists (see .env.example) or from the host's environment.
+# Inside the stack, services reach each other by name; the overrides below say so.
+name: najimi
+
+x-app-env: &app-env
+  env_file:
+    - path: ../.env
+      required: false
+  environment:
+    DATABASE_URL: postgres://najimi:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}@postgres:5432/najimi
+
+services:
+  postgres:
+    image: postgres:17.6-alpine
+    environment:
+      POSTGRES_USER: najimi
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}
+      POSTGRES_DB: najimi
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U najimi -d najimi"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+
+  # Applies database migrations, then exits; web and worker start after it succeeds.
+  migrate:
+    <<: *app-env
+    build: { context: .., dockerfile: apps/worker/Dockerfile }
+    image: najimi-worker
+    command:
+      ["node", "--enable-source-maps", "--import", "./dist/bundle/register.mjs", "dist/bundle/migrate.mjs"]
+    depends_on:
+      postgres: { condition: service_healthy }
+    restart: "no"
+
+  web:
+    <<: *app-env
+    build:
+      context: ..
+      dockerfile: apps/web/Dockerfile
+      args:
+        BETTER_AUTH_URL: ${BETTER_AUTH_URL:?set BETTER_AUTH_URL}
+    image: najimi-web
+    expose: ["3310"]
+    depends_on:
+      migrate: { condition: service_completed_successfully }
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:3310/api/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  worker:
+    <<: *app-env
+    image: najimi-worker
+    # Built once by `migrate` (same Dockerfile).
+    depends_on:
+      migrate: { condition: service_completed_successfully }
+    restart: unless-stopped
+
+  docs:
+    build: { context: .., dockerfile: apps/docs/Dockerfile }
+    image: najimi-docs
+    expose: ["80"]
+    restart: unless-stopped
+
+volumes:
+  pgdata:

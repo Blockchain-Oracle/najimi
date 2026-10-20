@@ -1,0 +1,39 @@
+{
+  "name": "@najimi/web",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node ../../scripts/with-env.mjs next dev --port 3310",
+    "build": "node ../../scripts/with-env.mjs next build",
+    "start": "node ../../scripts/with-env.mjs next start --port 3310",
+    "typecheck": "next typegen && tsc --noEmit"
+  },
+  "dependencies": {
+    "@najimi/config": "workspace:*",
+    "@najimi/db": "workspace:*",
+    "@najimi/env": "workspace:*",
+    "@najimi/jobs": "workspace:*",
+    "@najimi/live": "workspace:*",
+    "@najimi/tokens": "workspace:*",
+    "@najimi/ui": "workspace:*",
+    "@tanstack/react-query": "catalog:",
+    "better-auth": "catalog:",
+    "drizzle-orm": "catalog:",
+    "motion": "catalog:",
+    "next": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "server-only": "0.0.1",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@najimi/typescript-config": "workspace:*",
+    "@tailwindcss/postcss": "catalog:",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "tailwindcss": "catalog:",
+    "typescript": "catalog:"
+  }
+}

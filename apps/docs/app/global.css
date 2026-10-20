@@ -1,0 +1,67 @@
+@import "tailwindcss";
+@import "fumadocs-ui/css/neutral.css";
+@import "fumadocs-ui/css/preset.css";
+
+/* The design lock (context/design/README.md): black ink on white, a real dark mode from black
+   bands, Inter with open tracking, no colour in the chrome. */
+@theme {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-antonio), "Arial Narrow", sans-serif;
+}
+
+:root {
+  --color-fd-background: #ffffff;
+  --color-fd-foreground: #000000;
+  --color-fd-muted: #eeeeee;
+  --color-fd-muted-foreground: #595959;
+  --color-fd-popover: #ffffff;
+  --color-fd-popover-foreground: #000000;
+  --color-fd-card: #ffffff;
+  --color-fd-card-foreground: #000000;
+  --color-fd-border: #d9d9d9;
+  --color-fd-primary: #000000;
+  --color-fd-primary-foreground: #ffffff;
+  --color-fd-secondary: #eeeeee;
+  --color-fd-secondary-foreground: #000000;
+  --color-fd-accent: #eeeeee;
+  --color-fd-accent-foreground: #000000;
+  --color-fd-ring: #000000;
+}
+
+.dark {
+  --color-fd-background: #000000;
+  --color-fd-foreground: #ffffff;
+  --color-fd-muted: #1a1a1a;
+  --color-fd-muted-foreground: #8c8c8c;
+  --color-fd-popover: #111111;
+  --color-fd-popover-foreground: #ffffff;
+  --color-fd-card: #111111;
+  --color-fd-card-foreground: #ffffff;
+  --color-fd-border: #333333;
+  --color-fd-primary: #ffffff;
+  --color-fd-primary-foreground: #000000;
+  --color-fd-secondary: #1a1a1a;
+  --color-fd-secondary-foreground: #ffffff;
+  --color-fd-accent: #1a1a1a;
+  --color-fd-accent-foreground: #ffffff;
+  --color-fd-ring: #ffffff;
+}
+
+body {
+  background: var(--color-fd-background);
+  letter-spacing: 0.06em;
+}
+
+/* Page titles are poster titles: Antonio, stacked and tight. */
+#nd-page h1 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0;
+  line-height: 0.9;
+  font-size: clamp(2.6rem, 5vw, 3.6rem);
+}
+
+html {
+  scrollbar-gutter: stable;
+}

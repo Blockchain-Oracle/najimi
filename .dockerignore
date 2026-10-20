@@ -1,0 +1,19 @@
+# Never in an image: secrets, local data, research, builds made on the host.
+.env
+.env.*
+!.env.example
+**/node_modules
+**/.next
+**/.turbo
+**/out
+**/.source
+**/.output
+**/.wxt
+.data
+logs
+.git
+.claude
+context
+refs
+.firecrawl
+**/*.tsbuildinfo

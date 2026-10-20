@@ -1,0 +1,76 @@
+// Generated from packages/tokens/tokens.json — do not edit.
+export const tokens = {
+  "defaultMode": "light",
+  "themes": {
+    "light": {
+      "background": "#FFFFFF",
+      "foreground": "#000000",
+      "card": "#FFFFFF",
+      "card-foreground": "#000000",
+      "popover": "#FFFFFF",
+      "popover-foreground": "#000000",
+      "primary": "#000000",
+      "primary-foreground": "#FFFFFF",
+      "secondary": "#EEEEEE",
+      "secondary-foreground": "#000000",
+      "muted": "#EEEEEE",
+      "muted-foreground": "#595959",
+      "accent": "#EEEEEE",
+      "accent-foreground": "#000000",
+      "destructive": "#000000",
+      "destructive-foreground": "#FFFFFF",
+      "border": "#D9D9D9",
+      "input": "#D9D9D9",
+      "ring": "#000000",
+      "text-2": "#333333",
+      "text-3": "#595959",
+      "text-4": "#808080",
+      "ash": "#EEEEEE",
+      "raised": "#FFFFFF",
+      "confirm": "#7FFEB1",
+      "confirm-foreground": "#000000",
+      "heat": "#000000"
+    },
+    "dark": {
+      "background": "#000000",
+      "foreground": "#FFFFFF",
+      "card": "#111111",
+      "card-foreground": "#FFFFFF",
+      "popover": "#111111",
+      "popover-foreground": "#FFFFFF",
+      "primary": "#FFFFFF",
+      "primary-foreground": "#000000",
+      "secondary": "#1A1A1A",
+      "secondary-foreground": "#FFFFFF",
+      "muted": "#1A1A1A",
+      "muted-foreground": "#8C8C8C",
+      "accent": "#1A1A1A",
+      "accent-foreground": "#FFFFFF",
+      "destructive": "#FFFFFF",
+      "destructive-foreground": "#000000",
+      "border": "#333333",
+      "input": "#333333",
+      "ring": "#FFFFFF",
+      "text-2": "#BDBDBD",
+      "text-3": "#8C8C8C",
+      "text-4": "#666666",
+      "ash": "#1A1A1A",
+      "raised": "#111111",
+      "confirm": "#7FFEB1",
+      "confirm-foreground": "#000000",
+      "heat": "#FFFFFF"
+    }
+  },
+  "radius": {
+    "sm": "4px",
+    "card": "8px",
+    "nav": "20px",
+    "pill": "40px",
+    "tag": "9999px"
+  },
+  "motion": {
+    "quick": "150ms",
+    "state": "200ms",
+    "ease-out": "cubic-bezier(0.22, 1, 0.36, 1)"
+  }
+} as const

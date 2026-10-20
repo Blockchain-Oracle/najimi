@@ -1,0 +1,32 @@
+# dependencies
+node_modules
+
+# builds
+.next/
+out/
+dist/
+.turbo/
+.output/
+.wxt/
+*.tsbuildinfo
+next-env.d.ts
+.source/
+
+# env (only the example is committed)
+.env
+.env.*
+!.env.example
+
+# local data and logs
+.data/
+*.log
+logs/
+
+# os
+.DS_Store
+
+# local tooling and research (never public: research notes, cloned references, raw scrapes)
+.claude/
+context/
+refs/
+.firecrawl/

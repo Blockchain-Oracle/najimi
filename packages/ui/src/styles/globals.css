@@ -1,0 +1,55 @@
+/* Tailwind, the design-lock tokens (DICE "gig flyer") and the shadcn bridge: what every page needs. */
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "@najimi/tokens/tokens.css";
+@import "@najimi/tokens/theme.css";
+
+/* Light is the default; .dark on <html> switches every token (and copied components' dark: variants). */
+@custom-variant dark (&:is(.dark *));
+
+@source "../../../../apps/web/**/*.{ts,tsx}";
+@source "../**/*.{ts,tsx}";
+
+@theme inline {
+  --font-heading: var(--font-display);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+  body {
+    @apply bg-background text-foreground font-sans;
+    /* DICE's open tracking on every UI size; Inter's alternates for a calmer 1 and l. */
+    letter-spacing: var(--tracking-ui);
+    font-feature-settings: "ss01", "cv11";
+  }
+  /* Numbers line up in tables, counts and money. */
+  .tnum {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/* The display face: poster titles only (≥80px), stacked, tight. Never app chrome. */
+@utility font-display-poster {
+  font-family: var(--font-display);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-display);
+  line-height: 0.83;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

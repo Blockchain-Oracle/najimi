@@ -1,0 +1,31 @@
+{
+  "name": "najimi",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "typecheck": "turbo typecheck",
+    "check": "biome check .",
+    "check:fix": "biome check --write .",
+    "ci": "biome ci . && turbo typecheck build",
+    "db:generate": "pnpm --filter @najimi/db generate",
+    "db:migrate": "pnpm --filter @najimi/db migrate",
+    "services:up": "docker compose -f infra/compose.yaml --env-file .env up -d --wait",
+    "services:down": "docker compose -f infra/compose.yaml --env-file .env down"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.5.15",
+    "@najimi/typescript-config": "workspace:*",
+    "@types/node": "catalog:",
+    "tsx": "catalog:",
+    "turbo": "2.11.9",
+    "typescript": "catalog:"
+  },
+  "packageManager": "pnpm@11.24.0",
+  "engines": {
+    "node": ">=22.18"
+  }
+}

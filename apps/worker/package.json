@@ -1,0 +1,29 @@
+{
+  "name": "@najimi/worker",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node ../../scripts/with-env.mjs tsx watch --clear-screen=false src/index.ts",
+    "start": "node ../../scripts/with-env.mjs tsx src/index.ts",
+    "typecheck": "tsc --noEmit",
+    "build": "node scripts/build.mjs"
+  },
+  "dependencies": {
+    "@najimi/config": "workspace:*",
+    "@najimi/db": "workspace:*",
+    "@najimi/env": "workspace:*",
+    "@najimi/jobs": "workspace:*",
+    "@najimi/live": "workspace:*",
+    "drizzle-orm": "catalog:",
+    "pg-boss": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@najimi/typescript-config": "workspace:*",
+    "@types/node": "catalog:",
+    "esbuild": "0.28.2",
+    "tsx": "catalog:",
+    "typescript": "catalog:"
+  }
+}

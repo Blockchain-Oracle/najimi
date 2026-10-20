@@ -1,0 +1,32 @@
+packages:
+  - apps/*
+  - packages/*
+
+# Supply-chain guard: never install a version published less than a day ago
+# (compromised releases are usually caught and pulled within hours).
+minimumReleaseAge: 1440
+
+# Only these packages may run install scripts.
+allowBuilds:
+  esbuild: true
+
+# One version per shared dependency across apps and packages.
+catalog:
+  typescript: 7.0.2
+  "@types/node": 24.19.2
+  tsx: 4.23.15
+  react: 19.3.1
+  react-dom: 19.3.1
+  "@types/react": 19.3.0
+  "@types/react-dom": 19.3.0
+  next: 16.4.2
+  "@tanstack/react-query": 5.104.5
+  zod: 4.6.7
+  tailwindcss: 4.3.3
+  "@tailwindcss/postcss": 4.3.3
+  motion: 14.4.0
+  drizzle-orm: 0.45.4
+  postgres: 3.4.9
+  pg-boss: 12.38.0
+  better-auth: 1.7.8
+  lucide-react: 1.57.0

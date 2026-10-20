@@ -1,0 +1,18 @@
+{
+  "name": "@najimi/tokens",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Najimi design tokens from the design lock (context/design/README.md, DICE 'gig flyer'): one tokens.json → CSS custom properties, a Tailwind v4 theme and a TS export, light (default) and dark, behind a WCAG contrast gate.",
+  "exports": {
+    ".": "./generated/tokens.ts",
+    "./tokens.css": "./generated/tokens.css",
+    "./theme.css": "./generated/theme.css",
+    "./tokens.json": "./tokens.json"
+  },
+  "scripts": {
+    "build": "node scripts/generate.mjs && node scripts/contrast.mjs",
+    "generate": "node scripts/generate.mjs",
+    "contrast": "node scripts/contrast.mjs"
+  }
+}
