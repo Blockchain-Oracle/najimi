@@ -65,3 +65,52 @@ export const JOBS = {
   /** How often a running job proves it's alive; a dead worker's job is retried after this. */
   heartbeatSeconds: 30,
 } as const
+
+const DAY_MS = 24 * 60 * 60 * 1000
+
+/**
+ * Qloo (plan §3). Retry and timeout behaviour copies the official harness's client
+ * (@qloo/qloo-harness 0.1.26): 20 s timeout, 3 attempts, retry on 429/5xx with jittered backoff,
+ * Retry-After honoured up to 30 s, bodies capped at 5 MB. Cache lifetimes are our own analysis:
+ * the guide allows private server-side caching with no time limit.
+ */
+export const QLOO = {
+  baseUrl: "https://hackathon.api.qloo.com",
+  timeoutMs: 20_000,
+  attempts: 3,
+  backoffBaseMs: 250,
+  backoffJitter: 0.25,
+  retryAfterCapMs: 30_000,
+  maxBodyBytes: 5 * 1024 * 1024,
+  retryStatuses: [429, 500, 502, 503, 504],
+  /** Insights `take` maximum (Deep Dive); search allows more but we never need it. */
+  takeMax: 50,
+  /** Parallel Qloo requests per process (the taste portrait fans out over ten domains). */
+  concurrency: 4,
+  /** Cache lifetime by path prefix; the longest matching prefix wins. */
+  ttlMs: {
+    "/search": 30 * DAY_MS,
+    "/entities": 30 * DAY_MS,
+    "/v2/tags": 30 * DAY_MS,
+    "/v2/audiences": 30 * DAY_MS,
+    "/v2/insights": 7 * DAY_MS,
+    "/v2/analysis/compare": 7 * DAY_MS,
+    "/v2/trending": DAY_MS,
+  } as Record<string, number>,
+  defaultTtlMs: 7 * DAY_MS,
+} as const
+
+/** The ten taste domains of the Your People report (F3a), in the order the report shows them. */
+export const TASTE_DOMAINS = [
+  { key: "artist", type: "urn:entity:artist", label: "Music" },
+  { key: "movie", type: "urn:entity:movie", label: "Film" },
+  { key: "tv_show", type: "urn:entity:tv_show", label: "TV" },
+  { key: "book", type: "urn:entity:book", label: "Books" },
+  { key: "podcast", type: "urn:entity:podcast", label: "Podcasts" },
+  { key: "brand", type: "urn:entity:brand", label: "Brands" },
+  { key: "place", type: "urn:entity:place", label: "Places" },
+  { key: "destination", type: "urn:entity:destination", label: "Destinations" },
+  // The guide writes `video_game`; the Deep Dive and the harness `videogame` (first-calls #7 decides).
+  { key: "videogame", type: "urn:entity:videogame", label: "Games" },
+  { key: "person", type: "urn:entity:person", label: "People" },
+] as const

@@ -14,6 +14,7 @@ const nextConfig: NextConfig = {
     "@najimi/env",
     "@najimi/jobs",
     "@najimi/live",
+    "@najimi/qloo",
     "@najimi/tokens",
     "@najimi/ui",
   ],

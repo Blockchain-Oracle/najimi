@@ -147,6 +147,9 @@ importers:
       '@najimi/live':
         specifier: workspace:*
         version: link:../../packages/live
+      '@najimi/qloo':
+        specifier: workspace:*
+        version: link:../../packages/qloo
       '@najimi/tokens':
         specifier: workspace:*
         version: link:../../packages/tokens
@@ -220,6 +223,9 @@ importers:
       '@najimi/live':
         specifier: workspace:*
         version: link:../../packages/live
+      '@najimi/qloo':
+        specifier: workspace:*
+        version: link:../../packages/qloo
       drizzle-orm:
         specifier: 'catalog:'
         version: 0.45.4(@opentelemetry/api@1.9.1)(kysely@0.29.7)(pg@8.23.1)(postgres@3.4.9)
@@ -348,6 +354,37 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.19.2
+      typescript:
+        specifier: 'catalog:'
+        version: 7.0.2
+
+  packages/qloo:
+    dependencies:
+      '@najimi/config':
+        specifier: workspace:*
+        version: link:../config
+      '@najimi/db':
+        specifier: workspace:*
+        version: link:../db
+      '@najimi/env':
+        specifier: workspace:*
+        version: link:../env
+      drizzle-orm:
+        specifier: 'catalog:'
+        version: 0.45.4(@opentelemetry/api@1.9.1)(kysely@0.29.7)(pg@8.23.1)(postgres@3.4.9)
+      zod:
+        specifier: 'catalog:'
+        version: 4.6.7
+    devDependencies:
+      '@najimi/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.19.2
+      tsx:
+        specifier: 'catalog:'
+        version: 4.23.15
       typescript:
         specifier: 'catalog:'
         version: 7.0.2

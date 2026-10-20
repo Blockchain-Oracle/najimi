@@ -15,6 +15,7 @@
     "@najimi/env": "workspace:*",
     "@najimi/jobs": "workspace:*",
     "@najimi/live": "workspace:*",
+    "@najimi/qloo": "workspace:*",
     "@najimi/tokens": "workspace:*",
     "@najimi/ui": "workspace:*",
     "@tanstack/react-query": "catalog:",
