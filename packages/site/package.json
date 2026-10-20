@@ -15,6 +15,7 @@
     "@najimi/claude": "workspace:*",
     "@najimi/config": "workspace:*",
     "@najimi/env": "workspace:*",
+    "@najimi/geo": "workspace:*",
     "firecrawl": "4.49.1",
     "zod": "catalog:"
   },

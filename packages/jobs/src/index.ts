@@ -26,6 +26,13 @@ export const QUEUES = {
     options: { retryLimit: 0, expireInSeconds: 15 * 60 },
     send: { heartbeatSeconds: HEARTBEAT_SECONDS },
   },
+  /** Your People (F3): the report's sections from Qloo, each landing live. */
+  peopleReport: {
+    name: "people-report",
+    payload: z.object({ businessId: z.uuid(), runId: z.uuid(), reportId: z.uuid() }),
+    options: { retryLimit: 0, expireInSeconds: 15 * 60 },
+    send: { heartbeatSeconds: HEARTBEAT_SECONDS },
+  },
 } as const
 
 export type QueueName = keyof typeof QUEUES

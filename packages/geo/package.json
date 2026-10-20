@@ -1,0 +1,25 @@
+{
+  "name": "@najimi/geo",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./shapes": "./src/shapes.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --test src/*.test.ts"
+  },
+  "dependencies": {
+    "@najimi/config": "workspace:*",
+    "ngeohash": "0.6.4"
+  },
+  "devDependencies": {
+    "@najimi/typescript-config": "workspace:*",
+    "@types/ngeohash": "0.6.8",
+    "@types/node": "catalog:",
+    "tsx": "catalog:",
+    "typescript": "catalog:"
+  }
+}

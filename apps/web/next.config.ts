@@ -13,6 +13,7 @@ const nextConfig: NextConfig = {
     "@najimi/config",
     "@najimi/db",
     "@najimi/env",
+    "@najimi/geo",
     "@najimi/jobs",
     "@najimi/live",
     "@najimi/qloo",

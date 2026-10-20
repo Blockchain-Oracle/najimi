@@ -3,6 +3,7 @@ import { boss, type Payload, QUEUES } from "@najimi/jobs"
 import { emit, setRunStatus } from "@najimi/live"
 import { closeInterruptedRuns } from "./interrupted"
 import { businessSetup } from "./jobs/business-setup"
+import { peopleReport } from "./jobs/people-report"
 
 /*
  * The worker: every slow job runs here, never inside a web request (plan §4.6). It applies the
@@ -40,6 +41,16 @@ async function main() {
       if (!job) return
       const { businessId, runId } = QUEUES.businessSetup.payload.parse(job.data)
       await businessSetup(businessId, runId)
+    },
+  )
+
+  await queues.work<Payload<"peopleReport">>(
+    QUEUES.peopleReport.name,
+    { localConcurrency: 2 },
+    async ([job]) => {
+      if (!job) return
+      const { businessId, runId, reportId } = QUEUES.peopleReport.payload.parse(job.data)
+      await peopleReport(businessId, runId, reportId)
     },
   )
 

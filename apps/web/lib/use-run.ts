@@ -36,7 +36,7 @@ export function useRunEvents(
       }
       handler.current?.(event)
     }
-    for (const type of ["step", "status"]) source.addEventListener(type, take(type))
+    for (const type of ["step", "section", "status"]) source.addEventListener(type, take(type))
     return () => source.close()
   }, [runId])
 

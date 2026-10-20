@@ -14,6 +14,7 @@
     "@najimi/config": "workspace:*",
     "@najimi/db": "workspace:*",
     "@najimi/env": "workspace:*",
+    "@najimi/geo": "workspace:*",
     "@najimi/jobs": "workspace:*",
     "@najimi/live": "workspace:*",
     "@najimi/qloo": "workspace:*",

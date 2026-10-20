@@ -1,7 +1,9 @@
 "use client"
 
-import { useQuery, useQueryClient } from "@tanstack/react-query"
+import { Button } from "@najimi/ui/components/button"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import Image from "next/image"
+import { useRouter } from "next/navigation"
 import { api } from "@/lib/fetcher"
 import { qk } from "@/lib/query-keys"
 import { useRunEvents } from "@/lib/use-run"
@@ -52,8 +54,14 @@ export function SetupView({ initial }: { initial: BusinessData }) {
     if (event.type === "status" || REFRESH_ON.has(key))
       void queryClient.invalidateQueries({ queryKey: qk.business(id) })
   })
+  const router = useRouter()
+  const findPeople = useMutation({
+    mutationFn: () => api(`/api/businesses/${id}/report`, { json: {} }),
+    onSuccess: () => router.push(`/b/${id}/people`),
+  })
   const b = data.business
   const found = Boolean(b.name)
+  const canFind = b.status === "ready" && data.services.qloo
 
   return (
     <div className="grid gap-10 lg:grid-cols-[18rem_1fr]">
@@ -104,6 +112,21 @@ export function SetupView({ initial }: { initial: BusinessData }) {
                 matches={data.matches}
                 connected={data.services.qloo}
               />
+            ) : null}
+            {canFind ? (
+              <div className="flex flex-col gap-2 border-t border-foreground pt-6">
+                <Button
+                  size="lg"
+                  className="self-start"
+                  disabled={findPeople.isPending}
+                  onClick={() => findPeople.mutate()}
+                >
+                  {findPeople.isPending ? "Asking Qloo…" : "Find my people"}
+                </Button>
+                {findPeople.error ? (
+                  <p className="text-sm text-text-2">{findPeople.error.message}</p>
+                ) : null}
+              </div>
             ) : null}
           </>
         ) : b.status === "failed" ? (
