@@ -1,26 +1,35 @@
 import { redirect } from "next/navigation"
 import { Suspense } from "react"
 import { Onboarding } from "@/components/start/onboarding"
+import { safeNext } from "@/lib/next-path"
 import { pageLocale } from "@/lib/page-locale"
 import { selfOf } from "@/lib/people"
 import { getSession } from "@/lib/session"
 
-/** Someone who already told us who they are goes straight to their taste. */
-async function AlreadyOnboarded() {
+type Search = PageProps<"/[locale]/start">["searchParams"]
+
+/** Someone who already told us who they are goes straight on: where they were headed, or their taste. */
+async function AlreadyOnboarded({ searchParams }: { searchParams: Search }) {
   const session = await getSession()
   const self = session ? await selfOf(session.user.id) : null
-  if (self) redirect(`/people/${self.id}`)
+  if (self) redirect(safeNext((await searchParams).next) ?? `/people/${self.id}`)
   return null
 }
 
-export default async function StartPage({ params }: PageProps<"/[locale]/start">) {
+async function Flow({ searchParams }: { searchParams: Search }) {
+  return <Onboarding next={safeNext((await searchParams).next)} />
+}
+
+export default async function StartPage({ params, searchParams }: PageProps<"/[locale]/start">) {
   await pageLocale(params)
   return (
     <>
       <Suspense fallback={null}>
-        <AlreadyOnboarded />
+        <AlreadyOnboarded searchParams={searchParams} />
       </Suspense>
-      <Onboarding />
+      <Suspense fallback={<Onboarding next={null} />}>
+        <Flow searchParams={searchParams} />
+      </Suspense>
     </>
   )
 }

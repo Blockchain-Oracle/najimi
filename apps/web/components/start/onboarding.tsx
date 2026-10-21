@@ -20,9 +20,10 @@ const STEPS = 3
 
 /**
  * "Who are you" (C1): a name and a city, three or more things you love (live Qloo artwork), how
- * much each counts, then the reveal. A guest session starts on the first search.
+ * much each counts, then the reveal. A guest session starts on the first search. Someone who came
+ * from a shared link (`next`) carries on there after the reveal.
  */
-export function Onboarding() {
+export function Onboarding({ next }: { next: string | null }) {
   const t = useTranslations("Start")
   const tl = useTranslations("Loves")
   const locale = useLocale()
@@ -58,7 +59,7 @@ export function Onboarding() {
             })),
           },
         })
-        router.push(`/people/${personId}`)
+        router.push(`/people/${personId}${next ? `?next=${encodeURIComponent(next)}` : ""}`)
       } catch (e) {
         setError(e instanceof Error ? e.message : "")
       }

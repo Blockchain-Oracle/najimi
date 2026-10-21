@@ -39,21 +39,24 @@ async function find(
   return { ownerId: c.ownerId, key, mime, open: c.public }
 }
 
-/** Whether a live share link covers this creation (a share page renders it signed out). */
+/**
+ * Whether a live share link covers this creation: a link to the creation itself, or to the chat it
+ * was made in (a shared chat shows its results, never the person's own photos).
+ */
 async function sharedCreation(id: string, token: string | null): Promise<boolean> {
   if (!token) return false
   const [share] = await db
-    .select({ id: schema.shares.id })
+    .select()
     .from(schema.shares)
-    .where(
-      and(
-        eq(schema.shares.token, token),
-        eq(schema.shares.kind, "creation"),
-        eq(schema.shares.refId, id),
-        isNull(schema.shares.revokedAt),
-      ),
-    )
-  return Boolean(share)
+    .where(and(eq(schema.shares.token, token), isNull(schema.shares.revokedAt)))
+  if (!share) return false
+  if (share.kind === "creation") return share.refId === id
+  if (share.kind !== "chat") return false
+  const [c] = await db
+    .select({ chatId: schema.creations.chatId })
+    .from(schema.creations)
+    .where(eq(schema.creations.id, id))
+  return c?.chatId === share.refId
 }
 
 /**

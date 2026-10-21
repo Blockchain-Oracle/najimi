@@ -55,7 +55,9 @@
     "weightsTitle": "Combien compte chacun ?",
     "weightsHint": "Montez ce que vous aimez le plus. Cela change tout ce que Najimi crée.",
     "reveal": "Révéler mon goût",
-    "revealing": "Lecture de votre goût…"
+    "revealing": "Lecture de votre goût…",
+    "carryOnHint": "Ton goût est prêt. On continue",
+    "carryOn": "Continuer"
   },
   "Loves": {
     "searchPlaceholder": "Cherchez ce que vous aimez…",
@@ -278,7 +280,14 @@
       "auto": "Auto",
       "plan": "Plan seul"
     },
-    "outOfCredit": "Le fournisseur d'IA de Najimi n'a plus de crédit pour le moment. Il revient dès qu'il est rechargé."
+    "outOfCredit": "Le fournisseur d'IA de Najimi n'a plus de crédit pour le moment. Il revient dès qu'il est rechargé.",
+    "dictate": "Parler au lieu d'écrire",
+    "stopRecording": "Arrêter l'enregistrement",
+    "micBlocked": "Najimi ne vous entend pas : autorisez le micro pour ce site.",
+    "voiceFailed": "Nous n'avons pas compris. Réessayez.",
+    "shareChat": "Partager ce chat",
+    "linkCopied": "Lien copié",
+    "saveWorkflow": "Enregistrer comme workflow"
   },
   "Cards": {
     "asking": "Qloo réfléchit…",
@@ -417,7 +426,9 @@
   "Share": {
     "cta": "Créer le vôtre",
     "madeFrom": "Créé d'après un vrai goût : {words}",
-    "pitch": "Najimi connaît ce que les gens aiment grâce à Qloo, et crée pour leur vraie vie des choses qui leur ressemblent."
+    "pitch": "Najimi connaît ce que les gens aiment grâce à Qloo, et crée pour leur vraie vie des choses qui leur ressemblent.",
+    "chatTitle": "Un chat Najimi",
+    "moreWorkflows": "Plus de workflows"
   },
   "Home": {
     "planFor": "Pour le {room} de {name}",
@@ -442,7 +453,9 @@
     "switching": "Commandes",
     "dimmers": "Variateurs",
     "lookHint": "Des {category} réels, sur le site de chaque marque.",
-    "brandOnly": "Voir la boutique de la marque"
+    "brandOnly": "Voir la boutique de la marque",
+    "sendElectrician": "Envoyer à l'électricien",
+    "linkCopied": "Lien copié — envoyez-le à votre électricien"
   },
   "Food": {
     "minutes": "{n} min",
@@ -486,7 +499,8 @@
       "food": "Cuisine",
       "culture": "Culture",
       "style": "Style",
-      "film": "Film"
+      "film": "Film",
+      "mine": "Créé par un utilisateur de Najimi"
     },
     "items": {
       "relight-my-room": {
@@ -524,6 +538,33 @@
         "desc": "Une soirée entière : quoi regarder, écouter, manger, et la pièce prête.",
         "start": "Prépare une soirée à la maison"
       }
-    }
+    },
+    "runMine": "Lance mon workflow « {name} » :",
+    "yours": "Les tiens",
+    "runs": "{count, plural, one {lancé une fois} other {lancé # fois}}",
+    "runThis": "Lancer ce workflow",
+    "newHere": "Nouveau ici ? Dis d'abord à Najimi trois choses que tu aimes. Une minute, et le workflow démarre.",
+    "copyLink": "Copier le lien",
+    "linkCopied": "Lien copié",
+    "stepCount": "{count, plural, one {# étape} other {# étapes}}",
+    "public": "Toute personne qui a le lien peut le lancer",
+    "delete": "Supprimer",
+    "deleteConfirm": "Supprimer « {name} » ? Les chats qui l'ont lancé restent.",
+    "saveTitle": "Enregistrer comme workflow",
+    "saveHint": "Relance-le quand tu veux, pour toi ou pour un proche. Najimi a écrit les étapes à partir de ce chat ; à toi de les ajuster.",
+    "drafting": "Najimi écrit les étapes…",
+    "name": "Nom",
+    "description": "Ce qu'il t'apporte",
+    "steps": "Étapes",
+    "stepsHint": "Une par ligne. Au lancement, elles partent comme ton premier message : écris-les comme tu les demanderais.",
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "saving": "Enregistrement…",
+    "saved": "Workflow enregistré",
+    "savedShared": "Lien copié : {link}",
+    "savedPrivate": "Il est dans Workflows, rubrique Les tiens.",
+    "seeYours": "Ouvrir",
+    "saveFailed": "Ça n'a pas été enregistré. Réessaie.",
+    "readyMade": "Prêts à l'emploi"
   }
 }

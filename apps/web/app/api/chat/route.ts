@@ -31,6 +31,7 @@ import { buildTools } from "@/lib/chat/tools.server"
 import { charge, usageToday } from "@/lib/chat/usage"
 import { isLocale } from "@/lib/i18n"
 import { ownedPerson, peopleOf, selfOf } from "@/lib/people"
+import { isBuiltIn, runnableWorkflow } from "@/lib/workflows"
 
 const nextId = createIdGenerator({ prefix: "msg", size: 16 })
 
@@ -46,7 +47,7 @@ const bodySchema = z.object({
   messageId: z.string().max(100).optional(),
   /** Who a new chat is for (later turns use the chat's own). */
   personId: z.uuid().optional(),
-  /** A built-in workflow a new chat runs. */
+  /** A workflow a new chat runs: a built-in, a public one, or the person's own. */
   workflow: z.string().max(60).optional(),
 })
 
@@ -86,12 +87,9 @@ export async function POST(request: Request) {
       .select()
       .from(schema.userPrefs)
       .where(eq(schema.userPrefs.userId, user.id))
-    const [workflow] = parsed.data.workflow
-      ? await db
-          .select()
-          .from(schema.workflows)
-          .where(eq(schema.workflows.slug, parsed.data.workflow))
-      : []
+    const workflow = parsed.data.workflow
+      ? await runnableWorkflow(user.id, parsed.data.workflow)
+      : null
     if (workflow)
       await db
         .update(schema.workflows)
@@ -146,7 +144,7 @@ export async function POST(request: Request) {
     () => assistantId,
   )
   // A built-in workflow's recipe joins the instructions; one someone saved is their own words and
-  // would go in as a message, never as instructions.
+  // goes in as their first message (the page sends it), never as instructions.
   const [workflowRow] = chat.workflowId
     ? await db.select().from(schema.workflows).where(eq(schema.workflows.id, chat.workflowId))
     : []
@@ -201,7 +199,7 @@ export async function POST(request: Request) {
       others: people.filter((p) => p.id !== person.id).map((p) => ({ id: p.id, name: p.name })),
       photos,
       creations: made,
-      workflow: workflowRow && !workflowRow.ownerId ? workflowRow.instructions : null,
+      workflow: workflowRow && isBuiltIn(workflowRow) ? workflowRow.instructions : null,
       videoReady: videoReady(),
     })}`,
     messages: await convertToModelMessages(await forModel(user.id, messages), {

@@ -8,16 +8,15 @@ import { useTranslations } from "next-intl"
 import { useCallback, useState } from "react"
 import { api } from "@/lib/fetcher"
 import { type RunEvent, useRunEvents } from "@/lib/use-run"
+import { useMediaUrl, usePublicShare } from "../public-share"
 import { CompareSlider } from "./compare-slider"
 
 type ImageOut = NajimiTools["makeImage"]["output"]
 type VideoOut = NajimiTools["makeVideo"]["output"]
 
-export const creationUrl = (id: string, v: "original" | "display" | "thumb" = "display") =>
-  `/api/media/creation/${id}?v=${v}`
 const uploadUrl = (id: string) => `/api/media/upload/${id}?v=original`
 
-async function share(creationId: string, copied: string) {
+async function shareCreation(creationId: string, copied: string) {
   const { url } = await api<{ url: string }>("/api/shares", {
     json: { kind: "creation", refId: creationId },
   })
@@ -43,7 +42,9 @@ function Progress({ label }: { label: string }) {
  */
 export function ImageCard({ output, onAsk }: { output: ImageOut; onAsk: (text: string) => void }) {
   const t = useTranslations("Make")
-  const [ready, setReady] = useState<Set<string>>(new Set())
+  const share = usePublicShare()
+  const creationUrl = useMediaUrl()
+  const [ready, setReady] = useState<Set<string>>(() => new Set(share?.ready ?? []))
   const [failed, setFailed] = useState<string | null>(null)
   const [pick, setPick] = useState(0)
   const onEvent = useCallback((e: RunEvent) => {
@@ -51,15 +52,18 @@ export function ImageCard({ output, onAsk }: { output: ImageOut; onAsk: (text: s
     if (e.type === "status" && e.data.status === "failed")
       setFailed((e.data.error as string) ?? "failed")
   }, [])
-  useRunEvents(output.runId, onEvent)
+  useRunEvents(share ? null : output.runId, onEvent)
 
   if (!output.runId)
-    return (
+    return share ? null : (
       <p className="rounded-card bg-card px-4 py-3 text-sm text-card-foreground shadow-paper">
         {output.note === "allowance" ? t("noneLeft") : t("notMade")}
       </p>
     )
-  const ids = output.creationIds
+  const ids = share
+    ? output.creationIds.filter((id) => share.ready.includes(id))
+    : output.creationIds
+  if (share && !ids.length) return null
   const current = ids[pick] ?? ids[0]
   const before = output.sourceUploadId
     ? uploadUrl(output.sourceUploadId)
@@ -134,7 +138,7 @@ export function ImageCard({ output, onAsk }: { output: ImageOut; onAsk: (text: s
           ))}
         </ul>
       ) : null}
-      {isReady && current ? (
+      {isReady && current && !share ? (
         <div className="flex flex-wrap gap-1.5 px-1 pb-1">
           <a
             href={creationUrl(current, "original")}
@@ -145,7 +149,7 @@ export function ImageCard({ output, onAsk }: { output: ImageOut; onAsk: (text: s
           </a>
           <button
             type="button"
-            onClick={() => share(current, t("linkCopied"))}
+            onClick={() => shareCreation(current, t("linkCopied"))}
             className="inline-flex items-center gap-1.5 rounded-pill bg-paper-foreground/6 px-3 py-1.5 text-xs font-semibold"
           >
             <Share2 className="size-3.5" /> {t("share")}
@@ -173,10 +177,14 @@ export function ImageCard({ output, onAsk }: { output: ImageOut; onAsk: (text: s
 /** A video rendering at the provider (T11): honest progress, then the player. */
 export function VideoCard({ output }: { output: VideoOut }) {
   const t = useTranslations("Make")
+  const share = usePublicShare()
+  const creationUrl = useMediaUrl()
   const [stage, setStage] = useState<{ stage: string; position?: number | null }>({
     stage: "queued",
   })
-  const [done, setDone] = useState(false)
+  const [done, setDone] = useState(() =>
+    Boolean(share && output.creationId && share.ready.includes(output.creationId)),
+  )
   const [failed, setFailed] = useState<string | null>(null)
   const onEvent = useCallback((e: RunEvent) => {
     if (e.type === "progress") setStage(e.data as { stage: string; position?: number | null })
@@ -184,7 +192,8 @@ export function VideoCard({ output }: { output: VideoOut }) {
     if (e.type === "status" && e.data.status === "failed")
       setFailed((e.data.error as string) ?? "failed")
   }, [])
-  useRunEvents(output.runId, onEvent)
+  useRunEvents(share ? null : output.runId, onEvent)
+  if (share && !done) return null
   if (!output.runId || !output.creationId)
     return (
       <p className="rounded-card bg-card px-4 py-3 text-sm text-card-foreground shadow-paper">

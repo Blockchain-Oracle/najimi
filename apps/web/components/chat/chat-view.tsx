@@ -5,14 +5,16 @@ import { AGENT } from "@najimi/config"
 import { Dialog, DialogContent, DialogTitle } from "@najimi/ui/components/dialog"
 import { toast } from "@najimi/ui/components/sonner"
 import { useQueryClient } from "@tanstack/react-query"
-import { Copy, GitFork, RotateCcw, Scale } from "lucide-react"
+import { BookmarkPlus, Copy, GitFork, RotateCcw, Scale, Share2 } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { useEffect, useRef, useState } from "react"
 import { Streamdown } from "streamdown"
+import { SaveWorkflowDialog } from "@/components/workflows/save-workflow-dialog"
 import { useNajimiChat } from "@/lib/chat/use-najimi-chat"
 import { api } from "@/lib/fetcher"
 import type { Uploaded } from "@/lib/photo"
+import { ChatProvider, shareChat } from "./chat-context"
 import { type ChatPerson, Composer, type Mode } from "./composer"
 import { Message } from "./message"
 
@@ -29,6 +31,8 @@ export type ChatViewProps = {
   greetingName: string
   /** A workflow a new chat starts with (from the library or a shared link). */
   workflow?: string | null
+  /** A saved workflow's opening message: its steps, sent as the person's own words. */
+  workflowStart?: string | null
 }
 
 const textOf = (m: NajimiUIMessage) =>
@@ -46,6 +50,7 @@ export function ChatView(props: ChatViewProps) {
   const [mode, setMode] = useState<Mode>(props.mode)
   const [started, setStarted] = useState(!props.isNew)
   const [compareFor, setCompareFor] = useState<NajimiUIMessage | null>(null)
+  const [saving, setSaving] = useState(false)
   const tw = useTranslations("Workflows")
   const [workflow, setWorkflow] = useState<string | null>(props.workflow ?? null)
   const chat = useNajimiChat(props.chatId, props.messages, personId, workflow)
@@ -107,10 +112,9 @@ export function ChatView(props: ChatViewProps) {
   // biome-ignore lint/correctness/useExhaustiveDependencies: runs once, when a new workflow chat mounts
   useEffect(() => {
     if (!props.isNew || !props.workflow) return
-    const timer = setTimeout(
-      () => send(tw(`items.${props.workflow}.start` as "items.night-in.start")),
-      0,
-    )
+    const opening =
+      props.workflowStart ?? tw(`items.${props.workflow}.start` as "items.night-in.start")
+    const timer = setTimeout(() => send(opening), 0)
     return () => clearTimeout(timer)
   }, [])
 
@@ -139,132 +143,157 @@ export function ChatView(props: ChatViewProps) {
   const lastAssistant = [...messages].reverse().find((m) => m.role === "assistant")
 
   return (
-    <div className="mx-auto flex min-h-[calc(100svh-5rem)] w-full max-w-3xl flex-col px-4 md:px-6">
-      {messages.length === 0 ? (
-        <section className="flex flex-1 flex-col justify-center gap-6 py-10">
-          <h1 className="font-title text-title-sm">
-            {t("greeting", { name: props.greetingName })}
-          </h1>
-          <div className="flex flex-wrap gap-2">
-            {props.starters.map((s) => (
-              <button
-                key={s}
-                type="button"
-                onClick={() => send(s)}
-                className="rounded-pill border border-foreground/15 px-4 py-2 text-start text-sm transition-colors hover:border-lime hover:text-lime"
-              >
-                {s}
-              </button>
-            ))}
-          </div>
-        </section>
-      ) : (
-        <div className="flex flex-1 flex-col gap-8 py-6">
-          {messages.map((m, i) => {
-            const isLast = i === messages.length - 1
-            return (
-              <div key={m.id} className="flex flex-col gap-2">
-                <Message
-                  message={m}
-                  streaming={busy && isLast}
-                  actions={{
-                    live: isLast && !busy,
-                    onAsk: (text) => send(text),
-                    onAnswer: (toolCallId, output) =>
-                      void addToolOutput({ tool: "askUser", toolCallId, output }),
-                    onApprove: (id, approved) => void addToolApprovalResponse({ id, approved }),
-                  }}
-                />
-                {m.role === "assistant" && !(busy && isLast) && textOf(m) ? (
-                  <div className="flex items-center gap-1 text-text-3">
-                    <IconButton
-                      label={t("copy")}
-                      onClick={() =>
-                        navigator.clipboard.writeText(textOf(m)).then(() => toast(t("copied")))
-                      }
-                    >
-                      <Copy className="size-4" />
-                    </IconButton>
-                    {m.id === lastAssistant?.id ? (
-                      <IconButton
-                        label={t("regenerate")}
-                        onClick={() => void regenerate({ messageId: m.id })}
-                      >
-                        <RotateCcw className="size-4" />
-                      </IconButton>
-                    ) : null}
-                    <IconButton
-                      label={t("fork")}
-                      onClick={async () => {
-                        const { chatId } = await api<{ chatId: string }>(
-                          `/api/chats/${props.chatId}/fork`,
-                          { json: { messageId: m.id } },
-                        )
-                        router.push(`/c/${chatId}`)
-                      }}
-                    >
-                      <GitFork className="size-4" />
-                    </IconButton>
-                    <button
-                      type="button"
-                      onClick={() => setCompareFor(m)}
-                      className="ms-1 inline-flex items-center gap-1.5 rounded-pill border border-foreground/15 px-3 py-1 text-xs font-semibold text-foreground transition-colors hover:border-lime hover:text-lime"
-                    >
-                      <Scale className="size-3.5" /> {t("compare")}
-                    </button>
-                  </div>
-                ) : null}
-              </div>
-            )
-          })}
-          {stillRunning ? (
-            <p className="flex items-center gap-2 text-sm text-text-3">
-              <span className="size-2 animate-lime-pulse rounded-full bg-lime" />{" "}
-              {t("stillWorking")}
-            </p>
-          ) : null}
-          {stale || chat.error ? (
-            <div className="flex items-center gap-3 text-sm">
-              <span className="text-destructive">
-                {stale
-                  ? t("interrupted")
-                  : chat.error?.message.includes("out-of-credit")
-                    ? t("outOfCredit")
-                    : t("error")}
-              </span>
-              <button
-                type="button"
-                onClick={() =>
-                  void regenerate(lastAssistant ? { messageId: lastAssistant.id } : undefined)
-                }
-                className="sticker px-3 py-1 text-xs font-semibold"
-              >
-                {t("retry")}
-              </button>
+    <ChatProvider value={{ chatId: props.chatId }}>
+      <div className="mx-auto flex min-h-[calc(100svh-5rem)] w-full max-w-3xl flex-col px-4 md:px-6">
+        {messages.length === 0 ? (
+          <section className="flex flex-1 flex-col justify-center gap-6 py-10">
+            <h1 className="font-title text-title-sm">
+              {t("greeting", { name: props.greetingName })}
+            </h1>
+            <div className="flex flex-wrap gap-2">
+              {props.starters.map((s) => (
+                <button
+                  key={s}
+                  type="button"
+                  onClick={() => send(s)}
+                  className="rounded-pill border border-foreground/15 px-4 py-2 text-start text-sm transition-colors hover:border-lime hover:text-lime"
+                >
+                  {s}
+                </button>
+              ))}
             </div>
-          ) : null}
-          <div ref={bottom} />
+          </section>
+        ) : (
+          <div className="flex flex-1 flex-col gap-8 py-6">
+            {messages.map((m, i) => {
+              const isLast = i === messages.length - 1
+              return (
+                <div key={m.id} className="flex flex-col gap-2">
+                  <Message
+                    message={m}
+                    streaming={busy && isLast}
+                    actions={{
+                      live: isLast && !busy,
+                      onAsk: (text) => send(text),
+                      onAnswer: (toolCallId, output) =>
+                        void addToolOutput({ tool: "askUser", toolCallId, output }),
+                      onApprove: (id, approved) => void addToolApprovalResponse({ id, approved }),
+                    }}
+                  />
+                  {/* Every reply with words gets its actions; the last one always does (a reply
+                      can be all cards). */}
+                  {m.role === "assistant" &&
+                  !(busy && isLast) &&
+                  (textOf(m) || m.id === lastAssistant?.id) ? (
+                    <div className="flex items-center gap-1 text-text-3">
+                      {textOf(m) ? (
+                        <IconButton
+                          label={t("copy")}
+                          onClick={() =>
+                            navigator.clipboard.writeText(textOf(m)).then(() => toast(t("copied")))
+                          }
+                        >
+                          <Copy className="size-4" />
+                        </IconButton>
+                      ) : null}
+                      {m.id === lastAssistant?.id ? (
+                        <IconButton
+                          label={t("regenerate")}
+                          onClick={() => void regenerate({ messageId: m.id })}
+                        >
+                          <RotateCcw className="size-4" />
+                        </IconButton>
+                      ) : null}
+                      <IconButton
+                        label={t("fork")}
+                        onClick={async () => {
+                          const { chatId } = await api<{ chatId: string }>(
+                            `/api/chats/${props.chatId}/fork`,
+                            { json: { messageId: m.id } },
+                          )
+                          router.push(`/c/${chatId}`)
+                        }}
+                      >
+                        <GitFork className="size-4" />
+                      </IconButton>
+                      <IconButton
+                        label={t("shareChat")}
+                        onClick={() => void shareChat(props.chatId, t("linkCopied"))}
+                      >
+                        <Share2 className="size-4" />
+                      </IconButton>
+                      {m.id === lastAssistant?.id ? (
+                        <IconButton label={t("saveWorkflow")} onClick={() => setSaving(true)}>
+                          <BookmarkPlus className="size-4" />
+                        </IconButton>
+                      ) : null}
+                      <button
+                        type="button"
+                        onClick={() => setCompareFor(m)}
+                        className="ms-1 inline-flex items-center gap-1.5 rounded-pill border border-foreground/15 px-3 py-1 text-xs font-semibold text-foreground transition-colors hover:border-lime hover:text-lime"
+                      >
+                        <Scale className="size-3.5" /> {t("compare")}
+                      </button>
+                    </div>
+                  ) : null}
+                </div>
+              )
+            })}
+            {stillRunning ? (
+              <p className="flex items-center gap-2 text-sm text-text-3">
+                <span className="size-2 animate-lime-pulse rounded-full bg-lime" />{" "}
+                {t("stillWorking")}
+              </p>
+            ) : null}
+            {stale || chat.error ? (
+              <div className="flex items-center gap-3 text-sm">
+                <span className="text-destructive">
+                  {stale
+                    ? t("interrupted")
+                    : chat.error?.message.includes("out-of-credit")
+                      ? t("outOfCredit")
+                      : t("error")}
+                </span>
+                <button
+                  type="button"
+                  onClick={() =>
+                    void regenerate(lastAssistant ? { messageId: lastAssistant.id } : undefined)
+                  }
+                  className="sticker px-3 py-1 text-xs font-semibold"
+                >
+                  {t("retry")}
+                </button>
+              </div>
+            ) : null}
+            <div ref={bottom} />
+          </div>
+        )}
+        <div className="sticky bottom-0 bg-gradient-to-t from-background via-background to-transparent pt-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
+          <Composer
+            people={props.people}
+            personId={personId}
+            onPerson={changePerson}
+            mode={mode}
+            onMode={changeMode}
+            busy={busy}
+            onSend={send}
+            onStop={() => void stop()}
+            onWorkflow={runWorkflow}
+          />
         </div>
-      )}
-      <div className="sticky bottom-0 bg-gradient-to-t from-background via-background to-transparent pt-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
-        <Composer
-          people={props.people}
-          personId={personId}
-          onPerson={changePerson}
-          mode={mode}
-          onMode={changeMode}
-          busy={busy}
-          onSend={send}
-          onStop={() => void stop()}
-          onWorkflow={runWorkflow}
+        <SaveWorkflowDialog
+          chatId={props.chatId}
+          version={messages.length}
+          open={saving}
+          onOpenChange={setSaving}
+        />
+        <CompareDialog
+          chatId={props.chatId}
+          message={compareFor}
+          onClose={() => setCompareFor(null)}
         />
       </div>
-      <CompareDialog
-        chatId={props.chatId}
-        message={compareFor}
-        onClose={() => setCompareFor(null)}
-      />
-    </div>
+    </ChatProvider>
   )
 }
 

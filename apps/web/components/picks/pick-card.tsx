@@ -17,6 +17,7 @@ import {
 import { useTranslations } from "next-intl"
 import { useState } from "react"
 import { Artwork, shapeOf } from "@/components/artwork"
+import { usePublicShare } from "@/components/chat/public-share"
 import { BecauseChip } from "./because-chip"
 
 export type PickActions = {
@@ -88,6 +89,7 @@ export function PickCard({
   style?: React.CSSProperties
 }) {
   const t = useTranslations("Pick")
+  const publicView = Boolean(usePublicShare())
   const [listening, setListening] = useState(false)
   const links = pick.links ?? {}
   return (
@@ -124,7 +126,7 @@ export function PickCard({
         </div>
       ) : null}
       <div className="px-0.5">
-        <BecauseChip because={pick.because} callId={pick.callId} />
+        <BecauseChip because={pick.because} callId={pick.callId} publicView={publicView} />
       </div>
       <div className="mt-auto flex items-center justify-between pt-1">
         {actions ? (

@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl"
 import { useState } from "react"
 import { PickCard } from "@/components/picks/pick-card"
 import { api } from "@/lib/fetcher"
+import { usePublicShare } from "../public-share"
 import { DemographicsView } from "./demographics"
 import { HeatmapView } from "./heatmap"
 import { QlooChip } from "./qloo-chip"
@@ -74,6 +75,7 @@ export function InsightsCard({
   const t = useTranslations("Cards")
   const ta = useTranslations("Asked")
   const tp = useTranslations("Pick")
+  const share = usePublicShare()
   const [saved, setSaved] = useState<Set<string>>(new Set())
   const [hidden, setHidden] = useState<Set<string>>(new Set())
 
@@ -127,7 +129,7 @@ export function InsightsCard({
               <PickCard
                 key={p.qlooId}
                 pick={p}
-                actions={actions(p)}
+                actions={share ? undefined : actions(p)}
                 className="animate-card-land border border-paper-foreground/8 shadow-none"
                 style={
                   {

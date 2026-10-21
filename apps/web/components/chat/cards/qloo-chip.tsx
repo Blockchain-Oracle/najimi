@@ -3,11 +3,13 @@
 import { Popover, PopoverContent, PopoverTrigger } from "@najimi/ui/components/popover"
 import { useTranslations } from "next-intl"
 import { CallDetails } from "@/components/qloo/call-details"
+import { usePublicShare } from "../public-share"
 
 /** The "from Qloo" mark on every card: opens the exact call behind it. */
 export function QlooChip({ callId }: { callId: string | null }) {
   const t = useTranslations("Evidence")
-  if (!callId)
+  const share = usePublicShare()
+  if (!callId || share)
     return (
       <span className="rounded-pill bg-paper-foreground/8 px-2 py-0.5 text-[10px] font-bold tracking-wide uppercase">
         Qloo

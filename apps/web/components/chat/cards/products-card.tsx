@@ -26,9 +26,10 @@ export function ProductsCard({ output }: { output: Output }) {
       <div className="-mx-4 flex snap-x gap-3 overflow-x-auto px-4 pb-2">
         {output.brands.flatMap((b) =>
           b.products.length
-            ? b.products.map((p) => (
+            ? b.products.map((p, i) => (
                 <a
-                  key={p.url}
+                  // biome-ignore lint/suspicious/noArrayIndexKey: a saved tool result never reorders, and older ones repeat links
+                  key={`${b.id}:${i}`}
                   href={p.url}
                   target="_blank"
                   rel="noopener noreferrer"

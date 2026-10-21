@@ -2,8 +2,10 @@
 
 import type { NajimiTools } from "@najimi/agent"
 import { toast } from "@najimi/ui/components/sonner"
-import { Copy, Lamp, Lightbulb, Sparkles, Sun } from "lucide-react"
+import { Copy, Lamp, Lightbulb, Send, Sparkles, Sun } from "lucide-react"
 import { useTranslations } from "next-intl"
+import { shareChat, useChatId } from "../chat-context"
+import { usePublicShare } from "../public-share"
 import { CardShell } from "./insights-card"
 
 type Plan = NajimiTools["lightingPlan"]["input"]
@@ -30,6 +32,8 @@ const ICON = { ambient: Sun, task: Lamp, accent: Sparkles, decorative: Lightbulb
 /** The lighting plan (T12, brief #1): layers, moments and a brief an electrician can work from. */
 export function LightingCard({ plan, personName }: { plan: Plan; personName: string }) {
   const t = useTranslations("Home")
+  const chatId = useChatId()
+  const publicView = Boolean(usePublicShare())
   const brief = [
     `${plan.title} — ${plan.room}`,
     ...plan.layers.flatMap((l) =>
@@ -105,13 +109,24 @@ export function LightingCard({ plan, personName }: { plan: Plan; personName: str
           <p className="text-[11px] font-semibold tracking-wide text-lime uppercase">
             {t("forElectrician")}
           </p>
-          <button
-            type="button"
-            onClick={() => navigator.clipboard.writeText(brief).then(() => toast(t("copied")))}
-            className="inline-flex items-center gap-1 rounded-pill bg-white/10 px-2.5 py-1 text-xs font-semibold"
-          >
-            <Copy className="size-3.5" /> {t("copyBrief")}
-          </button>
+          <span className="flex gap-1.5">
+            <button
+              type="button"
+              onClick={() => navigator.clipboard.writeText(brief).then(() => toast(t("copied")))}
+              className="inline-flex items-center gap-1 rounded-pill bg-white/10 px-2.5 py-1 text-xs font-semibold"
+            >
+              <Copy className="size-3.5" /> {t("copyBrief")}
+            </button>
+            {chatId && !publicView ? (
+              <button
+                type="button"
+                onClick={() => void shareChat(chatId, t("linkCopied"))}
+                className="inline-flex items-center gap-1 rounded-pill bg-lime px-2.5 py-1 text-xs font-semibold text-lime-foreground"
+              >
+                <Send className="size-3.5" /> {t("sendElectrician")}
+              </button>
+            ) : null}
+          </span>
         </div>
         <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-sm">
           <dt className="text-white/55">{t("circuits")}</dt>

@@ -55,7 +55,9 @@
     "weightsTitle": "How much does each count?",
     "weightsHint": "Slide up what you love most. It changes everything Najimi makes.",
     "reveal": "Show me my taste",
-    "revealing": "Reading your taste…"
+    "revealing": "Reading your taste…",
+    "carryOnHint": "Your taste is ready. Carry on",
+    "carryOn": "Carry on"
   },
   "Loves": {
     "searchPlaceholder": "Search anything you love…",
@@ -278,7 +280,14 @@
       "auto": "Auto",
       "plan": "Plan only"
     },
-    "outOfCredit": "Najimi's AI provider is out of credit right now. It will be back once it's topped up."
+    "outOfCredit": "Najimi's AI provider is out of credit right now. It will be back once it's topped up.",
+    "dictate": "Talk instead of typing",
+    "stopRecording": "Stop recording",
+    "micBlocked": "Najimi can't hear you: allow the microphone for this site.",
+    "voiceFailed": "We couldn't hear that. Try again.",
+    "shareChat": "Share this chat",
+    "linkCopied": "Link copied",
+    "saveWorkflow": "Save as a workflow"
   },
   "Cards": {
     "asking": "Asking Qloo…",
@@ -417,7 +426,9 @@
   "Share": {
     "cta": "Make yours",
     "madeFrom": "Made from a real taste: {words}",
-    "pitch": "Najimi knows what people love through Qloo, and makes things for their real lives that fit them."
+    "pitch": "Najimi knows what people love through Qloo, and makes things for their real lives that fit them.",
+    "chatTitle": "A Najimi chat",
+    "moreWorkflows": "More workflows"
   },
   "Home": {
     "planFor": "For {name}'s {room}",
@@ -442,7 +453,9 @@
     "switching": "Switching",
     "dimmers": "Dimmers",
     "lookHint": "Real {category} from each brand's own site.",
-    "brandOnly": "Visit the brand's shop"
+    "brandOnly": "Visit the brand's shop",
+    "sendElectrician": "Send to your electrician",
+    "linkCopied": "Link copied — send it to your electrician"
   },
   "Food": {
     "minutes": "{n} min",
@@ -486,7 +499,8 @@
       "food": "Food",
       "culture": "Culture",
       "style": "Style",
-      "film": "Film"
+      "film": "Film",
+      "mine": "Made by a Najimi user"
     },
     "items": {
       "relight-my-room": {
@@ -524,6 +538,33 @@
         "desc": "A whole evening: something to watch, to hear, to eat, and the room set for it.",
         "start": "Plan a night in"
       }
-    }
+    },
+    "runMine": "Run my workflow “{name}”:",
+    "yours": "Yours",
+    "runs": "{count, plural, one {run once} other {run # times}}",
+    "runThis": "Run this workflow",
+    "newHere": "New here? Tell Najimi three things you love first. It takes a minute, then the workflow starts.",
+    "copyLink": "Copy the link",
+    "linkCopied": "Link copied",
+    "stepCount": "{count, plural, one {# step} other {# steps}}",
+    "public": "Anyone with the link can run it",
+    "delete": "Delete",
+    "deleteConfirm": "Delete “{name}”? Chats that ran it stay.",
+    "saveTitle": "Save as a workflow",
+    "saveHint": "Run this again any time, for you or anyone you make for. Najimi wrote the steps from this chat; make them yours.",
+    "drafting": "Najimi is writing the steps…",
+    "name": "Name",
+    "description": "What it gives you",
+    "steps": "Steps",
+    "stepsHint": "One per line. A run sends these as your first message, so write them the way you'd ask.",
+    "cancel": "Cancel",
+    "save": "Save workflow",
+    "saving": "Saving…",
+    "saved": "Workflow saved",
+    "savedShared": "Link copied: {link}",
+    "savedPrivate": "It's in Workflows, under Yours.",
+    "seeYours": "Open",
+    "saveFailed": "That didn't save. Try again.",
+    "readyMade": "Ready-made"
   }
 }

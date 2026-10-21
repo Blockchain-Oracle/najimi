@@ -14,6 +14,7 @@ import { useRef, useState } from "react"
 import { WORKFLOW_LOOK, WORKFLOW_SLUGS } from "@/components/workflows/workflow-meta"
 import { api } from "@/lib/fetcher"
 import { type Uploaded, uploadPhoto } from "@/lib/photo"
+import { VoiceButton } from "./voice-button"
 
 type Sample = Uploaded & { name: string }
 
@@ -274,6 +275,10 @@ export function Composer({
           </DropdownMenuContent>
         </DropdownMenu>
         <span className="flex-1" />
+        <VoiceButton
+          onText={(words) => setText((now) => (now.trim() ? `${now.trimEnd()} ${words}` : words))}
+          onError={setError}
+        />
         {busy ? (
           <button
             type="button"

@@ -17,6 +17,7 @@ import { ProductsCard } from "./cards/products-card"
 import { RecipeCard } from "./cards/recipe-card"
 import { WizardCard } from "./cards/wizard-card"
 import { StepChip } from "./lookup-step"
+import { usePublicShare } from "./public-share"
 
 type Part = NajimiUIMessage["parts"][number]
 
@@ -30,6 +31,7 @@ export type MessageActions = {
 
 function ToolPart({ part, actions }: { part: Part; actions: MessageActions }) {
   const t = useTranslations("Cards")
+  const shared = usePublicShare() !== null
   const failed = <p className="text-sm text-text-3">{t("failed")}</p>
   switch (part.type) {
     case "tool-qlooInsights":
@@ -78,7 +80,7 @@ function ToolPart({ part, actions }: { part: Part; actions: MessageActions }) {
             words={words}
             reason={part.approval.reason}
             onDecide={
-              part.approval.isAutomatic
+              part.approval.isAutomatic || !actions.live
                 ? undefined
                 : (ok) => actions.onApprove(part.approval.id, ok)
             }
@@ -154,10 +156,15 @@ function ToolPart({ part, actions }: { part: Part; actions: MessageActions }) {
         />
       )
     case "tool-savePerson":
+      // A stranger reading a shared chat sees that someone was saved, not a link to their page.
       return part.state === "output-available" ? (
-        <a href={`/people/${part.output.personId}`} className="w-fit">
+        shared ? (
           <StepChip kind="person" text={t("savedPerson", { name: part.output.name })} />
-        </a>
+        ) : (
+          <a href={`/people/${part.output.personId}`} className="w-fit">
+            <StepChip kind="person" text={t("savedPerson", { name: part.output.name })} />
+          </a>
+        )
       ) : (
         <StepChip
           kind="person"
