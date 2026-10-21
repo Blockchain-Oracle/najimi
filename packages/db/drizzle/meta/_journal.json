@@ -43,6 +43,13 @@
       "when": 1792589967336,
       "tag": "0005_generic_links",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1792590690435,
+      "tag": "0006_taste_copilot",
+      "breakpoints": true
     }
   ]
 }

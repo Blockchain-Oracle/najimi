@@ -1,7 +1,15 @@
 import { QLOO } from "@najimi/config"
 import { db, schema } from "@najimi/db"
 import { eq } from "drizzle-orm"
-import { cacheKey, normalizeParams, type Params, QlooError, qlooFetch } from "./client"
+import {
+  cacheKey,
+  normalizeParams,
+  type Params,
+  QlooError,
+  qlooFetch,
+  type RawResponse,
+  stableJson,
+} from "./client"
 
 /**
  * Who a call is for, so it lands in their evidence and the chat's Built-on-Qloo log. No user means a
@@ -58,17 +66,24 @@ const limiter = (() => {
   }
 })()
 
+/** Identical requests already on their way to Qloo: a second caller waits for the first. */
+const inFlight = new Map<string, Promise<RawResponse>>()
+
 /**
- * A Qloo GET through the private cache, logged for evidence. A fresh cached answer is served
- * without calling Qloo (and logged as a cache hit); only successful answers are cached.
+ * A Qloo request through the private cache, logged for evidence. A fresh cached answer is served
+ * without calling Qloo (and logged as a cache hit); only successful answers are cached. `body`
+ * makes it a JSON POST (weighted signals).
  */
 export async function qlooCall<T = unknown>(
   path: string,
   params: Params,
   context: CallContext = {},
+  body?: unknown,
 ): Promise<CallResult<T>> {
   const normalized = normalizeParams(params)
-  const key = cacheKey(path, normalized)
+  const key = cacheKey(path, normalized, body)
+  // The log and the cache keep the body beside the query, so the call view can show it.
+  const logged = body === undefined ? normalized : { ...normalized, body: stableJson(body) }
   const log = async (entry: {
     status: number | null
     ms: number | null
@@ -85,7 +100,7 @@ export async function qlooCall<T = unknown>(
         runId: context.runId ?? null,
         purpose: context.purpose ?? null,
         path,
-        params: normalized,
+        params: logged,
         cacheKey: key,
         status: entry.status,
         ms: entry.ms,
@@ -109,7 +124,12 @@ export async function qlooCall<T = unknown>(
   }
 
   try {
-    const response = await limiter(() => qlooFetch(path, normalized))
+    let pending = inFlight.get(key)
+    if (!pending) {
+      pending = limiter(() => qlooFetch(path, normalized, body)).finally(() => inFlight.delete(key))
+      inFlight.set(key, pending)
+    }
+    const response = await pending
     if (response.status < 400) {
       const expiresAt = new Date(Date.now() + ttlFor(path))
       await db
@@ -117,7 +137,7 @@ export async function qlooCall<T = unknown>(
         .values({
           key,
           path,
-          params: normalized,
+          params: logged,
           status: response.status,
           body: response.body as object,
           expiresAt,

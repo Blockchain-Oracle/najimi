@@ -6,8 +6,11 @@ packages:
 # (compromised releases are usually caught and pulled within hours).
 minimumReleaseAge: 1440
 
-# Only these packages may run install scripts.
+# Only these packages may run install scripts. next-intl's message-extraction tooling (swc,
+# parcel watcher) is never used at runtime, so its native builds are refused.
 allowBuilds:
+  '@parcel/watcher': false
+  '@swc/core': false
   esbuild: true
 
 # One version per shared dependency across apps and packages.
@@ -30,3 +33,7 @@ catalog:
   pg-boss: 12.38.0
   better-auth: 1.7.8
   lucide-react: 1.57.0
+  ai: 7.0.146
+  "@ai-sdk/react": 4.0.150
+  sharp: 0.35.5
+  next-intl: 4.14.9

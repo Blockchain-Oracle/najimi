@@ -1,23 +1,29 @@
 import type { NextConfig } from "next"
+import createNextIntlPlugin from "next-intl/plugin"
 
 const nextConfig: NextConfig = {
   // Self-hosted on Coolify: a minimal server bundle with only the files it needs.
   output: "standalone",
   // Partial prerendering: static shells paint at once; dynamic parts stream in Suspense.
   cacheComponents: true,
-  typedRoutes: true,
+  partialPrefetching: true,
+  // typedRoutes stays off: with every page under app/[locale] and no locale in the URL, it can't
+  // type the real hrefs ("/", "/start").
   devIndicators: false,
   // Workspace packages ship TypeScript source; Next compiles them with the app.
   transpilePackages: [
+    "@najimi/agent",
     "@najimi/config",
     "@najimi/db",
     "@najimi/env",
     "@najimi/jobs",
     "@najimi/live",
     "@najimi/qloo",
+    "@najimi/storage",
     "@najimi/tokens",
     "@najimi/ui",
   ],
 }
 
-export default nextConfig
+// i18n/request.ts gives every page its language and strings.
+export default createNextIntlPlugin()(nextConfig)

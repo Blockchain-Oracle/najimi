@@ -22,9 +22,29 @@ export const env = createEnv({
 
     /** Qloo hackathon key: server-side only, never in a bundle, repo or recording. */
     QLOO_API_KEY: z.string().min(1).optional(),
+
+    /** The agent model as `provider:model` (`openai:gpt-6-astra`, `anthropic:claude-opus-5-5`). */
+    AGENT_MODEL: z
+      .string()
+      .regex(/^(openai|anthropic):[\w.-]+$/)
+      .optional(),
+    OPENAI_API_KEY: z.string().min(1).optional(),
     ANTHROPIC_API_KEY: z.string().min(1).optional(),
-    /** Overrides the Claude API address (a proxy); never read from the shell's ANTHROPIC_BASE_URL. */
-    NAJIMI_CLAUDE_BASE_URL: z.url().optional(),
+    /** Signs tool approvals so a client can't forge "approved" (same value on every instance). */
+    TOOL_APPROVAL_SECRET: z.string().min(32).optional(),
+    /** fal.ai, for video (and image models once funded). */
+    FAL_KEY: z.string().min(1).optional(),
+    /** ElevenLabs Scribe, for voice dictation. */
+    ELEVENLABS_API_KEY: z.string().min(1).optional(),
+    /** Resend, for sign-in codes. */
+    RESEND_API_KEY: z.string().min(1).optional(),
+    EMAIL_FROM: z.string().min(3).optional(),
+
+    /** Object storage (RustFS). Server-side only: browsers never talk to it directly. */
+    S3_ENDPOINT: z.url().optional(),
+    S3_REGION: z.string().min(1).default("us-east-1"),
+    S3_ACCESS_KEY_ID: z.string().min(1).optional(),
+    S3_SECRET_ACCESS_KEY: z.string().min(1).optional(),
 
     /** Lets the deployed app's live pipe be checked from outside (S00); unset = dev only. */
     SYSTEM_CHECK_TOKEN: z.string().min(16).optional(),

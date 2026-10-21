@@ -1,0 +1,27 @@
+{
+  "Meta": {
+    "tagline": "Le copilote du goût.",
+    "description": "Dites à Najimi ce que vous aimez. Il crée pour votre vraie vie des choses qui vous ressemblent — votre pièce rééclairée, le dîner de votre mère, votre prochain livre — et montre les données de goût Qloo derrière chaque choix."
+  },
+  "Landing": {
+    "title": "Le copilote du goût.",
+    "lede": "Dites à Najimi ce que vous aimez. Il crée pour votre vraie vie des choses qui vous ressemblent — votre pièce rééclairée, le dîner de votre mère, votre prochain livre — et montre les données de goût Qloo derrière chaque choix.",
+    "coming": "En construction, étape par étape."
+  },
+  "Language": {
+    "label": "Langue",
+    "beta": "bêta"
+  },
+  "System": {
+    "livePipe": "Flux en direct",
+    "runCheck": "Lancer la vérification",
+    "running": "En cours…",
+    "allArrived": "Chaque étape est arrivée en direct",
+    "upload": "Stockage des photos",
+    "uploadHint": "Choisissez une photo. Elle est redimensionnée dans votre navigateur, réencodée sur le serveur (données de localisation supprimées), stockée en privé puis relue.",
+    "choose": "Choisir une photo",
+    "uploading": "Envoi…",
+    "stored": "Stockée et relue",
+    "failed": "L'envoi a échoué : {reason}"
+  }
+}

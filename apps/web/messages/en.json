@@ -1,0 +1,27 @@
+{
+  "Meta": {
+    "tagline": "The taste copilot.",
+    "description": "Tell Najimi what you love. It makes things for your real life that fit you — your room relit, dinner for your mum, your next book — and shows the Qloo taste data behind every choice."
+  },
+  "Landing": {
+    "title": "The taste copilot.",
+    "lede": "Tell Najimi what you love. It makes things for your real life that fit you — your room relit, dinner for your mum, your next book — and shows the Qloo taste data behind every choice.",
+    "coming": "Coming together, stage by stage."
+  },
+  "Language": {
+    "label": "Language",
+    "beta": "beta"
+  },
+  "System": {
+    "livePipe": "Live pipe",
+    "runCheck": "Run the live check",
+    "running": "Running…",
+    "allArrived": "Every step arrived live",
+    "upload": "Photo storage",
+    "uploadHint": "Pick a photo. It's resized in your browser, re-encoded on the server (location data removed), stored privately and read back.",
+    "choose": "Choose a photo",
+    "uploading": "Uploading…",
+    "stored": "Stored and read back",
+    "failed": "That didn't upload: {reason}"
+  }
+}

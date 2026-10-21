@@ -10,14 +10,18 @@
     "build": "node scripts/build.mjs"
   },
   "dependencies": {
+    "@najimi/agent": "workspace:*",
     "@najimi/config": "workspace:*",
     "@najimi/db": "workspace:*",
     "@najimi/env": "workspace:*",
     "@najimi/jobs": "workspace:*",
     "@najimi/live": "workspace:*",
     "@najimi/qloo": "workspace:*",
+    "@najimi/storage": "workspace:*",
+    "ai": "catalog:",
     "drizzle-orm": "catalog:",
     "pg-boss": "catalog:",
+    "sharp": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {

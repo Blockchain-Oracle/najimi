@@ -21,6 +21,7 @@ export const LOCAL_PORTS = {
   web: 3310,
   docs: 3311,
   postgres: 54330,
+  s3: 9300,
 } as const
 
 export const ROUTES = {
@@ -121,3 +122,123 @@ export const TASTE_DOMAINS = [
   { key: "videogame", type: "urn:entity:videogame", label: "Games", artwork: true },
   { key: "person", type: "urn:entity:person", label: "People", artwork: false },
 ] as const
+
+/**
+ * The agent: one provider registry (AI SDK), the model chosen by env `AGENT_MODEL` as
+ * `provider:model`. Base URLs are pinned so a shell's ANTHROPIC_BASE_URL or OPENAI_BASE_URL
+ * (the desktop app sets one for itself) never redirects production traffic.
+ */
+export const AGENT = {
+  defaultModel: "openai:gpt-6-astra",
+  baseUrls: {
+    anthropic: "https://api.anthropic.com/v1",
+    openai: "https://api.openai.com/v1",
+  },
+  /** Tool steps per turn before the model must answer. */
+  maxSteps: 10,
+  maxOutputTokens: 32_000,
+  /** A turn still "generating" after this is shown as interrupted, with Retry. */
+  turnTimeoutMs: 5 * 60 * 1000,
+  /** Keeps idle proxies from closing a slow chat stream. */
+  keepAliveMs: 15_000,
+  /** Characters of a chat title. */
+  titleMax: 60,
+} as const
+
+const HOUR_S = 60 * 60
+
+/** Images and video (generation providers, sizes, polling). */
+export const MEDIA = {
+  image: {
+    provider: "openai",
+    model: "gpt-image-2.5-flare",
+    /** Variants made per restyle request (one provider request, N creations). */
+    variants: 2,
+    size: "1536x1024",
+    timeoutMs: 3 * 60 * 1000,
+  },
+  video: {
+    provider: "fal",
+    /** FLUX 3 Max image-to-video is on promotion until 7 Nov 2026; Kling 3.0 after. */
+    model: "blackforestlabs/flux-3-max/image-to-video",
+    modelAfter: "fal-ai/kling-video/v3/standard/image-to-video",
+    switchAt: "2026-11-07T00:00:00Z",
+    seconds: 6,
+    /** fal's concurrency for a new account. */
+    concurrency: 2,
+    startTimeoutS: 10 * 60,
+  },
+  /** The in-process poller checks running provider requests this often. */
+  pollMs: 10_000,
+  renditions: { thumb: 480, display: 1600 },
+} as const
+
+/** What one person may make per day (rule 6), plus a ceiling for the whole server. */
+export const ALLOWANCE = {
+  guest: { turns: 30, images: 10, videos: 2 },
+  member: { turns: 100, images: 30, videos: 6 },
+  global: { images: 400, videos: 60 },
+  /** Guests started per IP per hour. */
+  guestsPerIpPerHour: 8,
+} as const
+
+/** Taste profiles: loves, weights, words and picks (T2, rule 1). */
+export const TASTE = {
+  lovesMin: 3,
+  lovesMax: 12,
+  weightDefault: 5,
+  weightMin: 1,
+  weightMax: 10,
+  /** Picks kept per domain on the taste page. */
+  picksPerDomain: 6,
+  /** Brands read to aggregate design-language words. */
+  brandsForWords: 30,
+  /** Words kept per family (aesthetic, lifestyle, decor…). */
+  wordsPerFamily: 8,
+} as const
+
+/** Photos people add (T5): checked, re-encoded (EXIF stripped), stored privately. */
+export const UPLOAD = {
+  maxBytes: 10 * 1024 * 1024,
+  mimes: ["image/jpeg", "image/png", "image/webp"],
+  /** The browser resizes to this long edge before sending (and converts HEIC to JPEG). */
+  maxEdge: 2048,
+  jpegQuality: 88,
+} as const
+
+/** Object storage (RustFS, S3-compatible). One private bucket; keys are random, never per user. */
+export const STORAGE = {
+  bucket: "najimi",
+  /** Links a provider or a share page may fetch without a session; signed, short-lived. */
+  signedUrlTtlS: 6 * HOUR_S,
+} as const
+
+/**
+ * Languages (T18, rule 8). Full: every string translated. Beta: shown with a tag until a native
+ * speaker has checked them. Arabic is right-to-left.
+ */
+export const LOCALES = [
+  { code: "en", name: "English", native: "English", dir: "ltr", beta: false },
+  { code: "fr", name: "French", native: "Français", dir: "ltr", beta: false },
+  { code: "es", name: "Spanish", native: "Español", dir: "ltr", beta: false },
+  { code: "pt", name: "Portuguese", native: "Português", dir: "ltr", beta: false },
+  { code: "ar", name: "Arabic", native: "العربية", dir: "rtl", beta: false },
+  { code: "yo", name: "Yoruba", native: "Yorùbá", dir: "ltr", beta: true },
+  { code: "ha", name: "Hausa", native: "Hausa", dir: "ltr", beta: true },
+  { code: "ig", name: "Igbo", native: "Igbo", dir: "ltr", beta: true },
+  { code: "sw", name: "Swahili", native: "Kiswahili", dir: "ltr", beta: true },
+  { code: "hi", name: "Hindi", native: "हिन्दी", dir: "ltr", beta: true },
+  { code: "zh", name: "Chinese", native: "中文", dir: "ltr", beta: true },
+  { code: "ja", name: "Japanese", native: "日本語", dir: "ltr", beta: true },
+] as const
+
+export type LocaleCode = (typeof LOCALES)[number]["code"]
+export const DEFAULT_LOCALE: LocaleCode = "en"
+
+export const EMAIL = {
+  from: "Najimi <najimi@konkyo.xyz>",
+  /** Sign-in codes (Better Auth email OTP): six digits, ten minutes, five tries. */
+  codeLength: 6,
+  codeExpiresInSeconds: 10 * 60,
+  codeAttempts: 5,
+} as const

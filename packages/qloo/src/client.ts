@@ -40,9 +40,23 @@ export function normalizeParams(params: Params): Record<string, string> {
   return out
 }
 
-export function cacheKey(path: string, params: Record<string, string>): string {
+/** JSON with keys sorted at every level, so equal bodies hash the same. */
+export function stableJson(value: unknown): string {
+  if (Array.isArray(value)) return `[${value.map(stableJson).join(",")}]`
+  if (value && typeof value === "object") {
+    const entries = Object.entries(value as Record<string, unknown>)
+      .filter(([, v]) => v !== undefined)
+      .sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))
+    return `{${entries.map(([k, v]) => `${JSON.stringify(k)}:${stableJson(v)}`).join(",")}}`
+  }
+  return JSON.stringify(value)
+}
+
+/** The cache key: the path, its sorted parameters and (for POST) its sorted JSON body. */
+export function cacheKey(path: string, params: Record<string, string>, body?: unknown): string {
+  const query = new URLSearchParams(params).toString()
   return createHash("sha256")
-    .update(`${path}?${new URLSearchParams(params).toString()}`)
+    .update(body === undefined ? `${path}?${query}` : `POST ${path}?${query}\n${stableJson(body)}`)
     .digest("hex")
 }
 
@@ -73,13 +87,15 @@ export type RawResponse = {
 const KEPT_HEADERS = /^(x-qloo-request-id|retry-after|x-ratelimit-.*|ratelimit.*|x-request-id)$/i
 
 /**
- * One GET to the hackathon host: `X-Api-Key`, a 20 s timeout per attempt, up to three attempts on
- * 429 and 5xx (honouring Retry-After), and a 5 MB body cap. 4xx other than 429 is returned as is
- * (a 404 from /search means "no results", not a failure).
+ * One request to the hackathon host: `X-Api-Key`, a 20 s timeout per attempt, up to three attempts
+ * on 429 and 5xx (honouring Retry-After), and a 5 MB body cap. 4xx other than 429 is returned as is
+ * (a 404 from /search means "no results", not a failure). With a body it's a JSON POST: the
+ * insights endpoint takes weighted signals (`{ id, weight }`) only that way.
  */
 export async function qlooFetch(
   path: string,
   params: Record<string, string>,
+  body?: unknown,
 ): Promise<RawResponse> {
   const key = env.QLOO_API_KEY
   if (!key) throw new QlooNotConfigured()
@@ -91,7 +107,13 @@ export async function qlooFetch(
   for (let attempt = 1; attempt <= QLOO.attempts; attempt++) {
     try {
       const response = await fetch(url, {
-        headers: { "X-Api-Key": key, Accept: "application/json" },
+        method: body === undefined ? "GET" : "POST",
+        headers: {
+          "X-Api-Key": key,
+          Accept: "application/json",
+          ...(body === undefined ? {} : { "Content-Type": "application/json" }),
+        },
+        body: body === undefined ? undefined : JSON.stringify(body),
         signal: AbortSignal.timeout(QLOO.timeoutMs),
       })
       const declared = Number(response.headers.get("content-length") ?? 0)
@@ -109,9 +131,9 @@ export async function qlooFetch(
         }
         throw lastError
       }
-      let body: unknown = null
+      let parsed: unknown = null
       try {
-        body = text ? JSON.parse(text) : null
+        parsed = text ? JSON.parse(text) : null
       } catch {
         throw new QlooError("Qloo returned something that isn't JSON", response.status, false)
       }
@@ -121,7 +143,7 @@ export async function qlooFetch(
       })
       return {
         status: response.status,
-        body,
+        body: parsed,
         ms: Date.now() - started,
         bytes: text.length,
         headers,

@@ -1,0 +1,30 @@
+{
+  "name": "@najimi/agent",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./models": "./src/models.ts",
+    "./tools": "./src/tools.ts",
+    "./ui-message": "./src/ui-message.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --test src/*.test.ts"
+  },
+  "dependencies": {
+    "@ai-sdk/anthropic": "4.0.84",
+    "@ai-sdk/openai": "4.0.98",
+    "@najimi/config": "workspace:*",
+    "@najimi/env": "workspace:*",
+    "ai": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@najimi/typescript-config": "workspace:*",
+    "@types/node": "catalog:",
+    "tsx": "catalog:",
+    "typescript": "catalog:"
+  }
+}

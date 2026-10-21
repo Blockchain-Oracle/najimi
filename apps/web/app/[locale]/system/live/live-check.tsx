@@ -1,11 +1,13 @@
 "use client"
 
 import { Button } from "@najimi/ui/components/button"
+import { useTranslations } from "next-intl"
 import { useState } from "react"
 import { authClient } from "@/lib/auth-client"
 import { useRunEvents } from "@/lib/use-run"
 
 export function LiveCheck() {
+  const t = useTranslations("System")
   const [runId, setRunId] = useState<string | null>(null)
   const [starting, setStarting] = useState(false)
   const { events: steps, status } = useRunEvents(runId)
@@ -26,7 +28,7 @@ export function LiveCheck() {
   return (
     <div className="flex flex-col gap-4">
       <Button onClick={run} disabled={busy}>
-        {busy ? "Running…" : "Run the live check"}
+        {busy ? t("running") : t("runCheck")}
       </Button>
       <ol className="flex flex-col gap-1 text-sm tnum">
         {steps.map((s) => (
@@ -40,7 +42,7 @@ export function LiveCheck() {
       </ol>
       {done ? (
         <p className="rounded-card bg-confirm px-4 py-3 text-sm font-bold uppercase text-confirm-foreground">
-          Every step arrived live
+          {t("allArrived")}
         </p>
       ) : null}
     </div>
