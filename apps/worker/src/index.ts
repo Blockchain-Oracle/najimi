@@ -1,12 +1,10 @@
 import { migrateDatabase } from "@najimi/db/migrate"
-import { boss, type Payload, QUEUES } from "@najimi/jobs"
+import { boss, type Payload, QUEUES, RETIRED_QUEUES } from "@najimi/jobs"
 import { emit, setRunStatus } from "@najimi/live"
 import { closeInterruptedRuns } from "./interrupted"
-import { businessSetup } from "./jobs/business-setup"
-import { peopleReport } from "./jobs/people-report"
 
 /*
- * The worker: every slow job runs here, never inside a web request (plan §4.6). It applies the
+ * The worker: every slow job runs here, never inside a web request. It applies the
  * database migrations at start, closes runs a previous process left half-done, then works the
  * queues. Stages register their queues' handlers below.
  */
@@ -17,6 +15,9 @@ async function main() {
   await migrateDatabase()
   await closeInterruptedRuns()
   const queues = await boss({ worker: true })
+  for (const name of RETIRED_QUEUES) {
+    if (await queues.getQueue(name)) await queues.deleteQueue(name)
+  }
 
   // S00: the live pipe, end to end. Each step is a real event a page can watch arrive.
   await queues.work<Payload<"liveCheck">>(
@@ -31,26 +32,6 @@ async function main() {
         await new Promise((resolve) => setTimeout(resolve, STEP_PAUSE_MS))
       }
       await setRunStatus(runId, "done")
-    },
-  )
-
-  await queues.work<Payload<"businessSetup">>(
-    QUEUES.businessSetup.name,
-    { localConcurrency: 3 },
-    async ([job]) => {
-      if (!job) return
-      const { businessId, runId } = QUEUES.businessSetup.payload.parse(job.data)
-      await businessSetup(businessId, runId)
-    },
-  )
-
-  await queues.work<Payload<"peopleReport">>(
-    QUEUES.peopleReport.name,
-    { localConcurrency: 2 },
-    async ([job]) => {
-      if (!job) return
-      const { businessId, runId, reportId } = QUEUES.peopleReport.payload.parse(job.data)
-      await peopleReport(businessId, runId, reportId)
     },
   )
 

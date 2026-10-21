@@ -1,15 +1,23 @@
 import { index, integer, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core"
-import { businesses, runs } from "./core"
+import { user } from "./auth"
+import { runs } from "./core"
 
-/** Every Claude call: model, effort, tokens (cache reads included), time, refusals (plan §4.5). */
+/**
+ * Every model call (chat turns, titles, comparisons): the provider and model that actually answered,
+ * tokens (cache reads included), tool calls, time, refusals.
+ */
 export const llmCalls = pgTable(
   "llm_calls",
   {
     id: uuid().defaultRandom().primaryKey(),
-    businessId: uuid().references(() => businesses.id, { onDelete: "cascade" }),
+    userId: text().references(() => user.id, { onDelete: "cascade" }),
+    chatId: uuid(),
+    messageId: text(),
     runId: uuid().references(() => runs.id, { onDelete: "set null" }),
     purpose: text().notNull(),
+    provider: text(),
     model: text().notNull(),
+    toolCalls: integer(),
     effort: text(),
     inputTokens: integer(),
     outputTokens: integer(),
@@ -21,5 +29,8 @@ export const llmCalls = pgTable(
     error: text(),
     createdAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
   },
-  (t) => [index("llm_calls_business_idx").on(t.businessId, t.createdAt)],
+  (t) => [
+    index("llm_calls_created_idx").on(t.createdAt),
+    index("llm_calls_user_idx").on(t.userId, t.createdAt),
+  ],
 )

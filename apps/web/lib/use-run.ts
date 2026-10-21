@@ -2,12 +2,15 @@
 
 import { useEffect, useRef, useState } from "react"
 
-export type RunEvent = { id: number; type: string; data: Record<string, unknown> }
+export type RunEvent = { id: number; type: string; data: Record<string, unknown>; at: string }
 export type RunStatus = "queued" | "running" | "waiting" | "done" | "failed" | "cancelled"
 
+const FINISHED: RunStatus[] = ["done", "failed", "cancelled"]
+
 /**
- * A run's events, live (plan §4.6): EventSource replays from Last-Event-ID on reconnect, so the
- * list is complete and in order. `onEvent` lets a page refresh the data an event changed.
+ * A run's events, live: EventSource replays from Last-Event-ID on reconnect, so the list is
+ * complete and in order. Every event type arrives (progress, asset, status…); `onEvent` lets a card
+ * refresh the data an event changed.
  */
 export function useRunEvents(
   runId: string | null | undefined,
@@ -22,21 +25,17 @@ export function useRunEvents(
     if (!runId) return
     setEvents([])
     const source = new EventSource(`/api/runs/${runId}/events`)
-    const take = (type: string) => (message: MessageEvent<string>) => {
-      const event: RunEvent = {
-        id: Number(message.lastEventId),
-        type,
-        data: JSON.parse(message.data),
-      }
+    source.onmessage = (message: MessageEvent<string>) => {
+      const parsed = JSON.parse(message.data) as Omit<RunEvent, "id">
+      const event: RunEvent = { ...parsed, id: Number(message.lastEventId) }
       setEvents((prev) => (prev.some((e) => e.id === event.id) ? prev : [...prev, event]))
-      if (type === "status") {
+      if (event.type === "status") {
         const next = event.data.status as RunStatus
         setStatus(next)
-        if (next === "done" || next === "failed" || next === "cancelled") source.close()
+        if (FINISHED.includes(next)) source.close()
       }
       handler.current?.(event)
     }
-    for (const type of ["step", "section", "status"]) source.addEventListener(type, take(type))
     return () => source.close()
   }, [runId])
 

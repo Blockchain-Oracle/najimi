@@ -1,6 +1,0 @@
-export { geocode } from "@najimi/geo"
-export * from "./basic"
-export * from "./direct"
-export * from "./extract"
-export * from "./parse"
-export * from "./read"

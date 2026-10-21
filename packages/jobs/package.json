@@ -10,6 +10,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@najimi/config": "workspace:*",
     "@najimi/env": "workspace:*",
     "pg-boss": "catalog:",
     "zod": "catalog:"

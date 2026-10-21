@@ -2,34 +2,32 @@ import { QLOO } from "@najimi/config"
 import { type CallContext, type CallResult, qlooCall } from "./call"
 import type { Params } from "./client"
 import {
+  compareResponse,
   demographicsResponse,
   entitiesOf,
-  type HeatmapPoint,
-  heatmapResponse,
   type QlooTag,
   type TasteItem,
-  type TrendingPoint,
   tagsResponse,
   toTasteItem,
-  trendingResponse,
 } from "./types"
 
 /*
- * The Qloo endpoints the product uses (plan §3), each returning parsed data plus the call id that
- * evidence chips point to. All GET on the hackathon host.
+ * The Qloo endpoints the product uses, each returning parsed data plus the call id evidence chips
+ * point to. Every parameter here was checked against the live hackathon API on 2026-10-21.
  */
 
-type With<T> = { data: T; call: Pick<CallResult, "callId" | "status" | "cacheHit"> }
-const meta = (r: CallResult) => ({ callId: r.callId, status: r.status, cacheHit: r.cacheHit })
+type Call = Pick<CallResult, "callId" | "status" | "cacheHit">
+type With<T> = { data: T; call: Call }
+const meta = (r: CallResult): Call => ({ callId: r.callId, status: r.status, cacheHit: r.cacheHit })
+const take = (n: number | undefined, fallback: number) => Math.min(n ?? fallback, QLOO.takeMax)
 
-/** `/search`: is this business (or a comparable) in Qloo? A 404 means "no results". */
+/** `/search`: entities by name. A 404 means "no results". Search has no address filter. */
 export async function search(
   input: {
     query: string
     types?: string[]
-    location?: { lat: number; lon: number }
+    near?: { lat: number; lon: number }
     radiusMiles?: number
-    address?: string
     take?: number
     sortBy?: "match" | "distance" | "popularity"
   },
@@ -38,9 +36,8 @@ export async function search(
   const params: Params = {
     query: input.query,
     types: input.types,
-    "filter.location": input.location ? `${input.location.lat},${input.location.lon}` : undefined,
-    "filter.radius": input.location ? (input.radiusMiles ?? 1) : undefined,
-    "filter.address": input.address,
+    "filter.location": input.near ? `${input.near.lat},${input.near.lon}` : undefined,
+    "filter.radius": input.near ? (input.radiusMiles ?? 1) : undefined,
     sort_by: input.sortBy,
     take: input.take ?? 5,
   }
@@ -49,28 +46,69 @@ export async function search(
   return { data: items, call: meta(result) }
 }
 
-/** `/entities`: by Qloo ids, or by one external id (instagram, twitter, wikidata, …). */
+/** A named city or neighbourhood (a Qloo locality) and its centre point. */
+export async function locality(
+  query: string,
+  ctx?: CallContext,
+): Promise<{ entityId: string; name: string; lat: number; lon: number } | null> {
+  const r = await search({ query, types: ["urn:entity:locality"], take: 1 }, ctx)
+  const hit = r.data[0]
+  return hit?.location ? { entityId: hit.entityId, name: hit.name, ...hit.location } : null
+}
+
+/** `/entities`: by Qloo ids, or by one external id (instagram, twitter, spotify, resy, wikidata). */
 export async function entities(
   input: { ids: string[] } | { external: string; ids: string[] },
   ctx?: CallContext,
 ): Promise<With<TasteItem[]>> {
   const params: Params =
     "external" in input
-      ? { [`external.${input.external}.ids`]: input.ids }
+      ? {
+          // Qloo stores Wikidata ids lowercased; "Q123" finds nothing, "q123" does.
+          [`external.${input.external}.ids`]:
+            input.external === "wikidata" ? input.ids.map((id) => id.toLowerCase()) : input.ids,
+        }
       : { entity_ids: input.ids }
   const result = await qlooCall("/entities", params, ctx)
   return { data: entitiesOf(result.body).map(toTasteItem), call: meta(result) }
+}
+
+/**
+ * An entity's full record (~45 properties for a place: selling points, who its customers are,
+ * ambience, signature dishes, hours; ~55 for a brand: competitors, partnerships). `/search` and
+ * `/entities` return a slim record; insights results carry the full one, so the entity is scored
+ * against one of its own tags.
+ */
+export async function fullRecord(
+  item: Pick<TasteItem, "entityId" | "type" | "tagIds">,
+  ctx?: CallContext,
+): Promise<With<TasteItem | null>> {
+  const tag = item.tagIds[0]
+  if (!tag || !item.type) return { data: null, call: { callId: "", status: 0, cacheHit: false } }
+  const result = await qlooCall(
+    "/v2/insights",
+    {
+      "filter.type": item.type,
+      "signal.interests.tags": tag,
+      "filter.results.entities": item.entityId,
+    },
+    ctx,
+  )
+  const [entity] = entitiesOf(result.body)
+  return { data: entity ? toTasteItem(entity) : null, call: meta(result) }
 }
 
 export type InsightsInput = {
   filterType: string
   signalEntities?: string[]
   signalTags?: string[]
+  /** Only entities with artwork (rows that must show images). */
+  withImage?: boolean
   extra?: Params
   take?: number
 }
 
-/** `/v2/insights` for entity types: what your people also love in one domain. */
+/** `/v2/insights` for entity types, with explainability (whose signal drove each result). */
 export async function insights(
   input: InsightsInput,
   ctx?: CallContext,
@@ -81,7 +119,8 @@ export async function insights(
       "filter.type": input.filterType,
       "signal.interests.entities": input.signalEntities,
       "signal.interests.tags": input.signalTags,
-      take: Math.min(input.take ?? 20, QLOO.takeMax),
+      "filter.exists": input.withImage ? "properties.image" : undefined,
+      take: take(input.take, 20),
       "feature.explainability": true,
       ...input.extra,
     },
@@ -90,29 +129,17 @@ export async function insights(
   return { data: entitiesOf(result.body).map(toTasteItem), call: meta(result) }
 }
 
-/** `urn:heatmap`: where your people are in a city, cell by cell (geohash, affinity, popularity). */
-export async function heatmap(
-  input: {
-    locationQuery: string
-    signalEntities?: string[]
-    signalTags?: string[]
-    extra?: Params
-  },
+type Signal = { signalEntities?: string[]; signalTags?: string[] }
+
+/** How well each of these entities fits this signal (affinity per id). */
+export function scoreShortlist(
+  input: Signal & { filterType: string; ids: string[] },
   ctx?: CallContext,
-): Promise<With<HeatmapPoint[]>> {
-  const result = await qlooCall(
-    "/v2/insights",
-    {
-      "filter.type": "urn:heatmap",
-      "filter.location.query": input.locationQuery,
-      "signal.interests.entities": input.signalEntities,
-      "signal.interests.tags": input.signalTags,
-      ...input.extra,
-    },
+) {
+  return insights(
+    { ...input, extra: { "filter.results.entities": input.ids }, take: input.ids.length },
     ctx,
   )
-  const parsed = heatmapResponse.safeParse(result.body)
-  return { data: parsed.success ? (parsed.data.results?.heatmap ?? []) : [], call: meta(result) }
 }
 
 export type DemographicLean = {
@@ -123,7 +150,7 @@ export type DemographicLean = {
 
 /** `urn:demographics`: age and gender lean (positive = above average, negative = below). */
 export async function demographics(
-  input: { signalEntities?: string[]; signalTags?: string[] },
+  input: Signal,
   ctx?: CallContext,
 ): Promise<With<DemographicLean[]>> {
   const result = await qlooCall(
@@ -147,9 +174,9 @@ export async function demographics(
   }
 }
 
-/** `urn:tag`: the vocabulary of your people's taste (styles, cuisines, keywords). */
+/** `urn:tag`: the words of a place's taste (for a place signal: its own domain's tags). */
 export async function tasteTags(
-  input: { signalEntities: string[]; tagTypes?: string[]; parentTypes?: string[]; take?: number },
+  input: { signalEntities: string[]; take?: number },
   ctx?: CallContext,
 ): Promise<With<QlooTag[]>> {
   const result = await qlooCall(
@@ -157,9 +184,7 @@ export async function tasteTags(
     {
       "filter.type": "urn:tag",
       "signal.interests.entities": input.signalEntities,
-      "filter.tag.types": input.tagTypes,
-      "filter.parents.types": input.parentTypes,
-      take: Math.min(input.take ?? 20, QLOO.takeMax),
+      take: take(input.take, 20),
     },
     ctx,
   )
@@ -178,7 +203,7 @@ export async function findTags(
       "filter.query": input.query,
       "feature.semantic_search": input.semantic ?? true,
       "filter.tag.types": input.tagTypes,
-      take: Math.min(input.take ?? 20, QLOO.takeMax),
+      take: take(input.take, 20),
     },
     ctx,
   )
@@ -186,61 +211,48 @@ export async function findTags(
   return { data: parsed.success ? (parsed.data.results?.tags ?? []) : [], call: meta(result) }
 }
 
-/** `/v2/trending`: one entity's weekly attention over a date range (newest first). */
-export async function trending(
-  input: { entityId: string; filterType: string; start: string; end: string },
-  ctx?: CallContext,
-): Promise<With<TrendingPoint[]>> {
-  const result = await qlooCall(
-    "/v2/trending",
-    {
-      "signal.interests.entities": [input.entityId],
-      "filter.type": input.filterType,
-      "filter.start_date": input.start,
-      "filter.end_date": input.end,
-    },
-    ctx,
-  )
-  const parsed = trendingResponse.safeParse(result.body)
-  return { data: parsed.success ? (parsed.data.results?.trending ?? []) : [], call: meta(result) }
+export type CompareResult = {
+  shared: { name: string; score: number | null }[]
+  onlyA: string[]
+  onlyB: string[]
 }
 
-/** `/v2/analysis/compare`: two groups of entities side by side (output shape UNTESTED). */
+/** `/v2/analysis/compare`: two groups' tags — shared (scored), and each side's own. */
 export async function compare(
-  input: { a: string[]; b: string[]; filterType?: string; take?: number },
+  input: { a: string[]; b: string[] },
   ctx?: CallContext,
-): Promise<With<unknown>> {
+): Promise<With<CompareResult>> {
   const result = await qlooCall(
     "/v2/analysis/compare",
-    {
-      "a.signal.interests.entities": input.a,
-      "b.signal.interests.entities": input.b,
-      "filter.type": input.filterType,
-      take: input.take,
-    },
+    { "a.signal.interests.entities": input.a, "b.signal.interests.entities": input.b },
     ctx,
   )
-  return { data: result.body, call: meta(result) }
+  const parsed = compareResponse.safeParse(result.body)
+  const r = parsed.success ? parsed.data.results : undefined
+  const sharedNames = new Set((r?.tags ?? []).map((t) => t.name))
+  return {
+    data: {
+      shared: (r?.tags ?? []).map((t) => ({ name: t.name, score: t.query?.score ?? null })),
+      onlyA: (r?.a ?? []).map((t) => t.name).filter((n) => !sharedNames.has(n)),
+      onlyB: (r?.b ?? []).map((t) => t.name).filter((n) => !sharedNames.has(n)),
+    },
+    call: meta(result),
+  }
 }
 
-/** `/v2/audiences/types` and `/v2/audiences`: audience ids for ad descriptions (item shape UNTESTED). */
-export async function audienceTypes(ctx?: CallContext): Promise<With<unknown>> {
-  const result = await qlooCall("/v2/audiences/types", {}, ctx)
-  return { data: result.body, call: meta(result) }
-}
-
+/** `/v2/audiences`: named audiences (e.g. life stage "Single") for audience signals. */
 export async function audiences(
-  input: { parentTypes?: string[]; query?: string; take?: number },
+  input: { parentTypes?: string[]; take?: number },
   ctx?: CallContext,
-): Promise<With<unknown>> {
+): Promise<With<{ id: string; name: string }[]>> {
   const result = await qlooCall(
     "/v2/audiences",
-    {
-      "filter.parents.types": input.parentTypes,
-      "filter.query": input.query,
-      take: Math.min(input.take ?? 20, QLOO.takeMax),
-    },
+    { "filter.parents.types": input.parentTypes, take: take(input.take, 20) },
     ctx,
   )
-  return { data: result.body, call: meta(result) }
+  const body = result.body as { results?: { audiences?: { entity_id?: string; name?: string }[] } }
+  const rows = (body.results?.audiences ?? []).flatMap((a) =>
+    a.entity_id && a.name ? [{ id: a.entity_id, name: a.name }] : [],
+  )
+  return { data: rows, call: meta(result) }
 }

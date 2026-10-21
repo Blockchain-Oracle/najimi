@@ -5,11 +5,11 @@
 
 export const APP = {
   name: "Najimi",
-  /** 馴染み: your regular place, where they know you. */
-  meaning: "your regular place",
-  tagline: "Find your people.",
+  /** 馴染み: familiar, the one who knows you. */
+  meaning: "familiar",
+  tagline: "The taste copilot.",
   description:
-    "Paste your website. Najimi finds your people with Qloo — who they are, what else they love, where they are — then goes and gets them, one approval at a time.",
+    "Tell Najimi what you love. It makes things for your real life that fit you — your room relit, dinner for your mum, your next book — and shows the real Qloo taste data behind every choice.",
   /** The public repository and live URLs, once they exist; links stay hidden until then. */
   repository: null as string | null,
   url: null as string | null,
@@ -25,8 +25,7 @@ export const LOCAL_PORTS = {
 
 export const ROUTES = {
   home: "/",
-  signIn: "/sign-in",
-  app: "/app",
+  start: "/start",
 } as const
 
 export const DB = {
@@ -100,76 +99,25 @@ export const QLOO = {
   defaultTtlMs: 7 * DAY_MS,
 } as const
 
-/** The ten taste domains of the Your People report (F3a), in the order the report shows them. */
+/** The loves typeahead (T2): Qloo search across every domain, as you type. */
+export const LOVES = {
+  searchMinChars: 2,
+  searchTake: 8,
+  searchDebounceMs: 250,
+} as const
+
+/** The ten taste domains, in the order the product shows them. */
 export const TASTE_DOMAINS = [
-  { key: "artist", type: "urn:entity:artist", label: "Music" },
-  { key: "movie", type: "urn:entity:movie", label: "Film" },
-  { key: "tv_show", type: "urn:entity:tv_show", label: "TV" },
-  { key: "book", type: "urn:entity:book", label: "Books" },
-  { key: "podcast", type: "urn:entity:podcast", label: "Podcasts" },
-  { key: "brand", type: "urn:entity:brand", label: "Brands" },
-  { key: "place", type: "urn:entity:place", label: "Places" },
-  { key: "destination", type: "urn:entity:destination", label: "Destinations" },
-  // The guide writes `video_game`; the Deep Dive and the harness `videogame` (first-calls #7 decides).
-  { key: "videogame", type: "urn:entity:videogame", label: "Games" },
-  { key: "person", type: "urn:entity:person", label: "People" },
+  { key: "artist", type: "urn:entity:artist", label: "Music", artwork: true },
+  { key: "movie", type: "urn:entity:movie", label: "Film", artwork: true },
+  { key: "tv_show", type: "urn:entity:tv_show", label: "TV", artwork: true },
+  { key: "book", type: "urn:entity:book", label: "Books", artwork: true },
+  { key: "podcast", type: "urn:entity:podcast", label: "Podcasts", artwork: true },
+  { key: "brand", type: "urn:entity:brand", label: "Brands", artwork: true },
+  { key: "place", type: "urn:entity:place", label: "Places", artwork: true },
+  // Destinations and people mostly have no artwork in Qloo; their rows use poster tiles.
+  { key: "destination", type: "urn:entity:destination", label: "Destinations", artwork: false },
+  // `urn:entity:video_game` is a 400 on the hackathon host; `videogame` works (live 2026-10-21).
+  { key: "videogame", type: "urn:entity:videogame", label: "Games", artwork: true },
+  { key: "person", type: "urn:entity:person", label: "People", artwork: false },
 ] as const
-
-/**
- * Claude (plan §4.5, claude-api skill): one model, tuned by effort per role. Opus 5.5's thinking is
- * always on; effort is the lever (its default is medium, so every role sets it explicitly).
- */
-export const CLAUDE = {
-  model: "claude-opus-5-5",
-  /** Never the shell's ANTHROPIC_BASE_URL (the desktop app sets one for itself). */
-  baseUrl: "https://api.anthropic.com",
-  /** Refusals route to a fallback model on the server ("default" picks it by category). */
-  fallbackBeta: "server-side-fallback-2026-07-01",
-  effort: {
-    extract: "low",
-    classify: "low",
-    draft: "medium",
-    plan: "high",
-    agent: "high",
-  },
-  maxTokens: {
-    extract: 16_000,
-    draft: 16_000,
-    agent: 64_000,
-  },
-  timeoutMs: 10 * 60 * 1000,
-} as const
-
-export type ClaudeRole = keyof typeof CLAUDE.effort
-
-/** Reading a pasted website (F1). Credits: map 1, scrape 1 per page (Firecrawl billing docs). */
-export const SITE = {
-  mapLimit: 60,
-  /** Pages read besides the home page, picked by what they're likely to say. */
-  extraPages: 5,
-  scrapeTimeoutMs: 45_000,
-  /** Characters of page text sent for extraction (long menus are trimmed, not dropped). */
-  maxCharsPerPage: 12_000,
-  /** The page paths most likely to hold facts, best first. */
-  pageHints: [
-    "about",
-    "menu",
-    "contact",
-    "location",
-    "visit",
-    "find-us",
-    "events",
-    "whats-on",
-    "programme",
-    "program",
-    "shop",
-    "products",
-    "collections",
-    "story",
-    "team",
-    "press",
-  ],
-  /** Nominatim's usage policy: an identifying agent, at most one request a second, cached. */
-  geocoderUrl: "https://nominatim.openstreetmap.org/search",
-  geocoderAgent: "Najimi/0.1 (growth agent for places; https://github.com)",
-} as const

@@ -1,5 +1,4 @@
 export * from "./auth"
 export * from "./core"
 export * from "./llm"
-export * from "./people"
 export * from "./qloo"

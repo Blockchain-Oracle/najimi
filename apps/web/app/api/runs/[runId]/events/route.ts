@@ -8,8 +8,9 @@ import { watchRun } from "@/lib/live-hub"
 import { getSession } from "@/lib/session"
 
 /**
- * A run's steps, live (plan §4.6): Server-Sent Events, replayed from Last-Event-ID after a dropped
- * connection, so a page never misses or repeats a step. Only the run's owner may watch it.
+ * A run's events, live: Server-Sent Events, replayed from Last-Event-ID after a dropped connection,
+ * so a page never misses or repeats one. Every event is a plain message carrying its own type, so a
+ * new event type reaches pages without anyone registering it. Only the run's owner may watch.
  */
 export async function GET(request: Request, ctx: RouteContext<"/api/runs/[runId]/events">) {
   const session = await getSession()
@@ -41,18 +42,22 @@ export async function GET(request: Request, ctx: RouteContext<"/api/runs/[runId]
           controller.close()
         } catch {}
       }
-      // Reads are chained so events always go out in id order, once each.
+      // Reads are chained so events always go out in id order, once each; a long backlog is read
+      // in pages until it is drained.
       const catchUp = () => {
         reading = reading.then(async () => {
-          if (closed) return
-          for (const event of await eventsAfter(runId, last)) {
+          for (;;) {
             if (closed) return
-            last = event.id
-            controller.enqueue(
-              encoder.encode(
-                `id: ${event.id}\nevent: ${event.type}\ndata: ${JSON.stringify({ ...event.data, at: event.createdAt })}\n\n`,
-              ),
-            )
+            const batch = await eventsAfter(runId, last)
+            for (const event of batch) {
+              if (closed) return
+              last = event.id
+              const payload = { type: event.type, data: event.data, at: event.createdAt }
+              controller.enqueue(
+                encoder.encode(`id: ${event.id}\ndata: ${JSON.stringify(payload)}\n\n`),
+              )
+            }
+            if (batch.length < LIVE.replayMax) return
           }
         })
       }

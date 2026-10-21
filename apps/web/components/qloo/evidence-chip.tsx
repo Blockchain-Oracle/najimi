@@ -3,6 +3,7 @@
 import { Popover, PopoverContent, PopoverTrigger } from "@najimi/ui/components/popover"
 import { useQuery } from "@tanstack/react-query"
 import { api } from "@/lib/fetcher"
+import { qk } from "@/lib/query-keys"
 
 type Call = {
   purpose: string | null
@@ -27,7 +28,7 @@ const SHOWN = [
 
 function CallDetails({ callId }: { callId: string }) {
   const { data, error, isPending } = useQuery({
-    queryKey: ["qloo-call", callId],
+    queryKey: qk.qlooCall(callId),
     queryFn: () => api<{ call: Call }>(`/api/qloo-calls/${callId}`),
     staleTime: Number.POSITIVE_INFINITY,
   })
@@ -54,8 +55,8 @@ function CallDetails({ callId }: { callId: string }) {
 }
 
 /**
- * Evidence (R1): every audience claim carries the Qloo call behind it — which endpoint, which
- * signal, what came back. Shared (public) reports show the purpose only.
+ * Evidence: every pick carries the Qloo call behind it — which endpoint, which signal, what came
+ * back. Shared (public) pages show the purpose only.
  */
 export function EvidenceChip({
   callId,

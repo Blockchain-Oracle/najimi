@@ -3,32 +3,24 @@
 import { Button } from "@najimi/ui/components/button"
 import { useState } from "react"
 import { authClient } from "@/lib/auth-client"
-
-type Step = { id: string; type: string; data: Record<string, unknown> }
+import { useRunEvents } from "@/lib/use-run"
 
 export function LiveCheck() {
-  const [steps, setSteps] = useState<Step[]>([])
-  const [busy, setBusy] = useState(false)
-  const done = steps.some((s) => s.type === "status" && s.data.status === "done")
+  const [runId, setRunId] = useState<string | null>(null)
+  const [starting, setStarting] = useState(false)
+  const { events: steps, status } = useRunEvents(runId)
+  const done = status === "done"
+  const busy = starting || (runId !== null && status !== "done" && status !== "failed")
 
   async function run() {
-    setBusy(true)
-    setSteps([])
+    setStarting(true)
+    setRunId(null)
     const session = await authClient.getSession()
     if (!session.data) await authClient.signIn.anonymous()
     const response = await fetch("/api/system/live-check", { method: "POST" })
-    const { runId } = (await response.json()) as { runId: string }
-    const source = new EventSource(`/api/runs/${runId}/events`)
-    const take = (type: string) => (event: MessageEvent) => {
-      const data = JSON.parse(event.data) as Record<string, unknown>
-      setSteps((prev) => [...prev, { id: event.lastEventId, type, data }])
-      if (type === "status" && (data.status === "done" || data.status === "failed")) {
-        source.close()
-        setBusy(false)
-      }
-    }
-    source.addEventListener("step", take("step"))
-    source.addEventListener("status", take("status"))
+    const { runId: id } = (await response.json()) as { runId: string }
+    setRunId(id)
+    setStarting(false)
   }
 
   return (

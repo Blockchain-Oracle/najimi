@@ -44,11 +44,11 @@
   --text-2xl: 28px;
   --text-2xl--line-height: 34px;
   --text-display-sm: 80px;
-  --text-display-sm--line-height: 0.83;
+  --text-display-sm--line-height: 0.88;
   --text-display: 96px;
-  --text-display--line-height: 0.83;
+  --text-display--line-height: 0.88;
   --text-display-lg: 106px;
-  --text-display-lg--line-height: 0.83;
+  --text-display-lg--line-height: 0.88;
   --radius-sm: var(--n-radius-sm);
   --radius-card: var(--n-radius-card);
   --radius-nav: var(--n-radius-nav);

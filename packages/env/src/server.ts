@@ -25,7 +25,6 @@ export const env = createEnv({
     ANTHROPIC_API_KEY: z.string().min(1).optional(),
     /** Overrides the Claude API address (a proxy); never read from the shell's ANTHROPIC_BASE_URL. */
     NAJIMI_CLAUDE_BASE_URL: z.url().optional(),
-    FIRECRAWL_API_KEY: z.string().min(1).optional(),
 
     /** Lets the deployed app's live pipe be checked from outside (S00); unset = dev only. */
     SYSTEM_CHECK_TOKEN: z.string().min(16).optional(),

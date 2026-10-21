@@ -30,3 +30,4 @@ logs/
 context/
 refs/
 .firecrawl/
+.backups/

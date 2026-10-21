@@ -3,13 +3,13 @@ import { Antonio, Inter } from "next/font/google"
 import { Provider } from "@/components/provider"
 import "./global.css"
 
-// The app's faces (design lock): Inter for reading, Antonio 700 for poster titles only.
+// Interim faces until the taste copilot type lands: Inter for reading, Antonio 700 for titles.
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" })
 const antonio = Antonio({ subsets: ["latin"], weight: ["700"], variable: "--font-antonio" })
 
 export const metadata: Metadata = {
   title: { default: "Najimi docs", template: "%s · Najimi docs" },
-  description: "How Najimi finds your people with Qloo and acts on your approval.",
+  description: "How Najimi, the taste copilot, uses Qloo to make things that fit you.",
 }
 
 export const viewport: Viewport = {

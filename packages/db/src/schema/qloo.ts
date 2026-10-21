@@ -1,5 +1,6 @@
 import { boolean, index, integer, jsonb, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core"
-import { businesses, runs } from "./core"
+import { user } from "./auth"
+import { runs } from "./core"
 
 /**
  * Qloo responses, cached privately (the hackathon guide allows server-side caching with no time
@@ -17,14 +18,18 @@ export const qlooCache = pgTable("qloo_cache", {
 })
 
 /**
- * Every Qloo call a business's work made, cached or not. Evidence chips point here (plan R1):
- * which endpoint, which signal, what came back. The Built-on-Qloo panel lists them.
+ * Every Qloo call made for someone, cached or not. Because chips point here: which endpoint,
+ * which signal, what came back. The Built-on-Qloo panel lists a chat's calls. Rows without a user
+ * are shared lookups (the loves typeahead) and are never shown as anyone's evidence.
  */
 export const qlooCalls = pgTable(
   "qloo_calls",
   {
     id: uuid().defaultRandom().primaryKey(),
-    businessId: uuid().references(() => businesses.id, { onDelete: "cascade" }),
+    userId: text().references(() => user.id, { onDelete: "cascade" }),
+    chatId: uuid(),
+    /** The AI SDK message whose tool made the call. */
+    messageId: text(),
     runId: uuid().references(() => runs.id, { onDelete: "set null" }),
     /** Why the call was made, in plain words ("Music your people love"). */
     purpose: text(),
@@ -38,5 +43,9 @@ export const qlooCalls = pgTable(
     error: text(),
     createdAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
   },
-  (t) => [index("qloo_calls_business_idx").on(t.businessId, t.createdAt)],
+  (t) => [
+    index("qloo_calls_created_idx").on(t.createdAt),
+    index("qloo_calls_user_idx").on(t.userId, t.createdAt),
+    index("qloo_calls_chat_idx").on(t.chatId, t.createdAt),
+  ],
 )

@@ -10,15 +10,12 @@
     "build": "node scripts/build.mjs"
   },
   "dependencies": {
-    "@najimi/claude": "workspace:*",
     "@najimi/config": "workspace:*",
     "@najimi/db": "workspace:*",
     "@najimi/env": "workspace:*",
-    "@najimi/geo": "workspace:*",
     "@najimi/jobs": "workspace:*",
     "@najimi/live": "workspace:*",
     "@najimi/qloo": "workspace:*",
-    "@najimi/site": "workspace:*",
     "drizzle-orm": "catalog:",
     "pg-boss": "catalog:",
     "zod": "catalog:"

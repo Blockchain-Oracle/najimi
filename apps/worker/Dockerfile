@@ -1,4 +1,4 @@
-# Najimi worker: every slow job (site reading, Qloo, agents, execution, calls, crons).
+# Najimi worker: every slow job (taste profiles, image and video generation, product lookups).
 # Build from the repository root:   docker build -f apps/worker/Dockerfile .
 #
 #   build:   install the worker's workspace, bundle its TypeScript (it and every @najimi package) to

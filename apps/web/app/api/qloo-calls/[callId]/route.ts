@@ -1,22 +1,22 @@
 import { db, schema } from "@najimi/db"
-import { eq } from "drizzle-orm"
-import { NextResponse } from "next/server"
+import { and, eq } from "drizzle-orm"
 import { z } from "zod"
-import { ownedBusiness } from "@/lib/access"
-import { getSession } from "@/lib/session"
+import { fail, json, withSession } from "@/lib/api"
 
 /**
- * One evidence chip (plan R1): which Qloo endpoint, which signal, what came back. The answer's
- * body stays on the server; the chip shows the request and what the product took from it.
+ * One because chip: which Qloo endpoint, which signal, what came back. Only the user the call was
+ * made for may open it; the answer's body stays on the server.
  */
 export async function GET(_: Request, ctx: RouteContext<"/api/qloo-calls/[callId]">) {
-  const session = await getSession()
-  if (!session) return NextResponse.json({ error: "Sign in first" }, { status: 401 })
+  const auth = await withSession()
+  if ("error" in auth) return auth.error
   const callId = z.uuid().safeParse((await ctx.params).callId).data
-  if (!callId) return NextResponse.json({ error: "Unknown call" }, { status: 404 })
-  const [call] = await db.select().from(schema.qlooCalls).where(eq(schema.qlooCalls.id, callId))
-  if (!call?.businessId || !(await ownedBusiness(session.user.id, call.businessId)))
-    return NextResponse.json({ error: "Unknown call" }, { status: 404 })
-  const { cacheKey: _key, ...rest } = call
-  return NextResponse.json({ call: rest })
+  if (!callId) return fail("Unknown call", 404)
+  const [call] = await db
+    .select()
+    .from(schema.qlooCalls)
+    .where(and(eq(schema.qlooCalls.id, callId), eq(schema.qlooCalls.userId, auth.session.user.id)))
+  if (!call) return fail("Unknown call", 404)
+  const { cacheKey: _key, userId: _user, ...rest } = call
+  return json({ call: rest })
 }

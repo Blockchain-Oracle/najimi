@@ -6,8 +6,7 @@ import { Antonio, Inter } from "next/font/google"
 import { Providers } from "./providers"
 import "./globals.css"
 
-// The design lock's faces (context/design/README.md): Inter for every UI size (DICE lists it as
-// Favorit's substitute) and Antonio 700 for poster titles only (Foggy's substitute). Both OFL.
+// Interim faces until the taste copilot's own type lands: Inter for UI, Antonio 700 for titles.
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" })
 const antonio = Antonio({ subsets: ["latin"], weight: ["700"], variable: "--font-antonio" })
 

@@ -3,11 +3,16 @@ import { db, schema } from "@najimi/db"
 import { eq } from "drizzle-orm"
 import { cacheKey, normalizeParams, type Params, QlooError, qlooFetch } from "./client"
 
-/** Who a call is for, so it lands in that business's evidence and Built-on-Qloo log. */
+/**
+ * Who a call is for, so it lands in their evidence and the chat's Built-on-Qloo log. No user means a
+ * shared lookup (the loves typeahead) that is never shown as anyone's evidence.
+ */
 export type CallContext = {
-  businessId?: string | null
+  userId?: string | null
+  chatId?: string | null
+  messageId?: string | null
   runId?: string | null
-  /** Why the call was made, in plain words ("Music your people love"). */
+  /** Why the call was made, in plain words ("Books for your taste"). */
   purpose?: string
 }
 
@@ -74,7 +79,9 @@ export async function qlooCall<T = unknown>(
     const [row] = await db
       .insert(schema.qlooCalls)
       .values({
-        businessId: context.businessId ?? null,
+        userId: context.userId ?? null,
+        chatId: context.chatId ?? null,
+        messageId: context.messageId ?? null,
         runId: context.runId ?? null,
         purpose: context.purpose ?? null,
         path,

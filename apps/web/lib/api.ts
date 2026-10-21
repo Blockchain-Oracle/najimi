@@ -1,7 +1,6 @@
 import "server-only"
 import { NextResponse } from "next/server"
 import type { z } from "zod"
-import { ownedBusiness } from "@/lib/access"
 import { getSession } from "@/lib/session"
 
 export const json = (body: unknown, status = 200) =>
@@ -9,14 +8,11 @@ export const json = (body: unknown, status = 200) =>
 
 export const fail = (error: string, status: number) => json({ error }, status)
 
-/** The signed-in (or guest) user and their business, or the response that says why not. */
-export async function withBusiness(businessId: string | undefined) {
+/** The signed-in (or guest) user, or the response that says why not. */
+export async function withSession() {
   const session = await getSession()
   if (!session) return { error: fail("Sign in first", 401) } as const
-  if (!businessId) return { error: fail("Unknown business", 404) } as const
-  const business = await ownedBusiness(session.user.id, businessId)
-  if (!business) return { error: fail("Unknown business", 404) } as const
-  return { session, business } as const
+  return { session } as const
 }
 
 export async function body<S extends z.ZodType>(request: Request, schema: S) {

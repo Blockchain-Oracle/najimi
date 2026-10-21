@@ -1,6 +1,6 @@
 import { APP } from "@najimi/config"
-import { StartForm } from "@/components/start-form"
 
+/** Interim landing while the taste copilot is built stage by stage; the real one comes at launch. */
 export default function Landing() {
   return (
     <main className="mx-auto flex min-h-svh w-full max-w-6xl flex-col px-6 pb-16">
@@ -9,17 +9,16 @@ export default function Landing() {
       </header>
       <section className="flex flex-1 flex-col justify-center gap-10 py-16">
         <h1 className="font-display-poster text-display-sm sm:text-display lg:text-display-lg">
-          Find
+          The taste
           <br />
-          your
-          <br />
-          people.
+          copilot.
         </h1>
         <p className="max-w-xl text-base text-text-2">
-          Paste your website. Najimi asks Qloo who your people are — what else they love and where
-          they are — then goes and gets them, one approval at a time.
+          Tell Najimi what you love. It makes things for your real life that fit you — your room
+          relit, dinner for your mum, your next book — and shows the Qloo taste data behind every
+          choice.
         </p>
-        <StartForm />
+        <p className="text-sm font-bold uppercase text-text-3">Coming together, stage by stage.</p>
       </section>
     </main>
   )

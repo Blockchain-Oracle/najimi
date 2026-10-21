@@ -10,11 +10,9 @@
     "typecheck": "next typegen && tsc --noEmit"
   },
   "dependencies": {
-    "@najimi/claude": "workspace:*",
     "@najimi/config": "workspace:*",
     "@najimi/db": "workspace:*",
     "@najimi/env": "workspace:*",
-    "@najimi/geo": "workspace:*",
     "@najimi/jobs": "workspace:*",
     "@najimi/live": "workspace:*",
     "@najimi/qloo": "workspace:*",
@@ -24,12 +22,10 @@
     "better-auth": "catalog:",
     "drizzle-orm": "catalog:",
     "lucide-react": "catalog:",
-    "maplibre-gl": "5.24.0",
     "motion": "catalog:",
     "next": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
-    "react-map-gl": "8.1.3",
     "server-only": "0.0.1",
     "zod": "catalog:"
   },

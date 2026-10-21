@@ -1,8 +1,7 @@
+import { JOBS } from "@najimi/config"
 import { env } from "@najimi/env/server"
 import { PgBoss } from "pg-boss"
 import { z } from "zod"
-
-const HEARTBEAT_SECONDS = 30
 
 /**
  * Every background queue, with the payload it carries (validated on both sides). Stages add their
@@ -14,26 +13,12 @@ export const QUEUES = {
     name: "live-check",
     payload: z.object({ runId: z.uuid() }),
     options: { retryLimit: 0, expireInSeconds: 5 * 60 },
-    send: { heartbeatSeconds: HEARTBEAT_SECONDS },
-  },
-  /**
-   * Reading a pasted business (F1, F2, F5): its site, what it says about itself, where it is, and
-   * who it is in Qloo. Not retried: a half-done read would pay Firecrawl and Claude twice.
-   */
-  businessSetup: {
-    name: "business-setup",
-    payload: z.object({ businessId: z.uuid(), runId: z.uuid() }),
-    options: { retryLimit: 0, expireInSeconds: 15 * 60 },
-    send: { heartbeatSeconds: HEARTBEAT_SECONDS },
-  },
-  /** Your People (F3): the report's sections from Qloo, each landing live. */
-  peopleReport: {
-    name: "people-report",
-    payload: z.object({ businessId: z.uuid(), runId: z.uuid(), reportId: z.uuid() }),
-    options: { retryLimit: 0, expireInSeconds: 15 * 60 },
-    send: { heartbeatSeconds: HEARTBEAT_SECONDS },
+    send: { heartbeatSeconds: JOBS.heartbeatSeconds },
   },
 } as const
+
+/** Queues an earlier version of the product used; the worker deletes them once at start. */
+export const RETIRED_QUEUES = ["business-setup", "place-setup", "people-report"] as const
 
 export type QueueName = keyof typeof QUEUES
 export type Payload<Q extends QueueName> = z.infer<(typeof QUEUES)[Q]["payload"]>
@@ -48,7 +33,7 @@ export function boss({ worker = false } = {}): Promise<PgBoss> {
   globalForBoss.najimiBoss ??= (async () => {
     const instance = new PgBoss({
       connectionString: env.DATABASE_URL,
-      schema: "pgboss",
+      schema: JOBS.schema,
       supervise: worker,
       schedule: worker,
       application_name: worker ? "najimi-worker" : "najimi-web",
