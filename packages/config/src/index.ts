@@ -187,7 +187,11 @@ export const MEDIA = {
 export const ALLOWANCE = {
   guest: { turns: 30, images: 10, videos: 2 },
   member: { turns: 100, images: 30, videos: 6 },
-  global: { images: 400, videos: 60 },
+  /**
+   * The whole server's day, whoever is asking: a ceiling on what the paid model and image keys can
+   * spend while sign-up is open to anyone. Raise it when there's budget for more.
+   */
+  global: { turns: 400, images: 120, videos: 20 },
   /** Guests started per IP per hour. */
   guestsPerIpPerHour: 8,
 } as const

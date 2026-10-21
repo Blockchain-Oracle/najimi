@@ -11,8 +11,9 @@ const limitOf = (counter: Counter, guest: boolean) =>
 
 /**
  * Takes `n` from today's allowance, atomically: the row only moves when it stays within the limit,
- * so two tabs can't both take the last one. Images and videos also take from the server's own
- * daily ceiling (`user_id = '*'`). Returns false when there isn't enough left.
+ * so two tabs can't both take the last one. Everything also takes from the server's own daily
+ * ceiling (`user_id = '*'`), so open sign-up can't run up the model bill. Returns false when there
+ * isn't enough left.
  */
 export async function charge(
   userId: string,
@@ -36,7 +37,7 @@ export async function charge(
         return rows.length > 0 && (rows[0]?.value ?? 0) <= limit
       }
       if (!(await take(userId, limitOf(counter, guest)))) return false
-      if (counter !== "turns" && !(await take("*", ALLOWANCE.global[counter]))) {
+      if (!(await take("*", ALLOWANCE.global[counter]))) {
         tx.rollback()
       }
       return true
@@ -47,7 +48,7 @@ export async function charge(
 /** Gives back what a failed or refused job took. */
 export async function refund(userId: string, counter: Counter, n = 1): Promise<void> {
   const col = schema.usageDays[counter]
-  for (const id of counter === "turns" ? [userId] : [userId, "*"]) {
+  for (const id of [userId, "*"]) {
     await db
       .update(schema.usageDays)
       .set({ [counter]: sql`greatest(${col} - ${n}, 0)` })
