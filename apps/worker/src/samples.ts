@@ -1,4 +1,6 @@
 import { readFileSync } from "node:fs"
+import { join } from "node:path"
+import { fileURLToPath } from "node:url"
 import { db, schema } from "@najimi/db"
 import { putBytes, sha256, storageReady } from "@najimi/storage"
 import { and, eq } from "drizzle-orm"
@@ -7,6 +9,8 @@ import sharp from "sharp"
 /** The sample rooms shipped with the app, for anyone without a photo to hand (judges, first runs). */
 export const SAMPLES = ["living", "desk", "bedroom"] as const
 const OWNER = "najimi-samples"
+// A static path, so the production bundle re-aims it at the source folder (scripts/build.mjs).
+const FOLDER = fileURLToPath(new URL("../samples", import.meta.url))
 
 /** Puts the sample rooms into storage once (idempotent: matched by content hash). */
 export async function seedSamples(): Promise<void> {
@@ -21,7 +25,7 @@ export async function seedSamples(): Promise<void> {
     })
     .onConflictDoNothing()
   for (const name of SAMPLES) {
-    const bytes = new Uint8Array(readFileSync(new URL(`../samples/${name}.jpg`, import.meta.url)))
+    const bytes = new Uint8Array(readFileSync(join(FOLDER, `${name}.jpg`)))
     const hash = sha256(bytes)
     const [exists] = await db
       .select({ id: schema.uploads.id })

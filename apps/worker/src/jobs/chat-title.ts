@@ -26,7 +26,7 @@ export async function chatTitle(chatId: string): Promise<void> {
     instructions: `Write a title of two to five words, in ${language}, for a chat that starts like this. Sentence case, no quotes, no full stop.`,
     prompt: `Person: ${ask}\nAssistant: ${answer}`,
     maxOutputTokens: 400,
-    providerOptions: { openai: { reasoningEffort: "minimal" } },
+    providerOptions: { openai: { reasoningEffort: "low" } },
   })
   const title = result.text
     .trim()
