@@ -110,7 +110,8 @@ export async function deleteUserData(db: Db, userId: string): Promise<string[]> 
 
 /**
  * Guests nobody has used for `days`: no session refreshed and no chat touched since. Sessions
- * refresh daily while in use, so a guest who comes back now and then is never swept.
+ * refresh daily while in use, so a guest who comes back now and then is never swept; nor is one
+ * whose creation is in the public showcase.
  */
 export async function idleGuests(db: Db, days: number, limit: number): Promise<string[]> {
   const cutoff = new Date(Date.now() - days * 24 * 60 * 60 * 1000)
@@ -124,6 +125,8 @@ export async function idleGuests(db: Db, days: number, limit: number): Promise<s
         lt(user.createdAt, cutoff),
         sql`not exists (select 1 from ${session} where ${session.userId} = ${user.id} and ${session.updatedAt} > ${since})`,
         sql`not exists (select 1 from ${chats} where ${chats.ownerId} = ${user.id} and ${chats.lastActiveAt} > ${since})`,
+        // A guest whose creation is in the public showcase stays.
+        sql`not exists (select 1 from ${creations} where ${creations.ownerId} = ${user.id} and ${creations.public})`,
       ),
     )
     .limit(limit)

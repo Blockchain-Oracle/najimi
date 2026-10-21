@@ -1,4 +1,4 @@
 {
   "title": "Najimi",
-  "pages": ["index"]
+  "pages": ["index", "guide", "qloo", "workflows", "architecture", "privacy"]
 }

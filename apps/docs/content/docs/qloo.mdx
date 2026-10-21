@@ -1,0 +1,72 @@
+---
+title: How Najimi uses Qloo
+description: The taste graph behind every answer, the agent's Qloo tools, and how to see each call.
+---
+
+Najimi would not work without [Qloo](https://www.qloo.com). Qloo's taste graph knows how things people love connect across domains: someone who loves *Insecure* and *Americanah* tends to love Jorja Smith, a certain kind of restaurant, a certain kind of room. Najimi asks Qloo, then turns the answers into things you can use.
+
+## Your taste, from three loves
+
+<Flow
+  label="The taste reveal: one weighted request per domain, explained"
+  steps={[
+    { title: "Loves + weights", note: "Qloo ids from /search, weights 1–10" },
+    { title: "/v2/insights × 10 domains", note: "signal.interests.entities with {id, weight}; feature.explainability", accent: true },
+    { title: "/v2/insights tags", note: "Aesthetic, decor, ambience, style, cuisine and dish words" },
+    { title: "Your taste page", note: "Words, picks, 'because' chips, connections" },
+  ]}
+/>
+
+- **Weighted signals.** Each love goes in as `{ id, weight }`, so a love at 9 pulls harder than one at 3.
+- **Explainability.** Qloo says which love drove each result. That is the **because** chip on every pick, and the "what your taste connects" line ("Insecure led to Jorja Smith").
+- **Words.** Tag insights over places and media give the vocabulary your taste is made of. Those words shape everything Najimi makes: the restyle's prompt, the lighting plan's mood, the recipe's cuisine.
+
+## The agent's Qloo tools
+
+The chat's model gets Qloo's whole surface as tools, not a narrow "recommend" button, and composes them per ask.
+
+| Tool | Qloo endpoint | What it's for |
+| --- | --- | --- |
+| `qlooSearch` | `/search` | Turn a name ("Fela", "Kyoto") into a Qloo id to use as a signal, filter or comparison. |
+| `qlooTags` | `/v2/tags` | Find tags by meaning: moods ("rainy day"), genres, cuisines, decor, dietary options, place kinds. |
+| `qlooInsights` | `/v2/insights` | Anything the graph answers: picks of any type, a taste's words, a **heatmap** of a city, the **demographic** lean. Every documented signal and filter. |
+| `qlooCompare` | `/v2/analysis/compare` | Two tastes side by side: you and Mum, or *Fleabag* vs *Insecure*. |
+| `qlooAudiences` | `/v2/audiences` | Audiences (life stage, hobbies, communities) to lean a taste with. Never political ones. |
+
+`qlooInsights` takes the person's loves as the signal by default, and the model adds to it freely:
+
+| Ask | How the model composes it |
+| --- | --- |
+| "70s films I'd love" | `ask: movie`, `filter.releaseYear {1970–1979}` |
+| "Hidden gems" | `filter.popularity { max: 0.3 }` |
+| "Where would I hang out in Paris?" | `ask: heatmap`, `filter.city: Paris` → a map with named areas |
+| "Is Kendrick a fit for me?" | `filter.onlyIds: [his id]` → a score |
+| "Dinner for Mum" | `signal.age: 55_and_older`, `filter.tags: [restaurant]`, her city |
+| "A trip around my taste" | `ask: destination`, `diversifyBy: city` |
+| "Music for this room" | `qlooTags "candlelit"` → `signal.tags` |
+
+Each answer becomes a card that renders whatever came back: picks of any type, a tag cloud, a map, an age and gender chart, a comparison.
+
+## Seeing every call
+
+Every Qloo request is logged with its path, parameters, status, time, cache hit and result count.
+
+- On every Qloo card, the **Qloo** chip opens the exact request behind it.
+- On a taste page, **Built on Qloo** lists every call the reveal made, in order.
+- **Compare without taste** answers the same ask with no Qloo at all, beside Najimi's answer.
+
+Answers are cached by a stable key (path, parameters and body), and identical requests in flight share one call, so a page reload or a retry costs Qloo nothing.
+
+## From taste to things
+
+<Flow
+  label="How a taste becomes something made"
+  steps={[
+    { title: "Qloo", note: "Words and picks for this person", accent: true },
+    { title: "tasteBrief", note: "The words that matter for this job (home, food, style)" },
+    { title: "Make", note: "Restyle, lighting plan, recipe, outfit, film" },
+    { title: "Real things", note: "Brands Qloo matches → their own products, with prices" },
+  ]}
+/>
+
+Brands are a Qloo answer too: for "lamps that fit me", the model asks `qlooInsights` for brands with the lighting-brands tag, then reads real products from each brand's own site.

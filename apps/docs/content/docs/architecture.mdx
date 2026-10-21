@@ -1,0 +1,74 @@
+---
+title: Architecture
+description: How Najimi is built and run.
+---
+
+<Layers
+  label="The system, top to bottom"
+  rows={[
+    { name: "Clients", parts: ["Phone and desktop browsers", "Link previews (OG images)", "Docs (this site)"] },
+    { name: "Web", parts: ["Next.js 16 App Router", "Partial prerendering", "AI SDK 7 agent", "Better Auth (guests, email codes, Google)", "next-intl, 12 languages"] },
+    { name: "Worker", parts: ["pg-boss queues", "Taste reveal", "Image and video jobs", "Chat titles", "Nightly guest sweep"] },
+    { name: "Data", parts: ["Postgres 17 (Drizzle)", "RustFS (S3) for photos and creations", "LISTEN/NOTIFY for live events"] },
+    { name: "Outside", parts: ["Qloo (taste graph)", "OpenAI (chat, images)", "fal (video)", "ElevenLabs (voice)", "openFDA (labels)", "Brand sites (products)"] },
+  ]}
+/>
+
+## The repository
+
+A pnpm and Turborepo monorepo:
+
+| Path | What |
+| --- | --- |
+| `apps/web` | The product: pages, API routes, the chat route, cards. |
+| `apps/worker` | Every slow job. Runs migrations at start. |
+| `apps/docs` | This site (Fumadocs, a static export). |
+| `packages/agent` | The model registry, the tools, the rules, the workflows. |
+| `packages/qloo` | The Qloo client: caching, de-duplication, call logging, taste and explore helpers. |
+| `packages/db` | Drizzle schema, migrations, data ownership (move a guest's data on sign-in, delete all of a person's data). |
+| `packages/media` | Image and video providers behind one interface. |
+| `packages/sources` | openFDA labels; product pages read from brands' own sites (JSON-LD, safe fetching). |
+| `packages/storage` | S3 objects, signed media links, renditions. |
+| `packages/jobs`, `live`, `email`, `env`, `config`, `tokens`, `ui` | Queues, live events, email codes, typed env, every tunable, design tokens, components. |
+
+## A chat turn
+
+<Flow
+  label="One turn, from the person's message to a saved answer"
+  steps={[
+    { title: "POST /api/chat", note: "Only the newest message; the server holds the conversation" },
+    { title: "Context", note: "Person, loves, taste words, people, photos, mode, workflow" },
+    { title: "streamText + tools", note: "Up to 10 steps; Qloo, making, plans", accent: true },
+    { title: "UI message stream", note: "Cards stream in; saved after every step" },
+  ]}
+/>
+
+- The turn keeps running if the page closes (the stream is drained on the server), and a reload shows it.
+- Images and video need an approval in *Ask first* mode. Approvals are signed, so a client can't forge one.
+- The daily allowance is taken atomically in Postgres, with a ceiling for the whole server.
+
+## Making things
+
+<Flow
+  label="An image, from tool call to card"
+  steps={[
+    { title: "makeImage", note: "Prompt built from taste words; the person's photo when restyling" },
+    { title: "media_jobs row", note: "Allowance taken, job queued" },
+    { title: "Worker", note: "Provider call; renditions (thumb, display) with sharp", accent: true },
+    { title: "Live event", note: "The card swaps its skeleton for the result" },
+  ]}
+/>
+
+Videos are submitted to the provider and finished by a poller, so a restart picks them up again. A paid request is never sent twice; a failed one is refunded.
+
+## Live updates
+
+Workers write run events to Postgres and `NOTIFY` a channel. The web app holds one `LISTEN` connection and streams events to open pages over server-sent events, replaying any a reconnecting page missed.
+
+## Media
+
+Photos and creations live in a private bucket. Every media link goes through the app, which serves it to its owner, to a provider holding a short-lived signed link, to anyone holding a live share token (creations only), or to everyone when public (sample rooms, the showcase).
+
+## Running it
+
+Production runs on Coolify: the web app, the worker, Postgres, RustFS and this docs site, each a container. The worker applies migrations when it starts.

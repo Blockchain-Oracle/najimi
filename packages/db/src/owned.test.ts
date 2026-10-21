@@ -150,6 +150,15 @@ test("idle guests: only guests nobody has used lately", async () => {
   const idle = await makeUser("idle-guest", { isAnonymous: true, createdAt: old })
   const back = await makeUser("returning-guest", { isAnonymous: true, createdAt: old })
   const member = await makeUser("old-member", { createdAt: old })
+  const showcased = await makeUser("showcased-guest", { isAnonymous: true, createdAt: old })
+  await db.insert(creations).values({
+    ownerId: showcased,
+    kind: "image",
+    purpose: "restyle",
+    prompt: "test",
+    status: "ready",
+    public: true,
+  })
   await db.insert(session).values({
     id: randomUUID(),
     userId: back,
@@ -163,4 +172,5 @@ test("idle guests: only guests nobody has used lately", async () => {
   assert.ok(found.includes(idle))
   assert.ok(!found.includes(back))
   assert.ok(!found.includes(member))
+  assert.ok(!found.includes(showcased))
 })
