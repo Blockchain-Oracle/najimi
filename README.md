@@ -140,3 +140,7 @@ pnpm dev                # web on :3310, docs on :3311, the worker (migrates on s
 - **Showcase images** on the landing page were made by Najimi from those sample rooms by a demo account, and marked public by hand.
 - **README art** ([`banner`](.github/assets/banner.png), [`demo cover`](apps/web/public/demo/cover.png)) is drawn by [`scripts/readme-art`](apps/web/scripts/readme-art/make.tsx) from phone captures of the live app in [`.github/assets/captures`](.github/assets/captures).
 - Written by Abu with Claude Code.
+
+## License
+
+[MIT](LICENSE).
