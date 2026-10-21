@@ -4,7 +4,7 @@ import { TASTE_DOMAINS } from "@najimi/config"
 import type { Constraints, StoredPick, TasteWords } from "@najimi/db/schema"
 import { Button } from "@najimi/ui/components/button"
 import { toast } from "@najimi/ui/components/sonner"
-import { MapPin } from "lucide-react"
+import { MapPin, Share2 } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
@@ -16,6 +16,7 @@ import { PickRail } from "@/components/picks/pick-rail"
 import { BuiltOnQloo } from "@/components/qloo/built-on-qloo"
 import { LovesFan, TasteWordsView } from "@/components/taste/taste-card"
 import { api } from "@/lib/fetcher"
+import { shareLink } from "@/lib/share-link"
 import { type RunEvent, useRunEvents } from "@/lib/use-run"
 import { AboutForm } from "./about-form"
 import { type EditableLove, LovesEditor } from "./loves-editor"
@@ -225,6 +226,13 @@ export function PersonView({ data }: { data: PersonViewData }) {
             >
               {person.isSelf ? t("askSelf") : t("askFor", { name: person.name })}
             </Link>
+            <button
+              type="button"
+              onClick={() => void shareLink("person", person.id, t("linkCopied"))}
+              className="inline-flex items-center gap-1.5 rounded-pill px-3 py-2 text-sm font-semibold text-paper-foreground ring-1 ring-paper-foreground/15 transition-colors hover:bg-paper-foreground/6"
+            >
+              <Share2 className="size-4" /> {t("share")}
+            </button>
             <BuiltOnQloo runId={runId} />
           </div>
         </div>

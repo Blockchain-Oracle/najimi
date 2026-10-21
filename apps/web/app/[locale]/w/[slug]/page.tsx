@@ -24,11 +24,17 @@ async function wordsOf(w: WorkflowRow) {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { slug } = await params
+  const { slug, locale } = await params
   const w = await runnableWorkflow(null, slug)
   if (!w) return {}
   const { name, description } = await wordsOf(w)
-  return { title: name, description }
+  const images = [{ url: `/api/og/w/${w.slug}?l=${locale}`, width: 1200, height: 630 }]
+  return {
+    title: name,
+    description,
+    openGraph: { title: name, description, images },
+    twitter: { card: "summary_large_image", title: name, description, images },
+  }
 }
 
 /**

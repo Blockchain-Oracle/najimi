@@ -5,11 +5,11 @@ import { and, eq, isNull } from "drizzle-orm"
 import { z } from "zod"
 import { body, fail, json, withSession } from "@/lib/api"
 
-const input = z.object({ kind: z.enum(["creation", "chat"]), refId: z.uuid() })
+const input = z.object({ kind: z.enum(["creation", "chat", "person"]), refId: z.uuid() })
 
 /**
- * A public link to something Najimi made, or to a whole chat (C15). One live link per thing; a
- * restyle shows the result only, never the person's own photo.
+ * A public link to something Najimi made, a whole chat, or a taste card (C15). One live link per
+ * thing; a restyle shows the result only, never the person's own photo.
  */
 export async function POST(request: Request) {
   const auth = await withSession()
@@ -24,12 +24,19 @@ export async function POST(request: Request) {
       .from(schema.creations)
       .where(and(eq(schema.creations.id, refId), eq(schema.creations.ownerId, userId)))
     if (creation?.status !== "ready") return fail("Nothing to share yet", 404)
-  } else {
+  } else if (kind === "chat") {
     const [chat] = await db
       .select({ id: schema.chats.id })
       .from(schema.chats)
       .where(and(eq(schema.chats.id, refId), eq(schema.chats.ownerId, userId)))
     if (!chat) return fail("Unknown chat", 404)
+  } else {
+    // A taste card: the name, loves, words and picks. Never the city, age or anything in About.
+    const [person] = await db
+      .select({ id: schema.people.id })
+      .from(schema.people)
+      .where(and(eq(schema.people.id, refId), eq(schema.people.ownerId, userId)))
+    if (!person) return fail("Unknown person", 404)
   }
   const [existing] = await db
     .select({ token: schema.shares.token })

@@ -122,7 +122,9 @@
     "builtOnQloo": "مبني على Qloo",
     "callsCount": "{count, plural, zero {لا استدعاءات} one {استدعاء واحد لـ Qloo} two {استدعاءان لـ Qloo} few {# استدعاءات لـ Qloo} many {# استدعاءً لـ Qloo} other {# استدعاء لـ Qloo}}",
     "askFor": "اسأل لـ {name}",
-    "askSelf": "اسأل ناجيمي"
+    "askSelf": "اسأل ناجيمي",
+    "share": "شارك هذا الذوق",
+    "linkCopied": "تم نسخ الرابط"
   },
   "Pick": {
     "because": "لأنك تحب {name}",
@@ -245,7 +247,19 @@
     "keep": "أبقِها",
     "deleteConfirm": "احذف كل شيء",
     "deleting": "جارٍ الحذف…",
-    "deleteFailed": "لم ينجح ذلك. لم يُحذف شيء؛ حاول مجددًا."
+    "deleteFailed": "لم ينجح ذلك. لم يُحذف شيء؛ حاول مجددًا.",
+    "links": "روابط المشاركة",
+    "linksHint": "يمكن لأي شخص لديه أحد هذه الروابط رؤية ما يعرضه. أوقف أحدها فيتوقف فورًا.",
+    "noLinks": "لم تشارك شيئًا بعد.",
+    "stop": "أوقف المشاركة",
+    "stopped": "هذا الرابط لم يعد يعمل.",
+    "kinds": {
+      "creation": "إبداع",
+      "chat": "محادثة",
+      "person": "ذوق"
+    },
+    "open": "افتح",
+    "untitled": "بلا عنوان"
   },
   "Chat": {
     "greeting": "ماذا نبحث لـ {name}؟",
@@ -449,7 +463,9 @@
     "madeFrom": "مصنوع من ذوق حقيقي: {words}",
     "pitch": "يعرف ناجيمي ما يحبه الناس عبر Qloo، ويصنع لحياتهم الحقيقية أشياء تشبههم.",
     "chatTitle": "محادثة ناجيمي",
-    "moreWorkflows": "المزيد من سير العمل"
+    "moreWorkflows": "المزيد من سير العمل",
+    "creationTitle": "صُنع مع نجيمي",
+    "tasteTitle": "ذوق {name}"
   },
   "Home": {
     "planFor": "لـ{room} {name}",

@@ -122,7 +122,9 @@
     "builtOnQloo": "Construit sur Qloo",
     "callsCount": "{count, plural, one {# appel Qloo} other {# appels Qloo}}",
     "askFor": "Demander pour {name}",
-    "askSelf": "Demander à Najimi"
+    "askSelf": "Demander à Najimi",
+    "share": "Partager ce goût",
+    "linkCopied": "Lien copié"
   },
   "Pick": {
     "because": "parce que vous aimez {name}",
@@ -245,7 +247,19 @@
     "keep": "Garder",
     "deleteConfirm": "Tout supprimer",
     "deleting": "Suppression…",
-    "deleteFailed": "Ça n'a pas marché. Rien n'a été supprimé ; réessaie."
+    "deleteFailed": "Ça n'a pas marché. Rien n'a été supprimé ; réessaie.",
+    "links": "Tes liens de partage",
+    "linksHint": "Toute personne qui a un de ces liens voit ce qu'il montre. Arrête-en un et il cesse de fonctionner aussitôt.",
+    "noLinks": "Rien de partagé pour l'instant.",
+    "stop": "Arrêter le partage",
+    "stopped": "Ce lien ne fonctionne plus.",
+    "kinds": {
+      "creation": "Création",
+      "chat": "Chat",
+      "person": "Goût"
+    },
+    "open": "Ouvrir",
+    "untitled": "Sans titre"
   },
   "Chat": {
     "greeting": "Que cherche-t-on pour {name} ?",
@@ -449,7 +463,9 @@
     "madeFrom": "Créé d'après un vrai goût : {words}",
     "pitch": "Najimi connaît ce que les gens aiment grâce à Qloo, et crée pour leur vraie vie des choses qui leur ressemblent.",
     "chatTitle": "Un chat Najimi",
-    "moreWorkflows": "Plus de workflows"
+    "moreWorkflows": "Plus de workflows",
+    "creationTitle": "Fait avec Najimi",
+    "tasteTitle": "Le goût de {name}"
   },
   "Home": {
     "planFor": "Pour le {room} de {name}",

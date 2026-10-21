@@ -4,6 +4,8 @@ import createNextIntlPlugin from "next-intl/plugin"
 const nextConfig: NextConfig = {
   // Self-hosted on Coolify: a minimal server bundle with only the files it needs.
   output: "standalone",
+  // Link-preview images read their fonts from disk (lib/og.tsx); the standalone bundle needs them.
+  outputFileTracingIncludes: { "/**": ["./assets/fonts/**"] },
   // Partial prerendering: static shells paint at once; dynamic parts stream in Suspense.
   cacheComponents: true,
   partialPrefetching: true,

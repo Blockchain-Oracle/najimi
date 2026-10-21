@@ -1,12 +1,18 @@
 import type { NajimiUIMessage } from "@najimi/agent"
 import { db, schema } from "@najimi/db"
-import { and, eq, inArray, isNull } from "drizzle-orm"
+import { and, eq, inArray } from "drizzle-orm"
+import type { Metadata } from "next"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import { getTranslations } from "next-intl/server"
 import { Suspense } from "react"
 import { SharedChat } from "@/components/chat/shared-chat"
+import { SharedTaste } from "@/components/taste/shared-taste"
 import { uploadIdsOf } from "@/lib/chat/merge"
+import { identityOf } from "@/lib/people"
+import { liveShare, sharedSubject } from "@/lib/shares"
+
+type Props = PageProps<"/[locale]/s/[token]">
 
 /** A shared chat without the person's own photos: their file parts never reach the page (samples stay). */
 async function withoutOwnPhotos(messages: NajimiUIMessage[]): Promise<NajimiUIMessage[]> {
@@ -26,40 +32,79 @@ async function withoutOwnPhotos(messages: NajimiUIMessage[]): Promise<NajimiUIMe
   }))
 }
 
+/** The title, line and picture a link preview shows (the picture is drawn by /api/og/s). */
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { token } = await params
+  const share = await liveShare(token)
+  const subject = share ? await sharedSubject(share) : null
+  if (!subject) return { robots: { index: false } }
+  const t = await getTranslations("Share")
+  const title =
+    subject.kind === "creation"
+      ? (subject.creation.title ?? t("creationTitle"))
+      : subject.kind === "chat"
+        ? (subject.chat.title ?? t("chatTitle"))
+        : t("tasteTitle", { name: subject.person.name })
+  const description =
+    subject.kind === "creation" && subject.creation.words.length
+      ? t("madeFrom", { words: subject.creation.words.join(" · ") })
+      : subject.kind === "person" && subject.taste?.words
+        ? Object.values(subject.taste.words).flat().slice(0, 8).join(" · ")
+        : t("pitch")
+  // Shared things are for the people they're sent to, not for search engines.
+  const images = [{ url: `/api/og/s/${token}`, width: 1200, height: 630 }]
+  return {
+    title,
+    description,
+    robots: { index: false },
+    openGraph: { title, description, images },
+    twitter: { card: "summary_large_image", title, description, images },
+  }
+}
+
 /**
- * What a share link points to (C15): one creation, or a whole chat read-only. Never the person's
- * own photos; revoked links stop at once.
+ * What a share link points to (C15, T19): one creation, a whole chat read-only, or a taste card.
+ * Never the person's own photos, city or About; revoked links stop at once.
  */
-async function Shared({ params }: { params: PageProps<"/[locale]/s/[token]">["params"] }) {
+async function Shared({ params }: { params: Props["params"] }) {
   const { token } = await params
   const t = await getTranslations("Share")
-  const [share] = await db
-    .select()
-    .from(schema.shares)
-    .where(and(eq(schema.shares.token, token), isNull(schema.shares.revokedAt)))
-  if (!share) notFound()
+  const share = await liveShare(token)
+  const subject = share ? await sharedSubject(share) : null
+  if (!subject) notFound()
 
-  if (share.kind === "chat") {
-    const [chat] = await db.select().from(schema.chats).where(eq(schema.chats.id, share.refId))
-    if (!chat) notFound()
-    const ready = await db
-      .select({ id: schema.creations.id })
-      .from(schema.creations)
-      .where(and(eq(schema.creations.chatId, chat.id), eq(schema.creations.status, "ready")))
+  if (subject.kind === "chat")
     return (
       <>
-        <h1 className="font-title text-title-sm">{chat.title ?? t("chatTitle")}</h1>
+        <h1 className="font-title text-title-sm">{subject.chat.title ?? t("chatTitle")}</h1>
         <SharedChat
           token={token}
-          ready={ready.map((r) => r.id)}
-          messages={await withoutOwnPhotos(chat.messages as NajimiUIMessage[])}
+          ready={subject.made.map((c) => c.id)}
+          messages={await withoutOwnPhotos(subject.messages)}
         />
       </>
     )
+
+  if (subject.kind === "person") {
+    const { person, taste, loves } = subject
+    return (
+      <SharedTaste
+        data={{
+          token,
+          name: person.name,
+          identity: identityOf(person.id),
+          loves: [...loves]
+            .sort((a, b) => b.weight - a.weight)
+            .map((l) => ({ qlooId: l.qlooId, name: l.name, imageUrl: l.imageUrl, type: l.type })),
+          words: taste?.words ?? null,
+          picks: taste?.picks ?? null,
+          bridges: taste?.bridges ?? null,
+        }}
+      />
+    )
   }
 
-  const [c] = await db.select().from(schema.creations).where(eq(schema.creations.id, share.refId))
-  if (c?.status !== "ready") notFound()
+  const c = subject.creation
   const src = (id: string, v: string) =>
     `/api/media/creation/${id}?v=${v}&share=${encodeURIComponent(token)}`
   return (
@@ -88,7 +133,7 @@ async function Shared({ params }: { params: PageProps<"/[locale]/s/[token]">["pa
   )
 }
 
-export default async function SharePage(props: PageProps<"/[locale]/s/[token]">) {
+export default async function SharePage(props: Props) {
   const t = await getTranslations("Share")
   return (
     <main className="mx-auto flex min-h-svh w-full max-w-3xl flex-col gap-6 px-5 py-8">

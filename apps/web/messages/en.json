@@ -122,7 +122,9 @@
     "builtOnQloo": "Built on Qloo",
     "callsCount": "{count, plural, one {# Qloo call} other {# Qloo calls}}",
     "askFor": "Ask for {name}",
-    "askSelf": "Ask Najimi"
+    "askSelf": "Ask Najimi",
+    "share": "Share this taste",
+    "linkCopied": "Link copied"
   },
   "Pick": {
     "because": "because you love {name}",
@@ -245,7 +247,19 @@
     "keep": "Keep it",
     "deleteConfirm": "Delete everything",
     "deleting": "Deleting…",
-    "deleteFailed": "That didn't work. Nothing was deleted; try again."
+    "deleteFailed": "That didn't work. Nothing was deleted; try again.",
+    "links": "Your share links",
+    "linksHint": "Anyone with one of these links can see what it shows. Stop one and it stops working at once.",
+    "noLinks": "Nothing shared yet.",
+    "stop": "Stop sharing",
+    "stopped": "That link no longer works.",
+    "kinds": {
+      "creation": "Creation",
+      "chat": "Chat",
+      "person": "Taste"
+    },
+    "open": "Open",
+    "untitled": "Untitled"
   },
   "Chat": {
     "greeting": "What should we find for {name}?",
@@ -449,7 +463,9 @@
     "madeFrom": "Made from a real taste: {words}",
     "pitch": "Najimi knows what people love through Qloo, and makes things for their real lives that fit them.",
     "chatTitle": "A Najimi chat",
-    "moreWorkflows": "More workflows"
+    "moreWorkflows": "More workflows",
+    "creationTitle": "Made with Najimi",
+    "tasteTitle": "{name}'s taste"
   },
   "Home": {
     "planFor": "For {name}'s {room}",

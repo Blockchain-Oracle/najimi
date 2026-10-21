@@ -1,12 +1,13 @@
 import { ALLOWANCE } from "@najimi/config"
 import { db, schema } from "@najimi/db"
-import { eq } from "drizzle-orm"
+import { and, desc, eq, inArray, isNull } from "drizzle-orm"
 import { redirect } from "next/navigation"
 import { getTranslations } from "next-intl/server"
 import { Suspense } from "react"
 import { LanguageMenu } from "@/components/language-menu"
 import { DeleteData } from "@/components/settings/delete-data"
 import { ModePicker } from "@/components/settings/mode-picker"
+import { type ShareItem, ShareLinks } from "@/components/settings/share-links"
 import { usageToday } from "@/lib/chat/usage"
 import { getSession } from "@/lib/session"
 
@@ -35,6 +36,43 @@ function Meter({ label, used, limit }: { label: string; used: number; limit: num
   )
 }
 
+/** The person's live share links, each named by what it shows. */
+async function sharesOf(userId: string, untitled: string): Promise<ShareItem[]> {
+  const rows = await db
+    .select()
+    .from(schema.shares)
+    .where(and(eq(schema.shares.ownerId, userId), isNull(schema.shares.revokedAt)))
+    .orderBy(desc(schema.shares.createdAt))
+  const ids = (kind: string) => rows.filter((r) => r.kind === kind).map((r) => r.refId)
+  const [creations, chats, people] = await Promise.all([
+    ids("creation").length
+      ? db
+          .select({ id: schema.creations.id, label: schema.creations.title })
+          .from(schema.creations)
+          .where(inArray(schema.creations.id, ids("creation")))
+      : [],
+    ids("chat").length
+      ? db
+          .select({ id: schema.chats.id, label: schema.chats.title })
+          .from(schema.chats)
+          .where(inArray(schema.chats.id, ids("chat")))
+      : [],
+    ids("person").length
+      ? db
+          .select({ id: schema.people.id, label: schema.people.name })
+          .from(schema.people)
+          .where(inArray(schema.people.id, ids("person")))
+      : [],
+  ])
+  const labels = new Map([...creations, ...chats, ...people].map((r) => [r.id, r.label]))
+  return rows.map((r) => ({
+    token: r.token,
+    kind: r.kind,
+    label: labels.get(r.refId) ?? untitled,
+    createdAt: r.createdAt.toISOString(),
+  }))
+}
+
 /** The parts that depend on who's signed in: how chats make things, today's allowance, account. */
 async function Mine() {
   const session = await getSession()
@@ -43,9 +81,10 @@ async function Mine() {
   const ta = await getTranslations("Auth")
   const user = session.user as typeof session.user & { isAnonymous?: boolean | null }
   const guest = Boolean(user.isAnonymous)
-  const [[prefs], used] = await Promise.all([
+  const [[prefs], used, links] = await Promise.all([
     db.select().from(schema.userPrefs).where(eq(schema.userPrefs.userId, user.id)),
     usageToday(user.id),
+    sharesOf(user.id, t("untitled")),
   ])
   const limits = guest ? ALLOWANCE.guest : ALLOWANCE.member
   return (
@@ -66,6 +105,14 @@ async function Mine() {
         {COUNTERS.map((c) => (
           <Meter key={c} label={t(`counters.${c}`)} used={used[c]} limit={limits[c]} />
         ))}
+      </section>
+
+      <section className={card}>
+        <div className="flex flex-col gap-1">
+          <h2 className="font-title text-xl">{t("links")}</h2>
+          <p className="text-sm text-paper-muted">{t("linksHint")}</p>
+        </div>
+        <ShareLinks items={links} />
       </section>
 
       <section className={card}>
