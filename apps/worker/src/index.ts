@@ -1,9 +1,11 @@
-import { MEDIA } from "@najimi/config"
+import { AUTH, MEDIA } from "@najimi/config"
 import { migrateDatabase } from "@najimi/db/migrate"
 import { boss, type Payload, QUEUES, RETIRED_QUEUES } from "@najimi/jobs"
 import { emit, setRunStatus } from "@najimi/live"
+import { deleteKeys } from "@najimi/storage"
 import { closeInterruptedRuns } from "./interrupted"
 import { chatTitle } from "./jobs/chat-title"
+import { guestsCleanup } from "./jobs/forget"
 import { mediaGenerate, pollVideos } from "./jobs/media"
 import { tasteRefresh } from "./jobs/taste-refresh"
 import { seedSamples } from "./samples"
@@ -70,6 +72,17 @@ async function main() {
       await mediaGenerate(QUEUES.mediaGenerate.payload.parse(job.data).jobId)
     },
   )
+  await queues.work<Payload<"storageDelete">>(QUEUES.storageDelete.name, async ([job]) => {
+    if (!job) return
+    await deleteKeys(QUEUES.storageDelete.payload.parse(job.data).keys)
+  })
+
+  await queues.work(QUEUES.guestsCleanup.name, async ([job]) => {
+    if (!job) return
+    await guestsCleanup()
+  })
+  await queues.schedule(QUEUES.guestsCleanup.name, AUTH.guestSweepCron, {}, { tz: "UTC" })
+
   // Submitted videos are checked here; a restart picks them up again by their provider id.
   const poller = setInterval(
     () => void pollVideos().catch((e) => console.error("[poll]", e)),

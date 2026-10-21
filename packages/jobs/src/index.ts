@@ -43,6 +43,23 @@ export const QUEUES = {
     options: { retryLimit: 0, expireInSeconds: 10 * 60 },
     send: { heartbeatSeconds: JOBS.heartbeatSeconds },
   },
+  /**
+   * Deleting stored objects whose rows are already gone ("delete all my data", the guest sweep):
+   * only when deleting them straight away failed. Safe to repeat, so it's retried.
+   */
+  storageDelete: {
+    name: "storage-delete",
+    payload: z.object({ keys: z.array(z.string().min(1)).min(1).max(5000) }),
+    options: { retryLimit: 5, retryDelay: 60, retryBackoff: true, expireInSeconds: 5 * 60 },
+    send: {},
+  },
+  /** Every night: guests nobody has used for a month go, rows and objects (T21). */
+  guestsCleanup: {
+    name: "guests-cleanup",
+    payload: z.object({}),
+    options: { retryLimit: 1, retryDelay: 600, expireInSeconds: 15 * 60 },
+    send: {},
+  },
 } as const
 
 /** Queues an earlier version of the product used; the worker deletes them once at start. */

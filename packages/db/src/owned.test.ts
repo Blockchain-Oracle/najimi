@@ -3,16 +3,16 @@ import { randomUUID } from "node:crypto"
 import { after, test } from "node:test"
 import { and, eq, inArray } from "drizzle-orm"
 import { db, pg } from "./index"
-import { reownUserData } from "./owned"
-import { chats, people, usageDays, user, userPrefs } from "./schema"
+import { deleteUserData, idleGuests, reownUserData } from "./owned"
+import { chats, creations, people, session, uploads, usageDays, user, userPrefs } from "./schema"
 
 // Runs against the local database (pnpm services:up); every row it makes is deleted at the end.
 
 const made: string[] = []
-async function makeUser(label: string) {
+async function makeUser(label: string, extra: Partial<typeof user.$inferInsert> = {}) {
   const id = `test-${label}-${randomUUID()}`
   made.push(id)
-  await db.insert(user).values({ id, name: label, email: `${id}@test.invalid` })
+  await db.insert(user).values({ id, name: label, email: `${id}@test.invalid`, ...extra })
   return id
 }
 
@@ -77,4 +77,90 @@ test("guest → existing account: its own me and prefs win, usage adds up, twice
     .where(and(eq(usageDays.userId, member), eq(usageDays.day, today)))
   assert.equal(usage?.images, 5)
   assert.equal(usage?.videos, 1)
+})
+
+test("delete all my data: every row goes, and every key of theirs comes back (never a sample's)", async () => {
+  const id = await makeUser("leaving")
+  const [me] = await db
+    .insert(people)
+    .values({ ownerId: id, isSelf: true, name: "Ada" })
+    .returning()
+  const [chat] = await db
+    .insert(chats)
+    .values({ ownerId: id, personId: me?.id, locale: "en" })
+    .returning()
+  const photo = `test/${randomUUID()}.jpg`
+  const sample = `test/${randomUUID()}-sample.jpg`
+  await db.insert(uploads).values([
+    {
+      ownerId: id,
+      s3Key: photo,
+      mime: "image/jpeg",
+      width: 1,
+      height: 1,
+      bytes: 1,
+      sha256: randomUUID(),
+    },
+    {
+      ownerId: id,
+      s3Key: sample,
+      mime: "image/jpeg",
+      width: 1,
+      height: 1,
+      bytes: 1,
+      sha256: randomUUID(),
+      sample: true,
+    },
+  ])
+  await db.insert(creations).values({
+    ownerId: id,
+    chatId: chat?.id,
+    kind: "image",
+    purpose: "restyle",
+    prompt: "test",
+    status: "ready",
+    s3Key: "test/c.png",
+    displayKey: "test/c-display.webp",
+    thumbKey: "test/c-thumb.webp",
+  })
+  const today = new Date().toISOString().slice(0, 10)
+  await db.insert(usageDays).values({ userId: id, day: today, turns: 2 })
+
+  const keys = await deleteUserData(db, id)
+
+  assert.deepEqual(
+    [...keys].sort(),
+    [photo, "test/c.png", "test/c-display.webp", "test/c-thumb.webp"].sort(),
+  )
+  for (const [table, column] of [
+    [people, people.ownerId],
+    [chats, chats.ownerId],
+    [uploads, uploads.ownerId],
+    [creations, creations.ownerId],
+    [usageDays, usageDays.userId],
+    [user, user.id],
+  ] as const) {
+    const left = await db.select().from(table).where(eq(column, id))
+    assert.equal(left.length, 0)
+  }
+})
+
+test("idle guests: only guests nobody has used lately", async () => {
+  const old = new Date(Date.now() - 40 * 24 * 60 * 60 * 1000)
+  const idle = await makeUser("idle-guest", { isAnonymous: true, createdAt: old })
+  const back = await makeUser("returning-guest", { isAnonymous: true, createdAt: old })
+  const member = await makeUser("old-member", { createdAt: old })
+  await db.insert(session).values({
+    id: randomUUID(),
+    userId: back,
+    token: randomUUID(),
+    expiresAt: new Date(Date.now() + 86_400_000),
+    updatedAt: new Date(),
+  })
+
+  const found = await idleGuests(db, 30, 10_000)
+
+  assert.ok(found.includes(idle))
+  assert.ok(!found.includes(back))
+  assert.ok(!found.includes(member))
 })

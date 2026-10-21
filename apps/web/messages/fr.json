@@ -224,7 +224,28 @@
     "title": "Réglages",
     "language": "Langue",
     "account": "Compte",
-    "comingSoon": "D'autres réglages arrivent avec les prochaines étapes."
+    "mode": "Quand Najimi crée",
+    "modeHint": "Pour les nouveaux chats. Chaque chat peut encore changer le sien depuis la zone de saisie.",
+    "saved": "Enregistré",
+    "saveFailed": "Ça n'a pas été enregistré. Réessaie.",
+    "today": "Aujourd'hui",
+    "todayGuest": "Une journée d'invité. Connecte-toi pour en avoir plus, et garder tout ce que tu crées. Remise à zéro à minuit (UTC).",
+    "todayMember": "Ta part du jour. Remise à zéro à minuit (UTC).",
+    "counters": {
+      "turns": "Messages",
+      "images": "Images",
+      "videos": "Vidéos"
+    },
+    "deleteHeading": "Supprimer toutes mes données",
+    "deleteHint": "Ton compte et tout ce qu'il contient, définitivement.",
+    "delete": "Supprimer toutes mes données",
+    "deleteTitle": "Tout supprimer ?",
+    "deleteWhat": "Ton compte, les personnes dont tu gardes le goût, leurs goûts et leurs coups de cœur, chaque chat, tes photos, tout ce que Najimi a créé, tes workflows et tes liens de partage.",
+    "deleteFinal": "Les liens partagés cessent de fonctionner tout de suite. C'est irréversible.",
+    "keep": "Garder",
+    "deleteConfirm": "Tout supprimer",
+    "deleting": "Suppression…",
+    "deleteFailed": "Ça n'a pas marché. Rien n'a été supprimé ; réessaie."
   },
   "Chat": {
     "greeting": "Que cherche-t-on pour {name} ?",

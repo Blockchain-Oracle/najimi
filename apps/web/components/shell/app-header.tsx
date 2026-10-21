@@ -7,6 +7,7 @@ import {
   DropdownMenuTrigger,
 } from "@najimi/ui/components/dropdown-menu"
 import { cn } from "@najimi/ui/lib/utils"
+import { Settings2 } from "lucide-react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
@@ -69,13 +70,23 @@ export function AppHeader({ google, email }: { google: boolean; email: boolean }
           <LanguageMenu />
         </div>
         {isGuest ? (
-          <button
-            type="button"
-            onClick={() => setSignIn(true)}
-            className="sticker px-3.5 py-1.5 text-sm font-semibold"
-          >
-            {t("signIn")}
-          </button>
+          <>
+            <Link
+              href="/settings"
+              aria-label={t("settings")}
+              title={t("settings")}
+              className="grid size-9 place-items-center rounded-full text-text-2 transition-colors hover:bg-secondary hover:text-foreground"
+            >
+              <Settings2 className="size-5" />
+            </Link>
+            <button
+              type="button"
+              onClick={() => setSignIn(true)}
+              className="sticker px-3.5 py-1.5 text-sm font-semibold"
+            >
+              {t("signIn")}
+            </button>
+          </>
         ) : (
           <DropdownMenu>
             <DropdownMenuTrigger className="grid size-9 place-items-center rounded-full bg-lime font-title text-lime-foreground">

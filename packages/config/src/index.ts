@@ -43,6 +43,11 @@ export const AUTH = {
    * emailed; `.invalid` is reserved by RFC 2606, so it can never reach a real inbox.
    */
   guestEmailDomain: "guest.najimi.invalid",
+  /** A guest nobody has used for this long is deleted, with everything they made. */
+  guestKeepDays: 30,
+  /** When the sweep runs (cron, UTC) and how many guests one run takes. */
+  guestSweepCron: "17 3 * * *",
+  guestSweepBatch: 200,
 } as const
 
 export const QUERY = {

@@ -224,7 +224,28 @@
     "title": "Settings",
     "language": "Language",
     "account": "Account",
-    "comingSoon": "More settings arrive with the next stages."
+    "mode": "When Najimi makes things",
+    "modeHint": "For new chats. Each chat can still change its own from the composer.",
+    "saved": "Saved",
+    "saveFailed": "That didn't save. Try again.",
+    "today": "Today",
+    "todayGuest": "A guest's day. Sign in for more, and to keep everything you make. It resets at midnight (UTC).",
+    "todayMember": "Your day's allowance. It resets at midnight (UTC).",
+    "counters": {
+      "turns": "Chat messages",
+      "images": "Images",
+      "videos": "Videos"
+    },
+    "deleteHeading": "Delete all my data",
+    "deleteHint": "Your account and everything in it, gone for good.",
+    "delete": "Delete all my data",
+    "deleteTitle": "Delete everything?",
+    "deleteWhat": "Your account, the people you keep a taste for, their tastes and loves, every chat, your photos, everything Najimi made, your workflows and your share links.",
+    "deleteFinal": "Shared links stop working at once. This can't be undone.",
+    "keep": "Keep it",
+    "deleteConfirm": "Delete everything",
+    "deleting": "Deleting…",
+    "deleteFailed": "That didn't work. Nothing was deleted; try again."
   },
   "Chat": {
     "greeting": "What should we find for {name}?",

@@ -1,4 +1,4 @@
-import { and, eq, sql } from "drizzle-orm"
+import { and, eq, lt, sql } from "drizzle-orm"
 import type { Db } from "./index"
 import {
   chats,
@@ -8,9 +8,11 @@ import {
   people,
   qlooCalls,
   runs,
+  session,
   shares,
   uploads,
   usageDays,
+  user,
   userPrefs,
   workflowFavourites,
   workflows,
@@ -73,4 +75,57 @@ export async function reownUserData(db: Db, fromUserId: string, toUserId: string
         videos = ${usageDays}.videos + excluded.videos`)
     await tx.delete(usageDays).where(eq(usageDays.userId, fromUserId))
   })
+}
+
+/**
+ * "Delete all my data" (T21), and the guest sweep: every row the person owns goes, in one
+ * transaction (each owned table cascades from the user row; the usage counters have no key, so
+ * they go by hand). Returns the storage keys of their photos and creations, for the caller to
+ * delete once the rows are gone. Sample rooms belong to everyone and are never returned.
+ */
+export async function deleteUserData(db: Db, userId: string): Promise<string[]> {
+  return db.transaction(async (tx) => {
+    const photos = await tx
+      .select({ key: uploads.s3Key })
+      .from(uploads)
+      .where(and(eq(uploads.ownerId, userId), eq(uploads.sample, false)))
+    const made = await tx
+      .select({
+        s3Key: creations.s3Key,
+        displayKey: creations.displayKey,
+        thumbKey: creations.thumbKey,
+        posterKey: creations.posterKey,
+      })
+      .from(creations)
+      .where(eq(creations.ownerId, userId))
+    await tx.delete(usageDays).where(eq(usageDays.userId, userId))
+    await tx.delete(user).where(eq(user.id, userId))
+    const keys = [
+      ...photos.map((p) => p.key),
+      ...made.flatMap((c) => [c.s3Key, c.displayKey, c.thumbKey, c.posterKey]),
+    ]
+    return [...new Set(keys.filter((k): k is string => Boolean(k)))]
+  })
+}
+
+/**
+ * Guests nobody has used for `days`: no session refreshed and no chat touched since. Sessions
+ * refresh daily while in use, so a guest who comes back now and then is never swept.
+ */
+export async function idleGuests(db: Db, days: number, limit: number): Promise<string[]> {
+  const cutoff = new Date(Date.now() - days * 24 * 60 * 60 * 1000)
+  const since = sql`${cutoff.toISOString()}::timestamptz`
+  const rows = await db
+    .select({ id: user.id })
+    .from(user)
+    .where(
+      and(
+        eq(user.isAnonymous, true),
+        lt(user.createdAt, cutoff),
+        sql`not exists (select 1 from ${session} where ${session.userId} = ${user.id} and ${session.updatedAt} > ${since})`,
+        sql`not exists (select 1 from ${chats} where ${chats.ownerId} = ${user.id} and ${chats.lastActiveAt} > ${since})`,
+      ),
+    )
+    .limit(limit)
+  return rows.map((r) => r.id)
 }
