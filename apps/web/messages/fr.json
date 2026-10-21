@@ -58,8 +58,7 @@
     "signOut": "Se déconnecter",
     "me": "Moi",
     "start": "Commencer",
-    "guest": "Invité",
-    "menu": "Menu"
+    "guest": "Invité"
   },
   "Start": {
     "step": "{current} sur {total}",
@@ -226,7 +225,8 @@
     "commaHint": "Séparez par des virgules",
     "theirLoves": "Qu'est-ce que cette personne aime ?",
     "theirLovesHint": "Un livre, une série, un chanteur, un plat — trois ou plus, c'est l'idéal.",
-    "revealTheirs": "Révéler son goût"
+    "revealTheirs": "Révéler son goût",
+    "openTaste": "Voir le goût"
   },
   "Auth": {
     "title": "Gardez votre goût",
@@ -345,7 +345,8 @@
     "voiceFailed": "Nous n'avons pas compris. Réessayez.",
     "shareChat": "Partager ce chat",
     "linkCopied": "Lien copié",
-    "saveWorkflow": "Enregistrer comme workflow"
+    "saveWorkflow": "Enregistrer comme workflow",
+    "share": "Partager"
   },
   "Cards": {
     "asking": "Qloo réfléchit…",
@@ -625,7 +626,8 @@
     "savedPrivate": "Il est dans Workflows, rubrique Les tiens.",
     "seeYours": "Ouvrir",
     "saveFailed": "Ça n'a pas été enregistré. Réessaie.",
-    "readyMade": "Prêts à l'emploi"
+    "readyMade": "Prêts à l'emploi",
+    "yoursEmpty": "Tes propres workflows apparaîtront ici. Sous une réponse dans un chat, « Enregistrer comme workflow » en fait un que tu peux relancer ou partager."
   },
   "Demo": {
     "title": "Voir Najimi à l'œuvre",

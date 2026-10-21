@@ -4,7 +4,7 @@ import type { NajimiTools } from "@najimi/agent"
 import { toast } from "@najimi/ui/components/sonner"
 import { Copy, Lamp, Lightbulb, Send, Sparkles, Sun } from "lucide-react"
 import { useTranslations } from "next-intl"
-import { shareChat, useChatId } from "../chat-context"
+import { shareChat, useChatId, WithPerson } from "../chat-context"
 import { usePublicShare } from "../public-share"
 import { CardShell } from "./insights-card"
 
@@ -50,7 +50,8 @@ export function LightingCard({ plan, personName }: { plan: Plan; personName: str
   return (
     <CardShell title={plan.title} callId={null}>
       <p className="text-sm text-paper-muted">
-        {t("planFor", { name: personName, room: plan.room })} · {plan.uses.join(" · ")}
+        <WithPerson text={(name) => t("planFor", { name, room: plan.room })} name={personName} /> ·{" "}
+        {plan.uses.join(" · ")}
       </p>
       <div className="flex flex-wrap gap-2">
         {plan.moments.map((m) => (

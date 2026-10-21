@@ -6,6 +6,7 @@ import { Dialog, DialogContent, DialogTitle } from "@najimi/ui/components/dialog
 import { ChefHat, Clock, Minus, Plus, Thermometer, Users } from "lucide-react"
 import { useTranslations } from "next-intl"
 import { useState } from "react"
+import { WithPerson } from "../chat-context"
 import { CardShell } from "./insights-card"
 
 type Recipe = NajimiTools["recipe"]["input"]
@@ -48,7 +49,9 @@ export function RecipeCard({
             {c}
           </span>
         ))}
-        <span className="text-paper-muted">{t("forName", { name: personName })}</span>
+        <span className="text-paper-muted">
+          <WithPerson text={(name) => t("forName", { name })} name={personName} />
+        </span>
       </div>
       <div className="grid gap-4 sm:grid-cols-[1fr_1.3fr]">
         <section className="flex flex-col gap-2">

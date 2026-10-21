@@ -143,7 +143,7 @@ export function ChatView(props: ChatViewProps) {
   const lastAssistant = [...messages].reverse().find((m) => m.role === "assistant")
 
   return (
-    <ChatProvider value={{ chatId: props.chatId }}>
+    <ChatProvider value={{ chatId: props.chatId, people: props.people }}>
       <div className="mx-auto flex min-h-[calc(100svh-5rem)] w-full max-w-3xl flex-col px-4 md:px-6">
         {messages.length === 0 ? (
           <section className="flex flex-1 flex-col justify-center gap-6 py-10">
@@ -185,7 +185,7 @@ export function ChatView(props: ChatViewProps) {
                   {m.role === "assistant" &&
                   !(busy && isLast) &&
                   (textOf(m) || m.id === lastAssistant?.id) ? (
-                    <div className="flex items-center gap-1 text-text-3">
+                    <div className="flex flex-wrap items-center gap-1 text-text-3">
                       {textOf(m) ? (
                         <IconButton
                           label={t("copy")}
@@ -216,24 +216,27 @@ export function ChatView(props: ChatViewProps) {
                       >
                         <GitFork className="size-4" />
                       </IconButton>
-                      <IconButton
-                        label={t("shareChat")}
-                        onClick={() => void shareChat(props.chatId, t("linkCopied"))}
-                      >
-                        <Share2 className="size-4" />
-                      </IconButton>
                       {m.id === lastAssistant?.id ? (
-                        <IconButton label={t("saveWorkflow")} onClick={() => setSaving(true)}>
-                          <BookmarkPlus className="size-4" />
+                        // The last reply names its actions: a phone has no hover to explain an icon.
+                        <>
+                          <PillButton onClick={() => void shareChat(props.chatId, t("linkCopied"))}>
+                            <Share2 className="size-3.5" /> {t("share")}
+                          </PillButton>
+                          <PillButton onClick={() => setSaving(true)}>
+                            <BookmarkPlus className="size-3.5" /> {t("saveWorkflow")}
+                          </PillButton>
+                        </>
+                      ) : (
+                        <IconButton
+                          label={t("shareChat")}
+                          onClick={() => void shareChat(props.chatId, t("linkCopied"))}
+                        >
+                          <Share2 className="size-4" />
                         </IconButton>
-                      ) : null}
-                      <button
-                        type="button"
-                        onClick={() => setCompareFor(m)}
-                        className="ms-1 inline-flex items-center gap-1.5 rounded-pill border border-foreground/15 px-3 py-1 text-xs font-semibold text-foreground transition-colors hover:border-lime hover:text-lime"
-                      >
+                      )}
+                      <PillButton onClick={() => setCompareFor(m)}>
                         <Scale className="size-3.5" /> {t("compare")}
-                      </button>
+                      </PillButton>
                     </div>
                   ) : null}
                 </div>
@@ -313,6 +316,18 @@ function IconButton({
       title={label}
       onClick={onClick}
       className="grid size-8 place-items-center rounded-full transition-colors hover:bg-secondary hover:text-foreground"
+    >
+      {children}
+    </button>
+  )
+}
+
+function PillButton({ onClick, children }: { onClick: () => void; children: React.ReactNode }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="ms-1 inline-flex items-center gap-1.5 rounded-pill border border-foreground/15 px-3 py-1 text-xs font-semibold text-foreground transition-colors hover:border-lime hover:text-lime focus-visible:border-lime"
     >
       {children}
     </button>

@@ -3,6 +3,7 @@
 import type { NajimiTools } from "@najimi/agent"
 import { useTranslations } from "next-intl"
 import { Artwork } from "@/components/artwork"
+import { WithPerson } from "../chat-context"
 import { CardShell } from "./insights-card"
 
 type Output = NajimiTools["tasteBrief"]["output"]
@@ -13,7 +14,13 @@ export function BriefCard({ output }: { output: Output }) {
   const tw = useTranslations("Taste.words")
   return (
     <CardShell title={output.ask} callId={null}>
-      <p className="text-sm text-paper-muted">{t("briefFor", { name: output.personName })}</p>
+      <p className="text-sm text-paper-muted">
+        <WithPerson
+          text={(name) => t("briefFor", { name })}
+          name={output.personName}
+          id={output.personId}
+        />
+      </p>
       <div className="flex -space-x-3 rtl:space-x-reverse">
         {output.loves.slice(0, 6).map((l) => (
           <Artwork

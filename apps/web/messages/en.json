@@ -58,8 +58,7 @@
     "signOut": "Sign out",
     "me": "Me",
     "start": "Start",
-    "guest": "Guest",
-    "menu": "Menu"
+    "guest": "Guest"
   },
   "Start": {
     "step": "{current} of {total}",
@@ -226,7 +225,8 @@
     "commaHint": "Separate with commas",
     "theirLoves": "What do they love?",
     "theirLovesHint": "A book, a show, a singer, a dish — three or more is best.",
-    "revealTheirs": "Show their taste"
+    "revealTheirs": "Show their taste",
+    "openTaste": "Open taste"
   },
   "Auth": {
     "title": "Keep your taste",
@@ -345,7 +345,8 @@
     "voiceFailed": "We couldn't hear that. Try again.",
     "shareChat": "Share this chat",
     "linkCopied": "Link copied",
-    "saveWorkflow": "Save as a workflow"
+    "saveWorkflow": "Save as a workflow",
+    "share": "Share"
   },
   "Cards": {
     "asking": "Asking Qloo…",
@@ -625,7 +626,8 @@
     "savedPrivate": "It's in Workflows, under Yours.",
     "seeYours": "Open",
     "saveFailed": "That didn't save. Try again.",
-    "readyMade": "Ready-made"
+    "readyMade": "Ready-made",
+    "yoursEmpty": "Your own workflows will show here. Under any answer in a chat, “Save as a workflow” turns that chat into one you can run again or share."
   },
   "Demo": {
     "title": "See Najimi work",

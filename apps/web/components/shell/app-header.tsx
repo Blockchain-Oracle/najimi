@@ -7,7 +7,7 @@ import {
   DropdownMenuTrigger,
 } from "@najimi/ui/components/dropdown-menu"
 import { cn } from "@najimi/ui/lib/utils"
-import { ChevronDown, Settings2 } from "lucide-react"
+import { Settings2 } from "lucide-react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
@@ -31,7 +31,7 @@ function NavLinks({ pathname }: { pathname: string | null }) {
       key={item.href}
       href={item.href}
       className={cn(
-        "rounded-pill px-3 py-1.5 text-sm font-semibold transition-colors",
+        "shrink-0 rounded-pill px-3 py-1.5 text-sm font-semibold whitespace-nowrap transition-colors",
         pathname?.startsWith(item.href) ? "bg-foreground text-background" : "hover:bg-secondary",
       )}
     >
@@ -40,46 +40,19 @@ function NavLinks({ pathname }: { pathname: string | null }) {
   ))
 }
 
-/**
- * On a phone the four places fold into one button named for where you are; a bottom bar would sit
- * on top of the chat's composer.
- */
-function NavMenu({ pathname }: { pathname: string | null }) {
-  const t = useTranslations("Nav")
-  const router = useRouter()
-  const here = NAV.find((item) => pathname?.startsWith(item.href))
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger className="inline-flex items-center gap-1 rounded-pill bg-foreground px-3 py-1.5 text-sm font-semibold text-background">
-        {t(here?.key ?? "menu")}
-        <ChevronDown className="size-3.5" />
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="start" className="min-w-44">
-        {NAV.map((item) => (
-          <DropdownMenuItem key={item.href} onClick={() => router.push(item.href)}>
-            {t(item.key)}
-          </DropdownMenuItem>
-        ))}
-        <DropdownMenuItem onClick={() => router.push("/settings")}>
-          {t("settings")}
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
-  )
-}
-
 /** The URL is runtime data: the lit-up nav streams in, the plain one is the static shell. */
 function CurrentNav() {
-  const pathname = usePathname()
+  return <NavLinks pathname={usePathname()} />
+}
+
+/** Where you can go, always in sight: in the header row on wide screens, its own row on a phone. */
+function Nav({ className }: { className?: string }) {
   return (
-    <>
-      <span className="contents max-sm:hidden">
-        <NavLinks pathname={pathname} />
-      </span>
-      <span className="sm:hidden">
-        <NavMenu pathname={pathname} />
-      </span>
-    </>
+    <nav className={className}>
+      <Suspense fallback={<NavLinks pathname={null} />}>
+        <CurrentNav />
+      </Suspense>
+    </nav>
   )
 }
 
@@ -99,43 +72,27 @@ export function AppHeader({ google, email }: { google: boolean; email: boolean }
         <Link href="/" className="font-title text-xl">
           najimi
         </Link>
-        <nav className="flex min-w-0 flex-1 items-center gap-1 ps-1 sm:ps-3">
-          <Suspense
-            fallback={
-              <>
-                <span className="contents max-sm:hidden">
-                  <NavLinks pathname={null} />
-                </span>
-                <span className="sm:hidden">
-                  <NavMenu pathname={null} />
-                </span>
-              </>
-            }
-          >
-            <CurrentNav />
-          </Suspense>
-        </nav>
+        <Nav className="flex min-w-0 flex-1 items-center gap-1 ps-3 max-sm:hidden" />
+        <span className="flex-1 sm:hidden" />
         <div className="hidden sm:block">
           <LanguageMenu />
         </div>
+        <Link
+          href="/settings"
+          aria-label={t("settings")}
+          title={t("settings")}
+          className="grid size-9 place-items-center rounded-full text-text-2 transition-colors hover:bg-secondary hover:text-foreground"
+        >
+          <Settings2 className="size-5" />
+        </Link>
         {isGuest ? (
-          <>
-            <Link
-              href="/settings"
-              aria-label={t("settings")}
-              title={t("settings")}
-              className="grid size-9 place-items-center rounded-full text-text-2 transition-colors hover:bg-secondary hover:text-foreground"
-            >
-              <Settings2 className="size-5" />
-            </Link>
-            <button
-              type="button"
-              onClick={() => setSignIn(true)}
-              className="sticker px-3.5 py-1.5 text-sm font-semibold"
-            >
-              {t("signIn")}
-            </button>
-          </>
+          <button
+            type="button"
+            onClick={() => setSignIn(true)}
+            className="sticker px-3.5 py-1.5 text-sm font-semibold"
+          >
+            {t("signIn")}
+          </button>
         ) : (
           <DropdownMenu>
             <DropdownMenuTrigger className="grid size-9 place-items-center rounded-full bg-lime font-title text-lime-foreground">
@@ -161,6 +118,7 @@ export function AppHeader({ google, email }: { google: boolean; email: boolean }
           </DropdownMenu>
         )}
       </div>
+      <Nav className="flex items-center gap-1 overflow-x-auto px-4 pb-2 [scrollbar-width:none] sm:hidden" />
       <SignInSheet open={signIn} onOpenChange={setSignIn} google={google} email={email} />
     </header>
   )

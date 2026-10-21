@@ -4,6 +4,7 @@ import type { NajimiTools } from "@najimi/agent"
 import { cn } from "@najimi/ui/lib/utils"
 import { useTranslations } from "next-intl"
 import { useState } from "react"
+import { WithPerson } from "../chat-context"
 import { CardShell } from "./insights-card"
 
 type Plan = NajimiTools["mealPlan"]["input"]
@@ -16,7 +17,9 @@ export function MealPlanCard({ plan, personName }: { plan: Plan; personName: str
   for (const s of plan.shopping) aisles.set(s.aisle, [...(aisles.get(s.aisle) ?? []), s])
   return (
     <CardShell title={plan.title} callId={null}>
-      <p className="text-sm text-paper-muted">{t("forName", { name: personName })}</p>
+      <p className="text-sm text-paper-muted">
+        <WithPerson text={(name) => t("forName", { name })} name={personName} />
+      </p>
       <div className="-mx-4 flex snap-x gap-3 overflow-x-auto px-4 pb-1">
         {plan.days.map((d) => (
           <div

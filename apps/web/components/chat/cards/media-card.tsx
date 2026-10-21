@@ -8,6 +8,7 @@ import { useTranslations } from "next-intl"
 import { useCallback, useState } from "react"
 import { api } from "@/lib/fetcher"
 import { type RunEvent, useRunEvents } from "@/lib/use-run"
+import { WithPerson } from "../chat-context"
 import { useMediaUrl, usePublicShare } from "../public-share"
 import { CompareSlider } from "./compare-slider"
 
@@ -77,7 +78,7 @@ export function ImageCard({ output, onAsk }: { output: ImageOut; onAsk: (text: s
       <header className="flex items-baseline justify-between gap-2 px-1">
         <h3 className="font-title text-lg leading-tight">{output.title}</h3>
         <span className="text-xs text-paper-muted">
-          {t("forName", { name: output.personName })}
+          <WithPerson text={(name) => t("forName", { name })} name={output.personName} />
         </span>
       </header>
       {failed ? (

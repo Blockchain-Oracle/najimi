@@ -1,6 +1,6 @@
 import { BUILT_IN_WORKFLOWS } from "@najimi/agent/workflows"
 import { cn } from "@najimi/ui/lib/utils"
-import { Camera, User } from "lucide-react"
+import { BookmarkPlus, Camera, User } from "lucide-react"
 import Link from "next/link"
 import { getTranslations } from "next-intl/server"
 import { Suspense } from "react"
@@ -15,8 +15,14 @@ async function Yours() {
   const session = await getSession()
   if (!session) return null
   const rows = await ownWorkflows(session.user.id)
-  if (!rows.length) return null
   const t = await getTranslations("Workflows")
+  // Nobody finds "save a chat as a workflow" by accident: say where it lives until they have one.
+  if (!rows.length)
+    return (
+      <p className="flex items-start gap-2 rounded-tile border border-foreground/12 px-4 py-3 text-sm text-text-2">
+        <BookmarkPlus className="mt-0.5 size-4 shrink-0 text-lime" /> {t("yoursEmpty")}
+      </p>
+    )
   return (
     <section className="flex flex-col gap-3">
       <h2 className="font-title text-2xl">{t("yours")}</h2>

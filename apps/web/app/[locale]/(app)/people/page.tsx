@@ -36,10 +36,15 @@ async function PeopleList() {
         >
           <LovesFan identity={identityOf(p.id)} loves={loves.filter((l) => l.personId === p.id)} />
           <div className="flex items-baseline justify-between gap-2 p-4">
-            <span className="font-title truncate text-xl">{p.name}</span>
-            {p.isSelf ? (
-              <span className="text-xs font-semibold text-paper-muted">{t("you")}</span>
-            ) : null}
+            <span className="flex min-w-0 items-baseline gap-2">
+              <span className="font-title truncate text-xl">{p.name}</span>
+              {p.isSelf ? (
+                <span className="text-xs font-semibold text-paper-muted">{t("you")}</span>
+              ) : null}
+            </span>
+            <span className="shrink-0 text-sm font-semibold underline decoration-paper-foreground/30 underline-offset-4">
+              {t("openTaste")} <span aria-hidden>→</span>
+            </span>
           </div>
         </Link>
       ))}
