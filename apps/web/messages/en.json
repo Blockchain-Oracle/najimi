@@ -4,11 +4,32 @@
     "description": "Tell Najimi what you love. It makes things for your real life that fit you — your room relit, dinner for your mum, your next book — and shows the Qloo taste data behind every choice."
   },
   "Landing": {
+    "kicker": "Built on Qloo's taste AI",
     "title": "The taste copilot.",
-    "lede": "Tell Najimi what you love. It makes things for your real life that fit you — your room relit, dinner for your mum, your next book — and shows the Qloo taste data behind every choice.",
-    "coming": "Coming together, stage by stage.",
+    "lede": "Tell Najimi three things you love. It reads your taste through Qloo, then makes things for your real life that fit you: your room relit, dinner for your mum, your next book, a night in. Every choice shows the Qloo data behind it.",
     "start": "Start — it's free",
-    "continue": "Open my taste"
+    "continue": "Open my taste",
+    "seeWorkflows": "See what it can do",
+    "showcase": "Things Najimi made",
+    "howTitle": "How it works",
+    "howLede": "Your taste isn't a genre. Qloo connects what you love across music, film, books, places and brands; Najimi turns that into things you can use.",
+    "steps": {
+      "love": {
+        "title": "Tell it what you love",
+        "body": "Three things or more: a book, an artist, a show, a place. Say how much each counts."
+      },
+      "read": {
+        "title": "Qloo reads your taste",
+        "body": "The words in your taste (aesthetic, mood, food) and picks across ten domains, live, with the reason for each."
+      },
+      "make": {
+        "title": "Najimi makes it real",
+        "body": "Restyles of your own photos, lighting plans an electrician can install, real products, recipes at the right texture, playlists, places."
+      }
+    },
+    "proof": "Compare any answer with the same ask without taste: the difference is Qloo.",
+    "footer": "Najimi, made for the Qloo hackathon.",
+    "builtOn": "Built on Qloo"
   },
   "Language": {
     "label": "Language",
@@ -328,7 +349,6 @@
     "asking": "Asking Qloo…",
     "thinking": "Thinking…",
     "failed": "This card couldn't be shown.",
-    "nothing": "Qloo has nothing for this yet.",
     "moreLikeAsk": "More like {name}",
     "lookedUp": "Looked up “{q}” in Qloo",
     "lookedUpTags": "Found Qloo tags for “{q}”",
@@ -367,7 +387,8 @@
     "cooking": "Writing the recipe…",
     "readingLabel": "Reading the FDA labels…",
     "savedPerson": "Kept a taste for {name} →",
-    "savingPerson": "Making a profile for {name}…"
+    "savingPerson": "Making a profile for {name}…",
+    "nothingFor": "Asked Qloo for “{title}”: nothing yet"
   },
   "Asked": {
     "city": "in {v}",

@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl"
 import { useState } from "react"
 import { PickCard } from "@/components/picks/pick-card"
 import { api } from "@/lib/fetcher"
+import { StepChip } from "../lookup-step"
 import { usePublicShare } from "../public-share"
 import { DemographicsView } from "./demographics"
 import { HeatmapView } from "./heatmap"
@@ -120,6 +121,14 @@ export function InsightsCard({
   })
 
   const picks = output.picks?.filter((p) => !hidden.has(p.qlooId)) ?? []
+  // An empty answer is a step on the way (the agent usually asks again, better), not a card.
+  if (!output.picks?.length && !output.tags?.length && !output.heatmap && !output.demographics)
+    return (
+      <StepChip
+        kind="search"
+        text={t("nothingFor", { title: output.title || input?.title || "" })}
+      />
+    )
   return (
     <CardShell title={output.title || input?.title || ""} callId={output.callId} chips={chips}>
       {output.picks ? (
@@ -183,13 +192,6 @@ export function InsightsCard({
               : k.replaceAll("_", " ")
           }
         />
-      ) : null}
-      {output.note &&
-      !picks.length &&
-      !output.tags?.length &&
-      !output.heatmap &&
-      !output.demographics ? (
-        <p className="text-sm text-paper-muted">{t("nothing")}</p>
       ) : null}
     </CardShell>
   )

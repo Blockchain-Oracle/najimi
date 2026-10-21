@@ -4,11 +4,32 @@
     "description": "Dites à Najimi ce que vous aimez. Il crée pour votre vraie vie des choses qui vous ressemblent — votre pièce rééclairée, le dîner de votre mère, votre prochain livre — et montre les données de goût Qloo derrière chaque choix."
   },
   "Landing": {
+    "kicker": "Construit sur l'IA de goût de Qloo",
     "title": "Le copilote du goût.",
-    "lede": "Dites à Najimi ce que vous aimez. Il crée pour votre vraie vie des choses qui vous ressemblent — votre pièce rééclairée, le dîner de votre mère, votre prochain livre — et montre les données de goût Qloo derrière chaque choix.",
-    "coming": "En construction, étape par étape.",
+    "lede": "Dis à Najimi trois choses que tu aimes. Il lit ton goût grâce à Qloo, puis crée pour ta vraie vie des choses qui te ressemblent : ta pièce rééclairée, un dîner pour ta mère, ton prochain livre, une soirée chez toi. Chaque choix montre les données Qloo derrière.",
     "start": "Commencer — c'est gratuit",
-    "continue": "Ouvrir mon goût"
+    "continue": "Ouvrir mon goût",
+    "seeWorkflows": "Voir ce qu'il sait faire",
+    "showcase": "Créations de Najimi",
+    "howTitle": "Comment ça marche",
+    "howLede": "Ton goût n'est pas un genre. Qloo relie ce que tu aimes à travers la musique, le cinéma, les livres, les lieux et les marques ; Najimi en fait des choses utiles.",
+    "steps": {
+      "love": {
+        "title": "Dis-lui ce que tu aimes",
+        "body": "Trois choses ou plus : un livre, un artiste, une série, un lieu. Dis combien chacune compte."
+      },
+      "read": {
+        "title": "Qloo lit ton goût",
+        "body": "Les mots de ton goût (esthétique, ambiance, cuisine) et des choix dans dix domaines, en direct, avec la raison de chacun."
+      },
+      "make": {
+        "title": "Najimi le rend réel",
+        "body": "Tes propres photos restylées, un plan d'éclairage qu'un électricien peut poser, de vrais produits, des recettes à la bonne texture, des playlists, des lieux."
+      }
+    },
+    "proof": "Compare n'importe quelle réponse avec la même demande sans goût : la différence, c'est Qloo.",
+    "footer": "Najimi, créé pour le hackathon Qloo.",
+    "builtOn": "Construit sur Qloo"
   },
   "Language": {
     "label": "Langue",
@@ -328,7 +349,6 @@
     "asking": "Qloo réfléchit…",
     "thinking": "Réflexion…",
     "failed": "Cette carte n'a pas pu s'afficher.",
-    "nothing": "Qloo n'a encore rien pour ça.",
     "moreLikeAsk": "Plus comme {name}",
     "lookedUp": "« {q} » cherché dans Qloo",
     "lookedUpTags": "Tags Qloo trouvés pour « {q} »",
@@ -367,7 +387,8 @@
     "cooking": "Rédaction de la recette…",
     "readingLabel": "Lecture des notices FDA…",
     "savedPerson": "Goût de {name} enregistré →",
-    "savingPerson": "Création du profil de {name}…"
+    "savingPerson": "Création du profil de {name}…",
+    "nothingFor": "Demandé à Qloo « {title} » : rien pour l'instant"
   },
   "Asked": {
     "city": "à {v}",
