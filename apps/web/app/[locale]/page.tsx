@@ -105,6 +105,12 @@ export default async function Landing({ params }: PageProps<"/[locale]">) {
         <span className="font-title text-xl">{APP.name.toLowerCase()}</span>
         <nav className="flex items-center gap-2">
           <Link
+            href="/demo"
+            className="rounded-pill px-3 py-1.5 text-sm font-semibold text-text-2 hover:text-foreground"
+          >
+            {t("demo")}
+          </Link>
+          <Link
             href="/workflows"
             className="hidden rounded-pill px-3 py-1.5 text-sm font-semibold text-text-2 hover:text-foreground sm:block"
           >

@@ -7,7 +7,7 @@ import {
   DropdownMenuTrigger,
 } from "@najimi/ui/components/dropdown-menu"
 import { cn } from "@najimi/ui/lib/utils"
-import { Settings2 } from "lucide-react"
+import { ChevronDown, Settings2 } from "lucide-react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
@@ -40,9 +40,47 @@ function NavLinks({ pathname }: { pathname: string | null }) {
   ))
 }
 
+/**
+ * On a phone the four places fold into one button named for where you are; a bottom bar would sit
+ * on top of the chat's composer.
+ */
+function NavMenu({ pathname }: { pathname: string | null }) {
+  const t = useTranslations("Nav")
+  const router = useRouter()
+  const here = NAV.find((item) => pathname?.startsWith(item.href))
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger className="inline-flex items-center gap-1 rounded-pill bg-foreground px-3 py-1.5 text-sm font-semibold text-background">
+        {t(here?.key ?? "menu")}
+        <ChevronDown className="size-3.5" />
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="start" className="min-w-44">
+        {NAV.map((item) => (
+          <DropdownMenuItem key={item.href} onClick={() => router.push(item.href)}>
+            {t(item.key)}
+          </DropdownMenuItem>
+        ))}
+        <DropdownMenuItem onClick={() => router.push("/settings")}>
+          {t("settings")}
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  )
+}
+
 /** The URL is runtime data: the lit-up nav streams in, the plain one is the static shell. */
 function CurrentNav() {
-  return <NavLinks pathname={usePathname()} />
+  const pathname = usePathname()
+  return (
+    <>
+      <span className="contents max-sm:hidden">
+        <NavLinks pathname={pathname} />
+      </span>
+      <span className="sm:hidden">
+        <NavMenu pathname={pathname} />
+      </span>
+    </>
+  )
 }
 
 /** The shell every app page shares: the wordmark, where you can go, language, and who you are. */
@@ -61,8 +99,19 @@ export function AppHeader({ google, email }: { google: boolean; email: boolean }
         <Link href="/" className="font-title text-xl">
           najimi
         </Link>
-        <nav className="flex flex-1 items-center gap-1 ps-3">
-          <Suspense fallback={<NavLinks pathname={null} />}>
+        <nav className="flex min-w-0 flex-1 items-center gap-1 ps-1 sm:ps-3">
+          <Suspense
+            fallback={
+              <>
+                <span className="contents max-sm:hidden">
+                  <NavLinks pathname={null} />
+                </span>
+                <span className="sm:hidden">
+                  <NavMenu pathname={null} />
+                </span>
+              </>
+            }
+          >
             <CurrentNav />
           </Suspense>
         </nav>

@@ -29,7 +29,8 @@
     },
     "proof": "Compare any answer with the same ask without taste: the difference is Qloo.",
     "footer": "Najimi, made for the Qloo hackathon.",
-    "builtOn": "Built on Qloo"
+    "builtOn": "Built on Qloo",
+    "demo": "Demo"
   },
   "Language": {
     "label": "Language",
@@ -57,7 +58,8 @@
     "signOut": "Sign out",
     "me": "Me",
     "start": "Start",
-    "guest": "Guest"
+    "guest": "Guest",
+    "menu": "Menu"
   },
   "Start": {
     "step": "{current} of {total}",
@@ -624,5 +626,33 @@
     "seeYours": "Open",
     "saveFailed": "That didn't save. Try again.",
     "readyMade": "Ready-made"
+  },
+  "Demo": {
+    "title": "See Najimi work",
+    "lede": "From three loves to a relit room: the taste from Qloo, two restyles of the real room, a lighting plan, real lamps and a soundtrack.",
+    "coverAlt": "Najimi on a phone: a bedroom before and after, relit in two warm moods",
+    "pendingTitle": "The recorded demo is on its way",
+    "pendingBody": "Until it's here, walk the same path yourself on the live app below. It takes about three minutes and no account.",
+    "pathTitle": "Try it in three minutes",
+    "steps": {
+      "start": {
+        "title": "Tell it three things you love",
+        "body": "A book, an artist, a show. Say how much each counts."
+      },
+      "taste": {
+        "title": "Watch your taste arrive",
+        "body": "Your words and picks land live from Qloo, each with the love that led to it."
+      },
+      "relight": {
+        "title": "Relight a room",
+        "body": "Pick a sample room (or your own photo), say what it's for, and get two restyles, a lighting plan and real lamps."
+      },
+      "share": {
+        "title": "Share it",
+        "body": "Send the chat or the result; it unfurls with a picture, and never shows your own photo."
+      }
+    },
+    "cta": "Start with Relight my room",
+    "docs": "Read the docs"
   }
 }

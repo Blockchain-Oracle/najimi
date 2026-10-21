@@ -29,7 +29,8 @@
     },
     "proof": "Compare n'importe quelle réponse avec la même demande sans goût : la différence, c'est Qloo.",
     "footer": "Najimi, créé pour le hackathon Qloo.",
-    "builtOn": "Construit sur Qloo"
+    "builtOn": "Construit sur Qloo",
+    "demo": "Démo"
   },
   "Language": {
     "label": "Langue",
@@ -57,7 +58,8 @@
     "signOut": "Se déconnecter",
     "me": "Moi",
     "start": "Commencer",
-    "guest": "Invité"
+    "guest": "Invité",
+    "menu": "Menu"
   },
   "Start": {
     "step": "{current} sur {total}",
@@ -624,5 +626,33 @@
     "seeYours": "Ouvrir",
     "saveFailed": "Ça n'a pas été enregistré. Réessaie.",
     "readyMade": "Prêts à l'emploi"
+  },
+  "Demo": {
+    "title": "Voir Najimi à l'œuvre",
+    "lede": "De trois coups de cœur à une pièce rééclairée : le goût lu par Qloo, deux restylages de la vraie pièce, un plan d'éclairage, de vraies lampes et une bande-son.",
+    "coverAlt": "Najimi sur un téléphone : une chambre avant et après, rééclairée dans deux ambiances chaudes",
+    "pendingTitle": "La démo enregistrée arrive",
+    "pendingBody": "En attendant, suis le même chemin toi-même sur l'app en ligne ci-dessous. Environ trois minutes, sans compte.",
+    "pathTitle": "Essaie en trois minutes",
+    "steps": {
+      "start": {
+        "title": "Dis-lui trois choses que tu aimes",
+        "body": "Un livre, un artiste, une série. Dis combien chacune compte."
+      },
+      "taste": {
+        "title": "Regarde ton goût arriver",
+        "body": "Tes mots et tes choix arrivent en direct de Qloo, chacun avec le coup de cœur qui l'a amené."
+      },
+      "relight": {
+        "title": "Rééclaire une pièce",
+        "body": "Choisis une pièce exemple (ou ta photo), dis à quoi elle sert, et reçois deux restylages, un plan d'éclairage et de vraies lampes."
+      },
+      "share": {
+        "title": "Partage-le",
+        "body": "Envoie le chat ou le résultat ; il s'affiche avec une image, sans jamais montrer ta photo."
+      }
+    },
+    "cta": "Commencer avec Rééclairer ma pièce",
+    "docs": "Lire la doc"
   }
 }

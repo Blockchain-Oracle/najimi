@@ -12,8 +12,10 @@ export const APP = {
     "Tell Najimi what you love. It makes things for your real life that fit you — your room relit, dinner for your mum, your next book — and shows the real Qloo taste data behind every choice.",
   /** The public repository and live URLs, once they exist; links stay hidden until then. */
   repository: null as string | null,
-  url: null as string | null,
-  docs: null as string | null,
+  url: "https://najimi.84.46.247.92.sslip.io" as string | null,
+  docs: "https://najimi-docs.84.46.247.92.sslip.io" as string | null,
+  /** The recorded demo's YouTube id; until there is one, /demo says so and shows the way in. */
+  demoVideo: null as string | null,
 } as const
 
 /** Local development ports, chosen to sit beside Konkyo (3210/3211/54320) without clashing. */
