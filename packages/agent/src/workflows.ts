@@ -45,7 +45,7 @@ export const BUILT_IN_WORKFLOWS: BuiltInWorkflow[] = [
 1. Work for the chat's person (often someone the user cares for, like a parent). If their constraints are unknown, askUser once: diet, allergies, texture (IDDSI level), serve lukewarm, medications.
 2. Save what you learn with remember.
 3. If they take medication, medicationNotes first, and respect what the label says (e.g. vitamin K for warfarin, grapefruit for some statins).
-4. tasteBrief (focus food).
+4. tasteBrief (focus food). If their cuisine and dish words are thin, ask for restaurants they'd love near them (qlooInsights ask place, filter.tags ["urn:tag:genre:place:restaurant"]): each comes with what Qloo says it's known for; build on those cuisines and dishes.
 5. recipe: from their cuisine and dish words, adapted to their texture level and temperature; then makeImage new, purpose dish, 1 variant.
 6. Offer mealPlan for the week with a shopping list, and places near them with fitting dietary tags (qlooTags "vegetarian" etc., then qlooInsights ask place).`,
   },

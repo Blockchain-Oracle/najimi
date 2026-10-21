@@ -321,7 +321,9 @@
     "planning": "Planning the light…",
     "shopping": "Looking on the brands' own sites…",
     "cooking": "Writing the recipe…",
-    "readingLabel": "Reading the FDA labels…"
+    "readingLabel": "Reading the FDA labels…",
+    "savedPerson": "Kept a taste for {name} →",
+    "savingPerson": "Making a profile for {name}…"
   },
   "Asked": {
     "city": "in {v}",

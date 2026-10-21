@@ -53,6 +53,8 @@ export type StoredPick = {
   links?: Record<string, string>
   /** Places: the neighbourhood (or town) it's in. */
   area?: string | null
+  /** Places: what Qloo says they're known for (cuisines, specialty dishes). */
+  details?: string[]
 }
 
 export const userPrefs = pgTable("user_prefs", {

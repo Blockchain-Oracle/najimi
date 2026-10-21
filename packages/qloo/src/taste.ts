@@ -157,6 +157,21 @@ export function toPick(item: TasteItem, loves: Love[], callId: string): StoredPi
     because: becauseOf(item, loves),
     callId,
     links: linksOf(item),
+    ...(item.type === "urn:entity:place"
+      ? {
+          details: [
+            ...new Set(
+              item.tagRefs
+                .filter(
+                  (t) =>
+                    /specialty_dish|cuisine/.test(t.type) ||
+                    t.id.startsWith("urn:tag:genre:place:restaurant:"),
+                )
+                .map((t) => t.name.trim()),
+            ),
+          ].slice(0, 5),
+        }
+      : {}),
     ...(item.type === "urn:entity:place" || item.type === "urn:entity:destination"
       ? {
           area:

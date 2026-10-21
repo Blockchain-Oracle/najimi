@@ -1,8 +1,8 @@
 "use client"
 
-import { Brain, Search, Tags, Users } from "lucide-react"
+import { Brain, Search, Tags, UserPlus, Users } from "lucide-react"
 
-const ICONS = { search: Search, tags: Tags, audiences: Users, remember: Brain }
+const ICONS = { search: Search, tags: Tags, audiences: Users, remember: Brain, person: UserPlus }
 
 /** A small step the agent took on the way (a Qloo lookup, a remembered fact), shown as a chip. */
 export function StepChip({

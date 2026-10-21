@@ -321,7 +321,9 @@
     "planning": "نصمّم الإضاءة…",
     "shopping": "نبحث في مواقع العلامات…",
     "cooking": "نكتب الوصفة…",
-    "readingLabel": "نقرأ نشرات FDA…"
+    "readingLabel": "نقرأ نشرات FDA…",
+    "savedPerson": "حُفظ ذوق {name} ←",
+    "savingPerson": "ننشئ ملفًا لـ {name}…"
   },
   "Asked": {
     "city": "في {v}",

@@ -20,7 +20,7 @@ import { labelNotes, productsFor } from "@najimi/sources"
 import { tool } from "ai"
 import { and, asc, eq } from "drizzle-orm"
 import type { z } from "zod"
-import type { PersonRow } from "@/lib/people"
+import { type PersonRow, startTasteRun } from "@/lib/people"
 import { charge, refund } from "./usage"
 
 /** Who a turn acts for and on: the signed-in user, their chat, and everyone they keep a taste for. */
@@ -92,7 +92,7 @@ function askedOf(input: InsightsInput, city: string | null) {
 }
 
 const pickLine = (p: Pick, i: number) =>
-  `${i + 1}. ${p.name} [id ${p.qlooId}]${p.caption ? ` (${p.caption})` : ""}${p.because ? ` — because they love ${p.because.name}` : ""}${p.affinity != null ? ` — ${Math.round(p.affinity * 100)}% match` : ""}`
+  `${i + 1}. ${p.name} [id ${p.qlooId}]${p.caption ? ` (${p.caption})` : ""}${p.details?.length ? ` known for ${p.details.join(", ")}` : ""}${p.because ? ` — because they love ${p.because.name}` : ""}${p.affinity != null ? ` — ${Math.round(p.affinity * 100)}% match` : ""}`
 
 const ENTITY_ASKS = new Set(TASTE_DOMAINS.map((d) => d.key as string))
 const FILTER_TYPE: Record<string, string> = {
@@ -704,10 +704,77 @@ export function buildTools(ctx: TurnContext, messageId: () => string | undefined
       }),
     }),
 
+    savePerson: tool({
+      ...toolDefs.savePerson,
+      execute: async (input) => {
+        const existing = ctx.people.find(
+          (p) => p.name.toLowerCase() === input.name.trim().toLowerCase() && !p.isSelf,
+        )
+        if (existing)
+          return { personId: existing.id, name: existing.name, loves: [], existed: true }
+        const found = input.loveIds?.length
+          ? ((
+              await entities({ ids: input.loveIds }, call(`What ${input.name} loves`)).catch(
+                () => null,
+              )
+            )?.data ?? [])
+          : []
+        const [row] = await db
+          .insert(schema.people)
+          .values({
+            ownerId: ctx.userId,
+            name: input.name.trim(),
+            city: input.city ?? ctx.person.city,
+            ageBand: input.ageBand ?? null,
+            constraints: {
+              ...input.constraints,
+              notes: [
+                ...(input.relation ? [input.relation] : []),
+                ...(input.constraints?.notes ?? []),
+              ],
+            },
+          })
+          .returning()
+        if (!row) throw new Error("Couldn't save the profile")
+        const loves = found.filter((e) => e.type)
+        if (loves.length) {
+          await db
+            .insert(schema.loves)
+            .values(
+              loves.map((e) => ({
+                personId: row.id,
+                qlooId: e.entityId,
+                type: e.type ?? "",
+                name: e.name,
+                imageUrl: e.image,
+                weight: 5,
+              })),
+            )
+            .onConflictDoNothing()
+          await startTasteRun(ctx.userId, row.id)
+        }
+        ctx.people.push(row)
+        return { personId: row.id, name: row.name, loves: loves.map((e) => e.name), existed: false }
+      },
+      toModelOutput: ({ output }) => ({
+        type: "text",
+        value: `${output.existed ? "Already kept" : "Saved"}: ${output.name}, id ${output.personId}${output.loves.length ? `, loves ${output.loves.join(", ")} (taste computing)` : ""}. Use this id in for.`,
+      }),
+    }),
+
     tasteBrief: tool({
       ...toolDefs.tasteBrief,
       execute: async (input) => {
         const person = target(ctx, input.for)
+        // A profile made moments ago is still computing: give it a few seconds to land.
+        for (let i = 0; i < 12; i++) {
+          const [t] = await db
+            .select({ words: schema.tastes.words })
+            .from(schema.tastes)
+            .where(eq(schema.tastes.personId, person.id))
+          if (!t || t.words) break
+          await new Promise((r) => setTimeout(r, 1000))
+        }
         const [[taste], rows] = await Promise.all([
           db.select().from(schema.tastes).where(eq(schema.tastes.personId, person.id)),
           db
@@ -755,6 +822,11 @@ export function buildTools(ctx: TurnContext, messageId: () => string | undefined
         const person = target(ctx, input.for)
         const c: Constraints = { ...person.constraints }
         const value = input.value.trim()
+        // "None" is an answer, not a fact: nothing to keep for a diet, an allergy or a medication.
+        const nothing =
+          /^(none|no|nothing|n\/a|aucune?|rien|non|ninguno|nenhum|لا|لا يوجد)\b/i.test(value)
+        if (nothing && ["diet", "allergy", "medication"].includes(input.kind))
+          return { personId: person.id, personName: person.name, kind: input.kind, value }
         const add = (list: string[] | undefined) => [...new Set([...(list ?? []), value])]
         switch (input.kind) {
           case "diet":

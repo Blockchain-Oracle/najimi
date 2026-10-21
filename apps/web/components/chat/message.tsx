@@ -153,6 +153,18 @@ function ToolPart({ part, actions }: { part: Part; actions: MessageActions }) {
           text={t("lookedUpAudiences")}
         />
       )
+    case "tool-savePerson":
+      return part.state === "output-available" ? (
+        <a href={`/people/${part.output.personId}`} className="w-fit">
+          <StepChip kind="person" text={t("savedPerson", { name: part.output.name })} />
+        </a>
+      ) : (
+        <StepChip
+          kind="person"
+          running
+          text={t("savingPerson", { name: part.input?.name ?? "" })}
+        />
+      )
     case "tool-remember":
       return part.state === "output-available" ? (
         <StepChip

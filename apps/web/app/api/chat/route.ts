@@ -185,6 +185,7 @@ export async function POST(request: Request) {
   const result = streamText({
     model: agentModel(modelId),
     instructions: `${RULES}\n\n${contextBlock({
+      speaker: people.find((p) => p.isSelf)?.name ?? person.name,
       locale: chat.locale,
       today: new Date().toISOString().slice(0, 10),
       mode: chat.mode,

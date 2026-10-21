@@ -31,6 +31,7 @@ export const pickSchema = z.object({
   callId: z.string(),
   links: z.record(z.string(), z.string()).optional(),
   area: z.string().nullable().optional(),
+  details: z.array(z.string()).optional(),
 })
 export type Pick = z.infer<typeof pickSchema>
 
@@ -489,6 +490,36 @@ export const toolDefs = {
           url: z.string().nullable(),
         }),
       ),
+    }),
+  }),
+
+  savePerson: tool({
+    description:
+      "Keep a taste profile for someone the person makes things for (a mum, a partner, a friend, a client) when they don't have one yet: their name, what they love (Qloo ids from qlooSearch), city, age band and what to keep in mind (diet, allergies, IDDSI texture, lukewarm food, medications). Their taste starts computing at once; use the returned id in for. Never put someone else's facts on the speaker's own profile.",
+    inputSchema: z.object({
+      name: z.string().min(1).max(60),
+      relation: z.string().max(40).optional(),
+      city: z.string().max(120).optional(),
+      ageBand: z
+        .enum(["24_and_younger", "25_to_29", "30_to_34", "35_to_44", "45_to_54", "55_and_older"])
+        .optional(),
+      loveIds: z.array(z.string().max(64)).max(8).optional(),
+      constraints: z
+        .object({
+          diet: z.array(z.string().max(60)).max(8).optional(),
+          allergies: z.array(z.string().max(60)).max(8).optional(),
+          iddsi: z.number().int().min(3).max(7).optional(),
+          serveWarm: z.boolean().optional(),
+          medications: z.array(z.string().max(60)).max(8).optional(),
+          notes: z.array(z.string().max(160)).max(6).optional(),
+        })
+        .optional(),
+    }),
+    outputSchema: z.object({
+      personId: z.string(),
+      name: z.string(),
+      loves: z.array(z.string()),
+      existed: z.boolean(),
     }),
   }),
 

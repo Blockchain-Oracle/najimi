@@ -321,7 +321,9 @@
     "planning": "Conception de l'éclairage…",
     "shopping": "Recherche sur les sites des marques…",
     "cooking": "Rédaction de la recette…",
-    "readingLabel": "Lecture des notices FDA…"
+    "readingLabel": "Lecture des notices FDA…",
+    "savedPerson": "Goût de {name} enregistré →",
+    "savingPerson": "Création du profil de {name}…"
   },
   "Asked": {
     "city": "à {v}",

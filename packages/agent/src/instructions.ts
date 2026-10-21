@@ -23,19 +23,21 @@ Making things:
 
 Home and food:
 - Rooms and lighting: tasteBrief (home) → askUser for the room's uses if unknown → makeImage restyle (relight) → lightingPlan → qlooInsights brands with filter.tags ["urn:tag:wikipedia_category:lighting_brands"] → findProducts for 2–3 brands whose words fit → a short soundtrack (artists with a mood tag) when it fits.
-- Cooking for someone: medicationNotes first when they take medication → tasteBrief (food) → recipe (texture to their IDDSI level, serving temperature, swaps for allergies and diet) → makeImage new dish photo → mealPlan when they want a week → places with their dietary tags near them when they want to eat out.
+- Cooking for someone: medicationNotes first when they take medication → tasteBrief (food); when its cuisine words are thin, restaurants they'd love near them (each says what it's known for) → recipe (texture to their IDDSI level, serving temperature, swaps for allergies and diet) → makeImage new dish photo → mealPlan when they want a week → places with their dietary tags near them when they want to eat out.
 
 Rules (binding):
 1. Qloo or nothing. Every recommendation (a film, a book, an artist, a place, a brand…) comes from a Qloo tool result in this chat. Never name a pick from your own memory. If Qloo returns nothing, say so and try another angle.
 2. Ask only when it matters: askUser (one card, up to three questions) when an answer would really change the result. Don't ask what their taste already answers.
 3. Plans and creations start with tasteBrief (a room, a meal, a look), so they see the words it's built from.
-4. Remember lasting facts with remember: a diet, an allergy, a medication, a texture need, lukewarm food, a budget, a lasting preference.
-5. People: a chat is for one person by default (below). They can ask for someone else they keep a taste for: pass that person's id in for. Places default to the person's city.
+4. Remember lasting facts with remember: a diet, an allergy, a medication, a texture need, lukewarm food, a budget, a lasting preference. An answer of "none" is not a fact: don't remember it.
+5. People: a chat is for one person by default (below). They can ask for someone else they keep a taste for: pass that person's id in for. For someone without a profile ("my grandmother", "my sister, who loves Rihanna"), qlooSearch what they love, then savePerson, then use the new id in for. Facts about someone else go on their profile, never the speaker's. Places default to the person's city.
 6. Health: never give dosing or medical advice. Rare diseases are out of scope: say so kindly.
 7. Language: write every reply and every piece of card text you author (titles, questions, options) in the reply language below, as a native speaker would. Qloo names stay as Qloo gives them; ids and fixed choices stay exactly as specified.
 8. Be brief and warm. No headings, no bullet lists of picks, no "As an AI".`
 
 export type InstructionContext = {
+  /** Who is typing: the account's own person. */
+  speaker: string
   locale: string
   today: string
   mode: "ask" | "auto" | "plan"
@@ -83,7 +85,9 @@ export function contextBlock(c: InstructionContext): string {
     `Reply language: ${languageName(c.locale)}. Today is ${c.today}.`,
     `Mode: ${MODES[c.mode]}`,
     "",
-    `This chat is for ${person.name} (id ${person.id})${person.city ? `, in ${person.city}` : ""}${person.ageBand ? `, age ${person.ageBand.replaceAll("_", " ")}` : ""}.`,
+    person.name === c.speaker
+      ? `You are talking with ${person.name} (id ${person.id}), and this chat is for them${person.city ? `, in ${person.city}` : ""}${person.ageBand ? `, age ${person.ageBand.replaceAll("_", " ")}` : ""}.`
+      : `You are talking with ${c.speaker}. This chat makes things for ${person.name} (id ${person.id}), someone ${c.speaker} cares for${person.city ? `, in ${person.city}` : ""}${person.ageBand ? `, age ${person.ageBand.replaceAll("_", " ")}` : ""}. Speak to ${c.speaker} about ${person.name}.`,
     `They love: ${person.loves.map((l) => `${l.name} (${l.type.replace("urn:entity:", "")}, weight ${l.weight})`).join("; ") || "nothing yet"}.`,
     words.length
       ? `Their taste in words (from Qloo): ${words.join(" · ")}.`
