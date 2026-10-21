@@ -1,31 +1,47 @@
 import { cn } from "@najimi/ui/lib/utils"
-import Image from "next/image"
 
-const RATIO = { square: "aspect-square", poster: "aspect-[2/3]", place: "aspect-[4/3]" } as const
+const RATIO = {
+  square: "aspect-square",
+  poster: "aspect-[2/3]",
+  place: "aspect-[4/3]",
+} as const
+
+/** Artwork shape per Qloo type: posters for film and TV, landscape for places, square otherwise. */
+export function shapeOf(type: string | null | undefined): keyof typeof RATIO {
+  if (type === "urn:entity:movie" || type === "urn:entity:tv_show" || type === "urn:entity:book")
+    return "poster"
+  if (type === "urn:entity:place" || type === "urn:entity:destination") return "place"
+  return "square"
+}
 
 /**
- * A Qloo entity's artwork in its Ash frame (design lock: colour lives only in artwork). Missing
- * artwork is an intentional poster tile: the name in the display face, never a grey icon box.
+ * A Qloo entity's artwork. Missing artwork (games, people, destinations) is an intentional poster
+ * tile: the name set large on kraft, never a grey icon box.
  */
 export function Artwork({
   src,
   name,
   shape = "square",
   className,
-  sizes = "160px",
 }: {
   src: string | null | undefined
   name: string
   shape?: keyof typeof RATIO
   className?: string
-  sizes?: string
 }) {
   return (
-    <div className={cn("relative overflow-hidden rounded-card bg-ash", RATIO[shape], className)}>
+    <div className={cn("relative overflow-hidden rounded-tile bg-ash", RATIO[shape], className)}>
       {src ? (
-        <Image src={src} alt={name} fill sizes={sizes} className="object-cover" unoptimized />
+        // biome-ignore lint/performance/noImgElement: Qloo artwork comes from many hosts; no resizing proxy
+        <img
+          src={src}
+          alt=""
+          loading="lazy"
+          decoding="async"
+          className="absolute inset-0 size-full object-cover"
+        />
       ) : (
-        <span className="font-display-poster absolute inset-0 flex items-end p-3 text-xl leading-[0.9] break-words text-foreground/80">
+        <span className="font-title absolute inset-0 flex items-end bg-kraft p-2.5 text-base leading-[0.95] break-words text-kraft-foreground">
           {name}
         </span>
       )}

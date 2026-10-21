@@ -201,6 +201,8 @@ export type TasteItem = {
   /** Explainability: how much each signal entity drove this result (0–1). */
   drivers: { entityId: string; score: number }[]
   tags: string[]
+  /** The tags with their ids and types (aesthetic, lifestyle… words are read from these). */
+  tagRefs: { id: string; name: string; type: string }[]
   /** Tag ids, primary genre first: a signal that fetches this entity's full record. */
   tagIds: string[]
   handles: Handles
@@ -296,6 +298,7 @@ export function toTasteItem(entity: QlooEntity): TasteItem {
       score: d.score,
     })),
     tags: (entity.tags ?? []).map((t) => t.name),
+    tagRefs: tagsWithTypes(entity),
     tagIds: [
       ...new Set(
         [

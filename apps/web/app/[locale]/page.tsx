@@ -1,4 +1,5 @@
 import { APP } from "@najimi/config"
+import Link from "next/link"
 import { getTranslations } from "next-intl/server"
 import { LanguageMenu } from "@/components/language-menu"
 import { pageLocale } from "@/lib/page-locale"
@@ -16,7 +17,21 @@ export default async function Landing({ params }: PageProps<"/[locale]">) {
       <section className="flex flex-1 flex-col justify-center gap-8 py-16">
         <h1 className="font-title text-hero max-w-4xl">{t("title")}</h1>
         <p className="max-w-xl text-lg text-text-2">{t("lede")}</p>
-        <p className="sticker w-fit px-4 py-2 text-sm font-semibold">{t("coming")}</p>
+        <div className="flex flex-wrap items-center gap-4">
+          <Link
+            href="/start"
+            className="rounded-pill bg-primary px-7 py-3.5 text-base font-semibold text-primary-foreground shadow-sticker transition-transform hover:-translate-y-0.5"
+          >
+            {t("start")}
+          </Link>
+          <Link
+            href="/me"
+            className="text-sm font-semibold underline underline-offset-4 decoration-foreground/30"
+          >
+            {t("continue")}
+          </Link>
+        </div>
+        <p className="text-sm text-text-3">{t("coming")}</p>
       </section>
     </main>
   )

@@ -2,6 +2,7 @@ import { migrateDatabase } from "@najimi/db/migrate"
 import { boss, type Payload, QUEUES, RETIRED_QUEUES } from "@najimi/jobs"
 import { emit, setRunStatus } from "@najimi/live"
 import { closeInterruptedRuns } from "./interrupted"
+import { tasteRefresh } from "./jobs/taste-refresh"
 
 /*
  * The worker: every slow job runs here, never inside a web request. It applies the
@@ -32,6 +33,16 @@ async function main() {
         await new Promise((resolve) => setTimeout(resolve, STEP_PAUSE_MS))
       }
       await setRunStatus(runId, "done")
+    },
+  )
+
+  await queues.work<Payload<"tasteRefresh">>(
+    QUEUES.tasteRefresh.name,
+    { localConcurrency: 3 },
+    async ([job]) => {
+      if (!job) return
+      const { personId, runId } = QUEUES.tasteRefresh.payload.parse(job.data)
+      await tasteRefresh(personId, runId)
     },
   )
 

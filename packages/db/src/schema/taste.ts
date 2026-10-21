@@ -19,7 +19,7 @@ export type Constraints = {
   diet?: string[]
   allergies?: string[]
   /** IDDSI food texture level (3 liquidised … 7 regular). */
-  iddsi?: number
+  iddsi?: number | null
   serveWarm?: boolean
   /** Generic drug names, for medication notes from the FDA label. */
   medications?: string[]

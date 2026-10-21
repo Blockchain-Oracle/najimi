@@ -15,6 +15,16 @@ export const QUEUES = {
     options: { retryLimit: 0, expireInSeconds: 5 * 60 },
     send: { heartbeatSeconds: JOBS.heartbeatSeconds },
   },
+  /**
+   * A person's taste (T2): words and picks per domain from their weighted loves, each landing on
+   * the reveal as it arrives. Qloo answers are cached, so a retry is cheap.
+   */
+  tasteRefresh: {
+    name: "taste-refresh",
+    payload: z.object({ personId: z.uuid(), runId: z.uuid() }),
+    options: { retryLimit: 1, retryDelay: 5, expireInSeconds: 5 * 60 },
+    send: { heartbeatSeconds: JOBS.heartbeatSeconds },
+  },
 } as const
 
 /** Queues an earlier version of the product used; the worker deletes them once at start. */

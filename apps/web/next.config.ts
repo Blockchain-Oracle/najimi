@@ -15,6 +15,7 @@ const nextConfig: NextConfig = {
     "@najimi/agent",
     "@najimi/config",
     "@najimi/db",
+    "@najimi/email",
     "@najimi/env",
     "@najimi/jobs",
     "@najimi/live",
