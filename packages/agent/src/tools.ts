@@ -309,6 +309,189 @@ export const toolDefs = {
     }),
   }),
 
+  lightingPlan: tool({
+    description:
+      'Show a lighting plan an electrician can install (brief #1: mood, comfort and function, not just bright or dim). Layers (ambient, task, accent, decorative) with fixtures, colour temperature in kelvin, lumens, dimming and controls; moments ("evening", "reading", "dinner") with kelvin and brightness; and a short brief for the electrician. Build it from the room\'s uses and the person\'s taste words. Text in the reply language.',
+    inputSchema: z.object({
+      title: z.string().max(80),
+      for: personRef,
+      room: z.string().max(60),
+      uses: z.array(z.string().max(60)).max(6),
+      words: z.array(z.string().max(60)).max(10),
+      layers: z
+        .array(
+          z.object({
+            layer: z.enum(["ambient", "task", "accent", "decorative"]),
+            why: z.string().max(200),
+            fixtures: z
+              .array(
+                z.object({
+                  type: z.string().max(60),
+                  placement: z.string().max(120),
+                  kelvin: z.number().int().min(1800).max(6500),
+                  lumens: z.number().int().min(50).max(10000).optional(),
+                  dimmable: z.boolean(),
+                  control: z.enum(["switch", "dimmer", "smart", "plug-in"]),
+                }),
+              )
+              .min(1)
+              .max(4),
+          }),
+        )
+        .min(2)
+        .max(4),
+      moments: z
+        .array(
+          z.object({
+            name: z.string().max(40),
+            kelvin: z.number().int().min(1800).max(6500),
+            brightness: z.number().int().min(5).max(100),
+            note: z.string().max(140),
+          }),
+        )
+        .min(2)
+        .max(4),
+      electrician: z.object({
+        circuits: z.string().max(240),
+        switching: z.string().max(240),
+        dimmers: z.string().max(240),
+        notes: z.array(z.string().max(160)).max(5),
+      }),
+    }),
+    outputSchema: z.object({ planId: z.string(), personName: z.string() }),
+  }),
+
+  findProducts: tool({
+    description:
+      'Real products for "get the look": for brands from qlooInsights (pass their Qloo ids), look on each brand\'s own website for a category (English: "floor lamp", "linen throw", "ceramic mug") and return named products with price, image and link. Choose brands whose design words match the person\'s taste; skip appliance makers. Takes 10-30 seconds.',
+    inputSchema: z.object({
+      title: z.string().max(80),
+      brandIds: z.array(z.string().max(64)).min(1).max(4),
+      category: z.string().min(2).max(60),
+    }),
+    outputSchema: z.object({
+      title: z.string(),
+      category: z.string(),
+      brands: z.array(
+        z.object({
+          id: z.string(),
+          name: z.string(),
+          site: z.string().nullable(),
+          image: z.string().nullable(),
+          products: z.array(
+            z.object({
+              name: z.string(),
+              image: z.string().nullable(),
+              price: z.number().nullable(),
+              currency: z.string().nullable(),
+              url: z.string(),
+            }),
+          ),
+        }),
+      ),
+    }),
+  }),
+
+  recipe: tool({
+    description:
+      "Show a recipe card for someone (brief #2: meals for older adults or anyone with needs): built from their cuisine and dish words and their constraints (diet, allergies, IDDSI texture level, serve lukewarm). Texture notes must match their IDDSI level. Then offer a dish photo with makeImage (kind new, purpose dish). Text in the reply language.",
+    inputSchema: z.object({
+      title: z.string().max(80),
+      for: personRef,
+      blurb: z.string().max(240),
+      servings: z.number().int().min(1).max(12),
+      minutes: z.number().int().min(5).max(600),
+      cuisine: z.string().max(40),
+      ingredients: z
+        .array(
+          z.object({
+            item: z.string().max(80),
+            amount: z.number().nullable(),
+            unit: z.string().max(20),
+            note: z.string().max(80).optional(),
+          }),
+        )
+        .min(2)
+        .max(25),
+      steps: z.array(z.string().max(400)).min(2).max(15),
+      texture: z.object({
+        iddsi: z.number().int().min(3).max(7).nullable(),
+        note: z.string().max(240),
+      }),
+      serve: z.enum(["hot", "warm", "lukewarm", "cold"]),
+      swaps: z
+        .array(
+          z.object({ from: z.string().max(60), to: z.string().max(60), why: z.string().max(120) }),
+        )
+        .max(4),
+      words: z.array(z.string().max(60)).max(8),
+    }),
+    outputSchema: z.object({
+      recipeId: z.string(),
+      personName: z.string(),
+      constraints: z.array(z.string()),
+    }),
+  }),
+
+  mealPlan: tool({
+    description:
+      "Show a meal plan for several days with a shopping list, for someone (their cuisine words and constraints). Text in the reply language.",
+    inputSchema: z.object({
+      title: z.string().max(80),
+      for: personRef,
+      days: z
+        .array(
+          z.object({
+            day: z.string().max(30),
+            meals: z
+              .array(
+                z.object({
+                  slot: z.string().max(20),
+                  name: z.string().max(80),
+                  note: z.string().max(120).optional(),
+                }),
+              )
+              .min(1)
+              .max(4),
+          }),
+        )
+        .min(1)
+        .max(7),
+      shopping: z
+        .array(
+          z.object({
+            item: z.string().max(60),
+            amount: z.string().max(30),
+            aisle: z.string().max(30),
+          }),
+        )
+        .max(40),
+    }),
+    outputSchema: z.object({ planId: z.string(), personName: z.string() }),
+  }),
+
+  medicationNotes: tool({
+    description:
+      "Food and drink notes from the FDA drug label (openFDA) for someone's medications (generic names), cited with the label's date and link. Use before suggesting food for someone on medication. Never give dosing or medical advice.",
+    inputSchema: z.object({
+      for: personRef,
+      medications: z.array(z.string().min(2).max(60)).min(1).max(5),
+    }),
+    outputSchema: z.object({
+      personName: z.string(),
+      notes: z.array(
+        z.object({
+          medication: z.string(),
+          found: z.boolean(),
+          brand: z.string().nullable(),
+          excerpts: z.array(z.object({ section: z.string(), text: z.string() })),
+          effective: z.string().nullable(),
+          url: z.string().nullable(),
+        }),
+      ),
+    }),
+  }),
+
   tasteBrief: tool({
     description:
       "Show the taste brief card: the words of a person's taste that a plan or a creation will be built from (look, rooms, mood, food), and the loves behind them. Call it first when planning or making something for someone (a room, a meal, a look), so they see what their taste is made of.",

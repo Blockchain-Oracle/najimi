@@ -21,7 +21,7 @@ import {
   streamText,
   toUIMessageStream,
 } from "ai"
-import { eq } from "drizzle-orm"
+import { eq, sql } from "drizzle-orm"
 import { z } from "zod"
 import { fail, withSession } from "@/lib/api"
 import { forModel, ownsUploads } from "@/lib/chat/files"
@@ -46,6 +46,8 @@ const bodySchema = z.object({
   messageId: z.string().max(100).optional(),
   /** Who a new chat is for (later turns use the chat's own). */
   personId: z.uuid().optional(),
+  /** A built-in workflow a new chat runs. */
+  workflow: z.string().max(60).optional(),
 })
 
 /** Approvals are signed so a client can't forge "approved"; one secret on every instance. */
@@ -84,6 +86,17 @@ export async function POST(request: Request) {
       .select()
       .from(schema.userPrefs)
       .where(eq(schema.userPrefs.userId, user.id))
+    const [workflow] = parsed.data.workflow
+      ? await db
+          .select()
+          .from(schema.workflows)
+          .where(eq(schema.workflows.slug, parsed.data.workflow))
+      : []
+    if (workflow)
+      await db
+        .update(schema.workflows)
+        .set({ runsCount: sql`${schema.workflows.runsCount} + 1` })
+        .where(eq(schema.workflows.id, workflow.id))
     const [created] = await db
       .insert(schema.chats)
       .values({
@@ -92,6 +105,7 @@ export async function POST(request: Request) {
         personId: person.id,
         locale: localeFrom(request),
         mode: prefs?.mode ?? "ask",
+        workflowId: workflow?.id ?? null,
       })
       .returning()
     if (!created) return fail("Couldn't start the chat", 500)
@@ -131,6 +145,11 @@ export async function POST(request: Request) {
     { userId: user.id, guest, chatId: chat.id, person, people },
     () => assistantId,
   )
+  // A built-in workflow's recipe joins the instructions; one someone saved is their own words and
+  // would go in as a message, never as instructions.
+  const [workflowRow] = chat.workflowId
+    ? await db.select().from(schema.workflows).where(eq(schema.workflows.id, chat.workflowId))
+    : []
   const made = await db
     .select({
       id: schema.creations.id,
@@ -181,6 +200,7 @@ export async function POST(request: Request) {
       others: people.filter((p) => p.id !== person.id).map((p) => ({ id: p.id, name: p.name })),
       photos,
       creations: made,
+      workflow: workflowRow && !workflowRow.ownerId ? workflowRow.instructions : null,
       videoReady: videoReady(),
     })}`,
     messages: await convertToModelMessages(await forModel(user.id, messages), {
@@ -249,6 +269,13 @@ export async function POST(request: Request) {
       },
       onError: (error) => {
         console.error("[chat]", error)
+        const body = (error as { responseBody?: string }).responseBody ?? ""
+        if (
+          /insufficient_quota|credit_balance|credit balance/i.test(
+            `${body} ${(error as Error).message}`,
+          )
+        )
+          return "out-of-credit"
         return "Something went wrong on our side. Try again."
       },
     }),

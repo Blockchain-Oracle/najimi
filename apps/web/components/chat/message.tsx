@@ -9,7 +9,12 @@ import { ApprovalCard } from "./cards/approval-card"
 import { BriefCard } from "./cards/brief-card"
 import { CompareCard } from "./cards/compare-card"
 import { CardSkeleton, InsightsCard } from "./cards/insights-card"
+import { LightingCard } from "./cards/lighting-card"
+import { MealPlanCard } from "./cards/meal-plan-card"
 import { ImageCard, VideoCard } from "./cards/media-card"
+import { MedicationCard } from "./cards/medication-card"
+import { ProductsCard } from "./cards/products-card"
+import { RecipeCard } from "./cards/recipe-card"
 import { WizardCard } from "./cards/wizard-card"
 import { StepChip } from "./lookup-step"
 
@@ -94,6 +99,36 @@ function ToolPart({ part, actions }: { part: Part; actions: MessageActions }) {
       if (part.state === "output-error") return failed
       return <CardSkeleton title={title} label={t("preparing")} />
     }
+    case "tool-lightingPlan":
+      if (part.state === "output-available")
+        return <LightingCard plan={part.input} personName={part.output.personName} />
+      if (part.state === "output-error") return failed
+      return <CardSkeleton title={part.input?.title} label={t("planning")} />
+    case "tool-findProducts":
+      if (part.state === "output-available") return <ProductsCard output={part.output} />
+      if (part.state === "output-error") return failed
+      return <CardSkeleton title={part.input?.title} label={t("shopping")} />
+    case "tool-recipe":
+      if (part.state === "output-available")
+        return (
+          <RecipeCard
+            recipe={part.input}
+            personName={part.output.personName}
+            constraints={part.output.constraints}
+            onAsk={actions.onAsk}
+          />
+        )
+      if (part.state === "output-error") return failed
+      return <CardSkeleton title={part.input?.title} label={t("cooking")} />
+    case "tool-mealPlan":
+      if (part.state === "output-available")
+        return <MealPlanCard plan={part.input} personName={part.output.personName} />
+      if (part.state === "output-error") return failed
+      return <CardSkeleton title={part.input?.title} label={t("cooking")} />
+    case "tool-medicationNotes":
+      if (part.state === "output-available") return <MedicationCard output={part.output} />
+      if (part.state === "output-error") return failed
+      return <CardSkeleton label={t("readingLabel")} />
     case "tool-qlooSearch":
       return (
         <StepChip

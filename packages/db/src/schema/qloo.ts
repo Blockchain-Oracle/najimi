@@ -49,3 +49,15 @@ export const qlooCalls = pgTable(
     index("qloo_calls_chat_idx").on(t.chatId, t.createdAt),
   ],
 )
+
+/**
+ * Answers from other public sources (a brand's product pages, FDA drug labels), cached privately
+ * so the same look-up isn't fetched twice in a week.
+ */
+export const externalCache = pgTable("external_cache", {
+  key: text().primaryKey(),
+  kind: text().notNull(),
+  body: jsonb().$type<unknown>().notNull(),
+  fetchedAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
+  expiresAt: timestamp({ withTimezone: true }).notNull(),
+})

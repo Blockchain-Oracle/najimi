@@ -21,6 +21,7 @@ const nextConfig: NextConfig = {
     "@najimi/live",
     "@najimi/media",
     "@najimi/qloo",
+    "@najimi/sources",
     "@najimi/storage",
     "@najimi/tokens",
     "@najimi/ui",

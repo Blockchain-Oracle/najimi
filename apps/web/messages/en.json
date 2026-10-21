@@ -277,7 +277,8 @@
       "ask": "Ask first",
       "auto": "Auto",
       "plan": "Plan only"
-    }
+    },
+    "outOfCredit": "Najimi's AI provider is out of credit right now. It will be back once it's topped up."
   },
   "Cards": {
     "asking": "Asking Qloo…",
@@ -316,7 +317,11 @@
     },
     "planOnly": "Plan only: “{title}” wasn't made.",
     "declined": "Not made: “{title}”.",
-    "preparing": "Preparing…"
+    "preparing": "Preparing…",
+    "planning": "Planning the light…",
+    "shopping": "Looking on the brands' own sites…",
+    "cooking": "Writing the recipe…",
+    "readingLabel": "Reading the FDA labels…"
   },
   "Asked": {
     "city": "in {v}",
@@ -411,5 +416,112 @@
     "cta": "Make yours",
     "madeFrom": "Made from a real taste: {words}",
     "pitch": "Najimi knows what people love through Qloo, and makes things for their real lives that fit them."
+  },
+  "Home": {
+    "planFor": "For {name}'s {room}",
+    "layers": {
+      "ambient": "Ambient",
+      "task": "Task",
+      "accent": "Accent",
+      "decorative": "Decorative"
+    },
+    "controls": {
+      "switch": "switch",
+      "dimmer": "dimmer",
+      "smart": "smart",
+      "plug-in": "plug-in"
+    },
+    "dimmable": "dimmable",
+    "notDimmable": "not dimmable",
+    "forElectrician": "For your electrician",
+    "copyBrief": "Copy brief",
+    "copied": "Brief copied",
+    "circuits": "Circuits",
+    "switching": "Switching",
+    "dimmers": "Dimmers",
+    "lookHint": "Real {category} from each brand's own site.",
+    "brandOnly": "Visit the brand's shop"
+  },
+  "Food": {
+    "minutes": "{n} min",
+    "serve": {
+      "hot": "Serve hot",
+      "warm": "Serve warm",
+      "lukewarm": "Serve lukewarm",
+      "cold": "Serve cold"
+    },
+    "forName": "for {name}",
+    "ingredients": "Ingredients",
+    "method": "Method",
+    "texture": "Texture",
+    "fewer": "Fewer servings",
+    "more": "More servings",
+    "cookMode": "Cook mode",
+    "dishPhoto": "Show me the dish",
+    "photoAsk": "Make a photo of “{title}”",
+    "planWeek": "Plan the week",
+    "weekAsk": "Plan a week of meals like “{title}”, with a shopping list",
+    "step": "Step {n} of {total}",
+    "back": "Back",
+    "next": "Next step",
+    "done": "Done",
+    "shopping": "Shopping list",
+    "medsTitle": "Food and medication notes for {name}",
+    "label": "FDA label, {date}",
+    "noLabel": "No FDA label found for this name. Check the generic name.",
+    "noFoodNotes": "The label has no food or drink notes.",
+    "pharmacist": "Quoted from the FDA drug label. This isn't medical advice: check with a pharmacist or doctor before changing what someone eats."
+  },
+  "Workflows": {
+    "title": "Workflows",
+    "hint": "Ready-made recipes for the bigger jobs. Each one runs in a chat, for you or anyone you make for.",
+    "pill": "Workflows",
+    "run": "Run",
+    "needsPhoto": "a photo",
+    "needsPerson": "someone to cook for",
+    "categories": {
+      "home": "Home",
+      "food": "Food",
+      "culture": "Culture",
+      "style": "Style",
+      "film": "Film"
+    },
+    "items": {
+      "relight-my-room": {
+        "name": "Relight my room",
+        "desc": "Your room in your light: two moods, a plan an electrician can install, the real lamps, a soundtrack.",
+        "start": "Relight my room"
+      },
+      "make-it-mine": {
+        "name": "Make it mine",
+        "desc": "Photograph anything (a desk, a shelf, a cup) and see it restyled in your taste, with the real products.",
+        "start": "Make this mine"
+      },
+      "cook-for": {
+        "name": "Cook for…",
+        "desc": "Recipes someone will love, at the right texture and temperature, with medication notes from the FDA label.",
+        "start": "Help me cook for someone"
+      },
+      "next-read": {
+        "name": "Next read",
+        "desc": "Books from your taste, the world of the best one, a reading playlist and somewhere to read.",
+        "start": "What should I read next?"
+      },
+      "dress-me": {
+        "name": "Dress me",
+        "desc": "An outfit from your taste, the pieces from real brands, and a playlist for getting ready.",
+        "start": "Dress me"
+      },
+      "my-taste-film": {
+        "name": "My taste film",
+        "desc": "A short film of who you are, made from the words of your taste, with its soundtrack.",
+        "start": "Make my taste film"
+      },
+      "night-in": {
+        "name": "Night in",
+        "desc": "A whole evening: something to watch, to hear, to eat, and the room set for it.",
+        "start": "Plan a night in"
+      }
+    }
   }
 }

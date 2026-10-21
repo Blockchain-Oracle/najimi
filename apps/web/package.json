@@ -20,6 +20,7 @@
     "@najimi/live": "workspace:*",
     "@najimi/media": "workspace:*",
     "@najimi/qloo": "workspace:*",
+    "@najimi/sources": "workspace:*",
     "@najimi/storage": "workspace:*",
     "@najimi/tokens": "workspace:*",
     "@najimi/ui": "workspace:*",

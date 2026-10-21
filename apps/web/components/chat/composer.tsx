@@ -11,6 +11,7 @@ import { useQuery } from "@tanstack/react-query"
 import { ArrowUp, Check, ChevronDown, ImagePlus, Images, Square, X } from "lucide-react"
 import { useTranslations } from "next-intl"
 import { useRef, useState } from "react"
+import { WORKFLOW_LOOK, WORKFLOW_SLUGS } from "@/components/workflows/workflow-meta"
 import { api } from "@/lib/fetcher"
 import { type Uploaded, uploadPhoto } from "@/lib/photo"
 
@@ -78,6 +79,7 @@ export function Composer({
   busy,
   onSend,
   onStop,
+  onWorkflow,
 }: {
   people: ChatPerson[]
   personId: string | null
@@ -87,8 +89,10 @@ export function Composer({
   busy: boolean
   onSend: (text: string, photos: Uploaded[]) => void
   onStop: () => void
+  onWorkflow: (slug: string) => void
 }) {
   const t = useTranslations("Chat")
+  const tw = useTranslations("Workflows")
   const [text, setText] = useState("")
   const [photos, setPhotos] = useState<Uploaded[]>([])
   const [uploading, setUploading] = useState(0)
@@ -231,6 +235,42 @@ export function Composer({
                 <span className="text-xs text-muted-foreground">{t(`modeHints.${m}`)}</span>
               </DropdownMenuItem>
             ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+        <DropdownMenu>
+          <DropdownMenuTrigger className="inline-flex items-center gap-1 rounded-pill bg-paper-foreground/6 px-2.5 py-1.5 text-sm font-semibold whitespace-nowrap hover:bg-paper-foreground/10">
+            {tw("pill")}
+            <ChevronDown className="size-3.5" />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start" className="w-72">
+            {WORKFLOW_SLUGS.map((slug) => {
+              const look = WORKFLOW_LOOK[slug]
+              const Icon = look?.icon
+              return (
+                <DropdownMenuItem
+                  key={slug}
+                  onClick={() => onWorkflow(slug)}
+                  className="items-start gap-2.5 py-2"
+                >
+                  <span
+                    className={cn(
+                      "grid size-8 shrink-0 place-items-center rounded-tile text-black",
+                      look?.tone,
+                    )}
+                  >
+                    {Icon ? <Icon className="size-4" /> : null}
+                  </span>
+                  <span className="flex flex-col">
+                    <span className="font-semibold">
+                      {tw(`items.${slug}.name` as "items.night-in.name")}
+                    </span>
+                    <span className="text-xs text-muted-foreground">
+                      {tw(`items.${slug}.desc` as "items.night-in.desc")}
+                    </span>
+                  </span>
+                </DropdownMenuItem>
+              )
+            })}
           </DropdownMenuContent>
         </DropdownMenu>
         <span className="flex-1" />

@@ -29,9 +29,16 @@ const continueAutomatically = (input: AutoSend) =>
  * The chat's connection: only the newest message goes up (the server keeps the conversation), with
  * who a new chat is for. Updates are batched while cards stream.
  */
-export function useNajimiChat(chatId: string, initial: NajimiUIMessage[], personId: string | null) {
+export function useNajimiChat(
+  chatId: string,
+  initial: NajimiUIMessage[],
+  personId: string | null,
+  workflow: string | null,
+) {
   const forRef = useRef(personId)
   forRef.current = personId
+  const workflowRef = useRef(workflow)
+  workflowRef.current = workflow
   const transport = useMemo(
     () =>
       new DefaultChatTransport<NajimiUIMessage>({
@@ -43,6 +50,7 @@ export function useNajimiChat(chatId: string, initial: NajimiUIMessage[], person
             trigger,
             messageId,
             ...(forRef.current ? { personId: forRef.current } : {}),
+            ...(workflowRef.current ? { workflow: workflowRef.current } : {}),
           },
         }),
       }),

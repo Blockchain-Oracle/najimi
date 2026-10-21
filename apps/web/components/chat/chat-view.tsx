@@ -27,6 +27,8 @@ export type ChatViewProps = {
   people: ChatPerson[]
   starters: string[]
   greetingName: string
+  /** A workflow a new chat starts with (from the library or a shared link). */
+  workflow?: string | null
 }
 
 const textOf = (m: NajimiUIMessage) =>
@@ -44,7 +46,9 @@ export function ChatView(props: ChatViewProps) {
   const [mode, setMode] = useState<Mode>(props.mode)
   const [started, setStarted] = useState(!props.isNew)
   const [compareFor, setCompareFor] = useState<NajimiUIMessage | null>(null)
-  const chat = useNajimiChat(props.chatId, props.messages, personId)
+  const tw = useTranslations("Workflows")
+  const [workflow, setWorkflow] = useState<string | null>(props.workflow ?? null)
+  const chat = useNajimiChat(props.chatId, props.messages, personId, workflow)
   const {
     messages,
     status,
@@ -78,12 +82,15 @@ export function ChatView(props: ChatViewProps) {
     if (status === "ready" && started) void queryClient.invalidateQueries({ queryKey: ["chats"] })
   }, [status, started, queryClient])
 
-  const send = (text: string, photos: Uploaded[] = []) => {
-    if (!started) {
-      // The URL becomes the chat's own as soon as it has a first message.
+  // The URL becomes the chat's own once its first answer is in (changing it mid-stream, or before
+  // the router has hydrated, would hand the page to the router and drop the live view).
+  useEffect(() => {
+    if (started && status === "ready" && window.location.pathname !== `/c/${props.chatId}`)
       window.history.replaceState(null, "", `/c/${props.chatId}`)
-      setStarted(true)
-    }
+  }, [started, status, props.chatId])
+
+  const send = (text: string, photos: Uploaded[] = []) => {
+    if (!started) setStarted(true)
     void sendMessage({
       text,
       files: photos.map((p) => ({
@@ -93,6 +100,25 @@ export function ChatView(props: ChatViewProps) {
         filename: "photo.jpg",
       })),
     })
+  }
+
+  // A workflow chat opens with its first message. The timer is cleared if the view unmounts first
+  // (React's development double-mount), so the message goes exactly once.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: runs once, when a new workflow chat mounts
+  useEffect(() => {
+    if (!props.isNew || !props.workflow) return
+    const timer = setTimeout(
+      () => send(tw(`items.${props.workflow}.start` as "items.night-in.start")),
+      0,
+    )
+    return () => clearTimeout(timer)
+  }, [])
+
+  const runWorkflow = (slug: string) => {
+    if (messages.length === 0) {
+      setWorkflow(slug)
+      setTimeout(() => send(tw(`items.${slug}.start` as "items.night-in.start")), 0)
+    } else router.push(`/c?workflow=${slug}`)
   }
 
   const changeMode = async (next: Mode) => {
@@ -199,7 +225,13 @@ export function ChatView(props: ChatViewProps) {
           ) : null}
           {stale || chat.error ? (
             <div className="flex items-center gap-3 text-sm">
-              <span className="text-destructive">{stale ? t("interrupted") : t("error")}</span>
+              <span className="text-destructive">
+                {stale
+                  ? t("interrupted")
+                  : chat.error?.message.includes("out-of-credit")
+                    ? t("outOfCredit")
+                    : t("error")}
+              </span>
               <button
                 type="button"
                 onClick={() =>
@@ -224,6 +256,7 @@ export function ChatView(props: ChatViewProps) {
           busy={busy}
           onSend={send}
           onStop={() => void stop()}
+          onWorkflow={runWorkflow}
         />
       </div>
       <CompareDialog

@@ -277,7 +277,8 @@
       "ask": "Demander",
       "auto": "Auto",
       "plan": "Plan seul"
-    }
+    },
+    "outOfCredit": "Le fournisseur d'IA de Najimi n'a plus de crédit pour le moment. Il revient dès qu'il est rechargé."
   },
   "Cards": {
     "asking": "Qloo réfléchit…",
@@ -316,7 +317,11 @@
     },
     "planOnly": "Planifier seulement : « {title} » n'a pas été créé.",
     "declined": "Non créé : « {title} ».",
-    "preparing": "Préparation…"
+    "preparing": "Préparation…",
+    "planning": "Conception de l'éclairage…",
+    "shopping": "Recherche sur les sites des marques…",
+    "cooking": "Rédaction de la recette…",
+    "readingLabel": "Lecture des notices FDA…"
   },
   "Asked": {
     "city": "à {v}",
@@ -411,5 +416,112 @@
     "cta": "Créer le vôtre",
     "madeFrom": "Créé d'après un vrai goût : {words}",
     "pitch": "Najimi connaît ce que les gens aiment grâce à Qloo, et crée pour leur vraie vie des choses qui leur ressemblent."
+  },
+  "Home": {
+    "planFor": "Pour le {room} de {name}",
+    "layers": {
+      "ambient": "Ambiance",
+      "task": "Fonctionnel",
+      "accent": "Accent",
+      "decorative": "Décoratif"
+    },
+    "controls": {
+      "switch": "interrupteur",
+      "dimmer": "variateur",
+      "smart": "connecté",
+      "plug-in": "sur prise"
+    },
+    "dimmable": "dimmable",
+    "notDimmable": "non dimmable",
+    "forElectrician": "Pour votre électricien",
+    "copyBrief": "Copier la fiche",
+    "copied": "Fiche copiée",
+    "circuits": "Circuits",
+    "switching": "Commandes",
+    "dimmers": "Variateurs",
+    "lookHint": "Des {category} réels, sur le site de chaque marque.",
+    "brandOnly": "Voir la boutique de la marque"
+  },
+  "Food": {
+    "minutes": "{n} min",
+    "serve": {
+      "hot": "Servir chaud",
+      "warm": "Servir tiède-chaud",
+      "lukewarm": "Servir tiède",
+      "cold": "Servir froid"
+    },
+    "forName": "pour {name}",
+    "ingredients": "Ingrédients",
+    "method": "Préparation",
+    "texture": "Texture",
+    "fewer": "Moins de portions",
+    "more": "Plus de portions",
+    "cookMode": "Mode cuisine",
+    "dishPhoto": "Voir le plat",
+    "photoAsk": "Fais une photo de « {title} »",
+    "planWeek": "Planifier la semaine",
+    "weekAsk": "Planifie une semaine de repas comme « {title} », avec la liste de courses",
+    "step": "Étape {n} sur {total}",
+    "back": "Retour",
+    "next": "Étape suivante",
+    "done": "Terminé",
+    "shopping": "Liste de courses",
+    "medsTitle": "Repas et médicaments : notes pour {name}",
+    "label": "Notice FDA, {date}",
+    "noLabel": "Aucune notice FDA pour ce nom. Vérifiez le nom générique.",
+    "noFoodNotes": "La notice ne mentionne ni aliment ni boisson.",
+    "pharmacist": "Cité depuis la notice FDA. Ce n'est pas un avis médical : demandez à un pharmacien ou un médecin avant de changer l'alimentation de quelqu'un."
+  },
+  "Workflows": {
+    "title": "Workflows",
+    "hint": "Des recettes prêtes pour les grands projets. Chacune se lance dans un chat, pour vous ou pour quelqu'un d'autre.",
+    "pill": "Workflows",
+    "run": "Lancer",
+    "needsPhoto": "une photo",
+    "needsPerson": "quelqu'un pour qui cuisiner",
+    "categories": {
+      "home": "Maison",
+      "food": "Cuisine",
+      "culture": "Culture",
+      "style": "Style",
+      "film": "Film"
+    },
+    "items": {
+      "relight-my-room": {
+        "name": "Rééclairer ma pièce",
+        "desc": "Votre pièce dans votre lumière : deux ambiances, un plan pour l'électricien, les vraies lampes, une bande-son.",
+        "start": "Rééclaire ma pièce"
+      },
+      "make-it-mine": {
+        "name": "À mon goût",
+        "desc": "Photographiez n'importe quoi (un bureau, une étagère, une tasse) et voyez-le restylé à votre goût, avec les vrais produits.",
+        "start": "Mets ça à mon goût"
+      },
+      "cook-for": {
+        "name": "Cuisiner pour…",
+        "desc": "Des recettes qui plairont, à la bonne texture et température, avec les notes de la notice FDA des médicaments.",
+        "start": "Aide-moi à cuisiner pour quelqu'un"
+      },
+      "next-read": {
+        "name": "Prochaine lecture",
+        "desc": "Des livres selon votre goût, l'univers du meilleur, une playlist de lecture et un endroit où lire.",
+        "start": "Que devrais-je lire ensuite ?"
+      },
+      "dress-me": {
+        "name": "Habille-moi",
+        "desc": "Une tenue selon votre goût, les pièces chez de vraies marques, et une playlist pour se préparer.",
+        "start": "Habille-moi"
+      },
+      "my-taste-film": {
+        "name": "Le film de mon goût",
+        "desc": "Un court film de qui vous êtes, fait des mots de votre goût, avec sa bande-son.",
+        "start": "Fais le film de mon goût"
+      },
+      "night-in": {
+        "name": "Soirée à la maison",
+        "desc": "Une soirée entière : quoi regarder, écouter, manger, et la pièce prête.",
+        "start": "Prépare une soirée à la maison"
+      }
+    }
   }
 }

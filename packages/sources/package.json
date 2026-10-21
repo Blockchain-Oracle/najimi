@@ -1,0 +1,27 @@
+{
+  "name": "@najimi/sources",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --test src/*.test.ts"
+  },
+  "dependencies": {
+    "@ai-sdk/openai": "4.0.98",
+    "@najimi/config": "workspace:*",
+    "@najimi/db": "workspace:*",
+    "@najimi/env": "workspace:*",
+    "ai": "catalog:",
+    "drizzle-orm": "catalog:"
+  },
+  "devDependencies": {
+    "@najimi/typescript-config": "workspace:*",
+    "@types/node": "catalog:",
+    "tsx": "catalog:",
+    "typescript": "catalog:"
+  }
+}

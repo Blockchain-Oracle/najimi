@@ -50,6 +50,13 @@
       "when": 1792590690435,
       "tag": "0006_taste_copilot",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1792595396949,
+      "tag": "0007_external_cache",
+      "breakpoints": true
     }
   ]
 }

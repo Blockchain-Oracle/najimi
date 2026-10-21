@@ -9,12 +9,14 @@ import {
   audiences,
   compare,
   type ExploreInput,
+  entities,
   explore,
   findTags,
   type Love,
   nameAreas,
   search,
 } from "@najimi/qloo"
+import { labelNotes, productsFor } from "@najimi/sources"
 import { tool } from "ai"
 import { and, asc, eq } from "drizzle-orm"
 import type { z } from "zod"
@@ -201,11 +203,33 @@ export function buildTools(ctx: TurnContext, messageId: () => string | undefined
         )
           return { ...base, callId: null, note: "No signal: add something they love." }
 
+        // Tags must be Qloo ids; a plain word ("chill") is looked up as a tag first.
+        const asTagIds = async (list: string[] | undefined) =>
+          list?.length
+            ? (
+                await Promise.all(
+                  list.map(async (t) =>
+                    t.startsWith("urn:tag:")
+                      ? t
+                      : ((
+                          await findTags({ query: t, take: 1 }, call(`Tag for “${t}”`)).catch(
+                            () => null,
+                          )
+                        )?.data[0]?.id ?? null),
+                  ),
+                )
+              ).filter((t): t is string => Boolean(t))
+            : undefined
+        const [signalTags, filterTags] = await Promise.all([
+          asTagIds(input.signal?.tags),
+          asTagIds(input.filter?.tags),
+        ])
+
         const request: ExploreInput = {
           filterType,
           signal: {
             entities,
-            tags: input.signal?.tags,
+            tags: signalTags,
             age: input.signal?.age,
             gender: input.signal?.gender,
             audiences: input.signal?.audiences,
@@ -213,6 +237,7 @@ export function buildTools(ctx: TurnContext, messageId: () => string | undefined
           },
           filter: {
             ...input.filter,
+            tags: filterTags,
             // Untyped tag analysis mixes every kind of word; default to the ones that describe a person.
             tagTypes:
               input.ask === "tags" &&
@@ -584,6 +609,98 @@ export function buildTools(ctx: TurnContext, messageId: () => string | undefined
             : output.note === "allowance"
               ? "Today's video allowance is used up."
               : `Not made: ${output.note}`,
+      }),
+    }),
+
+    lightingPlan: tool({
+      ...toolDefs.lightingPlan,
+      execute: async (input, { toolCallId }) => ({
+        planId: toolCallId,
+        personName: target(ctx, input.for).name,
+      }),
+      toModelOutput: () => ({ type: "text", value: "Lighting plan shown as a card." }),
+    }),
+
+    findProducts: tool({
+      ...toolDefs.findProducts,
+      execute: async (input) => {
+        const found = await entities(
+          { ids: input.brandIds },
+          call(`Brands for “${input.category}”`),
+        ).catch(() => null)
+        const brands = await Promise.all(
+          (found?.data ?? []).map(async (b) => {
+            const site =
+              (b.properties as { official_site?: string }).official_site ?? b.handles.website
+            const r = site
+              ? await productsFor({ name: b.name, site }, input.category).catch(() => null)
+              : null
+            return {
+              id: b.entityId,
+              name: b.name,
+              site: site ?? null,
+              image: b.image,
+              products: r?.products ?? [],
+            }
+          }),
+        )
+        return { title: input.title, category: input.category, brands }
+      },
+      toModelOutput: ({ output }) => ({
+        type: "text",
+        value: `Get the look (shown as a card): ${output.brands
+          .map(
+            (b) =>
+              `${b.name}: ${b.products.length ? b.products.map((p) => `${p.name}${p.price ? ` ${p.price} ${p.currency ?? ""}` : ""}`).join("; ") : "no product pages found, brand link shown"}`,
+          )
+          .join(" | ")}`,
+      }),
+    }),
+
+    recipe: tool({
+      ...toolDefs.recipe,
+      execute: async (input, { toolCallId }) => {
+        const person = target(ctx, input.for)
+        const c = person.constraints
+        const constraints = [
+          ...(c.diet ?? []),
+          ...(c.allergies ?? []).map((a) => `no ${a}`),
+          ...(c.iddsi ? [`IDDSI ${c.iddsi}`] : []),
+          ...(c.serveWarm ? ["lukewarm"] : []),
+        ]
+        return { recipeId: toolCallId, personName: person.name, constraints }
+      },
+      toModelOutput: () => ({ type: "text", value: "Recipe shown as a card." }),
+    }),
+
+    mealPlan: tool({
+      ...toolDefs.mealPlan,
+      execute: async (input, { toolCallId }) => ({
+        planId: toolCallId,
+        personName: target(ctx, input.for).name,
+      }),
+      toModelOutput: () => ({
+        type: "text",
+        value: "Meal plan and shopping list shown as a card.",
+      }),
+    }),
+
+    medicationNotes: tool({
+      ...toolDefs.medicationNotes,
+      execute: async (input) => {
+        const person = target(ctx, input.for)
+        const notes = await Promise.all(input.medications.map((m) => labelNotes(m)))
+        return { personName: person.name, notes }
+      },
+      toModelOutput: ({ output }) => ({
+        type: "text",
+        value: output.notes
+          .map((n) =>
+            n.found
+              ? `${n.medication} (FDA label ${n.effective ?? ""}): ${n.excerpts.map((e) => e.text).join(" ") || "no food notes on the label"}`
+              : `${n.medication}: no FDA label found`,
+          )
+          .join("\n"),
       }),
     }),
 

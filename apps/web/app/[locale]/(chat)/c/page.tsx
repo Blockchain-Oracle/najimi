@@ -12,7 +12,12 @@ async function NewChat({
 }) {
   const session = await getSession()
   if (!session) redirect("/start")
-  const forParam = (await searchParams).for
+  const query = await searchParams
+  const forParam = query.for
+  const workflow =
+    typeof query.workflow === "string" && /^[a-z-]{3,40}$/.test(query.workflow)
+      ? query.workflow
+      : null
   const data = await chatPageData(session.user.id, typeof forParam === "string" ? forParam : null)
   if (!data.self || !data.person) redirect("/start")
   return (
@@ -27,6 +32,7 @@ async function NewChat({
       people={data.people}
       starters={data.starters}
       greetingName={data.person.isSelf ? data.self.name : data.person.name}
+      workflow={workflow}
     />
   )
 }
