@@ -1,6 +1,6 @@
 import "server-only"
 import { type insightsInput, type Pick, toolDefs } from "@najimi/agent"
-import { TASTE_DOMAINS } from "@najimi/config"
+import { MEDIA, TASTE_DOMAINS } from "@najimi/config"
 import { db, schema } from "@najimi/db"
 import type { Constraints } from "@najimi/db/schema"
 import { enqueue } from "@najimi/jobs"
@@ -374,7 +374,7 @@ export function buildTools(ctx: TurnContext, messageId: () => string | undefined
       ...toolDefs.makeImage,
       execute: async (input, { toolCallId }) => {
         const person = target(ctx, input.for)
-        const n = input.variants ?? 2
+        const n = input.variants ?? MEDIA.image.variants
         const base = {
           title: input.title,
           kind: input.kind,

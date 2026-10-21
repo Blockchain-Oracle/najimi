@@ -50,6 +50,7 @@ export async function makeImages(input: {
       prompt: input.source ? { text: input.prompt, images: [input.source] } : input.prompt,
       n: input.n,
       size: SIZE[input.aspect],
+      providerOptions: { openai: { quality: MEDIA.image.quality } },
       abortSignal: AbortSignal.timeout(MEDIA.image.timeoutMs),
       maxRetries: 1,
     })

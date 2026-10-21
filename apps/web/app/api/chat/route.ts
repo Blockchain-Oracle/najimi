@@ -7,7 +7,7 @@ import {
   RULES,
   toolDefs,
 } from "@najimi/agent"
-import { AGENT, ALLOWANCE, DEFAULT_LOCALE } from "@najimi/config"
+import { AGENT, ALLOWANCE, DEFAULT_LOCALE, MEDIA } from "@najimi/config"
 import { db, schema } from "@najimi/db"
 import { env } from "@najimi/env/server"
 import { enqueue } from "@najimi/jobs"
@@ -209,7 +209,7 @@ export async function POST(request: Request) {
     tools,
     experimental_toolApprovalSecret: approvalSecret(),
     toolApproval: {
-      makeImage: (input) => approval("images", input.variants ?? 2),
+      makeImage: (input) => approval("images", input.variants ?? MEDIA.image.variants),
       makeVideo: () => approval("videos", 1),
     },
     stopWhen: isStepCount(AGENT.maxSteps),

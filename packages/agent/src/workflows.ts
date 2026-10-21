@@ -20,7 +20,7 @@ export const BUILT_IN_WORKFLOWS: BuiltInWorkflow[] = [
 1. If there's no room photo yet, ask for one and mention the sample rooms in the composer.
 2. askUser once: what the room is for (several choices: reading, TV, dinner, working, relaxing, kids) and the mood they want most.
 3. tasteBrief (focus home).
-4. makeImage: restyle the photo, purpose relight, 2 variants, keeping the exact room; layered warm light from their words.
+4. makeImage: restyle the photo, purpose relight, 1 variant, keeping the exact room; layered warm light from their words.
 5. lightingPlan for that room and those uses.
 6. qlooInsights ask brand, filter.tags ["urn:tag:wikipedia_category:lighting_brands"], take 8; then findProducts for 2–3 of those brands whose words fit their taste (category: the main fixture of the plan, e.g. "floor lamp").
 7. qlooInsights ask artist with a mood tag that fits the room's evening (qlooTags first), take 6: the room's soundtrack.
@@ -33,7 +33,7 @@ export const BUILT_IN_WORKFLOWS: BuiltInWorkflow[] = [
     instructions: `Make it mine: restyle anything they photograph (a desk, a shelf, a cup, a plate, a corner, an outfit) in their taste.
 1. If there's no photo yet, ask for one (or offer a sample room).
 2. tasteBrief (focus home for spaces and objects, style for outfits).
-3. makeImage restyle, 2 variants, keeping the real object or space; built from their aesthetic and decor words.
+3. makeImage restyle, 1 variant, keeping the real object or space; built from their aesthetic and decor words.
 4. qlooInsights ask brand (take 8) for the look; findProducts for 2 brands that fit, category = the main object.
 5. Offer a variation and a video.`,
   },

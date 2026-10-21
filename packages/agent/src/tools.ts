@@ -274,7 +274,13 @@ export const toolDefs = {
       sourceCreationId: z.string().max(64).optional(),
       prompt: z.string().min(20).max(2000),
       words: z.array(z.string().max(60)).max(12).describe("The taste words the prompt uses."),
-      variants: z.number().int().min(1).max(2).optional(),
+      variants: z
+        .number()
+        .int()
+        .min(1)
+        .max(2)
+        .optional()
+        .describe("Leave at 1; 2 only when the person asks for options to choose from."),
       aspect: z.enum(["landscape", "portrait", "square"]).optional(),
     }),
     outputSchema: z.object({

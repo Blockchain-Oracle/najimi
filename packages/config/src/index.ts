@@ -136,7 +136,8 @@ export const TASTE_DOMAINS = [
  * (the desktop app sets one for itself) never redirects production traffic.
  */
 export const AGENT = {
-  defaultModel: "openai:gpt-6-astra",
+  /** gpt-6-luna: $0.10 in / $0.50 out per 1M tokens, about 100× less than gpt-6-astra. */
+  defaultModel: "openai:gpt-6-luna",
   baseUrls: {
     anthropic: "https://api.anthropic.com/v1",
     openai: "https://api.openai.com/v1",
@@ -158,12 +159,14 @@ const HOUR_S = 60 * 60
 export const MEDIA = {
   image: {
     provider: "openai",
-    /** New images: fast and general. */
-    model: "gpt-image-2.5-flare",
-    /** Edits of a person's own photo: the model OpenAI recommends for editing precision. */
+    /** New images (a dish, a mood, an outfit): the low-cost image model. */
+    model: "gpt-image-1-mini",
+    /** Edits of a person's own photo: kept on the precise editor, so the room stays their room. */
     editModel: "gpt-image-2.5-sunburst",
-    /** Variants made per restyle request (one provider request, N creations). */
-    variants: 2,
+    /** Medium quality: about a quarter of the image tokens of high, and fine on a phone. */
+    quality: "medium",
+    /** Images per request (one provider request, N creations). One unless the person asks. */
+    variants: 1,
     size: "1536x1024",
     timeoutMs: 3 * 60 * 1000,
   },
