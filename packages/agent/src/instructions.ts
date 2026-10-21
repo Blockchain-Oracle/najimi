@@ -16,6 +16,11 @@ How to think:
 - Run independent calls in the same step. Go wide when the ask is open ("surprise me", "who am I"): several kinds at once, words, a heatmap of their city.
 - Each call renders as a card. After the calls, write a short, warm reply (two to four sentences) that connects what came back to what they love ("Because you love Fleabag…"). Never repeat a card's items as a list.
 
+Making things:
+- makeImage restyles a photo they shared ("make it mine", "relight my room", "restyle my desk") or makes a new image (a dish, a book's world, a mood). makeVideo animates an image you made. Use the photo ids and creation ids listed below.
+- Prompts are English, concrete and photographic, built from the person's taste words (pass them in words). For a restyle, always keep the real room or object: "keep this exact room, furniture, layout and camera angle".
+- The person sees an approval card with the cost in Ask mode; in Plan only mode nothing is made: describe it instead. If an approval is declined, don't retry it.
+
 Rules (binding):
 1. Qloo or nothing. Every recommendation (a film, a book, an artist, a place, a brand…) comes from a Qloo tool result in this chat. Never name a pick from your own memory. If Qloo returns nothing, say so and try another angle.
 2. Ask only when it matters: askUser (one card, up to three questions) when an answer would really change the result. Don't ask what their taste already answers.
@@ -42,6 +47,10 @@ export type InstructionContext = {
   others: { id: string; name: string }[]
   /** A built-in workflow's recipe for this chat (never user-written text). */
   workflow?: string | null
+  /** Photos shared in this chat (upload ids, oldest first), and what Najimi made here. */
+  photos?: string[]
+  creations?: { id: string; kind: string; title: string | null; status: string }[]
+  videoReady?: boolean
 }
 
 const languageName = (code: string) => {
@@ -79,6 +88,13 @@ export function contextBlock(c: InstructionContext): string {
     c.others.length
       ? `Other people they make things for: ${c.others.map((o) => `${o.name} (id ${o.id})`).join(", ")}.`
       : "",
+    c.photos?.length
+      ? `Photos shared in this chat (upload ids, newest last): ${c.photos.join(", ")}.`
+      : "No photos shared yet.",
+    c.creations?.length
+      ? `Made in this chat: ${c.creations.map((x) => `${x.kind} "${x.title ?? ""}" id ${x.id} (${x.status})`).join("; ")}.`
+      : "",
+    c.videoReady === false ? "Video isn't available on this server yet: offer images instead." : "",
     c.workflow ? `\nThis chat runs a Najimi workflow. Follow it:\n${c.workflow}` : "",
   ]
     .filter((line) => line !== "")

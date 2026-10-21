@@ -18,6 +18,7 @@ import { authClient } from "@/lib/auth-client"
 const NAV = [
   { href: "/c", key: "chat" },
   { href: "/people", key: "people" },
+  { href: "/assets", key: "assets" },
 ] as const
 
 /** Where you can go; `pathname` lights up where you are. */

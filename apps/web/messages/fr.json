@@ -118,7 +118,9 @@
     "saved": "Gardés",
     "nothingSaved": "Rien de gardé pour l'instant. Touchez le marque-page d'un choix.",
     "builtOnQloo": "Construit sur Qloo",
-    "callsCount": "{count, plural, one {# appel Qloo} other {# appels Qloo}}"
+    "callsCount": "{count, plural, one {# appel Qloo} other {# appels Qloo}}",
+    "askFor": "Demander pour {name}",
+    "askSelf": "Demander à Najimi"
   },
   "Pick": {
     "because": "parce que vous aimez {name}",
@@ -261,7 +263,21 @@
     "rename": "Renommer",
     "delete": "Supprimer",
     "confirmDelete": "Supprimer ce chat ?",
-    "noChats": "Aucun chat pour l'instant."
+    "noChats": "Aucun chat pour l'instant.",
+    "chats": "Chats",
+    "waiting": "En attente de vous",
+    "sample": "Pièce d'exemple",
+    "sampleHint": "Pas de photo sous la main ? Essayez l'une de celles-ci.",
+    "samples": {
+      "living": "Salon",
+      "desk": "Bureau",
+      "bedroom": "Chambre"
+    },
+    "modesShort": {
+      "ask": "Demander",
+      "auto": "Auto",
+      "plan": "Plan seul"
+    }
   },
   "Cards": {
     "asking": "Qloo réfléchit…",
@@ -297,7 +313,10 @@
       "55_and_older": "55+",
       "male": "Hommes",
       "female": "Femmes"
-    }
+    },
+    "planOnly": "Planifier seulement : « {title} » n'a pas été créé.",
+    "declined": "Non créé : « {title} ».",
+    "preparing": "Préparation…"
   },
   "Asked": {
     "city": "à {v}",
@@ -341,5 +360,56 @@
     "both": "Qu'est-ce que {name} et moi aimerions tous les deux ?",
     "hidden": "Trouve-moi des pépites méconnues",
     "trip": "Où devrais-je voyager ensuite ?"
+  },
+  "Make": {
+    "approveKicker": "Prêt à créer",
+    "costImages": "Utilise {n, plural, one {# image} other {# images}} de la limite du jour (il en reste {left}).",
+    "costVideos": "Utilise {n, plural, one {# vidéo} other {# vidéos}} de la limite du jour (il en reste {left}).",
+    "approve": "Créer",
+    "decline": "Pas maintenant",
+    "noneLeft": "C'est tout pour les images aujourd'hui. Connectez-vous pour plus, ou revenez demain.",
+    "noneLeftVideo": "C'est tout pour les vidéos aujourd'hui.",
+    "notMade": "Celle-ci n'a pas été créée.",
+    "forName": "pour {name}",
+    "refused": "Le fournisseur d'images a refusé celle-ci. Essayez une autre photo ou demande.",
+    "failed": "Ça n'a pas abouti.",
+    "retry": "Réessayer",
+    "retryAsk": "Réessaie « {title} »",
+    "making": "Création {n, plural, one {de votre image} other {de # versions}}… environ une demi-minute",
+    "variant": "Version {n}",
+    "download": "Télécharger",
+    "share": "Partager",
+    "linkCopied": "Lien copié",
+    "variation": "Variante",
+    "variationAsk": "Une autre version de « {title} », un peu différente",
+    "makeVideo": "Faire une vidéo",
+    "videoAsk": "Transforme la version {n} de « {title} » en courte vidéo",
+    "videoSoon": "La vidéo n'est pas encore activée. Les images marchent déjà.",
+    "rendering": "Rendu en cours… une à deux minutes",
+    "queued": "En file d'attente",
+    "queuedAt": "En file, numéro {n}",
+    "before": "Avant",
+    "after": "Après"
+  },
+  "Assets": {
+    "title": "Créations",
+    "hint": "Tout ce que Najimi a créé pour vous et pour ceux pour qui vous créez.",
+    "kinds": {
+      "all": "Tout",
+      "image": "Images",
+      "video": "Vidéos"
+    },
+    "empty": "Rien de créé pour l'instant. Restylez une photo ou demandez un plat, une ambiance, une pièce.",
+    "startMaking": "Créer quelque chose",
+    "more": "Voir plus",
+    "madeFrom": "Créé à partir de",
+    "openChat": "Ouvrir son chat",
+    "delete": "Supprimer",
+    "confirmDelete": "Supprimer définitivement ?"
+  },
+  "Share": {
+    "cta": "Créer le vôtre",
+    "madeFrom": "Créé d'après un vrai goût : {words}",
+    "pitch": "Najimi connaît ce que les gens aiment grâce à Qloo, et crée pour leur vraie vie des choses qui leur ressemblent."
   }
 }

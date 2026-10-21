@@ -45,7 +45,15 @@ export function ChatView(props: ChatViewProps) {
   const [started, setStarted] = useState(!props.isNew)
   const [compareFor, setCompareFor] = useState<NajimiUIMessage | null>(null)
   const chat = useNajimiChat(props.chatId, props.messages, personId)
-  const { messages, status, sendMessage, stop, regenerate, addToolOutput } = chat
+  const {
+    messages,
+    status,
+    sendMessage,
+    stop,
+    regenerate,
+    addToolOutput,
+    addToolApprovalResponse,
+  } = chat
   const busy = status === "submitted" || status === "streaming"
   const bottom = useRef<HTMLDivElement>(null)
 
@@ -138,6 +146,7 @@ export function ChatView(props: ChatViewProps) {
                     onAsk: (text) => send(text),
                     onAnswer: (toolCallId, output) =>
                       void addToolOutput({ tool: "askUser", toolCallId, output }),
+                    onApprove: (id, approved) => void addToolApprovalResponse({ id, approved }),
                   }}
                 />
                 {m.role === "assistant" && !(busy && isLast) && textOf(m) ? (

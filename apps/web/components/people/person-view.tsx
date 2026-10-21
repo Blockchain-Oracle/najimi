@@ -5,6 +5,7 @@ import type { Constraints, StoredPick, TasteWords } from "@najimi/db/schema"
 import { Button } from "@najimi/ui/components/button"
 import { toast } from "@najimi/ui/components/sonner"
 import { MapPin } from "lucide-react"
+import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { useCallback, useMemo, useState } from "react"
@@ -218,6 +219,12 @@ export function PersonView({ data }: { data: PersonViewData }) {
             </div>
           </div>
           <div className="flex flex-wrap items-center gap-2">
+            <Link
+              href={`/c?for=${person.id}`}
+              className="rounded-pill bg-lime px-4 py-2 text-sm font-semibold text-lime-foreground shadow-sticker transition-transform hover:-translate-y-px"
+            >
+              {person.isSelf ? t("askSelf") : t("askFor", { name: person.name })}
+            </Link>
             <BuiltOnQloo runId={runId} />
           </div>
         </div>

@@ -32,6 +32,17 @@ export const QUEUES = {
     options: { retryLimit: 1, retryDelay: 10, expireInSeconds: 2 * 60 },
     send: { heartbeatSeconds: JOBS.heartbeatSeconds },
   },
+  /**
+   * Making media (T9–T11): one provider request. Images finish inside the job; a video is
+   * submitted to the provider and finished by the worker's poller. Not retried: a paid request
+   * is never sent twice (a failed one is refunded and the card offers Retry).
+   */
+  mediaGenerate: {
+    name: "media-generate",
+    payload: z.object({ jobId: z.uuid() }),
+    options: { retryLimit: 0, expireInSeconds: 10 * 60 },
+    send: { heartbeatSeconds: JOBS.heartbeatSeconds },
+  },
 } as const
 
 /** Queues an earlier version of the product used; the worker deletes them once at start. */

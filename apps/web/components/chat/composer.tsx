@@ -7,10 +7,51 @@ import {
   DropdownMenuTrigger,
 } from "@najimi/ui/components/dropdown-menu"
 import { cn } from "@najimi/ui/lib/utils"
-import { ArrowUp, Check, ChevronDown, ImagePlus, Square, X } from "lucide-react"
+import { useQuery } from "@tanstack/react-query"
+import { ArrowUp, Check, ChevronDown, ImagePlus, Images, Square, X } from "lucide-react"
 import { useTranslations } from "next-intl"
 import { useRef, useState } from "react"
+import { api } from "@/lib/fetcher"
 import { type Uploaded, uploadPhoto } from "@/lib/photo"
+
+type Sample = Uploaded & { name: string }
+
+/** Sample rooms for anyone without a photo to hand. */
+function SamplePicker({ onPick }: { onPick: (sample: Uploaded) => void }) {
+  const t = useTranslations("Chat")
+  const samples = useQuery({
+    queryKey: ["samples"],
+    queryFn: () => api<{ samples: Sample[] }>("/api/samples"),
+    staleTime: Number.POSITIVE_INFINITY,
+  })
+  if (!samples.data?.samples.length) return null
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger className="inline-flex items-center gap-1.5 rounded-pill px-2.5 py-1.5 text-sm text-paper-muted hover:bg-paper-foreground/8">
+        <Images className="size-4" />{" "}
+        <span className="hidden whitespace-nowrap xl:inline">{t("sample")}</span>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="start" className="w-72 p-2">
+        <p className="px-1 pb-2 text-xs text-muted-foreground">{t("sampleHint")}</p>
+        <div className="grid grid-cols-3 gap-2">
+          {samples.data.samples.map((s) => (
+            <DropdownMenuItem
+              key={s.id}
+              onClick={() => onPick(s)}
+              className="flex-col items-stretch gap-1 p-1"
+            >
+              {/* biome-ignore lint/performance/noImgElement: a shipped sample photo */}
+              <img src={s.url} alt="" className="aspect-[3/2] w-full rounded-sm object-cover" />
+              <span className="text-center text-[11px]">
+                {t(`samples.${s.name}` as "samples.living")}
+              </span>
+            </DropdownMenuItem>
+          ))}
+        </div>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  )
+}
 
 export type ChatPerson = { id: string; name: string; identity: string; isSelf: boolean }
 export type Mode = "ask" | "auto" | "plan"
@@ -150,9 +191,14 @@ export function Composer({
             }}
           />
         </label>
+        {photos.length === 0 ? (
+          <SamplePicker onPick={(sample) => setPhotos((p) => [...p, sample])} />
+        ) : null}
         <DropdownMenu>
-          <DropdownMenuTrigger className="inline-flex items-center gap-1.5 rounded-pill px-2.5 py-1.5 text-sm font-semibold hover:bg-paper-foreground/8">
-            <span className={cn("size-2.5 rounded-full", DOT[person?.identity ?? "violet"])} />
+          <DropdownMenuTrigger className="inline-flex min-w-0 items-center gap-1.5 rounded-pill px-2.5 py-1.5 text-sm font-semibold whitespace-nowrap hover:bg-paper-foreground/8">
+            <span
+              className={cn("size-2.5 shrink-0 rounded-full", DOT[person?.identity ?? "violet"])}
+            />
             {t("for", { name: person?.isSelf ? t("me") : (person?.name ?? "") })}
             <ChevronDown className="size-3.5" />
           </DropdownMenuTrigger>
@@ -167,8 +213,8 @@ export function Composer({
           </DropdownMenuContent>
         </DropdownMenu>
         <DropdownMenu>
-          <DropdownMenuTrigger className="inline-flex items-center gap-1 rounded-pill px-2.5 py-1.5 text-sm text-paper-muted hover:bg-paper-foreground/8">
-            {t(`modes.${mode}`)}
+          <DropdownMenuTrigger className="inline-flex items-center gap-1 rounded-pill px-2.5 py-1.5 text-sm whitespace-nowrap text-paper-muted hover:bg-paper-foreground/8">
+            {t(`modesShort.${mode}`)}
             <ChevronDown className="size-3.5" />
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start" className="min-w-64">

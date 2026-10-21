@@ -1,0 +1,24 @@
+{
+  "name": "@najimi/media",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@ai-sdk/openai": "4.0.98",
+    "@fal-ai/client": "1.10.1",
+    "@najimi/config": "workspace:*",
+    "@najimi/env": "workspace:*",
+    "ai": "catalog:"
+  },
+  "devDependencies": {
+    "@najimi/typescript-config": "workspace:*",
+    "@types/node": "catalog:",
+    "typescript": "catalog:"
+  }
+}

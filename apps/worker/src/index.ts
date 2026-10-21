@@ -1,9 +1,12 @@
+import { MEDIA } from "@najimi/config"
 import { migrateDatabase } from "@najimi/db/migrate"
 import { boss, type Payload, QUEUES, RETIRED_QUEUES } from "@najimi/jobs"
 import { emit, setRunStatus } from "@najimi/live"
 import { closeInterruptedRuns } from "./interrupted"
 import { chatTitle } from "./jobs/chat-title"
+import { mediaGenerate, pollVideos } from "./jobs/media"
 import { tasteRefresh } from "./jobs/taste-refresh"
+import { seedSamples } from "./samples"
 
 /*
  * The worker: every slow job runs here, never inside a web request. It applies the
@@ -16,6 +19,7 @@ const STEP_PAUSE_MS = 400
 async function main() {
   await migrateDatabase()
   await closeInterruptedRuns()
+  await seedSamples().catch((error) => console.error("[worker] samples", error))
   const queues = await boss({ worker: true })
   for (const name of RETIRED_QUEUES) {
     if (await queues.getQueue(name)) await queues.deleteQueue(name)
@@ -56,11 +60,26 @@ async function main() {
     },
   )
 
+  await queues.work<Payload<"mediaGenerate">>(
+    QUEUES.mediaGenerate.name,
+    { localConcurrency: 3 },
+    async ([job]) => {
+      if (!job) return
+      await mediaGenerate(QUEUES.mediaGenerate.payload.parse(job.data).jobId)
+    },
+  )
+  // Submitted videos are checked here; a restart picks them up again by their provider id.
+  const poller = setInterval(
+    () => void pollVideos().catch((e) => console.error("[poll]", e)),
+    MEDIA.pollMs,
+  )
+
   console.log("[worker] ready")
 
   const shutdown = async (signal: string) => {
     console.log(`[worker] ${signal}: finishing current jobs`)
-    await queues.stop({ graceful: true, timeout: 3000 })
+    clearInterval(poller)
+    await queues.stop({ graceful: true, timeout: 20_000 })
     process.exit(0)
   }
   process.on("SIGTERM", () => void shutdown("SIGTERM"))

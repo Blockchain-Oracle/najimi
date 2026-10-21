@@ -18,6 +18,7 @@
     "@najimi/env": "workspace:*",
     "@najimi/jobs": "workspace:*",
     "@najimi/live": "workspace:*",
+    "@najimi/media": "workspace:*",
     "@najimi/qloo": "workspace:*",
     "@najimi/storage": "workspace:*",
     "@najimi/tokens": "workspace:*",

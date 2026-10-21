@@ -261,6 +261,54 @@ export const toolDefs = {
     outputSchema: z.object({ audiences: z.array(z.object({ id: z.string(), name: z.string() })) }),
   }),
 
+  makeImage: tool({
+    description:
+      'Make an image (shows an approval card with the cost first in Ask mode). restyle: edit a photo the person shared (sourceUploadId) or an earlier creation (sourceCreationId), keeping the real room, object or person and changing its look, light and decor to their taste. new: make a scene from words (a dish for a recipe, the world of a book, a mood). Write the prompt in English, concrete and photographic, built from the person\'s taste words, and pass the words you used. For a restyle say "keep this exact room/object, layout and camera angle".',
+    inputSchema: z.object({
+      title: z.string().max(80).describe("The card's title, in the reply language."),
+      for: personRef,
+      kind: z.enum(["restyle", "new"]),
+      purpose: z.enum(["restyle", "relight", "dish", "mood", "portrait", "scene", "outfit"]),
+      sourceUploadId: z.string().max(64).optional(),
+      sourceCreationId: z.string().max(64).optional(),
+      prompt: z.string().min(20).max(2000),
+      words: z.array(z.string().max(60)).max(12).describe("The taste words the prompt uses."),
+      variants: z.number().int().min(1).max(2).optional(),
+      aspect: z.enum(["landscape", "portrait", "square"]).optional(),
+    }),
+    outputSchema: z.object({
+      runId: z.string().nullable(),
+      creationIds: z.array(z.string()),
+      title: z.string(),
+      kind: z.string(),
+      purpose: z.string(),
+      words: z.array(z.string()),
+      sourceUploadId: z.string().nullable(),
+      sourceCreationId: z.string().nullable(),
+      personName: z.string(),
+      note: z.string().nullable(),
+    }),
+  }),
+
+  makeVideo: tool({
+    description:
+      'Turn an image Najimi made (fromCreationId) into a short video. Describe the camera move and motion in English ("slow push-in, warm lamp light flickers, rain on the window"). audio adds the model\'s own ambient sound. Shows an approval card with the cost first in Ask mode.',
+    inputSchema: z.object({
+      title: z.string().max(80),
+      fromCreationId: z.string().max(64),
+      motion: z.string().min(10).max(600),
+      seconds: z.union([z.literal(5), z.literal(6)]).optional(),
+      audio: z.boolean().optional(),
+    }),
+    outputSchema: z.object({
+      runId: z.string().nullable(),
+      creationId: z.string().nullable(),
+      posterCreationId: z.string().nullable(),
+      title: z.string(),
+      note: z.string().nullable(),
+    }),
+  }),
+
   tasteBrief: tool({
     description:
       "Show the taste brief card: the words of a person's taste that a plan or a creation will be built from (look, rooms, mood, food), and the loves behind them. Call it first when planning or making something for someone (a room, a meal, a look), so they see what their taste is made of.",

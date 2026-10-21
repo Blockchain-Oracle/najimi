@@ -24,6 +24,7 @@ COPY --from=build /out/package.json ./package.json
 COPY --from=build /out/node_modules ./node_modules
 COPY --from=build /app/apps/worker/dist ./dist
 COPY --from=build /app/packages/db/drizzle /app/packages/db/drizzle
+COPY --from=build /app/apps/worker/samples /app/apps/worker/samples
 USER node
 # The heap stays under the container's limit (set in Coolify) with room for native memory.
 CMD ["node", "--max-old-space-size=768", "--enable-source-maps", "--import", "./dist/bundle/register.mjs", "dist/bundle/main.mjs"]

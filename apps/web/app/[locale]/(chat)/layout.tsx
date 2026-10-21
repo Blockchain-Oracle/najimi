@@ -1,5 +1,6 @@
 import { Suspense } from "react"
 import { ChatSidebar } from "@/components/chat/chat-sidebar"
+import { MobileChats } from "@/components/chat/mobile-chats"
 import { AppHeader } from "@/components/shell/app-header"
 import { emailEnabled, googleEnabled } from "@/lib/auth"
 
@@ -13,7 +14,12 @@ export default function ChatLayout({ children }: LayoutProps<"/[locale]">) {
             <ChatSidebar />
           </Suspense>
         </aside>
-        <main className="min-w-0">{children}</main>
+        <main className="min-w-0">
+          <div className="px-4 pt-2 md:hidden">
+            <MobileChats />
+          </div>
+          {children}
+        </main>
       </div>
     </>
   )

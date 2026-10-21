@@ -118,7 +118,9 @@
     "saved": "Kept",
     "nothingSaved": "Nothing kept yet. Tap the bookmark on any pick.",
     "builtOnQloo": "Built on Qloo",
-    "callsCount": "{count, plural, one {# Qloo call} other {# Qloo calls}}"
+    "callsCount": "{count, plural, one {# Qloo call} other {# Qloo calls}}",
+    "askFor": "Ask for {name}",
+    "askSelf": "Ask Najimi"
   },
   "Pick": {
     "because": "because you love {name}",
@@ -261,7 +263,21 @@
     "rename": "Rename",
     "delete": "Delete",
     "confirmDelete": "Delete this chat?",
-    "noChats": "No chats yet."
+    "noChats": "No chats yet.",
+    "chats": "Chats",
+    "waiting": "Waiting on you",
+    "sample": "Sample room",
+    "sampleHint": "No photo to hand? Try one of these.",
+    "samples": {
+      "living": "Living room",
+      "desk": "Desk",
+      "bedroom": "Bedroom"
+    },
+    "modesShort": {
+      "ask": "Ask first",
+      "auto": "Auto",
+      "plan": "Plan only"
+    }
   },
   "Cards": {
     "asking": "Asking Qloo…",
@@ -297,7 +313,10 @@
       "55_and_older": "55+",
       "male": "Men",
       "female": "Women"
-    }
+    },
+    "planOnly": "Plan only: “{title}” wasn't made.",
+    "declined": "Not made: “{title}”.",
+    "preparing": "Preparing…"
   },
   "Asked": {
     "city": "in {v}",
@@ -341,5 +360,56 @@
     "both": "What would {name} and I both love?",
     "hidden": "Find me hidden gems I'd love",
     "trip": "Where should I travel next?"
+  },
+  "Make": {
+    "approveKicker": "Ready to make",
+    "costImages": "Uses {n, plural, one {# image} other {# images}} of today's allowance ({left} left).",
+    "costVideos": "Uses {n, plural, one {# video} other {# videos}} of today's allowance ({left} left).",
+    "approve": "Make it",
+    "decline": "Not now",
+    "noneLeft": "That's all the images for today. Sign in for more, or come back tomorrow.",
+    "noneLeftVideo": "That's all the videos for today.",
+    "notMade": "This one wasn't made.",
+    "forName": "for {name}",
+    "refused": "The image provider declined this one. Try a different photo or ask.",
+    "failed": "That didn't finish.",
+    "retry": "Try again",
+    "retryAsk": "Try “{title}” again",
+    "making": "Making {n, plural, one {your image} other {# versions}}… about half a minute",
+    "variant": "Version {n}",
+    "download": "Download",
+    "share": "Share",
+    "linkCopied": "Link copied",
+    "variation": "Variation",
+    "variationAsk": "Another take on “{title}”, a little different",
+    "makeVideo": "Make a video",
+    "videoAsk": "Turn version {n} of “{title}” into a short video",
+    "videoSoon": "Video isn't switched on yet. Images work now.",
+    "rendering": "Rendering… usually a minute or two",
+    "queued": "Queued",
+    "queuedAt": "Queued, number {n}",
+    "before": "Before",
+    "after": "After"
+  },
+  "Assets": {
+    "title": "Assets",
+    "hint": "Everything Najimi made for you and the people you make for.",
+    "kinds": {
+      "all": "All",
+      "image": "Images",
+      "video": "Videos"
+    },
+    "empty": "Nothing made yet. Restyle a photo or ask for a dish, a mood, a room.",
+    "startMaking": "Make something",
+    "more": "Load more",
+    "madeFrom": "Made from",
+    "openChat": "Open its chat",
+    "delete": "Delete",
+    "confirmDelete": "Delete this for good?"
+  },
+  "Share": {
+    "cta": "Make yours",
+    "madeFrom": "Made from a real taste: {words}",
+    "pitch": "Najimi knows what people love through Qloo, and makes things for their real lives that fit them."
   }
 }

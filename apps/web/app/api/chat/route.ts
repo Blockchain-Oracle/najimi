@@ -7,10 +7,11 @@ import {
   RULES,
   toolDefs,
 } from "@najimi/agent"
-import { AGENT, DEFAULT_LOCALE } from "@najimi/config"
+import { AGENT, ALLOWANCE, DEFAULT_LOCALE } from "@najimi/config"
 import { db, schema } from "@najimi/db"
 import { env } from "@najimi/env/server"
 import { enqueue } from "@najimi/jobs"
+import { videoReady } from "@najimi/media"
 import {
   convertToModelMessages,
   createIdGenerator,
@@ -27,7 +28,7 @@ import { forModel, ownsUploads } from "@/lib/chat/files"
 import { mergeIncoming, truncateForRegenerate, uploadIdsOf } from "@/lib/chat/merge"
 import { chatExists, messagesOf, ownedChat, saveMessages } from "@/lib/chat/store"
 import { buildTools } from "@/lib/chat/tools.server"
-import { charge } from "@/lib/chat/usage"
+import { charge, usageToday } from "@/lib/chat/usage"
 import { isLocale } from "@/lib/i18n"
 import { ownedPerson, peopleOf, selfOf } from "@/lib/people"
 
@@ -126,7 +127,33 @@ export async function POST(request: Request) {
 
   const last = messages.at(-1)
   const assistantId = last?.role === "assistant" ? last.id : nextId()
-  const tools = buildTools({ userId: user.id, chatId: chat.id, person, people }, () => assistantId)
+  const tools = buildTools(
+    { userId: user.id, guest, chatId: chat.id, person, people },
+    () => assistantId,
+  )
+  const made = await db
+    .select({
+      id: schema.creations.id,
+      kind: schema.creations.kind,
+      title: schema.creations.title,
+      status: schema.creations.status,
+    })
+    .from(schema.creations)
+    .where(eq(schema.creations.chatId, chat.id))
+  const photos = [...new Set(messages.filter((m) => m.role === "user").flatMap(uploadIdsOf))]
+  const today = await usageToday(user.id)
+  const left = (counter: "images" | "videos") =>
+    (guest ? ALLOWANCE.guest : ALLOWANCE.member)[counter] - today[counter]
+  /** Ask mode: an approval card with the cost; Plan only: never; Make automatically: straight away. */
+  const approval = (counter: "images" | "videos", n: number) =>
+    chat.mode === "plan"
+      ? ({ type: "denied", reason: "plan" } as const)
+      : chat.mode === "auto"
+        ? ("not-applicable" as const)
+        : ({
+            type: "user-approval",
+            reason: `${counter}:${n}:${Math.max(left(counter), 0)}`,
+          } as const)
   const modelId = agentModelId()
 
   await saveMessages(chat.id, messages, "generating")
@@ -152,6 +179,9 @@ export async function POST(request: Request) {
         words: taste?.words ?? null,
       },
       others: people.filter((p) => p.id !== person.id).map((p) => ({ id: p.id, name: p.name })),
+      photos,
+      creations: made,
+      videoReady: videoReady(),
     })}`,
     messages: await convertToModelMessages(await forModel(user.id, messages), {
       tools,
@@ -159,6 +189,10 @@ export async function POST(request: Request) {
     }),
     tools,
     experimental_toolApprovalSecret: approvalSecret(),
+    toolApproval: {
+      makeImage: (input) => approval("images", input.variants ?? 2),
+      makeVideo: () => approval("videos", 1),
+    },
     stopWhen: isStepCount(AGENT.maxSteps),
     maxOutputTokens: AGENT.maxOutputTokens,
     providerOptions: {
@@ -206,7 +240,11 @@ export async function POST(request: Request) {
         part.type === "start" ? { createdAt: Date.now(), model: modelId } : undefined,
       onStepEnd: ({ messages: all }) => saveMessages(chat.id, all),
       onEnd: async ({ messages: all }) => {
-        await saveMessages(chat.id, all, "idle")
+        // A question card left open means the chat is waiting on the person.
+        const waiting = all
+          .at(-1)
+          ?.parts.some((p) => p.type === "tool-askUser" && p.state === "input-available")
+        await saveMessages(chat.id, all, waiting ? "waiting" : "idle")
         if (!chat.title) await enqueue("chatTitle", { chatId: chat.id }).catch(() => undefined)
       },
       onError: (error) => {

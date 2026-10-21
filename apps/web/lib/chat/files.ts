@@ -2,17 +2,22 @@ import "server-only"
 import type { NajimiUIMessage } from "@najimi/agent"
 import { db, schema } from "@najimi/db"
 import { getBytes, providerMediaUrl } from "@najimi/storage"
-import { and, eq, inArray } from "drizzle-orm"
+import { and, eq, inArray, or } from "drizzle-orm"
 
 const UPLOAD = /^\/api\/media\/upload\/([0-9a-f-]{36})\?v=(original|display)$/
 
-/** Whether every upload id is the user's own. */
+/** Whether every upload id is the user's own (or one of the sample photos shipped with the app). */
 export async function ownsUploads(userId: string, ids: string[]): Promise<boolean> {
   if (!ids.length) return true
   const rows = await db
     .select({ id: schema.uploads.id })
     .from(schema.uploads)
-    .where(and(inArray(schema.uploads.id, ids), eq(schema.uploads.ownerId, userId)))
+    .where(
+      and(
+        inArray(schema.uploads.id, ids),
+        or(eq(schema.uploads.ownerId, userId), eq(schema.uploads.sample, true)),
+      ),
+    )
   return rows.length === new Set(ids).size
 }
 
@@ -40,7 +45,12 @@ export async function forModel(
             const [row] = await db
               .select()
               .from(schema.uploads)
-              .where(and(eq(schema.uploads.id, id), eq(schema.uploads.ownerId, userId)))
+              .where(
+                and(
+                  eq(schema.uploads.id, id),
+                  or(eq(schema.uploads.ownerId, userId), eq(schema.uploads.sample, true)),
+                ),
+              )
             if (!row) return p
             inline.set(
               id,

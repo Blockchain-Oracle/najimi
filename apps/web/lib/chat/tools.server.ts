@@ -3,6 +3,8 @@ import { type insightsInput, type Pick, toolDefs } from "@najimi/agent"
 import { TASTE_DOMAINS } from "@najimi/config"
 import { db, schema } from "@najimi/db"
 import type { Constraints } from "@najimi/db/schema"
+import { enqueue } from "@najimi/jobs"
+import { videoReady } from "@najimi/media"
 import {
   audiences,
   compare,
@@ -17,10 +19,12 @@ import { tool } from "ai"
 import { and, asc, eq } from "drizzle-orm"
 import type { z } from "zod"
 import type { PersonRow } from "@/lib/people"
+import { charge, refund } from "./usage"
 
 /** Who a turn acts for and on: the signed-in user, their chat, and everyone they keep a taste for. */
 export type TurnContext = {
   userId: string
+  guest: boolean
   chatId: string
   /** The chat's own person (tools default to them). */
   person: PersonRow
@@ -338,6 +342,248 @@ export function buildTools(ctx: TurnContext, messageId: () => string | undefined
       toModelOutput: ({ output }) => ({
         type: "text",
         value: output.audiences.map((a) => `${a.name}: ${a.id}`).join("\n") || "None.",
+      }),
+    }),
+
+    makeImage: tool({
+      ...toolDefs.makeImage,
+      execute: async (input, { toolCallId }) => {
+        const person = target(ctx, input.for)
+        const n = input.variants ?? 2
+        const base = {
+          title: input.title,
+          kind: input.kind,
+          purpose: input.purpose,
+          personName: person.name,
+          sourceUploadId: null as string | null,
+          sourceCreationId: null as string | null,
+        }
+        // A source must be the user's own photo (or a shipped sample), or their own creation.
+        let sourceUploadId: string | null = null
+        let sourceCreationId: string | null = null
+        if (input.sourceUploadId) {
+          const [u] = await db
+            .select()
+            .from(schema.uploads)
+            .where(eq(schema.uploads.id, input.sourceUploadId))
+          if (u && (u.ownerId === ctx.userId || u.sample)) sourceUploadId = u.id
+        }
+        if (input.sourceCreationId) {
+          const [c] = await db
+            .select()
+            .from(schema.creations)
+            .where(
+              and(
+                eq(schema.creations.id, input.sourceCreationId),
+                eq(schema.creations.ownerId, ctx.userId),
+              ),
+            )
+          if (c?.status === "ready" && c.kind === "image") sourceCreationId = c.id
+        }
+        if (input.kind === "restyle" && !sourceUploadId && !sourceCreationId)
+          return {
+            ...base,
+            runId: null,
+            creationIds: [],
+            words: [],
+            note: "No photo to restyle: ask them to add one, or offer a sample room.",
+          }
+
+        // Rule 2: the words a creation is made of come from the person's taste, and are recorded.
+        const [taste] = await db
+          .select()
+          .from(schema.tastes)
+          .where(eq(schema.tastes.personId, person.id))
+        const known = new Set(
+          Object.values(taste?.words ?? {})
+            .flat()
+            .map((w) => w.toLowerCase()),
+        )
+        const words = input.words.filter((w) => known.has(w.toLowerCase()))
+        const tasteWords = words.length
+          ? words
+          : Object.values(taste?.words ?? {})
+              .flat()
+              .slice(0, 6)
+        const prompt = `${input.prompt}\n\nTaste words to express: ${tasteWords.join(", ")}.`
+
+        if (!(await charge(ctx.userId, ctx.guest, "images", n)))
+          return {
+            ...base,
+            sourceUploadId,
+            sourceCreationId,
+            runId: null,
+            creationIds: [],
+            words: tasteWords,
+            note: "allowance",
+          }
+        const [run] = await db
+          .insert(schema.runs)
+          .values({
+            ownerId: ctx.userId,
+            kind: "media",
+            chatId: ctx.chatId,
+            toolCallId,
+            subject: { kind: "image" },
+          })
+          .returning({ id: schema.runs.id })
+        const [job] = await db
+          .insert(schema.mediaJobs)
+          .values({
+            ownerId: ctx.userId,
+            chatId: ctx.chatId,
+            toolCallId,
+            kind: "image",
+            provider: "openai",
+            model: "",
+            runId: run?.id,
+            input: {
+              prompt,
+              aspect: input.aspect ?? "landscape",
+              sourceUploadId,
+              sourceCreationId,
+            },
+          })
+          .returning({ id: schema.mediaJobs.id })
+        if (!run || !job) {
+          await refund(ctx.userId, "images", n)
+          return {
+            ...base,
+            sourceUploadId,
+            sourceCreationId,
+            runId: null,
+            creationIds: [],
+            words: tasteWords,
+            note: "failed",
+          }
+        }
+        const rows = await db
+          .insert(schema.creations)
+          .values(
+            Array.from({ length: n }, () => ({
+              ownerId: ctx.userId,
+              mediaJobId: job.id,
+              chatId: ctx.chatId,
+              personId: person.id,
+              kind: "image" as const,
+              purpose: input.purpose,
+              title: input.title,
+              prompt,
+              words: tasteWords,
+              sourceUploadId,
+              sourceCreationId,
+            })),
+          )
+          .returning({ id: schema.creations.id })
+        await enqueue("mediaGenerate", { jobId: job.id })
+        return {
+          ...base,
+          sourceUploadId,
+          sourceCreationId,
+          runId: run.id,
+          creationIds: rows.map((r) => r.id),
+          words: tasteWords,
+          note: null,
+        }
+      },
+      toModelOutput: ({ output }) => ({
+        type: "text",
+        value: output.runId
+          ? `Making ${output.creationIds.length} image(s) "${output.title}" (ids ${output.creationIds.join(", ")}); the card shows them as they finish. Don't wait for them.`
+          : output.note === "allowance"
+            ? "Today's image allowance is used up. Say so kindly."
+            : `Not made: ${output.note}`,
+      }),
+    }),
+
+    makeVideo: tool({
+      ...toolDefs.makeVideo,
+      execute: async (input, { toolCallId }) => {
+        const base = { title: input.title, posterCreationId: null as string | null }
+        if (!videoReady()) return { ...base, runId: null, creationId: null, note: "unavailable" }
+        const [from] = await db
+          .select()
+          .from(schema.creations)
+          .where(
+            and(
+              eq(schema.creations.id, input.fromCreationId),
+              eq(schema.creations.ownerId, ctx.userId),
+            ),
+          )
+        if (from?.status !== "ready" || from.kind !== "image")
+          return {
+            ...base,
+            runId: null,
+            creationId: null,
+            note: "That image isn't ready to animate.",
+          }
+        if (!(await charge(ctx.userId, ctx.guest, "videos", 1)))
+          return { ...base, runId: null, creationId: null, note: "allowance" }
+        const [run] = await db
+          .insert(schema.runs)
+          .values({
+            ownerId: ctx.userId,
+            kind: "media",
+            chatId: ctx.chatId,
+            toolCallId,
+            subject: { kind: "video" },
+          })
+          .returning({ id: schema.runs.id })
+        const [job] = await db
+          .insert(schema.mediaJobs)
+          .values({
+            ownerId: ctx.userId,
+            chatId: ctx.chatId,
+            toolCallId,
+            kind: "video",
+            provider: "fal",
+            model: "",
+            runId: run?.id,
+            input: {
+              prompt: input.motion,
+              seconds: input.seconds ?? 6,
+              audio: input.audio ?? false,
+              sourceCreationId: from.id,
+            },
+          })
+          .returning({ id: schema.mediaJobs.id })
+        if (!run || !job) {
+          await refund(ctx.userId, "videos", 1)
+          return { ...base, runId: null, creationId: null, note: "failed" }
+        }
+        const [creation] = await db
+          .insert(schema.creations)
+          .values({
+            ownerId: ctx.userId,
+            mediaJobId: job.id,
+            chatId: ctx.chatId,
+            personId: from.personId,
+            kind: "video",
+            purpose: "film",
+            title: input.title,
+            prompt: input.motion,
+            words: from.words,
+            sourceCreationId: from.id,
+          })
+          .returning({ id: schema.creations.id })
+        await enqueue("mediaGenerate", { jobId: job.id })
+        return {
+          ...base,
+          posterCreationId: from.id,
+          runId: run.id,
+          creationId: creation?.id ?? null,
+          note: null,
+        }
+      },
+      toModelOutput: ({ output }) => ({
+        type: "text",
+        value: output.runId
+          ? `The video "${output.title}" is rendering (1–3 minutes); the card shows progress. Don't wait for it.`
+          : output.note === "unavailable"
+            ? "Video isn't available on this server yet. Say so and offer more images."
+            : output.note === "allowance"
+              ? "Today's video allowance is used up."
+              : `Not made: ${output.note}`,
       }),
     }),
 

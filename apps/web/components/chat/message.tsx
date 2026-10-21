@@ -5,9 +5,11 @@ import { cn } from "@najimi/ui/lib/utils"
 import { useTranslations } from "next-intl"
 import { Streamdown } from "streamdown"
 import { CardBoundary } from "./card-boundary"
+import { ApprovalCard } from "./cards/approval-card"
 import { BriefCard } from "./cards/brief-card"
 import { CompareCard } from "./cards/compare-card"
 import { CardSkeleton, InsightsCard } from "./cards/insights-card"
+import { ImageCard, VideoCard } from "./cards/media-card"
 import { WizardCard } from "./cards/wizard-card"
 import { StepChip } from "./lookup-step"
 
@@ -16,6 +18,7 @@ type Part = NajimiUIMessage["parts"][number]
 export type MessageActions = {
   onAsk: (text: string) => void
   onAnswer: (toolCallId: string, output: NajimiTools["askUser"]["output"]) => void
+  onApprove: (approvalId: string, approved: boolean) => void
   /** Only the newest message's open cards take answers. */
   live: boolean
 }
@@ -56,6 +59,41 @@ function ToolPart({ part, actions }: { part: Part; actions: MessageActions }) {
           />
         )
       return <CardSkeleton title={part.input?.title} label={t("thinking")} />
+    case "tool-makeImage":
+    case "tool-makeVideo": {
+      const title = part.input?.title ?? ""
+      const words =
+        part.type === "tool-makeImage"
+          ? (part.input?.words ?? []).filter((w): w is string => Boolean(w))
+          : []
+      if (part.state === "approval-requested")
+        return (
+          <ApprovalCard
+            title={title}
+            words={words}
+            reason={part.approval.reason}
+            onDecide={
+              part.approval.isAutomatic
+                ? undefined
+                : (ok) => actions.onApprove(part.approval.id, ok)
+            }
+          />
+        )
+      if (part.state === "output-denied")
+        return (
+          <p className="rounded-card border border-dashed border-foreground/25 px-4 py-3 text-sm text-text-2">
+            {part.approval?.reason === "plan" ? t("planOnly", { title }) : t("declined", { title })}
+          </p>
+        )
+      if (part.state === "output-available")
+        return part.type === "tool-makeImage" ? (
+          <ImageCard output={part.output} onAsk={actions.onAsk} />
+        ) : (
+          <VideoCard output={part.output} />
+        )
+      if (part.state === "output-error") return failed
+      return <CardSkeleton title={title} label={t("preparing")} />
+    }
     case "tool-qlooSearch":
       return (
         <StepChip

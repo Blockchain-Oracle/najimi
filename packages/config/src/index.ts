@@ -151,7 +151,10 @@ const HOUR_S = 60 * 60
 export const MEDIA = {
   image: {
     provider: "openai",
+    /** New images: fast and general. */
     model: "gpt-image-2.5-flare",
+    /** Edits of a person's own photo: the model OpenAI recommends for editing precision. */
+    editModel: "gpt-image-2.5-sunburst",
     /** Variants made per restyle request (one provider request, N creations). */
     variants: 2,
     size: "1536x1024",
