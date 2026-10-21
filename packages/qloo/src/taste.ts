@@ -29,6 +29,8 @@ type Insights = {
   exclude?: string[]
   /** Tags the results must carry (`urn:tag:genre:place:restaurant`). */
   tags?: string[]
+  /** Tags that join the signal (a mood: `urn:tag:keyword:media:rainy_day`). */
+  signalTags?: string[]
   /** Places: around this city. */
   city?: string | null
   /** Rank these ids only (fit check). */
@@ -51,6 +53,7 @@ export async function profileInsights(
     ...(input.withImage ? { "filter.exists": "properties.image" } : {}),
     ...(input.exclude?.length ? { "filter.exclude.entities": input.exclude.join(",") } : {}),
     ...(input.tags?.length ? { "filter.tags": input.tags.join(",") } : {}),
+    ...(input.signalTags?.length ? { "signal.interests.tags": input.signalTags.join(",") } : {}),
     ...(input.city ? { "filter.location.query": input.city } : {}),
     ...(input.only?.length ? { "filter.results.entities": input.only.join(",") } : {}),
     ...input.extra,
@@ -154,6 +157,14 @@ export function toPick(item: TasteItem, loves: Love[], callId: string): StoredPi
     because: becauseOf(item, loves),
     callId,
     links: linksOf(item),
+    ...(item.type === "urn:entity:place" || item.type === "urn:entity:destination"
+      ? {
+          area:
+            (item.properties as { neighborhood?: string }).neighborhood ??
+            (item.properties as { geocode?: { name?: string } }).geocode?.name ??
+            null,
+        }
+      : {}),
   }
 }
 
@@ -166,7 +177,13 @@ const DOMAIN_TYPE = Object.fromEntries(TASTE_DOMAINS.map((d) => [d.key, d.type])
 export async function profilePicks(
   loves: Love[],
   domain: Domain,
-  opts: { city?: string | null; exclude?: string[]; take?: number; tags?: string[] },
+  opts: {
+    city?: string | null
+    exclude?: string[]
+    take?: number
+    tags?: string[]
+    signalTags?: string[]
+  },
   ctx: CallContext = {},
 ): Promise<{ picks: StoredPick[]; callId: string | null; sparse: boolean }> {
   const meta = TASTE_DOMAINS.find((d) => d.key === domain)
@@ -182,6 +199,7 @@ export async function profilePicks(
         exclude: [...(opts.exclude ?? []), ...loves.map((l) => l.qlooId)],
         city: local ? opts.city : undefined,
         tags: opts.tags,
+        signalTags: opts.signalTags,
       },
       ctx,
       domain,
@@ -273,3 +291,16 @@ export async function profileWords(
     ),
   }
 }
+
+/** Place kinds and their Qloo genre tags (checked live 2026-10-21). */
+export const PLACE_KINDS = {
+  restaurant: "urn:tag:genre:place:restaurant",
+  cafe: "urn:tag:genre:place:restaurant:cafe",
+  bar: "urn:tag:genre:place:restaurant:bar",
+  bookstore: "urn:tag:genre:place:book_store",
+  museum: "urn:tag:genre:place:museum",
+  gallery: "urn:tag:genre:place:art_gallery",
+  hotel: "urn:tag:genre:place:hotel",
+  park: "urn:tag:genre:place:park",
+} as const
+export type PlaceKind = keyof typeof PLACE_KINDS

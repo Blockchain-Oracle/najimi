@@ -25,6 +25,13 @@ export const QUEUES = {
     options: { retryLimit: 1, retryDelay: 5, expireInSeconds: 5 * 60 },
     send: { heartbeatSeconds: JOBS.heartbeatSeconds },
   },
+  /** A new chat's title, in the chat's language, once its first answer is in. */
+  chatTitle: {
+    name: "chat-title",
+    payload: z.object({ chatId: z.uuid() }),
+    options: { retryLimit: 1, retryDelay: 10, expireInSeconds: 2 * 60 },
+    send: { heartbeatSeconds: JOBS.heartbeatSeconds },
+  },
 } as const
 
 /** Queues an earlier version of the product used; the worker deletes them once at start. */

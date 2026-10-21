@@ -10,6 +10,7 @@
 
 @source "../../../../apps/web/**/*.{ts,tsx}";
 @source "../**/*.{ts,tsx}";
+@source "../../../../apps/web/node_modules/streamdown/dist/*.js";
 
 @theme inline {
   --font-heading: var(--font-display);
@@ -141,5 +142,32 @@
     animation-duration: 0.01ms !important;
     /* biome-ignore lint/complexity/noImportantStyles: reduced motion must beat every component's own timing */
     transition-duration: 0.01ms !important;
+  }
+}
+
+/* Model replies: quiet markdown on the wall (bold and links stand out, nothing else shouts). */
+@utility prose-najimi {
+  & p + p {
+    margin-top: 0.75em;
+  }
+  & strong {
+    font-weight: 700;
+    color: var(--color-foreground);
+  }
+  & a {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-color: var(--color-lime);
+  }
+  & ul,
+  & ol {
+    margin-block: 0.5em;
+    padding-inline-start: 1.25em;
+  }
+  & ul {
+    list-style: disc;
+  }
+  & ol {
+    list-style: decimal;
   }
 }

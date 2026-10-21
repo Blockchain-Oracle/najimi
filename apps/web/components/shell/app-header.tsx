@@ -15,7 +15,10 @@ import { SignInSheet } from "@/components/auth/sign-in-sheet"
 import { LanguageMenu } from "@/components/language-menu"
 import { authClient } from "@/lib/auth-client"
 
-const NAV = [{ href: "/people", key: "people" }] as const
+const NAV = [
+  { href: "/c", key: "chat" },
+  { href: "/people", key: "people" },
+] as const
 
 /** Where you can go; `pathname` lights up where you are. */
 function NavLinks({ pathname }: { pathname: string | null }) {

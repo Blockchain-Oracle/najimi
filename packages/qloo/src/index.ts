@@ -1,5 +1,6 @@
 export * from "./api"
 export { type CallContext, type CallResult, qlooCall } from "./call"
 export { QlooError, QlooNotConfigured, qlooConfigured } from "./client"
+export * from "./explore"
 export * from "./taste"
 export * from "./types"

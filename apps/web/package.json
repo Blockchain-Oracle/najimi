@@ -35,6 +35,7 @@
     "react-dom": "catalog:",
     "server-only": "0.0.1",
     "sharp": "catalog:",
+    "streamdown": "2.7.1",
     "zod": "catalog:"
   },
   "devDependencies": {

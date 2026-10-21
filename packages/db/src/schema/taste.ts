@@ -51,6 +51,8 @@ export type StoredPick = {
   because: { qlooId: string; name: string; share: number | null } | null
   callId: string
   links?: Record<string, string>
+  /** Places: the neighbourhood (or town) it's in. */
+  area?: string | null
 }
 
 export const userPrefs = pgTable("user_prefs", {

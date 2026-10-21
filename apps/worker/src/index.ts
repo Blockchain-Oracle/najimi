@@ -2,6 +2,7 @@ import { migrateDatabase } from "@najimi/db/migrate"
 import { boss, type Payload, QUEUES, RETIRED_QUEUES } from "@najimi/jobs"
 import { emit, setRunStatus } from "@najimi/live"
 import { closeInterruptedRuns } from "./interrupted"
+import { chatTitle } from "./jobs/chat-title"
 import { tasteRefresh } from "./jobs/taste-refresh"
 
 /*
@@ -43,6 +44,15 @@ async function main() {
       if (!job) return
       const { personId, runId } = QUEUES.tasteRefresh.payload.parse(job.data)
       await tasteRefresh(personId, runId)
+    },
+  )
+
+  await queues.work<Payload<"chatTitle">>(
+    QUEUES.chatTitle.name,
+    { localConcurrency: 4 },
+    async ([job]) => {
+      if (!job) return
+      await chatTitle(QUEUES.chatTitle.payload.parse(job.data).chatId)
     },
   )
 
