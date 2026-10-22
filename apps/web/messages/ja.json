@@ -180,7 +180,8 @@
     "removed": "削除しました。もう表示されません。",
     "undo": "元に戻す",
     "moreLike": "{name}に似たもの",
-    "loading": "ほかにも探しています…"
+    "loading": "ほかにも探しています…",
+    "actions": "その他の操作"
   },
   "Evidence": {
     "title": "この提案のQloo呼び出し",

@@ -180,7 +180,8 @@
     "removed": "已移除，不会再出现。",
     "undo": "撤销",
     "moreLike": "更多类似 {name} 的推荐",
-    "loading": "正在寻找更多…"
+    "loading": "正在寻找更多…",
+    "actions": "更多操作"
   },
   "Evidence": {
     "title": "背后的 Qloo 调用",

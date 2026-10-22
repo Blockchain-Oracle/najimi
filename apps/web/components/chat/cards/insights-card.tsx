@@ -151,7 +151,7 @@ export function InsightsCard({
                 key={p.qlooId}
                 pick={p}
                 actions={share ? undefined : actions(p)}
-                className="animate-card-land border border-paper-foreground/8 shadow-none"
+                className="animate-card-land"
                 style={{ animationDelay: `${i * 50}ms` }}
               />
             ))}

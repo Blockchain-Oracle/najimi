@@ -180,7 +180,8 @@
     "removed": "Removido. Não vai voltar.",
     "undo": "Desfazer",
     "moreLike": "Mais como {name}",
-    "loading": "Buscando mais…"
+    "loading": "Buscando mais…",
+    "actions": "Mais ações"
   },
   "Evidence": {
     "title": "A chamada Qloo por trás disso",

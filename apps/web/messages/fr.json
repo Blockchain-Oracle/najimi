@@ -180,7 +180,8 @@
     "removed": "Retiré. Il ne reviendra pas.",
     "undo": "Annuler",
     "moreLike": "Plus comme {name}",
-    "loading": "Recherche…"
+    "loading": "Recherche…",
+    "actions": "Plus d'actions"
   },
   "Evidence": {
     "title": "L'appel Qloo derrière ce choix",

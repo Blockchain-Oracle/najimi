@@ -27,14 +27,14 @@ export function BecauseChip({
       <PopoverTrigger
         aria-label={t("because", { name: because.name })}
         title={t("because", { name: because.name })}
-        className="inline-flex max-w-full items-center gap-1.5 rounded-pill bg-sticker px-2.5 py-1 text-start text-[11px] leading-tight font-semibold text-sticker-foreground transition-transform hover:-translate-y-px"
+        className="inline-flex max-w-full items-center gap-1.5 rounded-tag bg-raised px-2 py-1 text-start text-[11px] leading-tight text-text-2 shadow-sticker transition-colors hover:text-foreground"
       >
-        <Heart aria-hidden className="size-3 shrink-0 fill-lime text-lime" />
+        <Heart aria-hidden className="size-3 shrink-0" strokeWidth={1.75} />
         <span className="truncate">{because.name}</span>
       </PopoverTrigger>
       <PopoverContent
         align="start"
-        className="w-80 rounded-card border-0 bg-sticker text-sticker-foreground shadow-sticker"
+        className="w-80 rounded-card border-0 bg-popover text-popover-foreground shadow-float"
       >
         <div className="flex flex-col gap-3">
           <p className="text-sm font-semibold">
@@ -43,10 +43,10 @@ export function BecauseChip({
               : t("because", { name: because.name })}
           </p>
           {publicView || !callId ? (
-            <p className="text-xs text-white/60">{te("publicNote")}</p>
+            <p className="text-xs text-text-3">{te("publicNote")}</p>
           ) : (
             <>
-              <p className="text-[11px] font-semibold tracking-wide text-lime uppercase">
+              <p className="text-[11px] font-medium tracking-[0.08em] text-text-3 uppercase">
                 {te("title")}
               </p>
               <CallDetails callId={callId} />

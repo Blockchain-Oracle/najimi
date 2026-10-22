@@ -180,7 +180,8 @@
     "removed": "Eliminado. No volverá.",
     "undo": "Deshacer",
     "moreLike": "Más como {name}",
-    "loading": "Buscando más…"
+    "loading": "Buscando más…",
+    "actions": "Más acciones"
   },
   "Evidence": {
     "title": "La llamada a Qloo detrás de esto",
