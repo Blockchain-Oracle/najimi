@@ -88,6 +88,13 @@ export const QUEUES = {
     options: { retryLimit: 3, retryDelay: 120, expireInSeconds: 5 * 60 },
     send: {},
   },
+  /** Every morning: a nudge that today's feed tune-up is ready, for whoever used it this week. */
+  tuneUpNudge: {
+    name: "tune-up-nudge",
+    payload: z.object({}),
+    options: { retryLimit: 1, retryDelay: 600, expireInSeconds: 15 * 60 },
+    send: {},
+  },
   /** Every half hour: Najimi asks how the nights, stays and shows that just happened went. */
   followUps: {
     name: "follow-ups",

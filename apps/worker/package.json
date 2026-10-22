@@ -13,6 +13,7 @@
     "@najimi/agent": "workspace:*",
     "@najimi/booking": "workspace:*",
     "@najimi/config": "workspace:*",
+    "@najimi/connectors": "workspace:*",
     "@najimi/db": "workspace:*",
     "@najimi/env": "workspace:*",
     "@najimi/games": "workspace:*",

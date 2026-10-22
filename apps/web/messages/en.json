@@ -332,7 +332,8 @@
     "all": "All",
     "keptEmpty": "Tap the bookmark on anything in your feed and it lands here.",
     "keptCta": "Open my feed",
-    "graph": "Your taste graph"
+    "graph": "Your taste graph",
+    "feeds": "Your feeds"
   },
   "Pick": {
     "because": "because you love {name}",
@@ -880,5 +881,68 @@
     "calling": "Calling {venue}…",
     "callingHint": "You'll see their answer here in a few minutes.",
     "callFailed": "The call didn't go out."
+  },
+  "Connect": {
+    "title": "Your feeds",
+    "line": "Make X, Instagram, TikTok and YouTube show you more of you.",
+    "today": "Today",
+    "tuneUp": "Five-minute tune-up",
+    "tuneUpLine": "Real accounts and topics from your taste. Tap, and it ticks off.",
+    "follow": "Follow",
+    "find": "Find",
+    "copy": "Copy",
+    "copied": "Copied",
+    "markDone": "Done",
+    "doneIt": "Done",
+    "undo": "Undo",
+    "allDone": "All done here. A fresh list tomorrow.",
+    "scoreKicker": "Feed score",
+    "scoreTitle": "How much of your feed is you?",
+    "scoreLine": "Drop a screenshot of your For You or Explore page. It's read, scored and never kept.",
+    "isYou": "{count, plural, =0 {Nothing on it fits you yet} one {# thing on it fits your taste} other {# things on it fit your taste}}",
+    "notYou": "Not you",
+    "trend": "Your score over time",
+    "reading": "Reading it…",
+    "scoreIt": "Score my {name} feed",
+    "error": "Something went wrong. Try again.",
+    "bringTitle": "Bring your taste in",
+    "bringLine": "From what you already follow and love elsewhere. You keep what's you.",
+    "export": "Your data export",
+    "byName": "By name",
+    "privacy": "The archive is opened here, in your browser. Only names and handles from it are sent on; nothing else leaves your phone.",
+    "pickExport": "Choose the .zip",
+    "nothingInExport": "That file doesn't hold any follows or likes we can read.",
+    "foundSome": "{count, plural, one {Qloo knows # of these} other {Qloo knows # of these}}. Keep what's you.",
+    "noneFound": "Qloo didn't recognise anything there.",
+    "addKept": "{count, plural, one {Add # to my taste} other {Add # to my taste}}",
+    "added": "{count, plural, =0 {Already in your taste} one {Added # to your taste} other {Added # to your taste}}",
+    "placeholder": {
+      "handles": "@burnaboy, x.com/temsbaby, instagram.com/nike",
+      "letterboxd": "Your Letterboxd username",
+      "goodreads": "Your Goodreads profile link or id",
+      "lastfm": "Your Last.fm username"
+    },
+    "how": {
+      "instagram": {
+        "1": "In Instagram: Profile → ≡ → Accounts Center → Your information and permissions → Export your information.",
+        "2": "Choose Followers and following, and Likes and saved; pick JSON; request it.",
+        "3": "When Instagram emails you (often minutes, up to a day), download the .zip and choose it here."
+      },
+      "tiktok": {
+        "1": "In TikTok: Profile → ≡ → Settings and privacy → Account → Download your data.",
+        "2": "Pick JSON and request it.",
+        "3": "When it's ready (in the same screen, a few days at most), download it and choose it here."
+      },
+      "spotify": {
+        "1": "On spotify.com: Account → Privacy settings → Download your data.",
+        "2": "Request your Account data (not the extended history).",
+        "3": "When Spotify emails you, download the .zip and choose it here."
+      },
+      "youtube": {
+        "1": "Open takeout.google.com and deselect all.",
+        "2": "Select YouTube and YouTube Music, then only 'subscriptions'.",
+        "3": "Download the .zip when it's ready and choose it here."
+      }
+    }
   }
 }

@@ -216,6 +216,9 @@ importers:
       drizzle-orm:
         specifier: 'catalog:'
         version: 0.45.4(@opentelemetry/api@1.9.1)(kysely@0.29.7)(pg@8.23.1)(postgres@3.4.9)
+      fflate:
+        specifier: 0.8.3
+        version: 0.8.3
       heic2any:
         specifier: 0.0.4
         version: 0.0.4
@@ -298,6 +301,9 @@ importers:
       '@najimi/config':
         specifier: workspace:*
         version: link:../../packages/config
+      '@najimi/connectors':
+        specifier: workspace:*
+        version: link:../../packages/connectors
       '@najimi/db':
         specifier: workspace:*
         version: link:../../packages/db
@@ -478,6 +484,9 @@ importers:
       '@najimi/config':
         specifier: workspace:*
         version: link:../config
+      '@najimi/db':
+        specifier: workspace:*
+        version: link:../db
       '@najimi/env':
         specifier: workspace:*
         version: link:../env
@@ -3877,6 +3886,9 @@ packages:
     peerDependenciesMeta:
       picomatch:
         optional: true
+
+  fflate@0.8.3:
+    resolution: {integrity: sha512-tbZNuJrLwGUp3zshBtdy4W+ORxZuIh8a5ilyIEQDC5rY1f3U20JMry0Ll3WBzU58EZKsEuJFXhb5gwv8CsPvgA==}
 
   figures@6.1.0:
     resolution: {integrity: sha512-d+l3qxjSesT4V7v2fh+QnmFnUWv9lSpjarhShNTgBOfA0ttejbQUAlHLitbjkoRiDulW0OPoQPYIGhIC8ohejg==}
@@ -8372,6 +8384,8 @@ snapshots:
   fdir@6.5.0(picomatch@4.0.7):
     optionalDependencies:
       picomatch: 4.0.7
+
+  fflate@0.8.3: {}
 
   figures@6.1.0:
     dependencies:

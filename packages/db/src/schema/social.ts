@@ -33,6 +33,8 @@ export type NotificationKind =
   | "drop"
   /** A booking changed (confirmed, failed, cancelled). */
   | "booking"
+  /** Today's feed tune-up is ready. */
+  | "tuneup"
 
 /** Your news (the inbox): a follow, someone joining your circle, a mention, a new DM. */
 export const notifications = pgTable(

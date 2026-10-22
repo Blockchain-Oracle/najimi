@@ -148,6 +148,13 @@
       "when": 1792696873215,
       "tag": "0020_plans",
       "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1792698531058,
+      "tag": "0021_socials",
+      "breakpoints": true
     }
   ]
 }

@@ -5,6 +5,7 @@ import {
   chatMembers,
   chats,
   creations,
+  feedScores,
   follows,
   gameAnswers,
   gameRounds,
@@ -18,6 +19,7 @@ import {
   runs,
   session,
   shares,
+  tuneUps,
   uploads,
   usageDays,
   user,
@@ -120,6 +122,13 @@ export async function reownUserData(db: Db, fromUserId: string, toUserId: string
       .set({ actorId: toUserId })
       .where(eq(notifications.actorId, fromUserId))
     await tx.update(llmCalls).set({ userId: toUserId }).where(eq(llmCalls.userId, fromUserId))
+    await tx.update(feedScores).set({ userId: toUserId }).where(eq(feedScores.userId, fromUserId))
+    // Today's tune-up belongs to the account once it signs in (its own list wins a clash).
+    await tx.execute(sql`
+      update ${tuneUps} t set user_id = ${toUserId}
+      where t.user_id = ${fromUserId}
+        and not exists (select 1 from ${tuneUps} u where u.user_id = ${toUserId} and u.day = t.day)`)
+    await tx.delete(tuneUps).where(eq(tuneUps.userId, fromUserId))
     // Games: rounds they dealt or that are about them, and their goes (a round both accounts
     // played keeps the account's own go).
     await tx

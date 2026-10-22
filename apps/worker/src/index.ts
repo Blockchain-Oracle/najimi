@@ -12,6 +12,7 @@ import { dailyDrop } from "./jobs/daily-drop"
 import { guestsCleanup } from "./jobs/forget"
 import { mediaGenerate, pollVideos } from "./jobs/media"
 import { tasteRefresh, tasteRetune } from "./jobs/taste-refresh"
+import { tuneUpNudge } from "./jobs/tune-up-nudge"
 import { seedSamples } from "./samples"
 
 /*
@@ -125,6 +126,11 @@ async function main() {
     await followUps()
   })
   await queues.schedule(QUEUES.followUps.name, "*/30 * * * *", {}, { tz: "UTC" })
+  await queues.work(QUEUES.tuneUpNudge.name, async ([job]) => {
+    if (!job) return
+    await tuneUpNudge()
+  })
+  await queues.schedule(QUEUES.tuneUpNudge.name, "0 8 * * *", {}, { tz: "UTC" })
 
   // Submitted videos are checked here; a restart picks them up again by their provider id.
   const poller = setInterval(
