@@ -16,6 +16,7 @@ import { HotelsCard } from "./cards/hotels-card"
 import { CardSkeleton, InsightsCard } from "./cards/insights-card"
 import { ImageCard } from "./cards/media-card"
 import { PlanCard } from "./cards/plan-card"
+import { PostApproval, PostCard } from "./cards/post-card"
 import { SteerCard } from "./cards/steer-card"
 import { WizardCard } from "./cards/wizard-card"
 import { Run } from "./run"
@@ -137,6 +138,24 @@ function ToolPart({
         return <CallCard input={part.input ?? {}} output={part.output} />
       if (part.state === "output-error") return failed
       return <CardSkeleton title={part.input?.venue} label={t("dialling")} />
+    case "tool-postToX":
+      if (part.state === "approval-requested")
+        return (
+          <PostApproval
+            input={part.input ?? {}}
+            onDecide={
+              part.approval.isAutomatic || !actions.live
+                ? undefined
+                : (ok) => actions.onApprove(part.approval.id, ok)
+            }
+          />
+        )
+      if (part.state === "output-denied")
+        return <p className="text-sm text-text-3">{t("postDeclined")}</p>
+      if (part.state === "output-available")
+        return <PostCard input={part.input ?? {}} output={part.output} />
+      if (part.state === "output-error") return failed
+      return <CardSkeleton title={undefined} label={t("postWriting")} />
     case "tool-startGame":
       if (part.state === "output-available") return <GameCard output={part.output} />
       if (part.state === "output-error") return failed

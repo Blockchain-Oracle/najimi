@@ -3,12 +3,9 @@
 import { candidatesFromExport, EXPORT_FILES, type ExportPlatform } from "@najimi/connectors/exports"
 import { Sheet, SheetContent, SheetTitle } from "@najimi/ui/components/sheet"
 import { toast } from "@najimi/ui/components/sonner"
-import { cn } from "@najimi/ui/lib/utils"
-import { useQueryClient } from "@tanstack/react-query"
-import { Check, FileArchive, Loader2 } from "lucide-react"
-import { useRouter } from "next/navigation"
+import { FileArchive, Loader2 } from "lucide-react"
 import { useTranslations } from "next-intl"
-import { useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import {
   siGoodreads,
   siInstagram,
@@ -22,25 +19,24 @@ import {
 import { BrandIcon } from "@/components/brands/brand-icon"
 import { api } from "@/lib/fetcher"
 import { sound } from "@/lib/sounds"
+import { type Hit, ReviewHits } from "./review-hits"
+import { SocialRead } from "./social-read"
 
 /*
  * Bring your taste in (W14): what you already follow and love elsewhere. Exports (Instagram,
  * TikTok, Spotify, YouTube) are opened here in your browser and only the short lists inside
- * (handles, artists, channel names) are sent on; usernames and handles are read by name. Qloo
- * matches each to the real thing; you keep what's you. After SeatGeek's connect step (Refero
- * 9cca4ae4) and BeReal's "connected" toast (76a2af67).
+ * (handles, artists, channel names) are sent on; an X account is read by its handle (who it
+ * shares and mentions); usernames and handles are read by name. Qloo matches each to the real
+ * thing; you keep what's you. After SeatGeek's connect step (Refero 9cca4ae4) and BeReal's
+ * "connected" toast (76a2af67).
  */
 
-type Hit = {
-  qlooId: string
-  type: string
-  name: string
-  image: string | null
-  caption: string | null
-  from: string
-}
+/** Other parts of the page open a source here (the accounts list's "Bring export"). */
+export const BRING_EVENT = "najimi:bring"
+
 type Source =
   | { kind: "export"; id: ExportPlatform; icon: typeof siX; name: string }
+  | { kind: "social"; id: "x"; icon: typeof siX; name: string }
   | {
       kind: "name"
       id: "handles" | "letterboxd" | "goodreads" | "lastfm"
@@ -49,15 +45,17 @@ type Source =
     }
 
 const SOURCES: Source[] = [
+  { kind: "social", id: "x", icon: siX, name: "X" },
   { kind: "export", id: "instagram", icon: siInstagram, name: "Instagram" },
   { kind: "export", id: "tiktok", icon: siTiktok, name: "TikTok" },
-  { kind: "export", id: "spotify", icon: siSpotify, name: "Spotify" },
   { kind: "export", id: "youtube", icon: siYoutube, name: "YouTube" },
-  { kind: "name", id: "handles", icon: siX, name: "X handles" },
+  { kind: "export", id: "spotify", icon: siSpotify, name: "Spotify" },
   { kind: "name", id: "letterboxd", icon: siLetterboxd, name: "Letterboxd" },
   { kind: "name", id: "goodreads", icon: siGoodreads, name: "Goodreads" },
   { kind: "name", id: "lastfm", icon: siLastdotfm, name: "Last.fm" },
 ]
+/** Pasted handles and links (X or Instagram), reached from the X sheet. */
+const HANDLES: Source = { kind: "name", id: "handles", icon: siX, name: "Handles" }
 
 /** At most this much of an archive is read (only the few files that matter). */
 const MAX_READ = 40 * 1024 * 1024
@@ -93,25 +91,32 @@ async function readExport(file: File, platform: ExportPlatform): Promise<Record<
 
 export function BringTaste({ personId }: { personId: string }) {
   const t = useTranslations("Connect")
-  const router = useRouter()
-  const queryClient = useQueryClient()
   const input = useRef<HTMLInputElement>(null)
   const [source, setSource] = useState<Source | null>(null)
   const [value, setValue] = useState("")
   const [working, setWorking] = useState(false)
   const [hits, setHits] = useState<Hit[] | null>(null)
-  const [kept, setKept] = useState<Set<string>>(new Set())
-  const [adding, setAdding] = useState(false)
+  const [reading, setReading] = useState<string | null>(null)
 
   const open = (s: Source) => {
     sound("tap")
     setSource(s)
     setHits(null)
+    setReading(null)
     setValue("")
   }
+  // The accounts list asks for an export by id.
+  useEffect(() => {
+    const onBring = (e: Event) => {
+      const id = (e as CustomEvent<string>).detail
+      const found = SOURCES.find((s) => s.id === id)
+      if (found) open(found)
+    }
+    window.addEventListener(BRING_EVENT, onBring)
+    return () => window.removeEventListener(BRING_EVENT, onBring)
+  })
   const found = (list: Hit[]) => {
     setHits(list)
-    setKept(new Set(list.map((h) => h.qlooId)))
     if (list.length) sound("promote")
   }
 
@@ -134,7 +139,12 @@ export function BringTaste({ personId }: { personId: string }) {
   }
 
   const fromName = async () => {
-    if (source?.kind !== "name" || !value.trim()) return
+    if (!value.trim()) return
+    if (source?.kind === "social") {
+      setReading(value.trim())
+      return
+    }
+    if (source?.kind !== "name") return
     setWorking(true)
     try {
       const r = await api<{ hits: Hit[] }>("/api/imports", {
@@ -148,33 +158,7 @@ export function BringTaste({ personId }: { personId: string }) {
     }
   }
 
-  const add = async () => {
-    const chosen = (hits ?? []).filter((h) => kept.has(h.qlooId))
-    if (!chosen.length) return
-    setAdding(true)
-    try {
-      const r = await api<{ added: number }>(`/api/people/${personId}/loves/batch`, {
-        json: {
-          loves: chosen.map((h) => ({
-            qlooId: h.qlooId,
-            type: h.type,
-            name: h.name,
-            image: h.image,
-            weight: 6,
-          })),
-        },
-      })
-      toast(t("added", { count: r.added }))
-      sound("check")
-      setSource(null)
-      void queryClient.invalidateQueries({ queryKey: ["tuneup"] })
-      router.refresh()
-    } catch (e) {
-      toast(e instanceof Error ? e.message : t("error"))
-    } finally {
-      setAdding(false)
-    }
-  }
+  const close = () => setSource(null)
 
   return (
     <section className="flex flex-col gap-3">
@@ -196,14 +180,18 @@ export function BringTaste({ personId }: { personId: string }) {
             <span className="flex min-w-0 flex-col">
               <span className="truncate text-[14px] font-semibold">{s.name}</span>
               <span className="truncate text-[11px] text-text-3">
-                {s.kind === "export" ? t("export") : t("byName")}
+                {s.kind === "export"
+                  ? t("export")
+                  : s.kind === "social"
+                    ? t("byHandle")
+                    : t("byName")}
               </span>
             </span>
           </button>
         ))}
       </div>
 
-      <Sheet open={Boolean(source)} onOpenChange={(o) => !o && setSource(null)}>
+      <Sheet open={Boolean(source)} onOpenChange={(o) => !o && close()}>
         <SheetContent
           side="bottom"
           className="max-h-[88svh] overflow-y-auto rounded-t-sheet border-0 bg-background px-5 pb-[max(1.25rem,env(safe-area-inset-bottom))]"
@@ -213,7 +201,9 @@ export function BringTaste({ personId }: { personId: string }) {
               <SheetTitle className="flex items-center gap-2 font-title text-[1.6rem] font-normal">
                 <BrandIcon icon={source.icon} colored className="size-6" /> {source.name}
               </SheetTitle>
-              {hits === null ? (
+              {reading && source.kind === "social" ? (
+                <SocialRead platform="x" handle={reading} personId={personId} onDone={close} />
+              ) : hits === null ? (
                 source.kind === "export" ? (
                   <>
                     <ol className="flex flex-col gap-2 text-[14px] text-text-2">
@@ -260,10 +250,15 @@ export function BringTaste({ personId }: { personId: string }) {
                     }}
                     className="flex flex-col gap-3"
                   >
+                    {source.kind === "social" ? (
+                      <p className="text-[14px] text-text-2">{t("xHandleLine")}</p>
+                    ) : null}
                     <input
                       value={value}
                       onChange={(e) => setValue(e.target.value)}
-                      placeholder={t(`placeholder.${source.id}` as "placeholder.handles")}
+                      placeholder={t(
+                        `placeholder.${source.kind === "social" ? "x" : source.id}` as "placeholder.handles",
+                      )}
                       autoCapitalize="none"
                       className="h-12 rounded-tile bg-card px-4 text-[16px] outline-none ring-1 ring-border focus:ring-2 focus:ring-ring"
                     />
@@ -275,69 +270,19 @@ export function BringTaste({ personId }: { personId: string }) {
                       {working ? <Loader2 className="size-5 animate-spin" /> : null}
                       {t("find")}
                     </button>
+                    {source.kind === "social" ? (
+                      <button
+                        type="button"
+                        onClick={() => open(HANDLES)}
+                        className="self-center text-[13px] text-text-3 underline underline-offset-4"
+                      >
+                        {t("pasteHandles")}
+                      </button>
+                    ) : null}
                   </form>
                 )
-              ) : hits.length ? (
-                <>
-                  <p className="text-[14px] text-text-2">
-                    {t("foundSome", { count: hits.length })}
-                  </p>
-                  <ul className="grid grid-cols-3 gap-2 sm:grid-cols-4">
-                    {hits.map((h) => {
-                      const on = kept.has(h.qlooId)
-                      return (
-                        <li key={h.qlooId}>
-                          <button
-                            type="button"
-                            aria-pressed={on}
-                            onClick={() =>
-                              setKept((s) => {
-                                const next = new Set(s)
-                                if (on) next.delete(h.qlooId)
-                                else next.add(h.qlooId)
-                                return next
-                              })
-                            }
-                            className={cn(
-                              "relative flex w-full flex-col overflow-hidden rounded-tile bg-card text-start ring-2 transition-[box-shadow,opacity]",
-                              on ? "ring-signal" : "opacity-50 ring-transparent",
-                            )}
-                          >
-                            {h.image ? (
-                              // biome-ignore lint/performance/noImgElement: remote artwork
-                              <img
-                                src={h.image}
-                                alt=""
-                                className="aspect-square w-full object-cover"
-                              />
-                            ) : (
-                              <span className="aspect-square w-full bg-secondary" />
-                            )}
-                            <span className="truncate px-2 py-1.5 text-[12px] font-semibold">
-                              {h.name}
-                            </span>
-                            {on ? (
-                              <span className="absolute top-1.5 end-1.5 grid size-5 place-items-center rounded-full bg-signal text-signal-foreground">
-                                <Check className="size-3" strokeWidth={3} />
-                              </span>
-                            ) : null}
-                          </button>
-                        </li>
-                      )
-                    })}
-                  </ul>
-                  <button
-                    type="button"
-                    disabled={adding || !kept.size}
-                    onClick={() => void add()}
-                    className="sticky bottom-0 flex h-12 items-center justify-center gap-2 rounded-pill bg-primary font-heading text-[15px] text-primary-foreground disabled:opacity-40"
-                  >
-                    {adding ? <Loader2 className="size-5 animate-spin" /> : null}
-                    {t("addKept", { count: kept.size })}
-                  </button>
-                </>
               ) : (
-                <p className="text-[14px] text-text-3">{t("noneFound")}</p>
+                <ReviewHits personId={personId} hits={hits} onAdded={close} />
               )}
             </div>
           ) : null}

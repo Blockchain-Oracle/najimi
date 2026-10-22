@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto"
 import { safeZone, todayIn } from "@najimi/booking"
 import { AGENT, ALLOWANCE, MEDIA, ROOMS } from "@najimi/config"
+import { connectionsOf } from "@najimi/connectors/sessions"
 import { db, schema } from "@najimi/db"
 import { env } from "@najimi/env/server"
 import { enqueue } from "@najimi/jobs"
@@ -172,6 +173,13 @@ export async function runTurn(chatId: string): Promise<void> {
       })),
     }
   }
+  // The accounts they connected, so Najimi knows what it can do for them there.
+  const socials = (await connectionsOf(by).catch(() => [])).map((c) => ({
+    platform: c.platform,
+    handle: c.handle,
+    active: c.status === "active",
+    autopilot: c.autopilot,
+  }))
   // Their own clock: "tonight" and "9pm" mean where they are.
   const tz = safeZone(lastHuman?.metadata?.tz)
   const tools = buildTools({ userId: by, guest, chatId, person, tz }, () => assistantId)
@@ -202,6 +210,7 @@ export async function runTurn(chatId: string): Promise<void> {
           words: taste?.words ?? null,
         },
         screen: lastHuman?.metadata?.screen ?? null,
+        socials,
         room,
         photos,
         creations: made,
@@ -227,6 +236,8 @@ export async function runTurn(chatId: string): Promise<void> {
           type: "user-approval",
           reason: `call:${input.venue}:${input.party}:${input.date} ${input.time}`,
         }),
+        // A post in their name always waits for their yes.
+        postToX: (input) => ({ type: "user-approval", reason: `post:${input.text.slice(0, 60)}` }),
       },
       stopWhen: isStepCount(AGENT.maxSteps),
       maxOutputTokens: AGENT.maxOutputTokens,

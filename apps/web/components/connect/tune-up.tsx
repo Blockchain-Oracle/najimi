@@ -4,21 +4,24 @@ import type { TuneUpItem } from "@najimi/db/schema"
 import { toast } from "@najimi/ui/components/sonner"
 import { cn } from "@najimi/ui/lib/utils"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
-import { Check, Copy, ExternalLink, Loader2 } from "lucide-react"
+import { Bot, Check, Copy, ExternalLink, X as Failed, Hand, Loader2 } from "lucide-react"
 import { motion, useReducedMotion } from "motion/react"
 import { useTranslations } from "next-intl"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { siInstagram, siTiktok, siX, siYoutube } from "simple-icons"
 import { BrandIcon } from "@/components/brands/brand-icon"
 import { celebrate } from "@/components/games/confetti"
 import { api } from "@/lib/fetcher"
 import { sound } from "@/lib/sounds"
+import { CONNECT_EVENT, useSocials, tz as zone } from "./accounts"
 
 /*
  * Today's tune-up (W15): five minutes that turn your feeds toward your taste. Real accounts Qloo
  * matched to what you love (with their handles), and your taste as topics for each platform's own
  * feed controls. Tap to open the exact profile or intent; it ticks off. A fresh list each day.
- * After Duolingo's daily quests (Refero 0966d27a, 274b36f1).
+ * On X and Instagram, "Do it for me" hands the follows to Najimi, which does them slowly with your
+ * own connected account while you watch each one tick off here. After Duolingo's daily quests
+ * (Refero 0966d27a, 274b36f1); the running row's underline is 21st.dev educalvolpz/ai-task-list.
  */
 
 export const PLATFORMS = [
@@ -28,6 +31,7 @@ export const PLATFORMS = [
   { id: "youtube", icon: siYoutube, name: "YouTube" },
 ] as const
 type Platform = (typeof PLATFORMS)[number]["id"]
+type LiveState = { state: "running" | "done" | "failed"; url?: string; error?: string }
 
 const sized = (url: string | null | undefined, width: number) =>
   url?.includes("images.qloo.com") ? url.replace(/-\d+x-auto\./, `-${width}x-auto.`) : (url ?? null)
@@ -95,6 +99,69 @@ export function TuneUp() {
     )
   }
 
+  // "Do it for me": who's connected, what Najimi did, and its run as it happens.
+  const socials = useSocials()
+  const connection = socials.data?.connections.find((c) => c.platform === platform) ?? null
+  const actsFor = platform === "x" || platform === "instagram"
+  const auto = Boolean(connection?.autopilot && connection.status === "active")
+  const [live, setLive] = useState<Record<string, LiveState>>({})
+  const [switching, setSwitching] = useState(false)
+  const byNajimi = new Map(
+    (socials.data?.actions ?? []).flatMap((a) =>
+      a.status === "done" && a.url ? [[a.target.toLowerCase(), a.url]] : [],
+    ),
+  )
+  const after = socials.data?.after
+  const watching = Boolean(socials.data?.connections.some((c) => c.autopilot))
+  useEffect(() => {
+    if (!watching || after === undefined) return
+    const source = new EventSource(`/api/me/live?after=${after}`)
+    source.onmessage = (e: MessageEvent<string>) => {
+      const { type, data } = JSON.parse(e.data) as {
+        type: string
+        data: { itemId?: string; state?: string; url?: string; error?: string }
+      }
+      if (type !== "social") return
+      if (
+        data.itemId &&
+        (data.state === "running" || data.state === "done" || data.state === "failed")
+      ) {
+        const state = data.state
+        setLive((m) => ({
+          ...m,
+          [data.itemId as string]: { state, url: data.url, error: data.error },
+        }))
+        if (state === "done") sound("check")
+      }
+      if (data.state === "finished") {
+        void queryClient.invalidateQueries({ queryKey: ["tuneup"] })
+        void queryClient.invalidateQueries({ queryKey: ["socials"] })
+      }
+    }
+    return () => source.close()
+  }, [watching, after, queryClient])
+
+  const setMode = async (on: boolean) => {
+    if (!actsFor) return
+    if (on && connection?.status !== "active") {
+      window.dispatchEvent(new CustomEvent(CONNECT_EVENT, { detail: platform }))
+      return
+    }
+    setSwitching(true)
+    try {
+      await api(`/api/socials/${platform}`, {
+        method: "PATCH",
+        json: { autopilot: on, tz: zone() },
+      })
+      sound(on ? "promote" : "tap")
+      await queryClient.invalidateQueries({ queryKey: ["socials"] })
+    } catch (e) {
+      toast(e instanceof Error ? e.message : t("error"))
+    } finally {
+      setSwitching(false)
+    }
+  }
+
   return (
     <section className="dark flex flex-col gap-4 rounded-sheet bg-[#0b0b0d] p-4 text-foreground ring-1 ring-white/10">
       <header className="flex items-center gap-3">
@@ -134,6 +201,40 @@ export function TuneUp() {
         })}
       </div>
 
+      {actsFor ? (
+        <div className="flex items-center gap-2">
+          <div className="grid flex-1 grid-cols-2 gap-1 rounded-pill bg-white/5 p-1">
+            {[
+              { on: false, icon: Hand, label: t("illTap") },
+              { on: true, icon: Bot, label: t("doItForMe") },
+            ].map((m) => (
+              <button
+                key={m.label}
+                type="button"
+                disabled={switching || socials.isPending}
+                aria-pressed={auto === m.on}
+                onClick={() => void setMode(m.on)}
+                className={cn(
+                  "flex h-9 items-center justify-center gap-1.5 rounded-pill text-[13px] font-semibold transition-colors",
+                  auto === m.on ? "bg-white/12 text-foreground" : "text-text-3",
+                )}
+              >
+                <m.icon className={cn("size-3.5", m.on && auto && "text-signal")} />
+                {m.label}
+              </button>
+            ))}
+          </div>
+          {switching ? <Loader2 className="size-4 animate-spin text-text-3" /> : null}
+        </div>
+      ) : null}
+      {actsFor && auto ? (
+        <p className="-mt-2 text-[12px] text-text-3">
+          {connection?.pausedUntil
+            ? t("pausedUntil")
+            : t("autoLine", { handle: connection?.handle ?? "" })}
+        </p>
+      ) : null}
+
       {today.isPending ? (
         <div className="flex flex-col gap-2">
           {[0, 1, 2].map((i) => (
@@ -146,8 +247,8 @@ export function TuneUp() {
             <li
               key={item.id}
               className={cn(
-                "flex items-center gap-3 rounded-tile p-2.5 transition-colors",
-                item.done ? "bg-success/10" : "bg-white/5",
+                "relative flex items-center gap-3 rounded-tile p-2.5 transition-colors",
+                item.done || live[item.id]?.state === "done" ? "bg-success/10" : "bg-white/5",
               )}
             >
               {item.kind === "topics" ? (
@@ -193,6 +294,23 @@ export function TuneUp() {
                 </div>
               ) : (
                 <>
+                  {live[item.id]?.state === "running" ? (
+                    <motion.span
+                      aria-hidden
+                      className="pointer-events-none absolute inset-x-3 bottom-0 h-px text-signal"
+                      style={{
+                        backgroundImage:
+                          "linear-gradient(90deg, transparent 0%, currentColor 50%, transparent 100%)",
+                        backgroundSize: "50% 100%",
+                      }}
+                      animate={{ backgroundPositionX: ["0%", "200%"] }}
+                      transition={{
+                        duration: 1.4,
+                        ease: [0.645, 0.045, 0.355, 1],
+                        repeat: Infinity,
+                      }}
+                    />
+                  ) : null}
                   {item.image ? (
                     // biome-ignore lint/performance/noImgElement: remote artwork
                     <img
@@ -206,11 +324,24 @@ export function TuneUp() {
                   <span className="flex min-w-0 flex-1 flex-col">
                     <span className="truncate text-[14px] font-semibold">{item.label}</span>
                     <span className="truncate text-[12px] text-text-3">
-                      {item.handle ? `@${item.handle} · ` : ""}
-                      {item.why}
+                      {live[item.id]?.state === "failed"
+                        ? live[item.id]?.error
+                        : (live[item.id]?.state === "done" ||
+                              byNajimi.has((item.target ?? item.handle ?? "").toLowerCase())) &&
+                            actsFor
+                          ? t("najimiFollowed")
+                          : `${item.handle ? `@${item.handle} · ` : ""}${item.why ?? ""}`}
                     </span>
                   </span>
-                  {item.done ? (
+                  {live[item.id]?.state === "running" ? (
+                    <span className="flex h-9 shrink-0 items-center gap-1.5 px-2 text-[12px] font-semibold text-signal">
+                      <Loader2 className="size-3.5 animate-spin" /> {t("najimiFollowing")}
+                    </span>
+                  ) : live[item.id]?.state === "failed" ? (
+                    <span className="grid size-9 shrink-0 place-items-center rounded-full bg-danger/15 text-danger">
+                      <Failed className="size-4" />
+                    </span>
+                  ) : item.done || live[item.id]?.state === "done" ? (
                     <button
                       type="button"
                       onClick={() => void tick(item, false)}
@@ -227,7 +358,11 @@ export function TuneUp() {
                       onClick={() => void tick(item, true)}
                       className="flex h-9 shrink-0 items-center gap-1.5 rounded-pill bg-foreground px-3.5 text-[13px] font-semibold text-background"
                     >
-                      {item.kind === "follow" ? t("follow") : t("find")}
+                      {item.kind !== "follow"
+                        ? t("find")
+                        : item.platform === "youtube"
+                          ? t("subscribe")
+                          : t("follow")}
                       <ExternalLink className="size-3.5" />
                     </a>
                   )}

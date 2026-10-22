@@ -4,6 +4,7 @@ import {
   bookings,
   chatMembers,
   chats,
+  connectorSessions,
   creations,
   feedScores,
   follows,
@@ -19,6 +20,7 @@ import {
   runs,
   session,
   shares,
+  socialActions,
   tuneUps,
   uploads,
   usageDays,
@@ -129,6 +131,17 @@ export async function reownUserData(db: Db, fromUserId: string, toUserId: string
       where t.user_id = ${fromUserId}
         and not exists (select 1 from ${tuneUps} u where u.user_id = ${toUserId} and u.day = t.day)`)
     await tx.delete(tuneUps).where(eq(tuneUps.userId, fromUserId))
+    // Connected accounts (the account's own connection wins a clash) and what was done with them.
+    await tx.execute(sql`
+      update ${connectorSessions} c set user_id = ${toUserId}
+      where c.user_id = ${fromUserId}
+        and not exists (select 1 from ${connectorSessions} d where d.user_id = ${toUserId}
+          and d.platform = c.platform and d.account_id = c.account_id)`)
+    await tx.delete(connectorSessions).where(eq(connectorSessions.userId, fromUserId))
+    await tx
+      .update(socialActions)
+      .set({ userId: toUserId })
+      .where(eq(socialActions.userId, fromUserId))
     // Games: rounds they dealt or that are about them, and their goes (a round both accounts
     // played keeps the account's own go).
     await tx

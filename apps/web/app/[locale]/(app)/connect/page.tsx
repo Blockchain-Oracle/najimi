@@ -2,6 +2,8 @@ import type { Metadata } from "next"
 import { redirect } from "next/navigation"
 import { getTranslations } from "next-intl/server"
 import { Suspense } from "react"
+import { Accounts } from "@/components/connect/accounts"
+import { Activity } from "@/components/connect/activity"
 import { BringTaste } from "@/components/connect/bring-taste"
 import { FeedScore } from "@/components/connect/feed-score"
 import { TuneUp } from "@/components/connect/tune-up"
@@ -27,6 +29,10 @@ async function Connect() {
       <div className="grid gap-4 lg:grid-cols-2">
         <TuneUp />
         <FeedScore />
+      </div>
+      <div className="grid items-start gap-4 lg:grid-cols-2">
+        <Accounts personId={self.id} />
+        <Activity />
       </div>
       <BringTaste personId={self.id} />
     </div>

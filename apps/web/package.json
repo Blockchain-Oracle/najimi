@@ -45,6 +45,7 @@
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-force-graph-2d": "1.29.2",
+    "rettiwt-api": "7.1.4",
     "server-only": "0.0.1",
     "sharp": "catalog:",
     "simple-icons": "16.35.0",

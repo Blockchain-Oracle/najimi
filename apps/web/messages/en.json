@@ -547,7 +547,19 @@
     "planning": "Planning the route",
     "rooms": "Finding rooms",
     "dialling": "Getting ready to call",
-    "callDeclined": "Didn't call {venue}."
+    "callDeclined": "Didn't call {venue}.",
+    "postTitle": "A post for you on X",
+    "postYou": "You",
+    "postFromYours": "It goes out from your connected X when you say yes.",
+    "postByLink": "Your X isn't connected: say yes and you'll get a one-tap link to post it.",
+    "postNo": "Not now",
+    "postYes": "Post it",
+    "postReady": "Looks good",
+    "postPosted": "Posted on X",
+    "postOpen": "See it on X",
+    "postOnX": "Post on X",
+    "postDeclined": "Didn't post it.",
+    "postWriting": "Writing your post"
   },
   "Asked": {
     "city": "in {v}",
@@ -920,7 +932,8 @@
       "handles": "@burnaboy, x.com/temsbaby, instagram.com/nike",
       "letterboxd": "Your Letterboxd username",
       "goodreads": "Your Goodreads profile link or id",
-      "lastfm": "Your Last.fm username"
+      "lastfm": "Your Last.fm username",
+      "x": "@temsbaby"
     },
     "how": {
       "instagram": {
@@ -943,6 +956,71 @@
         "2": "Select YouTube and YouTube Music, then only 'subscriptions'.",
         "3": "Download the .zip when it's ready and choose it here."
       }
-    }
+    },
+    "byHandle": "By handle",
+    "xHandleLine": "Any public X account, yours or someone you admire. Najimi reads who it shares and mentions.",
+    "pasteHandles": "Or paste a list of handles",
+    "accountsTitle": "Your accounts",
+    "accountsLine": "Connect X or Instagram and Najimi reads what you follow, then follows for you when you say so.",
+    "rowLine": {
+      "x": "Who you follow and like. Najimi can follow for you.",
+      "instagram": "Who you follow, like and save. Najimi can follow for you.",
+      "tiktok": "From your data export. The tune-up opens TikTok for you.",
+      "youtube": "From Google Takeout. The tune-up opens each Subscribe."
+    },
+    "connect": "Connect",
+    "connected": "Connected",
+    "reconnect": "Reconnect",
+    "needsReconnect": "Needs connecting again",
+    "bringExport": "Bring export",
+    "autopilotTag": "Auto",
+    "connectHow": {
+      "x": {
+        "1": "On a computer, open x.com signed in to your account.",
+        "2": "Press F12 → Application (Storage in Firefox) → Cookies → https://x.com.",
+        "3": "Copy the values of auth_token and ct0 into the boxes below."
+      },
+      "instagram": {
+        "1": "On a computer, open instagram.com signed in to your account.",
+        "2": "Press F12 → Application (Storage in Firefox) → Cookies → https://www.instagram.com.",
+        "3": "Copy the value of sessionid into the box below."
+      }
+    },
+    "xKey": "Rettiwt API key",
+    "xKeyInstead": "I have a Rettiwt Auth Helper key",
+    "xCookiesInstead": "Use auth_token and ct0 instead",
+    "sessionPrivacy": "Your session is locked with encryption the moment it arrives, opened only to act for you, never shown again, and deleted when you disconnect.",
+    "connectIt": "Connect {name}",
+    "connectedToast": "{name} connected",
+    "readMine": "Read what I follow on {name}",
+    "doItForMe": "Do it for me",
+    "illTap": "I'll tap",
+    "autopilotLine": {
+      "x": "Each morning Najimi follows today's picks for you, a minute or so apart, never more than 25 a day.",
+      "instagram": "Each morning Najimi follows today's picks for you, a minute or so apart, never more than 15 a day."
+    },
+    "autopilotOn": "Najimi will follow for you on {name}",
+    "autopilotOff": "You're tapping on {name} again",
+    "pausedUntil": "Paused for a day: the platform asked to slow down.",
+    "riskLine": "{name} can limit accounts that automate. Najimi stays far below its limits and stops the moment {name} objects.",
+    "disconnect": "Disconnect and forget my session",
+    "disconnected": "{name} disconnected. Your session is deleted.",
+    "autoLine": "Najimi follows these for you as @{handle}, slowly, each morning.",
+    "najimiFollowed": "Najimi followed for you",
+    "najimiFollowing": "Following…",
+    "subscribe": "Subscribe",
+    "countFollowing": "{count, plural, one {# followed} other {# followed}}",
+    "countPosts": "{count, plural, one {# post} other {# posts}}",
+    "stepReadOwn": "Reading your {name}",
+    "stepReadHandle": "Reading @{handle} on {name}",
+    "stepMatch": "{count, plural, =0 {Matching with Qloo} one {Matching # account with Qloo} other {Matching # with Qloo}}",
+    "stepMatched": "{count} found",
+    "stepKeep": "Keep what's you",
+    "activityTitle": "What Najimi did",
+    "activityCount": "{count, plural, one {# follow} other {# follows}}",
+    "didFollow": "Followed {name}",
+    "couldntFollow": "Couldn't follow {name}",
+    "stepNamed": "Finding the culture in the posts",
+    "stepNamedCount": "{count, plural, =0 {none named} one {# named} other {# named}}"
   }
 }

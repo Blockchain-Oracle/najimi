@@ -421,3 +421,56 @@ export async function mediaFor(picks: PickIds[]): Promise<Record<string, CardMed
   }
   return out
 }
+
+// ── Social accounts → Wikidata ──────────────────────────────────────────────────────────────
+
+/** The accounts a person, artist or brand lists on Wikidata (X P2002, Instagram P2003, TikTok P7085, YouTube channel P2397). */
+export type SocialAccounts = {
+  x: string | null
+  instagram: string | null
+  tiktok: string | null
+  youtube: string | null
+}
+
+const SOCIAL_CLAIMS = { x: "P2002", instagram: "P2003", tiktok: "P7085", youtube: "P2397" } as const
+
+async function socialsFromWikidata(qids: string[]): Promise<Record<string, SocialAccounts | null>> {
+  const out: Record<string, SocialAccounts | null> = {}
+  for (const batch of chunks(qids, MEDIA_LINKS.batch)) {
+    const params = new URLSearchParams({
+      action: "wbgetentities",
+      ids: batch.join("|"),
+      props: "claims",
+      format: "json",
+    })
+    const body = await json<WikidataClaims>(`https://www.wikidata.org/w/api.php?${params}`)
+    if (!body?.entities) continue
+    for (const qid of batch) {
+      const claims = body.entities[qid]?.claims
+      const value = (p: string) => {
+        const v = claims?.[p]?.[0]?.mainsnak?.datavalue?.value
+        return typeof v === "string" && v.trim() ? v.trim() : null
+      }
+      out[qid] = {
+        x: value(SOCIAL_CLAIMS.x),
+        instagram: value(SOCIAL_CLAIMS.instagram),
+        tiktok: value(SOCIAL_CLAIMS.tiktok),
+        youtube: value(SOCIAL_CLAIMS.youtube),
+      }
+    }
+  }
+  return out
+}
+
+/** Social accounts for Wikidata items, keyed by QID (cached a month). */
+export async function socialAccountsFor(qids: string[]): Promise<Record<string, SocialAccounts>> {
+  const found = await cachedMany(
+    "socials-wd",
+    qids.map((q) => q.toUpperCase()),
+    MEDIA_LINKS.days.appleId,
+    socialsFromWikidata,
+  )
+  return Object.fromEntries(
+    Object.entries(found).flatMap(([qid, accounts]) => (accounts ? [[qid, accounts]] : [])),
+  )
+}

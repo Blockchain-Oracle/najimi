@@ -1,4 +1,5 @@
 import {
+  boolean,
   date,
   index,
   integer,
@@ -22,6 +23,8 @@ export type TuneUpItem = {
   /** Why it's there, in a few words ("Because you love Burna Boy"). */
   why: string | null
   handle?: string | null
+  /** The account to act on there (X/Instagram/TikTok username, YouTube channel id). */
+  target?: string | null
   image?: string | null
   /** Where tapping it goes: the exact profile, intent or settings page. */
   url: string | null
@@ -71,4 +74,69 @@ export const feedScores = pgTable(
     createdAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
   },
   (t) => [index("feed_scores_user_idx").on(t.userId, t.createdAt)],
+)
+
+/**
+ * A social account someone connected so Najimi can read what they follow and act for them ("Do it
+ * for me"). The session (cookies or the platform's own settings) is sealed with CONNECTOR_SECRET,
+ * opened only in the worker, never sent to a browser, and wiped on disconnect. `pool` rows are
+ * spare accounts Najimi reads public handles with; their owner is the Najimi system user.
+ */
+export const connectorSessions = pgTable(
+  "connector_sessions",
+  {
+    id: uuid().defaultRandom().primaryKey(),
+    userId: text()
+      .references(() => user.id, { onDelete: "cascade" })
+      .notNull(),
+    platform: text().$type<SocialPlatform>().notNull(),
+    mode: text().$type<"own" | "pool">().notNull().default("own"),
+    /** The account's id and handle on the platform. */
+    accountId: text().notNull(),
+    handle: text(),
+    name: text(),
+    image: text(),
+    secretEnc: text().notNull(),
+    status: text().$type<"active" | "expired" | "locked">().notNull().default("active"),
+    /** "Do it for me": the agent runs this platform's tune-up itself. */
+    autopilot: boolean().notNull().default(false),
+    /** Where the person is, so their tune-up runs on their day. */
+    tz: text(),
+    /** The platform pushed back: nothing is done for them until then. */
+    pausedUntil: timestamp({ withTimezone: true }),
+    lastError: text(),
+    lastUsedAt: timestamp({ withTimezone: true }),
+    createdAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
+  },
+  (t) => [uniqueIndex("connector_sessions_owner_idx").on(t.userId, t.platform, t.accountId)],
+)
+
+export type SocialActionKind = "follow" | "like" | "save" | "post" | "subscribe" | "read"
+
+/**
+ * Everything Najimi did on a platform for someone, or tried to: the record the pacing caps count,
+ * the screen reports, and the agent reads back.
+ */
+export const socialActions = pgTable(
+  "social_actions",
+  {
+    id: uuid().defaultRandom().primaryKey(),
+    userId: text()
+      .references(() => user.id, { onDelete: "cascade" })
+      .notNull(),
+    platform: text().$type<SocialPlatform>().notNull(),
+    kind: text().$type<SocialActionKind>().notNull(),
+    /** Who or what it was done to (handle, post id), and how it reads. */
+    target: text().notNull(),
+    label: text(),
+    /** The tune-up item it came from, when it did. */
+    itemId: text(),
+    status: text().$type<"done" | "failed" | "skipped">().notNull(),
+    detail: text(),
+    /** Where the result lives (the post, the profile). */
+    url: text(),
+    createdAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
+  },
+  (t) => [index("social_actions_user_idx").on(t.userId, t.platform, t.createdAt)],
 )

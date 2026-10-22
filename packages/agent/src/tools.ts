@@ -474,6 +474,20 @@ export const toolDefs = {
     }),
   }),
 
+  postToX: tool({
+    description:
+      "Post on X for the person asking: a post in their own voice (plain, specific, no hashtag spam, under 280 characters) about what they asked for or something from their taste. They see the exact post and approve it first. It goes out from their connected X; without one, the card gives them a one-tap link to post it themselves.",
+    inputSchema: z.object({
+      text: z.string().min(1).max(280).describe("The exact post, as it will appear."),
+    }),
+    outputSchema: z.object({
+      status: z.enum(["posted", "link", "failed"]),
+      url: z.string().nullable(),
+      handle: z.string().nullable(),
+      note: z.string().nullable(),
+    }),
+  }),
+
   startGame: tool({
     description:
       "Start a taste game when someone wants to play: 'wavelength' (guess how much someone would love five things; Qloo knows), 'knowme' (which of these did they pick as a love?), 'twins' (in a circle: who loves this?), 'blind' (Qloo predicts how YOU will feel about five things you may not know). For wavelength and knowme, name whose taste it's about by their @username (default: the person asking). The card has the play button and a challenge link; you play too.",

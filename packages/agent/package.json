@@ -20,6 +20,7 @@
     "@ai-sdk/provider": "4.0.31",
     "@ai-sdk/provider-utils": "5.0.64",
     "@najimi/booking": "workspace:*",
+    "@najimi/connectors": "workspace:*",
     "@najimi/config": "workspace:*",
     "@najimi/db": "workspace:*",
     "@najimi/env": "workspace:*",

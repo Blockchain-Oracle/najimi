@@ -7,7 +7,7 @@ import { body, fail, json, withSession } from "@/lib/api"
 import { allow } from "@/lib/rate-limit"
 
 const input = z.object({
-  platform: z.enum(["instagram", "tiktok", "spotify", "youtube"]),
+  platform: z.enum(["instagram", "tiktok", "spotify", "youtube", "x"]),
   candidates: z
     .array(
       z.object({
@@ -22,6 +22,7 @@ const input = z.object({
             id: z.string().regex(/^[a-z0-9_.]{1,30}$/),
           })
           .optional(),
+        exactName: z.boolean().optional(),
       }),
     )
     .min(1)
@@ -41,7 +42,7 @@ export async function POST(request: Request) {
   if ("error" in parsed) return parsed.error
   const found = await resolve(parsed.data.candidates, {
     userId: auth.session.user.id,
-    purpose: `Import from a ${parsed.data.platform} export`,
+    purpose: `Import from ${parsed.data.platform}`,
   })
   const known = new Set<string>(TASTE_DOMAINS.map((d) => d.type))
   const hits: (LoveHit & { from: string })[] = found

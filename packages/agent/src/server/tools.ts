@@ -3,6 +3,9 @@ import { CALL_HOURS, callsOn, placeCall } from "@najimi/booking/calls"
 import { hotelsNear, hotelsOn } from "@najimi/booking/nuitee"
 import { locate, planNight, planTrip } from "@najimi/booking/plan"
 import { FEED, MEDIA, TASTE, TASTE_DOMAINS } from "@najimi/config"
+import { PlatformError } from "@najimi/connectors/errors"
+import { connectionOf, noteConnection, secretOf } from "@najimi/connectors/sessions"
+import { xPost } from "@najimi/connectors/x"
 import { db, schema } from "@najimi/db"
 import { createRound, TITLES } from "@najimi/games/round"
 import { enqueue, enqueueAt, enqueueDebounced } from "@najimi/jobs"
@@ -860,6 +863,45 @@ export function buildTools(ctx: TurnContext, messageId: () => string | undefined
           }
         } catch (error) {
           return { ...base, offers: [], note: (error as Error).message }
+        }
+      },
+    }),
+
+    postToX: tool({
+      ...toolDefs.postToX,
+      execute: async ({ text }) => {
+        const intent = `https://x.com/intent/post?text=${encodeURIComponent(text)}`
+        const own = await connectionOf(ctx.userId, "x").catch(() => null)
+        if (own?.status !== "active")
+          return { status: "link" as const, url: intent, handle: null, note: null }
+        try {
+          const posted = await xPost(secretOf(own), text)
+          await noteConnection(own, { ok: true })
+          await db.insert(schema.socialActions).values({
+            userId: ctx.userId,
+            platform: "x",
+            kind: "post",
+            target: posted.id,
+            label: text.slice(0, 120),
+            status: "done",
+            url: posted.url,
+          })
+          return { status: "posted" as const, url: posted.url, handle: own.handle, note: null }
+        } catch (error) {
+          const e = error instanceof PlatformError ? error : null
+          if (e)
+            await noteConnection(own, {
+              ok: false,
+              error: e.message,
+              status: e.expired ? (e.code === "locked" ? "locked" : "expired") : undefined,
+            })
+          // Their words aren't lost: the link posts the same text by hand.
+          return {
+            status: "failed" as const,
+            url: intent,
+            handle: own.handle,
+            note: e?.message ?? "X didn't take the post",
+          }
         }
       },
     }),

@@ -17,6 +17,8 @@ export type Candidate = {
   type: string | null
   year?: number
   external?: { kind: ExternalKind; id: string }
+  /** When the handle isn't in Qloo, try the display name, accepting only an exact match. */
+  exactName?: boolean
 }
 
 export class ImportError extends Error {

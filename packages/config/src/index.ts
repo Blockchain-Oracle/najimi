@@ -431,6 +431,34 @@ export const IMPORTS = {
 } as const
 
 /**
+ * Social both ways (W14, W15). "Do it for me" acts with the person's own session, slowly and well
+ * under each platform's limits (rate limits per X's and Instagram's published and observed caps),
+ * and stops for the day at the first sign the platform objects.
+ */
+export const SOCIAL = {
+  /** Most accounts one read brings back (following, likes, bookmarks). */
+  readMax: 200,
+  /** Candidates one connected read sends to Qloo. */
+  resolveMax: 120,
+  /** Tweets read from a public X timeline when someone only gives a handle. */
+  timelineMax: 60,
+  pacing: {
+    x: { followsPerDay: 25, likesPerDay: 40, postsPerDay: 4, gapSeconds: [25, 60] },
+    instagram: { followsPerDay: 15, likesPerDay: 30, postsPerDay: 2, gapSeconds: [40, 90] },
+    tiktok: { followsPerDay: 0, likesPerDay: 0, postsPerDay: 2, gapSeconds: [40, 90] },
+    youtube: { followsPerDay: 20, likesPerDay: 30, postsPerDay: 0, gapSeconds: [5, 15] },
+  },
+  /** Errors that mean "stop for today" (the platform is pushing back on this account). */
+  backoffHours: 24,
+  /** Connected reads one person may start per hour. */
+  readsPerHour: 6,
+  /** The bridge (Instagram) answers within this, or the call is given up. */
+  bridgeTimeoutMs: 90_000,
+  /** "Do it for me" runs at this local hour (the tune-up nudge comes first). */
+  morningHour: 9,
+} as const
+
+/**
  * The feed (W4): culture from your taste, a card at a time, music every two or three cards. Each
  * category's share is a dial (0 off … 3 more); pages come from the stored picks, then Qloo's next
  * pages for that category.

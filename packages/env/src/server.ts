@@ -58,6 +58,12 @@ export const env = createEnv({
     ELEVENLABS_PHONE_NUMBER_ID: z.string().min(1).optional(),
     /** Verifies ElevenLabs' post-call webhook (HMAC). */
     ELEVENLABS_WEBHOOK_SECRET: z.string().min(1).optional(),
+    // Social both ways (W14, W15).
+    /** Encrypts the sessions people connect (AES-256-GCM); at least 32 characters. */
+    CONNECTOR_SECRET: z.string().min(32).optional(),
+    /** The internal social bridge (Instagram, TikTok) and the token it answers to. */
+    SOCIAL_BRIDGE_URL: z.url().optional(),
+    SOCIAL_BRIDGE_TOKEN: z.string().min(24).optional(),
     /** Tours as links out (Viator Basic Access). */
     VIATOR_API_KEY: z.string().min(1).optional(),
     /** Resend, for sign-in codes. */

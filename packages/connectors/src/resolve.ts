@@ -70,8 +70,9 @@ export async function resolve(candidates: Candidate[], ctx?: CallContext): Promi
       const handle = ext.kind === "twitter" || ext.kind === "instagram"
       const resolved = hit ? toResolved(hit, handle ? `@${c.name}` : c.name) : null
       if (resolved) found.set(resolved.qlooId, resolved)
-      // A handle tried on both platforms may miss on one; a named thing still gets a search.
-      else if (c.type) unmatched.push(c)
+      // A handle tried on both platforms may miss on one; a named thing still gets a search, and
+      // an account's display name gets an exact-name search.
+      else if (c.type || c.exactName) unmatched.push(c)
     }),
   )
 
@@ -81,7 +82,11 @@ export async function resolve(candidates: Candidate[], ctx?: CallContext): Promi
         { query: c.name, types: c.type ? [c.type] : undefined, take: 5 },
         ctx,
       ).catch(() => null)
-      const hit = r ? pick(r.data, c) : null
+      const hit = r
+        ? c.exactName
+          ? (r.data.find((h) => norm(h.name) === norm(c.name)) ?? null)
+          : pick(r.data, c)
+        : null
       const resolved = hit ? toResolved(hit, c.name) : null
       if (resolved && !found.has(resolved.qlooId)) found.set(resolved.qlooId, resolved)
     }),

@@ -155,6 +155,20 @@
       "when": 1792698531058,
       "tag": "0021_socials",
       "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "7",
+      "when": 1792699495929,
+      "tag": "0022_connectors",
+      "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1792700414318,
+      "tag": "0023_connector_pause",
+      "breakpoints": true
     }
   ]
 }

@@ -95,6 +95,27 @@ export const QUEUES = {
     options: { retryLimit: 1, retryDelay: 600, expireInSeconds: 15 * 60 },
     send: {},
   },
+  /**
+   * "Do it for me" on one platform: today's tune-up follows, done slowly with the person's own
+   * session, each one reported as it happens. One run per person and platform at a time.
+   */
+  socialRun: {
+    name: "social-run",
+    payload: z.object({
+      userId: z.string().min(1),
+      platform: z.enum(["x", "instagram", "youtube"]),
+      day: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+    }),
+    options: { policy: "stately", retryLimit: 0, expireInSeconds: 30 * 60 },
+    send: {},
+  },
+  /** Every hour: starts "Do it for me" for everyone whose morning it is. */
+  socialMornings: {
+    name: "social-mornings",
+    payload: z.object({}),
+    options: { retryLimit: 1, retryDelay: 600, expireInSeconds: 15 * 60 },
+    send: {},
+  },
   /** Every half hour: Najimi asks how the nights, stays and shows that just happened went. */
   followUps: {
     name: "follow-ups",

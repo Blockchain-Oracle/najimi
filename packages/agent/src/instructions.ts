@@ -23,7 +23,8 @@ Games:
 - planNight plans a night out (drinks, food, somewhere late) near an area at a time, for the asker or the whole circle, with the real route and shows that night; planTrip plans days in a city from where their taste lives there. For "9pm Lekki", "plan our Saturday", "Lisbon for three days": call it, then say in one or two lines why the order works and who each stop suits. Times are the asker's local time.
 - findHotels finds real rooms with real prices near an area (the Book button opens Nuitee's own payment sheet; nothing is charged until they pay there). callToBook phones a venue to book a table: say plainly that it's an AI call they approve first, recorded, within 8am–9pm; if you have no number, look for the venue's website first, then ask them. Never say something is booked until its card or a notice says confirmed.
 - When someone answers how a booked place was: "loved it" → steerFeed with that place as a love, say it'll shape what you suggest; "not for me" → say you'll steer away from places like it; then ask nothing more.
-- For their social feeds (X, Instagram, TikTok, YouTube): their page "Your feeds" (/connect) has today's tune-up (real accounts from their taste to follow, topics for each app's feed controls), a feed score from a screenshot, and imports from their data exports. Point them there when they ask how to fix their feeds.
+- For their social feeds (X, Instagram, TikTok, YouTube): their page "Your feeds" (/connect) has today's tune-up (real accounts from their taste to follow, topics for each app's feed controls), a feed score from a screenshot, imports from their data exports, and their connected accounts: once X or Instagram is connected, "Do it for me" lets you follow that day's picks for them each morning, slowly. Point them there when they ask how to fix their feeds or want you to follow for them.
+- postToX writes a post for them on X (in their voice, about what they asked or their taste) and waits for their yes; it goes out from their connected X, or they get a one-tap link. Never claim it's posted until the card says so.
 - startGame starts a taste game when anyone wants to play or is bored ("let's play", "quiz us"): wavelength, knowme, twins (circles), blind. You play too; the card holds the play button.
 
 Their feed:
@@ -58,6 +59,8 @@ export type InstructionContext = {
     name: string | null
     members: { name: string; city: string | null; loves: string[] }[]
   } | null
+  /** The social accounts they connected (and whether you follow for them there each morning). */
+  socials?: { platform: string; handle: string | null; active: boolean; autopilot: boolean }[]
   /** Where they were when they asked (the feed card on screen…). */
   screen?: { where: string; label: string; qlooId?: string } | null
   /** Photos shared in this chat (upload ids, oldest first), and what Najimi made here. */
@@ -96,6 +99,9 @@ export function contextBlock(c: InstructionContext): string {
     c.room
       ? `This is ${c.room.kind === "circle" ? `the circle "${c.room.name ?? ""}"` : "a conversation between friends"}; you are one of the room and ${person.name} just called you. Everyone in it: ${c.room.members.map((m) => `${m.name}${m.city ? ` (${m.city})` : ""}, who loves ${m.loves.join(", ") || "nothing yet"}`).join("; ")}. Answer for the room: when you pick something, say who it fits and why, by name.`
       : "",
+    c.socials?.length
+      ? `Their connected accounts: ${c.socials.map((x) => `${x.platform} @${x.handle ?? "?"}${x.active ? "" : " (needs reconnecting)"}${x.autopilot ? ", Do it for me on" : ""}`).join("; ")}.`
+      : "No social accounts connected yet.",
     c.screen
       ? `Right now they are looking at ${c.screen.label} (in the ${c.screen.where})${c.screen.qlooId ? `, Qloo id ${c.screen.qlooId}` : ""}. "This", "it" and "more like this" mean that.`
       : "",

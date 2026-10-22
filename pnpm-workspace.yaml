@@ -13,6 +13,11 @@ allowBuilds:
   '@swc/core': false
   esbuild: true
 
+# rettiwt-api asks for axios ^1.8.4; hold it at a reviewed release (1.14.1 and 0.30.4 were the
+# hijacked ones, 2026-03-31).
+overrides:
+  axios: 1.20.0
+
 # One version per shared dependency across apps and packages.
 catalog:
   typescript: 7.0.2

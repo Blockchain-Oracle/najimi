@@ -11,6 +11,7 @@ import { chatTitle } from "./jobs/chat-title"
 import { dailyDrop } from "./jobs/daily-drop"
 import { guestsCleanup } from "./jobs/forget"
 import { mediaGenerate, pollVideos } from "./jobs/media"
+import { socialMornings, socialRun } from "./jobs/social"
 import { tasteRefresh, tasteRetune } from "./jobs/taste-refresh"
 import { tuneUpNudge } from "./jobs/tune-up-nudge"
 import { seedSamples } from "./samples"
@@ -131,6 +132,21 @@ async function main() {
     await tuneUpNudge()
   })
   await queues.schedule(QUEUES.tuneUpNudge.name, "0 8 * * *", {}, { tz: "UTC" })
+
+  // "Do it for me": each person's platforms, on their own morning, one run at a time each.
+  await queues.work<Payload<"socialRun">>(
+    QUEUES.socialRun.name,
+    { localConcurrency: 4 },
+    async ([job]) => {
+      if (!job) return
+      await socialRun(QUEUES.socialRun.payload.parse(job.data))
+    },
+  )
+  await queues.work(QUEUES.socialMornings.name, async ([job]) => {
+    if (!job) return
+    await socialMornings()
+  })
+  await queues.schedule(QUEUES.socialMornings.name, "5 * * * *", {}, { tz: "UTC" })
 
   // Submitted videos are checked here; a restart picks them up again by their provider id.
   const poller = setInterval(

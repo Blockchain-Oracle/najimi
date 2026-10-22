@@ -1,0 +1,2 @@
+# instagrapi 3.1.0 caps Pillow below 13, but every 12.x has open advisories (fixed in 13.0.0).
+pillow==13.0.0

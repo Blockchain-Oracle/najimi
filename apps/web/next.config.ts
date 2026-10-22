@@ -17,6 +17,8 @@ const nextConfig: NextConfig = {
   images: { remotePatterns: [{ protocol: "https", hostname: "images.qloo.com" }] },
   // Local only: 127.0.0.1 is a second origin (no cookies), to walk sign-up as a stranger.
   allowedDevOrigins: ["127.0.0.1"],
+  // X's client stays a plain Node dependency (axios, linkedom) rather than being bundled.
+  serverExternalPackages: ["rettiwt-api"],
   // Workspace packages ship TypeScript source; Next compiles them with the app.
   transpilePackages: [
     "@najimi/agent",
