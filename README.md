@@ -2,11 +2,11 @@
 <p align="center">Find your people by what you love.</p>
 
 <p align="center">
-  <a href="https://najimi.84.46.247.92.sslip.io"><b>Open Najimi</b></a>
+  <a href="https://najimi.xyz"><b>Open Najimi</b></a>
   &nbsp;·&nbsp;
-  <a href="https://najimi-docs.84.46.247.92.sslip.io"><b>Documentation</b></a>
+  <a href="https://docs.najimi.xyz"><b>Documentation</b></a>
   &nbsp;·&nbsp;
-  <a href="https://najimi-docs.84.46.247.92.sslip.io/qloo"><b>How it uses Qloo</b></a>
+  <a href="https://docs.najimi.xyz/qloo"><b>How it uses Qloo</b></a>
 </p>
 
 **Najimi is a social app where your taste is your identity.** Tell it a few things you love: an artist, a show, a book, a place. [Qloo](https://www.qloo.com)'s taste graph turns them into a taste that reaches music, film, TV, books, podcasts, brands, places, destinations and people, and every pick names the love behind it. An AI agent works from that taste with the whole Qloo surface as its tools.
@@ -41,11 +41,11 @@ Najimi is being built stage by stage around one idea: one taste profile, owned b
 | `qlooCompare` | `/v2/analysis/compare` | Two tastes side by side |
 | `qlooAudiences` | `/v2/audiences` | Audiences to lean a taste with (never political ones) |
 
-Loves go in as weighted signals (`{ id, weight }`), and Qloo's explainability names the love behind each result. Every Qloo card has a **Qloo** chip that opens the exact request. More in the [Qloo page of the docs](https://najimi-docs.84.46.247.92.sslip.io/qloo).
+Loves go in as weighted signals (`{ id, weight }`), and Qloo's explainability names the love behind each result. Every Qloo card has a **Qloo** chip that opens the exact request. More in the [Qloo page of the docs](https://docs.najimi.xyz/qloo).
 
 ## Architecture
 
-A pnpm and Turborepo monorepo: a Next.js 16 web app, a pg-boss worker, Postgres 17, RustFS (S3) for media, and a Fumadocs site, each a container on Coolify. Live updates go from the worker through Postgres `LISTEN/NOTIFY` to pages as server-sent events. The [architecture page](https://najimi-docs.84.46.247.92.sslip.io/architecture) has the diagrams.
+A pnpm and Turborepo monorepo: a Next.js 16 web app, a pg-boss worker, Postgres 17, RustFS (S3) for media, and a Fumadocs site, each a container on Coolify. Live updates go from the worker through Postgres `LISTEN/NOTIFY` to pages as server-sent events. The [architecture page](https://docs.najimi.xyz/architecture) has the diagrams.
 
 | Path | What |
 | --- | --- |

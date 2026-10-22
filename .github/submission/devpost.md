@@ -2,8 +2,8 @@
 
 **Tagline:** Tell it three things you love. It reads your taste through Qloo, then makes things for your real life that fit you.
 
-**Try it:** https://najimi.84.46.247.92.sslip.io (no account; works on a phone)
-**Docs:** https://najimi-docs.84.46.247.92.sslip.io · **How it uses Qloo:** https://najimi-docs.84.46.247.92.sslip.io/qloo
+**Try it:** https://najimi.xyz (no account; works on a phone)
+**Docs:** https://docs.najimi.xyz · **How it uses Qloo:** https://docs.najimi.xyz/qloo
 **Code:** the repository linked on this page (MIT)
 
 ## Inspiration
@@ -72,7 +72,7 @@ Qloo API · Next.js · React · AI SDK · OpenAI · fal · ElevenLabs · openFDA
 
 ## Testing instructions for judges
 
-1. Open https://najimi.84.46.247.92.sslip.io on a phone and tap **Start — it's free**. No account is needed.
+1. Open https://najimi.xyz on a phone and tap **Start — it's free**. No account is needed.
 2. Add three things you love, set how much each counts, and watch your taste arrive.
 3. Open **Workflows → Relight my room**, pick a sample room, answer the two questions, and approve the images.
 4. Under the last answer, try **Compare without taste**, then **Share**.

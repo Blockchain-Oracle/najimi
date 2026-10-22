@@ -12,8 +12,8 @@ export const APP = {
     "A social app where taste is identity: a feed of music and culture, the map of where your people are, games with friends, and an agent in every chat that plans and books, on Qloo's taste graph.",
   /** The public repository and live URLs, once they exist; links stay hidden until then. */
   repository: null as string | null,
-  url: "https://najimi.84.46.247.92.sslip.io" as string | null,
-  docs: "https://najimi-docs.84.46.247.92.sslip.io" as string | null,
+  url: "https://najimi.xyz" as string | null,
+  docs: "https://docs.najimi.xyz" as string | null,
 } as const
 
 /** Local development ports, chosen to sit beside Konkyo (3210/3211/54320) without clashing. */
@@ -380,7 +380,7 @@ export const IMPORTS = {
   maxFeedBytes: 2 * 1024 * 1024,
   /** Imports one person may run per minute. */
   perMinute: 12,
-  userAgent: "Mozilla/5.0 (compatible; Najimi/1.0; +https://najimi.84.46.247.92.sslip.io)",
+  userAgent: "Mozilla/5.0 (compatible; Najimi/1.0; +https://najimi.xyz)",
 } as const
 
 /**
@@ -453,5 +453,5 @@ export const MEDIA_LINKS = {
   days: { appleId: 30, songs: 7, episode: 1, trailer: 30 },
   /** Apple artwork is resized in its URL. */
   artwork: 600,
-  userAgent: "Najimi/1.0 (+https://najimi.84.46.247.92.sslip.io)",
+  userAgent: "Najimi/1.0 (+https://najimi.xyz)",
 } as const
