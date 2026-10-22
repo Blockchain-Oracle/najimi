@@ -10,6 +10,7 @@ import { useCallback, useState } from "react"
 import { api } from "@/lib/fetcher"
 import { type RunEvent, useRunEvents } from "@/lib/use-run"
 import { WithPerson } from "../chat-context"
+import { Making } from "../making"
 import { useMediaUrl, usePublicShare } from "../public-share"
 import { CompareSlider } from "./compare-slider"
 
@@ -24,17 +25,6 @@ async function shareCreation(creationId: string, copied: string) {
   })
   await navigator.clipboard.writeText(url).catch(() => undefined)
   toast(copied)
-}
-
-function Progress({ label }: { label: string }) {
-  return (
-    <div className="relative grid aspect-[3/2] place-items-center overflow-hidden rounded-tile bg-ash">
-      <div className="absolute inset-0 animate-pulse bg-gradient-to-br from-lime/10 via-transparent to-violet/15" />
-      <span className="relative flex items-center gap-2 text-sm text-white/80">
-        <span className="size-2 animate-lime-pulse rounded-full bg-lime" /> {label}
-      </span>
-    </div>
-  )
 }
 
 /**
@@ -106,7 +96,7 @@ export function ImageCard({ output, onAsk }: { output: ImageOut; onAsk: (text: s
           <img src={creationUrl(current)} alt={output.title} className="w-full rounded-tile" />
         )
       ) : (
-        <Progress label={t("making", { n: ids.length })} />
+        <Making before={before} label={t("making", { n: ids.length })} words={output.words} />
       )}
       {ids.length > 1 ? (
         <div className="flex gap-2 px-1">

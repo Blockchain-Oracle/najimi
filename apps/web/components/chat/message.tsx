@@ -18,6 +18,7 @@ import { RecipeCard } from "./cards/recipe-card"
 import { WizardCard } from "./cards/wizard-card"
 import { StepChip } from "./lookup-step"
 import { usePublicShare } from "./public-share"
+import { TextShimmer } from "./text-shimmer"
 
 type Part = NajimiUIMessage["parts"][number]
 
@@ -232,8 +233,9 @@ export function Message({
   return (
     <div className="flex flex-col gap-3">
       {thinking ? (
-        <span className="flex items-center gap-2 text-sm text-text-3">
-          <span className="size-2 animate-lime-pulse rounded-full bg-lime" /> {t("thinking")}
+        <span className="flex items-center gap-2 text-sm">
+          <span className="size-2 animate-lime-pulse rounded-full bg-lime" />
+          <TextShimmer>{t("thinking")}</TextShimmer>
         </span>
       ) : null}
       {visible.map((part, i) => {

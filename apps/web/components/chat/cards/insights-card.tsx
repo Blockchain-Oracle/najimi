@@ -8,6 +8,7 @@ import { PickCard } from "@/components/picks/pick-card"
 import { api } from "@/lib/fetcher"
 import { StepChip } from "../lookup-step"
 import { usePublicShare } from "../public-share"
+import { TextShimmer } from "../text-shimmer"
 import { DemographicsView } from "./demographics"
 import { HeatmapView } from "./heatmap"
 import { QlooChip } from "./qloo-chip"
@@ -46,7 +47,18 @@ export function CardSkeleton({ title, label }: { title?: string; label: string }
     <section className="flex flex-col gap-3 rounded-card bg-card/90 p-4 text-card-foreground shadow-paper">
       <div className="flex items-center gap-2">
         <span className="size-2 animate-lime-pulse rounded-full bg-lime-ink" />
-        <span className="font-title text-lg">{title || label}</span>
+        {title ? (
+          <span className="flex min-w-0 flex-col">
+            <span className="truncate font-title text-lg">{title}</span>
+            <TextShimmer tone="paper" className="text-xs font-semibold">
+              {label}
+            </TextShimmer>
+          </span>
+        ) : (
+          <TextShimmer tone="paper" className="font-title text-lg">
+            {label}
+          </TextShimmer>
+        )}
       </div>
       <div className="flex gap-3 overflow-hidden">
         {[0, 1, 2, 3].map((i) => (
