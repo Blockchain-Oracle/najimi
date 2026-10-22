@@ -79,6 +79,8 @@ export const people = pgTable(
     city: text(),
     cityLat: doublePrecision(),
     cityLon: doublePrecision(),
+    /** The face picked at sign-up (config LOOKS): it sets the identity colour. */
+    look: text(),
     locale: text(),
     /** Qloo demographics band, when it matters (`55_and_older` for "cook for Mum"). */
     ageBand: text(),

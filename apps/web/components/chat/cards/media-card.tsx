@@ -1,6 +1,7 @@
 "use client"
 
 import type { NajimiTools } from "@najimi/agent"
+import { MEDIA } from "@najimi/config"
 import { toast } from "@najimi/ui/components/sonner"
 import { cn } from "@najimi/ui/lib/utils"
 import { Clapperboard, Download, RefreshCw, Share2, Sparkles } from "lucide-react"
@@ -162,13 +163,16 @@ export function ImageCard({ output, onAsk }: { output: ImageOut; onAsk: (text: s
           >
             <Sparkles className="size-3.5" /> {t("variation")}
           </button>
-          <button
-            type="button"
-            onClick={() => onAsk(t("videoAsk", { title: output.title, n: pick + 1 }))}
-            className="inline-flex items-center gap-1.5 rounded-pill bg-lime px-3 py-1.5 text-xs font-semibold text-lime-foreground"
-          >
-            <Clapperboard className="size-3.5" /> {t("makeVideo")}
-          </button>
+          {/* Offered only while video is switched on (MEDIA.video.enabled). */}
+          {MEDIA.video.enabled ? (
+            <button
+              type="button"
+              onClick={() => onAsk(t("videoAsk", { title: output.title, n: pick + 1 }))}
+              className="inline-flex items-center gap-1.5 rounded-pill bg-lime px-3 py-1.5 text-xs font-semibold text-lime-foreground"
+            >
+              <Clapperboard className="size-3.5" /> {t("makeVideo")}
+            </button>
+          ) : null}
         </div>
       ) : null}
     </section>

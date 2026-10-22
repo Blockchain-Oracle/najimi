@@ -62,10 +62,10 @@
   },
   "Start": {
     "step": "{current} من {total}",
-    "nameTitle": "بماذا نناديك؟",
+    "nameTitle": "من أنت؟",
     "namePlaceholder": "اسمك",
     "cityLabel": "مدينتك",
-    "cityHint": "للأماكن القريبة منك. يمكنك تخطيها.",
+    "cityHint": "للأماكن القريبة منك. يمكنك التخطي.",
     "cityPlaceholder": "لاغوس، باريس، طوكيو…",
     "languageLabel": "اللغة",
     "next": "التالي",
@@ -74,12 +74,24 @@
     "lovesHint": "كتاب، مسلسل، فنان، مكان، علامة تجارية — أي شيء. كلما كانت أكثر تنوعًا كان أفضل.",
     "pickMore": "{count, plural, zero {اكتمل} one {بقي واحد} two {بقي اثنان} few {بقي #} many {بقي #} other {بقي #}}",
     "picked": "تم اختيار {count}",
-    "weightsTitle": "ما وزن كل واحد؟",
+    "weightsTitle": "كم يساوي كل واحد؟",
     "weightsHint": "ارفع ما تحبه أكثر. هذا يغيّر كل ما يصنعه ناجيمي.",
     "reveal": "اكشف ذوقي",
     "revealing": "نقرأ ذوقك…",
     "carryOnHint": "ذوقك جاهز. تابع",
-    "carryOn": "تابع"
+    "carryOn": "تابع",
+    "lookHint": "اختر وجهًا لذوقك. لونه يرافقك في كل مكان.",
+    "nameHint": "المس الاسم لتكتب اسمك",
+    "nameHello": "أهلًا، {name}",
+    "lookLabel": "الوجوه",
+    "cityTitle": "أين أنت؟",
+    "citySearch": "ابحث عن مدينتك",
+    "cityClear": "اختر مدينة أخرى",
+    "mapLabel": "خريطة العالم",
+    "skipCity": "تخطَّ الآن",
+    "handEmpty": "المس ثلاثة أشياء تحبها",
+    "popular": "محبوبة الآن",
+    "removeLove": "أزل {name}"
   },
   "Loves": {
     "searchPlaceholder": "ابحث عن أي شيء تحبه…",
@@ -91,7 +103,8 @@
     "less": "قليلًا",
     "more": "كثيرًا",
     "addLove": "أضف شيئًا تحبه",
-    "keepOne": "احتفظ بشيء واحد على الأقل"
+    "keepOne": "احتفظ بشيء واحد على الأقل",
+    "weightFor": "وزن {name}"
   },
   "Domains": {
     "artist": "الموسيقى",

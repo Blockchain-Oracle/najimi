@@ -62,10 +62,10 @@
   },
   "Start": {
     "step": "{current} of {total}",
-    "nameTitle": "What should we call you?",
+    "nameTitle": "Who's this?",
     "namePlaceholder": "Your name",
     "cityLabel": "Your city",
-    "cityHint": "For places near you. You can skip it.",
+    "cityHint": "For places near you. Skip it if you'd rather.",
     "cityPlaceholder": "Lagos, Paris, Tokyo…",
     "languageLabel": "Language",
     "next": "Next",
@@ -79,7 +79,19 @@
     "reveal": "Show me my taste",
     "revealing": "Reading your taste…",
     "carryOnHint": "Your taste is ready. Carry on",
-    "carryOn": "Carry on"
+    "carryOn": "Carry on",
+    "lookHint": "Pick a face for your taste. Its colour follows you everywhere.",
+    "nameHint": "Tap the name to make it yours",
+    "nameHello": "Hello, {name}",
+    "lookLabel": "Faces",
+    "cityTitle": "Where are you?",
+    "citySearch": "Search your city",
+    "cityClear": "Pick another city",
+    "mapLabel": "A map of the world",
+    "skipCity": "Skip for now",
+    "handEmpty": "Tap three things you love",
+    "popular": "Loved right now",
+    "removeLove": "Remove {name}"
   },
   "Loves": {
     "searchPlaceholder": "Search anything you love…",
@@ -91,7 +103,8 @@
     "less": "a little",
     "more": "a lot",
     "addLove": "Add a love",
-    "keepOne": "Keep at least one love"
+    "keepOne": "Keep at least one love",
+    "weightFor": "How much {name} counts"
   },
   "Domains": {
     "artist": "Music",

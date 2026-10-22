@@ -29,11 +29,15 @@ function SamplePicker({ onPick }: { onPick: (sample: Uploaded) => void }) {
   if (!samples.data?.samples.length) return null
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="inline-flex items-center gap-1.5 rounded-pill px-2.5 py-1.5 text-sm text-paper-muted hover:bg-paper-foreground/8">
+      <DropdownMenuTrigger
+        aria-label={t("sample")}
+        title={t("sample")}
+        className="inline-flex items-center gap-1.5 rounded-pill px-2.5 py-1.5 text-sm text-paper-muted hover:bg-paper-foreground/8"
+      >
         <Images className="size-4" />{" "}
-        <span className="hidden whitespace-nowrap xl:inline">{t("sample")}</span>
+        <span className="hidden whitespace-nowrap sm:inline">{t("sample")}</span>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="start" className="w-72 p-2">
+      <DropdownMenuContent side="top" align="start" className="w-72 p-2">
         <p className="px-1 pb-2 text-xs text-muted-foreground">{t("sampleHint")}</p>
         <div className="grid grid-cols-3 gap-2">
           {samples.data.samples.map((s) => (
@@ -212,7 +216,7 @@ export function Composer({
               </span>
               <ChevronDown className="size-3.5 shrink-0" />
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="min-w-48">
+            <DropdownMenuContent side="top" align="start" className="min-w-48">
               {people.map((p) => (
                 <DropdownMenuItem key={p.id} onClick={() => onPerson(p.id)}>
                   <span className={cn("size-2.5 rounded-full", DOT[p.identity])} />
@@ -227,7 +231,7 @@ export function Composer({
               {t(`modesShort.${mode}`)}
               <ChevronDown className="size-3.5" />
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="min-w-64">
+            <DropdownMenuContent side="top" align="start" className="min-w-64">
               {(["ask", "auto", "plan"] as const).map((m) => (
                 <DropdownMenuItem
                   key={m}
@@ -248,7 +252,7 @@ export function Composer({
               {tw("pill")}
               <ChevronDown className="size-3.5" />
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-72">
+            <DropdownMenuContent side="top" align="start" className="w-72">
               {WORKFLOW_SLUGS.map((slug) => {
                 const look = WORKFLOW_LOOK[slug]
                 const Icon = look?.icon

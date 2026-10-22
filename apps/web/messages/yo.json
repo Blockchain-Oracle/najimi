@@ -29,7 +29,8 @@
     },
     "proof": "Fi ìdáhùn èyíkéyìí wé ti ìbéèrè kan náà láìka ìfẹ́ rẹ sí: Qloo ló mú ìyàtọ̀ wá.",
     "footer": "Najimi, tí a ṣe fún hackathon Qloo.",
-    "builtOn": "A kọ́ ọ lórí Qloo"
+    "builtOn": "A kọ́ ọ lórí Qloo",
+    "demo": "Àfihàn"
   },
   "Language": {
     "label": "Èdè",
@@ -61,10 +62,10 @@
   },
   "Start": {
     "step": "{current} nínú {total}",
-    "nameTitle": "Kí ni ká máa pè ọ́?",
+    "nameTitle": "Ta ni èyí?",
     "namePlaceholder": "Orúkọ rẹ",
     "cityLabel": "Ìlú rẹ",
-    "cityHint": "Fún àwọn ibi tó sún mọ́ ọ. O lè fo èyí.",
+    "cityHint": "Fún àwọn ibi tó sún mọ́ ọ. O lè fo èyí kọjá bí o bá fẹ́.",
     "cityPlaceholder": "Lagos, Paris, Tokyo…",
     "languageLabel": "Èdè",
     "next": "Tó kàn",
@@ -78,7 +79,19 @@
     "reveal": "Fi ohun tó wù mí hàn mí",
     "revealing": "Ó ń ka ohun tó wù ọ́…",
     "carryOnHint": "Ohun tó wù ọ́ ti ṣe tán. Tẹ̀síwájú",
-    "carryOn": "Tẹ̀síwájú"
+    "carryOn": "Tẹ̀síwájú",
+    "lookHint": "Yan ojú tó bá ìfẹ́ rẹ mu. Àwọ̀ rẹ yóò máa bá ọ lọ ní gbogbo ibi.",
+    "nameHint": "Tẹ orúkọ náà láti sọ di tìrẹ",
+    "nameHello": "Ẹ káàbọ̀, {name}",
+    "lookLabel": "Ojú",
+    "cityTitle": "Níbo lo wà?",
+    "citySearch": "Ṣàwárí ìlú rẹ",
+    "cityClear": "Yan ìlú mìíràn",
+    "mapLabel": "Àwòrán ilẹ̀ ayé",
+    "skipCity": "Fo èyí kọjá fún ìsinsìnyí",
+    "handEmpty": "Tẹ ohun mẹ́ta tó o fẹ́ràn",
+    "popular": "Ohun tí wọ́n fẹ́ràn lọ́wọ́lọ́wọ́",
+    "removeLove": "Yọ {name} kúrò"
   },
   "Loves": {
     "searchPlaceholder": "Wá ohunkóhun tí o fẹ́ràn…",
@@ -90,7 +103,8 @@
     "less": "díẹ̀",
     "more": "púpọ̀",
     "addLove": "Fi ohun tí o fẹ́ràn kún un",
-    "keepOne": "Fi ohun kan tí o fẹ́ràn sílẹ̀ ó kéré tán"
+    "keepOne": "Fi ohun kan tí o fẹ́ràn sílẹ̀ ó kéré tán",
+    "weightFor": "Báwo ni {name} ṣe ṣe pàtàkì tó"
   },
   "Domains": {
     "artist": "Orin",
@@ -224,7 +238,8 @@
     "commaHint": "Fi kọ́má yà wọ́n sọ́tọ̀",
     "theirLoves": "Kí ni wọ́n fẹ́ràn?",
     "theirLovesHint": "Ìwé, ètò, akọrin, oúnjẹ — mẹ́ta tàbí jù bẹ́ẹ̀ lọ ló dára jù.",
-    "revealTheirs": "Fi ìfẹ́ràn wọn hàn"
+    "revealTheirs": "Fi ìfẹ́ràn wọn hàn",
+    "openTaste": "Ṣí ìfẹ́ wọn"
   },
   "Auth": {
     "title": "Pa ìfẹ́ràn rẹ mọ́",
@@ -343,7 +358,8 @@
     "voiceFailed": "A kò gbọ́ ìyẹn. Gbìyànjú lẹ́ẹ̀kan sí i.",
     "shareChat": "Pín chat yìí",
     "linkCopied": "A ti da link kọ",
-    "saveWorkflow": "Fipamọ́ bí ìlànà iṣẹ́"
+    "saveWorkflow": "Fipamọ́ bí ìlànà iṣẹ́",
+    "share": "Pín"
   },
   "Cards": {
     "asking": "Ń béèrè lọ́wọ́ Qloo…",
@@ -623,6 +639,35 @@
     "savedPrivate": "Ó wà nínú Ìlànà iṣẹ́, lábẹ́ Tìrẹ.",
     "seeYours": "Ṣí",
     "saveFailed": "Kò ṣeé fipamọ́. Tún gbìyànjú.",
-    "readyMade": "Tí a ti pèsè"
+    "readyMade": "Tí a ti pèsè",
+    "yoursEmpty": "Àwọn workflow tìrẹ yóò hàn níbí. Lábẹ́ ìdáhùn èyíkéyìí nínú chat, “Fi pamọ́ gẹ́gẹ́ bí workflow” yí chat náà padà sí workflow tí o lè tún ṣiṣẹ́ tàbí pín."
+  },
+  "Demo": {
+    "title": "Wo bí Najimi ṣe ń ṣiṣẹ́",
+    "lede": "Láti ohun mẹ́ta tó o fẹ́ràn sí yàrá tí a tún tan: ìfẹ́ rẹ láti Qloo, ọ̀nà méjì láti tún yàrá gidi ṣe, ètò ìmọ́lẹ̀, fìtílà gidi àti orin.",
+    "coverAlt": "Najimi lórí fóònù: yàrá ìsùn ṣáájú àti lẹ́yìn, tí a tún tan pẹ̀lú ìmọ́lẹ̀ onírẹ̀lẹ̀ méjì",
+    "pendingTitle": "Àfihàn tí a gbà sílẹ̀ ń bọ̀",
+    "pendingBody": "Títí yóò fi dé, gbìyànjú ọ̀nà kan náà fúnra rẹ lórí app tó wà nílẹ̀ ní ìsàlẹ̀. Ó gba ìṣẹ́jú mẹ́ta, kò sì nílò àkọọ́lẹ̀.",
+    "pathTitle": "Gbìyànjú rẹ̀ láàárín ìṣẹ́jú mẹ́ta",
+    "steps": {
+      "start": {
+        "title": "Sọ ohun mẹ́ta tó o fẹ́ràn fún un",
+        "body": "Ìwé kan, olórin kan, eré kan. Sọ bí ọ̀kọ̀ọ̀kan ṣe ṣe pàtàkì tó."
+      },
+      "taste": {
+        "title": "Wo bí ìfẹ́ rẹ ṣe ń yọ síta",
+        "body": "Ọ̀rọ̀ àti àṣàyàn rẹ yóò dé láti Qloo ní tààrà, ọ̀kọ̀ọ̀kan pẹ̀lú ohun tó mú kí o fẹ́ràn rẹ̀."
+      },
+      "relight": {
+        "title": "Tún yàrá kan tan",
+        "body": "Yan yàrá àpẹẹrẹ kan (tàbí fọ́tò tìrẹ), sọ ohun tí o fẹ́ lò ó fún, kí o sì gba àtúnṣe méjì, ètò ìmọ́lẹ̀ àti fìtílà gidi."
+      },
+      "share": {
+        "title": "Pín in",
+        "body": "Fi chat tàbí àbájáde náà ránṣẹ́; yóò ṣí pẹ̀lú àwòrán, kò sì ní fi fọ́tò tìrẹ hàn láé."
+      }
+    },
+    "cta": "Bẹ̀rẹ̀ pẹ̀lú Tún yàrá mi tan",
+    "docs": "Ka ìwé ìtọ́sọ́nà"
   }
 }

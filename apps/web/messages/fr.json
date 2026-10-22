@@ -62,15 +62,15 @@
   },
   "Start": {
     "step": "{current} sur {total}",
-    "nameTitle": "Comment vous appelez-vous ?",
+    "nameTitle": "Qui es-tu ?",
     "namePlaceholder": "Votre prénom",
     "cityLabel": "Votre ville",
-    "cityHint": "Pour les lieux près de chez vous. Facultatif.",
+    "cityHint": "Pour les lieux près de chez toi. Tu peux passer.",
     "cityPlaceholder": "Lagos, Paris, Tokyo…",
     "languageLabel": "Langue",
     "next": "Suivant",
     "back": "Retour",
-    "lovesTitle": "Trois choses que vous aimez",
+    "lovesTitle": "Trois choses que tu aimes",
     "lovesHint": "Un livre, une série, un artiste, un lieu, une marque — n'importe quoi. Plus c'est varié, mieux c'est.",
     "pickMore": "{count, plural, one {Encore #} other {Encore #}}",
     "picked": "{count} choisis",
@@ -79,7 +79,19 @@
     "reveal": "Révéler mon goût",
     "revealing": "Lecture de votre goût…",
     "carryOnHint": "Ton goût est prêt. On continue",
-    "carryOn": "Continuer"
+    "carryOn": "Continuer",
+    "lookHint": "Choisis un visage pour ton goût. Sa couleur te suit partout.",
+    "nameHint": "Touche le nom pour mettre le tien",
+    "nameHello": "Bonjour, {name}",
+    "lookLabel": "Visages",
+    "cityTitle": "Où es-tu ?",
+    "citySearch": "Cherche ta ville",
+    "cityClear": "Choisir une autre ville",
+    "mapLabel": "Une carte du monde",
+    "skipCity": "Passer pour l'instant",
+    "handEmpty": "Touche trois choses que tu aimes",
+    "popular": "Très aimés en ce moment",
+    "removeLove": "Retirer {name}"
   },
   "Loves": {
     "searchPlaceholder": "Cherchez ce que vous aimez…",
@@ -91,7 +103,8 @@
     "less": "un peu",
     "more": "beaucoup",
     "addLove": "Ajouter un coup de cœur",
-    "keepOne": "Gardez au moins un coup de cœur"
+    "keepOne": "Gardez au moins un coup de cœur",
+    "weightFor": "Combien compte {name}"
   },
   "Domains": {
     "artist": "Musique",

@@ -33,7 +33,7 @@ export async function chatPageData(userId: string, personId: string | null) {
     people: people.map((p) => ({
       id: p.id,
       name: p.name,
-      identity: identityOf(p.id),
+      identity: identityOf(p.id, p.look),
       isSelf: p.isSelf,
     })),
     starters,

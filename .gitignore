@@ -31,3 +31,6 @@ context/
 refs/
 .firecrawl/
 .backups/
+
+# MapLibre's worker, copied from node_modules before dev and build
+apps/web/public/vendor/

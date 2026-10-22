@@ -1,4 +1,4 @@
-import { TASTE, TASTE_DOMAINS } from "@najimi/config"
+import { LOOKS, type LookId, TASTE, TASTE_DOMAINS } from "@najimi/config"
 import { z } from "zod"
 
 const entityTypes = TASTE_DOMAINS.map((d) => d.type) as [string, ...string[]]
@@ -35,6 +35,14 @@ export const AGE_BANDS = [
 export const personInput = z.object({
   name: z.string().trim().min(1).max(80),
   city: z.string().trim().max(120).nullable().optional(),
+  /** Where the map pin landed (a Qloo locality's coordinates). */
+  cityLat: z.number().min(-90).max(90).nullable().optional(),
+  cityLon: z.number().min(-180).max(180).nullable().optional(),
+  /** A face from LOOKS; it sets the identity colour. */
+  look: z
+    .enum(LOOKS.map((l) => l.id) as [LookId, ...LookId[]])
+    .nullable()
+    .optional(),
   locale: z.string().max(8).nullable().optional(),
   ageBand: z.enum(AGE_BANDS).nullable().optional(),
   constraints: constraintsInput.optional(),

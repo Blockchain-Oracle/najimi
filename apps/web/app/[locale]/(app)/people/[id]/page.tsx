@@ -58,7 +58,7 @@ async function Person({ params, searchParams }: Pick<Props, "params" | "searchPa
             ageBand: page.person.ageBand,
             constraints: page.person.constraints,
           },
-          identity: identityOf(page.person.id),
+          identity: identityOf(page.person.id, page.person.look),
           loves: page.loves.map((l) => ({
             id: l.id,
             qlooId: l.qlooId,

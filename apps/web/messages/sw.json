@@ -29,7 +29,8 @@
     },
     "proof": "Linganisha jibu lolote na la ombi lilelile bila mapendeleo: tofauti ni Qloo.",
     "footer": "Najimi, imeundwa kwa hackathon ya Qloo.",
-    "builtOn": "Imejengwa kwa Qloo"
+    "builtOn": "Imejengwa kwa Qloo",
+    "demo": "Onyesho"
   },
   "Language": {
     "label": "Lugha",
@@ -61,10 +62,10 @@
   },
   "Start": {
     "step": "{current} kati ya {total}",
-    "nameTitle": "Tukuite nani?",
+    "nameTitle": "Huyu ni nani?",
     "namePlaceholder": "Jina lako",
     "cityLabel": "Jiji lako",
-    "cityHint": "Kwa maeneo karibu nawe. Unaweza kuruka.",
+    "cityHint": "Kwa maeneo yaliyo karibu nawe. Ruka ukipenda.",
     "cityPlaceholder": "Lagos, Paris, Tokyo…",
     "languageLabel": "Lugha",
     "next": "Endelea",
@@ -78,7 +79,19 @@
     "reveal": "Nionyeshe mapendeleo yangu",
     "revealing": "Inasoma mapendeleo yako…",
     "carryOnHint": "Mapendeleo yako yako tayari. Endelea",
-    "carryOn": "Endelea"
+    "carryOn": "Endelea",
+    "lookHint": "Chagua sura inayowakilisha ladha yako. Rangi yake itakufuata kila mahali.",
+    "nameHint": "Gusa jina ulifanye lako",
+    "nameHello": "Habari, {name}",
+    "lookLabel": "Sura",
+    "cityTitle": "Uko wapi?",
+    "citySearch": "Tafuta jiji lako",
+    "cityClear": "Chagua jiji jingine",
+    "mapLabel": "Ramani ya dunia",
+    "skipCity": "Ruka kwa sasa",
+    "handEmpty": "Gusa vitu vitatu unavyopenda",
+    "popular": "Vinavyopendwa sasa",
+    "removeLove": "Ondoa {name}"
   },
   "Loves": {
     "searchPlaceholder": "Tafuta chochote unachopenda…",
@@ -90,7 +103,8 @@
     "less": "kidogo",
     "more": "sana",
     "addLove": "Ongeza unachopenda",
-    "keepOne": "Bakiza angalau kimoja unachopenda"
+    "keepOne": "Bakiza angalau kimoja unachopenda",
+    "weightFor": "{name} ni muhimu kiasi gani?"
   },
   "Domains": {
     "artist": "Muziki",
@@ -224,7 +238,8 @@
     "commaHint": "Tenganisha kwa koma",
     "theirLoves": "Anapenda nini?",
     "theirLovesHint": "Kitabu, kipindi, mwimbaji, mlo — vitatu au zaidi ni bora.",
-    "revealTheirs": "Onyesha mapendeleo yake"
+    "revealTheirs": "Onyesha mapendeleo yake",
+    "openTaste": "Fungua ladha"
   },
   "Auth": {
     "title": "Hifadhi mapendeleo yako",
@@ -343,7 +358,8 @@
     "voiceFailed": "Hatukusikia. Jaribu tena.",
     "shareChat": "Shiriki gumzo hili",
     "linkCopied": "Kiungo kimenakiliwa",
-    "saveWorkflow": "Hifadhi kama mtiririko wa kazi"
+    "saveWorkflow": "Hifadhi kama mtiririko wa kazi",
+    "share": "Shiriki"
   },
   "Cards": {
     "asking": "Tunauliza Qloo…",
@@ -623,6 +639,35 @@
     "savedPrivate": "Uko kwenye Michakato, chini ya Yako.",
     "seeYours": "Fungua",
     "saveFailed": "Haijahifadhiwa. Jaribu tena.",
-    "readyMade": "Iliyo tayari"
+    "readyMade": "Iliyo tayari",
+    "yoursEmpty": "Mitiririko yako ya kazi itaonekana hapa. Chini ya jibu lolote kwenye gumzo, “Hifadhi kama mtiririko wa kazi” hubadilisha gumzo hilo kuwa kitu unachoweza kutumia tena au kushiriki."
+  },
+  "Demo": {
+    "title": "Tazama Najimi ikifanya kazi",
+    "lede": "Kutoka vitu vitatu unavyopenda hadi chumba chenye mwanga mpya: ladha kutoka Qloo, mitindo miwili mipya ya chumba halisi, mpango wa taa, taa halisi na muziki.",
+    "coverAlt": "Najimi kwenye simu: chumba cha kulala kabla na baada, kikiwa na mwanga mpya katika mitindo miwili ya joto",
+    "pendingTitle": "Onyesho lililorekodiwa linakuja hivi karibuni",
+    "pendingBody": "Kabla halijafika, fuata hatua hizohizo kwenye programu ya moja kwa moja hapa chini. Huchukua takriban dakika tatu na huhitaji akaunti.",
+    "pathTitle": "Ijaribu kwa dakika tatu",
+    "steps": {
+      "start": {
+        "title": "Taja vitu vitatu unavyopenda",
+        "body": "Kitabu, msanii au kipindi. Eleza kila kimoja ni muhimu kiasi gani."
+      },
+      "taste": {
+        "title": "Tazama ladha yako ikijitokeza",
+        "body": "Maneno na chaguo zako huonekana papo hapo kutoka Qloo, kila kimoja kikiwa na sababu ya kukipenda."
+      },
+      "relight": {
+        "title": "Weka mwanga mpya chumbani",
+        "body": "Chagua chumba cha mfano (au picha yako mwenyewe), eleza matumizi yake, upate mitindo miwili mipya, mpango wa taa na taa halisi."
+      },
+      "share": {
+        "title": "Shiriki",
+        "body": "Tuma gumzo au matokeo; yatafunguka pamoja na picha, bila kuonyesha picha yako mwenyewe."
+      }
+    },
+    "cta": "Anza na Weka mwanga mpya chumbani kwangu",
+    "docs": "Soma nyaraka"
   }
 }

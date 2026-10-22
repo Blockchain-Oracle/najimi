@@ -1,4 +1,5 @@
 import "server-only"
+import { lookById } from "@najimi/config"
 import { db, schema } from "@najimi/db"
 import { enqueue } from "@najimi/jobs"
 import { and, asc, desc, eq } from "drizzle-orm"
@@ -76,8 +77,13 @@ export async function startTasteRun(ownerId: string, personId: string): Promise<
 const IDENTITY = ["violet", "pink", "cobalt", "orange", "teal", "butter"] as const
 export type Identity = (typeof IDENTITY)[number]
 
-/** Each person keeps one identity colour (OurSpaces: every space owns one). */
-export function identityOf(personId: string): Identity {
+/**
+ * Each person keeps one identity colour (OurSpaces: every space owns one): the face they picked,
+ * or one drawn from their id.
+ */
+export function identityOf(personId: string, look?: string | null): Identity {
+  const picked = lookById(look)
+  if (picked) return picked.identity
   let hash = 0
   for (const ch of personId) hash = (hash * 31 + ch.charCodeAt(0)) >>> 0
   return IDENTITY[hash % IDENTITY.length] ?? "violet"

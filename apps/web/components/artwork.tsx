@@ -1,4 +1,7 @@
+"use client"
+
 import { cn } from "@najimi/ui/lib/utils"
+import { useState } from "react"
 
 const RATIO = {
   square: "aspect-square",
@@ -29,17 +32,29 @@ export function Artwork({
   shape?: keyof typeof RATIO
   className?: string
 }) {
+  const [loaded, setLoaded] = useState(false)
   return (
     <div className={cn("relative overflow-hidden rounded-tile bg-ash", RATIO[shape], className)}>
       {src ? (
-        // biome-ignore lint/performance/noImgElement: Qloo artwork comes from many hosts; no resizing proxy
-        <img
-          src={src}
-          alt=""
-          loading="lazy"
-          decoding="async"
-          className="absolute inset-0 size-full object-cover"
-        />
+        <>
+          {/* Qloo's images can take a moment: a shimmer until they land, then a fade. */}
+          {loaded ? null : <span className="absolute inset-0 animate-pulse bg-foreground/8" />}
+          {/* biome-ignore lint/performance/noImgElement: Qloo artwork comes from many hosts; no resizing proxy */}
+          <img
+            src={src}
+            alt=""
+            loading="lazy"
+            decoding="async"
+            onLoad={() => setLoaded(true)}
+            ref={(img) => {
+              if (img?.complete && img.naturalWidth) setLoaded(true)
+            }}
+            className={cn(
+              "absolute inset-0 size-full object-cover transition-opacity duration-500",
+              loaded ? "opacity-100" : "opacity-0",
+            )}
+          />
+        </>
       ) : (
         <span className="font-title absolute inset-0 flex items-end bg-kraft p-2.5 text-base leading-[0.95] break-words text-kraft-foreground">
           {name}

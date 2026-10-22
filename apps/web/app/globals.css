@@ -1,1 +1,27 @@
 @import "@najimi/ui/globals.css";
+
+/* The sign-up map's pin (components/start/city-map.tsx): the city's name over a lime dot. */
+.najimi-pin {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  pointer-events: none;
+}
+.najimi-pin-label {
+  border-radius: 9999px;
+  background: var(--color-lime);
+  color: #111114;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 4px 10px;
+  white-space: nowrap;
+  box-shadow: 0 4px 0 rgb(0 0 0 / 0.35);
+}
+.najimi-pin-dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 9999px;
+  background: var(--color-lime);
+  box-shadow: 0 0 0 6px rgb(201 255 61 / 0.25);
+}

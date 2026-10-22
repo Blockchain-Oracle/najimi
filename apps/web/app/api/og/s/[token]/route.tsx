@@ -104,7 +104,7 @@ export async function GET(_request: Request, ctx: RouteContext<"/api/og/s/[token
               gap: 18,
               height: 250,
               paddingBottom: 22,
-              background: OG.identity[identityOf(person.id)] ?? OG.lime,
+              background: OG.identity[identityOf(person.id, person.look)] ?? OG.lime,
             }}
           >
             {shown.map((l, i) =>

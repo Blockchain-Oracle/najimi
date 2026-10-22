@@ -134,7 +134,9 @@ pnpm dev                # web on :3310, docs on :3311, the worker (migrates on s
 ## Provenance
 
 - **Qloo** data comes from the hackathon API (`hackathon.api.qloo.com`). Entity artwork is Qloo's.
-- **Map tiles** © OpenStreetMap contributors.
+- **Map tiles** © OpenStreetMap contributors; the sign-up map uses [OpenFreeMap](https://openfreemap.org)'s dark style (© OpenMapTiles) with [MapLibre GL JS](https://maplibre.org) (BSD-3-Clause).
+- **Faces** at sign-up are from [OurSpaces](https://github.com/thomasnguyen/ourspaces-app) (MIT, © 2026 Thomas Nguyen); **interface sounds** are from [Mixkit](https://mixkit.co/free-sound-effects/) under the [Mixkit Sound Effects Free License](https://mixkit.co/license/#sfxFree), via OurSpaces and Konkyo.
+- **Components** adapted from [21st.dev](https://21st.dev): Kokonut UI's Avatar Picker (the face card) and mapcn's MapLibre components (the city map).
 - **Fonts:** Bricolage Grotesque, IBM Plex Sans and IBM Plex Sans Arabic (SIL Open Font License), plus a three-character subset of Noto Sans JP for 馴染み in the banner.
 - **Sample rooms** in [`apps/worker/samples`](apps/worker/samples) were generated for this project with an image model; they show no real home.
 - **Showcase images** on the landing page were made by Najimi from those sample rooms by a demo account, and marked public by hand.

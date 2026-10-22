@@ -249,6 +249,13 @@ export function captionOf(entity: QlooEntity): string | null {
       return p?.geocode?.name ?? tagOfType(entity, ["urn:tag:genre:destination"])
     case "urn:entity:brand":
       return tagOfType(entity, ["urn:tag:genre:brand", "urn:tag:brand_type:qloo"])
+    case "urn:entity:locality": {
+      // "Lagos, Faro, Portugal" → "Faro, Portugal": what tells one Lagos from another.
+      const where = entity.disambiguation
+      if (!where) return null
+      const lead = `${entity.name}, `
+      return where.startsWith(lead) ? where.slice(lead.length) : where
+    }
     default:
       return null
   }

@@ -29,7 +29,8 @@
     },
     "proof": "Kwatanta kowace amsa da ta tambayar nan ba tare da la’akari da zaɓinka ba: Qloo ne bambancin.",
     "footer": "Najimi, an ƙera don hackathon na Qloo.",
-    "builtOn": "An gina bisa Qloo"
+    "builtOn": "An gina bisa Qloo",
+    "demo": "Gwaji"
   },
   "Language": {
     "label": "Harshe",
@@ -61,10 +62,10 @@
   },
   "Start": {
     "step": "{current} cikin {total}",
-    "nameTitle": "Yaya za mu kira ka?",
+    "nameTitle": "Wane ne wannan?",
     "namePlaceholder": "Sunanka",
     "cityLabel": "Birninka",
-    "cityHint": "Don wuraren kusa da kai. Za ka iya tsallakewa.",
+    "cityHint": "Don wuraren da ke kusa da kai. Ka tsallake idan ka ga dama.",
     "cityPlaceholder": "Lagos, Paris, Tokyo…",
     "languageLabel": "Harshe",
     "next": "Na gaba",
@@ -78,7 +79,19 @@
     "reveal": "Nuna mini abubuwan da nake so",
     "revealing": "Ana fahimtar abubuwan da kake so…",
     "carryOnHint": "Bayanan abubuwan da kake so sun shirya. Ci gaba",
-    "carryOn": "Ci gaba"
+    "carryOn": "Ci gaba",
+    "lookHint": "Zaɓi fuskar ɗanɗanonka. Launinta zai bi ka ko’ina.",
+    "nameHint": "Taɓa sunan don ka mai da shi naka",
+    "nameHello": "Sannu, {name}",
+    "lookLabel": "Fuskoki",
+    "cityTitle": "Ina kake?",
+    "citySearch": "Nemi birninka",
+    "cityClear": "Zaɓi wani birni",
+    "mapLabel": "Taswirar duniya",
+    "skipCity": "Tsallake yanzu",
+    "handEmpty": "Taɓa abubuwa uku da kake so",
+    "popular": "Abubuwan da ake so yanzu",
+    "removeLove": "Cire {name}"
   },
   "Loves": {
     "searchPlaceholder": "Nemo duk abin da kake so…",
@@ -90,7 +103,8 @@
     "less": "kaɗan",
     "more": "sosai",
     "addLove": "Ƙara abin so",
-    "keepOne": "Bar aƙalla abin so ɗaya"
+    "keepOne": "Bar aƙalla abin so ɗaya",
+    "weightFor": "Yaya muhimmancin {name} yake?"
   },
   "Domains": {
     "artist": "Kiɗa",
@@ -224,7 +238,8 @@
     "commaHint": "Raba da waƙafi",
     "theirLoves": "Me suke so?",
     "theirLovesHint": "Littafi, shiri, mawaƙi, abinci — uku ko fiye sun fi.",
-    "revealTheirs": "Nuna abubuwan da suke so"
+    "revealTheirs": "Nuna abubuwan da suke so",
+    "openTaste": "Buɗe ɗanɗano"
   },
   "Auth": {
     "title": "Adana abubuwan da kake so",
@@ -343,7 +358,8 @@
     "voiceFailed": "Ba mu ji ba. Sake gwadawa.",
     "shareChat": "Raba tattaunawar",
     "linkCopied": "An kwafe link",
-    "saveWorkflow": "Adana a matsayin tsarin aiki"
+    "saveWorkflow": "Adana a matsayin tsarin aiki",
+    "share": "Raba"
   },
   "Cards": {
     "asking": "Ana tambayar Qloo…",
@@ -623,6 +639,35 @@
     "savedPrivate": "Yana cikin Tsarin aiki, ƙarƙashin Naka.",
     "seeYours": "Buɗe",
     "saveFailed": "Ba a ajiye ba. Sake gwadawa.",
-    "readyMade": "Shiryayye"
+    "readyMade": "Shiryayye",
+    "yoursEmpty": "Ayyukan tafiyarka za su bayyana a nan. A ƙarƙashin kowace amsa a hira, “Ajiye a matsayin workflow” yana mai da hirar aikin da za ka iya sake aiwatarwa ko rabawa."
+  },
+  "Demo": {
+    "title": "Kalli Najimi yana aiki",
+    "lede": "Daga abubuwa uku da kake so zuwa ɗaki da aka sake haskakawa: ɗanɗano daga Qloo, salo biyu na ainihin ɗakin, shirin haske, fitilu na gaske da kiɗa.",
+    "coverAlt": "Najimi a waya: ɗakin kwana kafin da bayan an sake haskaka shi da yanayi biyu masu ɗumi",
+    "pendingTitle": "Bidiyon gwajin da aka naɗa yana tafe",
+    "pendingBody": "Har sai ya iso, bi wannan hanya da kanka a manhajar kai tsaye da ke ƙasa. Yana ɗaukar kusan minti uku, kuma babu buƙatar asusu.",
+    "pathTitle": "Gwada shi cikin minti uku",
+    "steps": {
+      "start": {
+        "title": "Faɗa masa abubuwa uku da kake so",
+        "body": "Littafi, mawaƙi ko shiri. Faɗi muhimmancin kowanne."
+      },
+      "taste": {
+        "title": "Kalli ɗanɗanonka yana bayyana",
+        "body": "Kalmominka da zaɓuɓɓukanka suna bayyana kai tsaye daga Qloo, kowanne tare da abin da ya sa ka so shi."
+      },
+      "relight": {
+        "title": "Sake haskaka ɗaki",
+        "body": "Zaɓi ɗakin misali (ko hotonka), faɗi abin da za a yi da shi, sannan ka samu salo biyu, shirin haske da fitilu na gaske."
+      },
+      "share": {
+        "title": "Raba shi",
+        "body": "Aika hirar ko sakamakon; zai buɗe tare da hoto, kuma ba zai taɓa nuna hotonka ba."
+      }
+    },
+    "cta": "Fara da Sake haskaka ɗakina",
+    "docs": "Karanta takardun bayani"
   }
 }

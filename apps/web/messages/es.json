@@ -29,7 +29,8 @@
     },
     "proof": "Compara cualquier respuesta con la misma petición sin tus gustos: la diferencia es Qloo.",
     "footer": "Najimi, creado para el hackathon de Qloo.",
-    "builtOn": "Creado con Qloo"
+    "builtOn": "Creado con Qloo",
+    "demo": "Demo"
   },
   "Language": {
     "label": "Idioma",
@@ -61,10 +62,10 @@
   },
   "Start": {
     "step": "{current} de {total}",
-    "nameTitle": "¿Cómo te llamamos?",
+    "nameTitle": "¿Quién eres?",
     "namePlaceholder": "Tu nombre",
     "cityLabel": "Tu ciudad",
-    "cityHint": "Para lugares cercanos. Es opcional.",
+    "cityHint": "Para encontrar lugares cerca de ti. Puedes omitirlo.",
     "cityPlaceholder": "Lagos, París, Tokio…",
     "languageLabel": "Idioma",
     "next": "Siguiente",
@@ -78,7 +79,19 @@
     "reveal": "Ver mis gustos",
     "revealing": "Leyendo tus gustos…",
     "carryOnHint": "Tus gustos están listos. Sigue",
-    "carryOn": "Sigue"
+    "carryOn": "Sigue",
+    "lookHint": "Elige una cara para tu gusto. Su color te acompaña a todas partes.",
+    "nameHint": "Toca el nombre para personalizarlo",
+    "nameHello": "Hola, {name}",
+    "lookLabel": "Caras",
+    "cityTitle": "¿Dónde estás?",
+    "citySearch": "Busca tu ciudad",
+    "cityClear": "Elige otra ciudad",
+    "mapLabel": "Un mapa del mundo",
+    "skipCity": "Omitir por ahora",
+    "handEmpty": "Toca tres cosas que te encantan",
+    "popular": "Lo más querido ahora",
+    "removeLove": "Quitar {name}"
   },
   "Loves": {
     "searchPlaceholder": "Busca lo que te encanta…",
@@ -90,7 +103,8 @@
     "less": "poco",
     "more": "mucho",
     "addLove": "Añadir un gusto",
-    "keepOne": "Deja al menos un gusto"
+    "keepOne": "Deja al menos un gusto",
+    "weightFor": "Cuánto cuenta {name}"
   },
   "Domains": {
     "artist": "Música",
@@ -224,7 +238,8 @@
     "commaHint": "Separa con comas",
     "theirLoves": "¿Qué le encanta?",
     "theirLovesHint": "Un libro, una serie, un cantante, un plato: mejor tres o más.",
-    "revealTheirs": "Ver sus gustos"
+    "revealTheirs": "Ver sus gustos",
+    "openTaste": "Ver gustos"
   },
   "Auth": {
     "title": "Guarda tus gustos",
@@ -343,7 +358,8 @@
     "voiceFailed": "No pudimos oírte. Inténtalo de nuevo.",
     "shareChat": "Compartir chat",
     "linkCopied": "Enlace copiado",
-    "saveWorkflow": "Guardar como flujo"
+    "saveWorkflow": "Guardar como flujo",
+    "share": "Compartir"
   },
   "Cards": {
     "asking": "Consultando Qloo…",
@@ -623,6 +639,35 @@
     "savedPrivate": "Está en Flujos, en Tuyos.",
     "seeYours": "Abrir",
     "saveFailed": "No se guardó. Inténtalo de nuevo.",
-    "readyMade": "Listos para usar"
+    "readyMade": "Listos para usar",
+    "yoursEmpty": "Tus propios flujos de trabajo aparecerán aquí. Debajo de cualquier respuesta en un chat, «Guardar como flujo de trabajo» convierte ese chat en uno que puedes volver a ejecutar o compartir."
+  },
+  "Demo": {
+    "title": "Mira a Najimi en acción",
+    "lede": "De tres cosas que te encantan a una habitación con nueva iluminación: el gusto de Qloo, dos versiones renovadas de la habitación real, un plan de iluminación, lámparas reales y una banda sonora.",
+    "coverAlt": "Najimi en un teléfono: un dormitorio antes y después, con dos ambientes cálidos de iluminación",
+    "pendingTitle": "La demo grabada está en camino",
+    "pendingBody": "Mientras llega, recorre el mismo camino en la app en vivo aquí abajo. Tarda unos tres minutos y no necesitas una cuenta.",
+    "pathTitle": "Pruébalo en tres minutos",
+    "steps": {
+      "start": {
+        "title": "Cuéntale tres cosas que te encantan",
+        "body": "Un libro, un artista, una serie. Di cuánto cuenta cada uno."
+      },
+      "taste": {
+        "title": "Mira cómo aparece tu gusto",
+        "body": "Tus palabras y elecciones llegan en vivo desde Qloo, cada una con el gusto que la inspiró."
+      },
+      "relight": {
+        "title": "Renueva la iluminación de una habitación",
+        "body": "Elige una habitación de muestra (o una foto tuya), di para qué la usas y obtén dos versiones renovadas, un plan de iluminación y lámparas reales."
+      },
+      "share": {
+        "title": "Compártelo",
+        "body": "Envía el chat o el resultado; se despliega con una imagen y nunca muestra tu foto."
+      }
+    },
+    "cta": "Empieza con «Renueva mi habitación»",
+    "docs": "Lee la documentación"
   }
 }

@@ -112,6 +112,32 @@ export const LOVES = {
   searchMinChars: 2,
   searchTake: 8,
   searchDebounceMs: 250,
+  /**
+   * The "pick 3" grid at sign-up: well-known things across the domains (with a Lagos lean, where
+   * Najimi started), found in Qloo by name so each tile is Qloo's own entity and artwork.
+   */
+  popular: [
+    { q: "Burna Boy", type: "urn:entity:artist" },
+    { q: "Beyoncé", type: "urn:entity:artist" },
+    { q: "Tems", type: "urn:entity:artist" },
+    { q: "Taylor Swift", type: "urn:entity:artist" },
+    { q: "Kendrick Lamar", type: "urn:entity:artist" },
+    { q: "Bad Bunny", type: "urn:entity:artist" },
+    { q: "Insecure", type: "urn:entity:tv_show" },
+    { q: "Fleabag", type: "urn:entity:tv_show" },
+    { q: "The Bear", type: "urn:entity:tv_show" },
+    { q: "Succession", type: "urn:entity:tv_show" },
+    { q: "Spirited Away", type: "urn:entity:movie" },
+    { q: "Black Panther", type: "urn:entity:movie" },
+    { q: "In the Mood for Love", type: "urn:entity:movie" },
+    { q: "Parasite", type: "urn:entity:movie" },
+    { q: "Americanah", type: "urn:entity:book" },
+    { q: "Things Fall Apart", type: "urn:entity:book" },
+    { q: "Normal People", type: "urn:entity:book" },
+    { q: "Aesop", type: "urn:entity:brand" },
+  ],
+  /** Cities offered on the map at sign-up (Qloo localities). */
+  placesTake: 6,
 } as const
 
 /** The ten taste domains, in the order the product shows them. */
@@ -276,3 +302,36 @@ export const EMAIL = {
   codeExpiresInSeconds: 10 * 60,
   codeAttempts: 5,
 } as const
+
+/**
+ * The faces you can be (ported from OurSpaces, MIT, © 2026 Thomas Nguyen): one per identity
+ * colour, so the face you pick is the colour your taste wears everywhere. The name is a
+ * placeholder until you type your own.
+ */
+export const LOOKS = [
+  { id: "juno", name: "Juno", identity: "violet" },
+  { id: "momo", name: "Momo", identity: "pink" },
+  { id: "pico", name: "Pico", identity: "orange" },
+  { id: "wren", name: "Wren", identity: "cobalt" },
+  { id: "ziggy", name: "Ziggy", identity: "teal" },
+  { id: "pepper", name: "Pepper", identity: "butter" },
+] as const
+export type LookId = (typeof LOOKS)[number]["id"]
+export const lookById = (id: string | null | undefined) => LOOKS.find((l) => l.id === id)
+
+/**
+ * Interface sounds (OurSpaces' set, Mixkit Sound Effects Free License): soft and short. `tap`
+ * by default, `place` when something lands (a pin, a love), `check` when a result arrives,
+ * `promote` for the big moments (your taste revealed).
+ */
+export const SOUNDS = {
+  files: {
+    tap: "/sounds/tap.mp3",
+    place: "/sounds/place.mp3",
+    check: "/sounds/check.mp3",
+    promote: "/sounds/promote.mp3",
+  },
+  volumes: { tap: 0.34, place: 0.42, check: 0.4, promote: 0.52 },
+  storageKey: "najimi:interface-sounds",
+} as const
+export type UiSound = keyof typeof SOUNDS.files

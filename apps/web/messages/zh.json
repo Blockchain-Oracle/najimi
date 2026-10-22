@@ -29,7 +29,8 @@
     },
     "proof": "同样的问题，对比融入品味前后的回答：差别就在 Qloo。",
     "footer": "Najimi，为 Qloo 黑客松而作。",
-    "builtOn": "基于 Qloo"
+    "builtOn": "基于 Qloo",
+    "demo": "演示"
   },
   "Language": {
     "label": "语言",
@@ -61,10 +62,10 @@
   },
   "Start": {
     "step": "{current} / {total}",
-    "nameTitle": "怎么称呼你？",
+    "nameTitle": "这是谁？",
     "namePlaceholder": "你的名字",
     "cityLabel": "你的城市",
-    "cityHint": "用来寻找附近的好去处，也可以跳过。",
+    "cityHint": "用于推荐附近地点。不想填也可以跳过。",
     "cityPlaceholder": "拉各斯、巴黎、东京…",
     "languageLabel": "语言",
     "next": "下一步",
@@ -78,7 +79,19 @@
     "reveal": "看看我的品味",
     "revealing": "解读你的品味中…",
     "carryOnHint": "你的品味已就绪，继续吧",
-    "carryOn": "继续"
+    "carryOn": "继续",
+    "lookHint": "选一张代表你品味的脸。它的颜色会一路伴随你。",
+    "nameHint": "点按名字，把它改成你的名字",
+    "nameHello": "你好，{name}",
+    "lookLabel": "形象",
+    "cityTitle": "你在哪儿？",
+    "citySearch": "搜索城市",
+    "cityClear": "换个城市",
+    "mapLabel": "世界地图",
+    "skipCity": "暂时跳过",
+    "handEmpty": "点选三件你喜欢的东西",
+    "popular": "当下热门",
+    "removeLove": "移除{name}"
   },
   "Loves": {
     "searchPlaceholder": "搜搜你喜欢的事物…",
@@ -90,7 +103,8 @@
     "less": "有点喜欢",
     "more": "特别喜欢",
     "addLove": "添加喜好",
-    "keepOne": "至少保留一个喜好"
+    "keepOne": "至少保留一个喜好",
+    "weightFor": "{name}对你有多重要"
   },
   "Domains": {
     "artist": "音乐",
@@ -224,7 +238,8 @@
     "commaHint": "用逗号分隔",
     "theirLoves": "对方喜欢什么？",
     "theirLovesHint": "一本书、一部剧、一位歌手、一道菜——最好至少三项。",
-    "revealTheirs": "查看对方的品味"
+    "revealTheirs": "查看对方的品味",
+    "openTaste": "查看品味"
   },
   "Auth": {
     "title": "保存你的品味",
@@ -343,7 +358,8 @@
     "voiceFailed": "没听清，请再试一次。",
     "shareChat": "分享聊天",
     "linkCopied": "链接已复制",
-    "saveWorkflow": "存为工作流"
+    "saveWorkflow": "存为工作流",
+    "share": "分享"
   },
   "Cards": {
     "asking": "正在询问 Qloo…",
@@ -623,6 +639,35 @@
     "savedPrivate": "可在“工作流”的“我的”中找到。",
     "seeYours": "打开",
     "saveFailed": "保存失败，请重试。",
-    "readyMade": "现成工作流"
+    "readyMade": "现成工作流",
+    "yoursEmpty": "你自己的工作流会显示在这里。在聊天的任意回答下方，点按“保存为工作流”，就能把这段聊天变成可再次运行或分享的工作流。"
+  },
+  "Demo": {
+    "title": "看看 Najimi 如何工作",
+    "lede": "从三件心头好到焕然一新的房间：Qloo 呈现你的品味，为真实房间打造两种新风格、一份灯光方案、真实灯具和一段配乐。",
+    "coverAlt": "手机上的 Najimi：卧室改造前后对比，呈现两种温暖的灯光氛围",
+    "pendingTitle": "录制演示即将上线",
+    "pendingBody": "在此之前，你可以在下方的在线应用里亲自走一遍同样的流程。大约需要三分钟，无需账号。",
+    "pathTitle": "三分钟体验",
+    "steps": {
+      "start": {
+        "title": "告诉它三件你喜欢的东西",
+        "body": "一本书、一位艺术家、一部剧。说说它们对你有多重要。"
+      },
+      "taste": {
+        "title": "看你的品味逐渐呈现",
+        "body": "你的描述和选择会通过 Qloo 实时呈现，每项都附有推荐理由。"
+      },
+      "relight": {
+        "title": "为房间换种灯光",
+        "body": "选一间示例房间（或上传自己的照片），说说用途，就能获得两种新风格、一份灯光方案和真实灯具推荐。"
+      },
+      "share": {
+        "title": "分享成果",
+        "body": "发送聊天或结果；对方会看到展开后的图片，而且绝不会看到你的照片。"
+      }
+    },
+    "cta": "从“改造我的房间”开始",
+    "docs": "阅读文档"
   }
 }

@@ -29,7 +29,8 @@
     },
     "proof": "Tụlee azịza ọ bụla na nke otu ajụjụ ahụ na-enweghị mmasị gị: ihe dị iche bụ Qloo.",
     "footer": "Najimi, e mere maka hackathon Qloo.",
-    "builtOn": "E ji Qloo wuo ya"
+    "builtOn": "E ji Qloo wuo ya",
+    "demo": "Nlele ngosi"
   },
   "Language": {
     "label": "Asụsụ",
@@ -61,10 +62,10 @@
   },
   "Start": {
     "step": "{current} n’ime {total}",
-    "nameTitle": "Gịnị ka anyị ga-akpọ gị?",
+    "nameTitle": "Onye bụ nke a?",
     "namePlaceholder": "Aha gị",
     "cityLabel": "Obodo gị",
-    "cityHint": "Maka ebe dị gị nso. Ị nwere ike ịfefe ya.",
+    "cityHint": "Maka ebe dị gị nso. Hapụ ya ma ọ bụrụ na ịchọrọ.",
     "cityPlaceholder": "Lagos, Paris, Tokyo…",
     "languageLabel": "Asụsụ",
     "next": "Ọzọ",
@@ -78,7 +79,19 @@
     "reveal": "Gosi m mmasị m",
     "revealing": "A na-agụ mmasị gị…",
     "carryOnHint": "Mmasị gị adịla njikere. Gaa n’ihu",
-    "carryOn": "Gaa n’ihu"
+    "carryOn": "Gaa n’ihu",
+    "lookHint": "Họrọ ihu maka ihe na-amasị gị. Agba ya ga-eso gị ebe niile.",
+    "nameHint": "Pịa aha ahụ ka ọ bụrụ nke gị",
+    "nameHello": "Ndewo, {name}",
+    "lookLabel": "Ihu",
+    "cityTitle": "Ebee ka ị nọ?",
+    "citySearch": "Chọọ obodo gị",
+    "cityClear": "Họrọ obodo ọzọ",
+    "mapLabel": "Maapụ ụwa",
+    "skipCity": "Hapụ ya ugbu a",
+    "handEmpty": "Pịa ihe atọ na-amasị gị",
+    "popular": "Ihe ndị mmadụ hụrụ n'anya ugbu a",
+    "removeLove": "Wepụ {name}"
   },
   "Loves": {
     "searchPlaceholder": "Chọọ ihe ọ bụla ị hụrụ n’anya…",
@@ -90,7 +103,8 @@
     "less": "obere",
     "more": "ọtụtụ",
     "addLove": "Tinye ihe ị hụrụ n’anya",
-    "keepOne": "Debe opekata mpe otu ihe ị hụrụ n’anya"
+    "keepOne": "Debe opekata mpe otu ihe ị hụrụ n’anya",
+    "weightFor": "Ego ole ka {name} dị gị mkpa"
   },
   "Domains": {
     "artist": "Egwu",
@@ -224,7 +238,8 @@
     "commaHint": "Jiri kọma kewaa",
     "theirLoves": "Gịnị ka ha hụrụ n'anya?",
     "theirLovesHint": "Akwụkwọ, ihe nkiri, onye ọbụ abụ, nri — atọ ma ọ bụ karịa kacha mma.",
-    "revealTheirs": "Gosi mmasị ha"
+    "revealTheirs": "Gosi mmasị ha",
+    "openTaste": "Meghee ihe ndị na-amasị gị"
   },
   "Auth": {
     "title": "Chekwaa mmasị gị",
@@ -343,7 +358,8 @@
     "voiceFailed": "Anyị anụghị nke ahụ. Nwaa ọzọ.",
     "shareChat": "Kekọrịta nkata a",
     "linkCopied": "E depụtagoro link",
-    "saveWorkflow": "Chekwaa ka usoro ọrụ"
+    "saveWorkflow": "Chekwaa ka usoro ọrụ",
+    "share": "Kesaa"
   },
   "Cards": {
     "asking": "Na-ajụ Qloo…",
@@ -623,6 +639,35 @@
     "savedPrivate": "Ọ dị na Workflows, n'okpuru Nke gị.",
     "seeYours": "Mepee",
     "saveFailed": "E chekwaghị ya. Nwaa ọzọ.",
-    "readyMade": "A kwadebere ya"
+    "readyMade": "A kwadebere ya",
+    "yoursEmpty": "Workflows nke gị ga-apụta ebe a. N'okpuru azịza ọ bụla n'ime chat, “Chekwaa dị ka workflow” na-eme ka chat ahụ bụrụ nke ị nwere ike ịrụ ọzọ ma ọ bụ kesaa."
+  },
+  "Demo": {
+    "title": "Lee Najimi ka ọ na-arụ ọrụ",
+    "lede": "Site n'ihe atọ na-amasị gị ruo n'ime ụlọ a gbanwere ọkụ: ihe ndị na-amasị gị sitere na Qloo, ụdị ọhụrụ abụọ nke ime ụlọ n'ezie, atụmatụ ọkụ, oriọna n'ezie na egwu.",
+    "coverAlt": "Najimi na ekwentị: ime ụlọ ihi ụra tupu na mgbe e mesịrị, nke e nyere ọkụ n'ụdị ọkụ abụọ na-ekpo ọkụ",
+    "pendingTitle": "Ndekọ ngosi na-abịa n'oge na-adịghị anya",
+    "pendingBody": "Ruo mgbe ọ bịara, soro otu ụzọ ahụ n'onwe gị na ngwa dị n'okpuru. Ọ na-ewe ihe dị ka nkeji atọ, achọghịkwa akaụntụ.",
+    "pathTitle": "Nwalee ya n'ime nkeji atọ",
+    "steps": {
+      "start": {
+        "title": "Gwa ya ihe atọ na-amasị gị",
+        "body": "Akwụkwọ, onye na-ese egwu, ma ọ bụ ihe nkiri. Kwuo ego ole nke ọ bụla dị gị mkpa."
+      },
+      "taste": {
+        "title": "Lelee ka ihe ndị na-amasị gị si apụta",
+        "body": "Okwu na nhọrọ gị si na Qloo abịa ozugbo, nke ọ bụla na ihe mere i ji hụ ya n'anya."
+      },
+      "relight": {
+        "title": "Gbanwee ọkụ n'ime ụlọ",
+        "body": "Họrọ ime ụlọ nlele (ma ọ bụ foto nke gị), kwuo ihe e ji ya eme, nweta ụdị ọhụrụ abụọ, atụmatụ ọkụ na oriọna n'ezie."
+      },
+      "share": {
+        "title": "Kesaa ya",
+        "body": "Zipu chat ma ọ bụ nsonaazụ ya; ọ ga-emeghe ma nwee foto, ọ gaghị egosikwa foto nke gị."
+      }
+    },
+    "cta": "Malite na Gbanwee ọkụ n'ime ụlọ m",
+    "docs": "Gụọ akwụkwọ ntuziaka"
   }
 }

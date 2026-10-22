@@ -4,8 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "node ../../scripts/with-env.mjs next dev --port 3310",
-    "build": "node ../../scripts/with-env.mjs next build",
+    "dev": "node scripts/vendor-maplibre.mjs && node ../../scripts/with-env.mjs next dev --port 3310",
+    "build": "node scripts/vendor-maplibre.mjs && node ../../scripts/with-env.mjs next build",
     "start": "node ../../scripts/with-env.mjs next start --port 3310",
     "typecheck": "next typegen && tsc --noEmit",
     "i18n:translate": "node ../../scripts/with-env.mjs tsx scripts/translate-messages.ts"
@@ -31,6 +31,7 @@
     "drizzle-orm": "catalog:",
     "heic2any": "0.0.4",
     "lucide-react": "catalog:",
+    "maplibre-gl": "6.13.0",
     "motion": "catalog:",
     "next": "catalog:",
     "next-intl": "catalog:",

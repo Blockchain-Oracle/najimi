@@ -34,7 +34,10 @@ async function PeopleList() {
           href={`/people/${p.id}`}
           className="overflow-hidden rounded-card bg-card text-card-foreground shadow-paper transition-transform hover:-translate-y-1"
         >
-          <LovesFan identity={identityOf(p.id)} loves={loves.filter((l) => l.personId === p.id)} />
+          <LovesFan
+            identity={identityOf(p.id, p.look)}
+            loves={loves.filter((l) => l.personId === p.id)}
+          />
           <div className="flex items-baseline justify-between gap-2 p-4">
             <span className="flex min-w-0 items-baseline gap-2">
               <span className="font-title truncate text-xl">{p.name}</span>

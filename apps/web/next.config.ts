@@ -12,6 +12,8 @@ const nextConfig: NextConfig = {
   // typedRoutes stays off: with every page under app/[locale] and no locale in the URL, it can't
   // type the real hrefs ("/", "/start").
   devIndicators: false,
+  // Local only: 127.0.0.1 is a second origin (no cookies), to walk sign-up as a stranger.
+  allowedDevOrigins: ["127.0.0.1"],
   // Workspace packages ship TypeScript source; Next compiles them with the app.
   transpilePackages: [
     "@najimi/agent",
