@@ -27,7 +27,13 @@ import type { PersonRow } from "@/lib/people"
  * the feed again carries on with something new; a new taste or mix starts it over.
  */
 
-type Cursor = { page: number; off: Partial<Record<FeedDomain, number>>; dry: FeedDomain[] }
+type Cursor = {
+  page: number
+  off: Partial<Record<FeedDomain, number>>
+  dry: FeedDomain[]
+  /** Second time round: everything new has been seen, so cards seen lately may come back. */
+  again?: boolean
+}
 
 const START: Cursor = { page: 0, off: {}, dry: [] }
 
@@ -47,6 +53,7 @@ function decode(raw: string | null | undefined): Cursor | null {
         ),
       ),
       dry: (c.dry ?? []).filter((d) => known.has(d)),
+      again: c.again === true,
     }
   } catch {
     return null
@@ -59,7 +66,10 @@ type Context = {
   person: PersonRow
   loves: Love[]
   stored: Record<string, StoredPick[]>
-  skip: Set<string>
+  /** Never shown: what they love and what they hid. */
+  never: Set<string>
+  /** Seen in the last few days: skipped until there's nothing new left. */
+  seen: Set<string>
   mix: FeedMix
 }
 
@@ -78,7 +88,8 @@ async function build(
   if (!slots.length) return { cards: [], next: null, domains: [] }
 
   const take = TASTE.picksPerDomain
-  const pages = new Map<string, Promise<StoredPick[]>>()
+  const skip = (id: string) => ctx.never.has(id) || (!cursor.again && ctx.seen.has(id))
+  const pages = new Map<string, Promise<StoredPick[] | null>>()
   const qlooPage = (domain: FeedDomain, page: number) => {
     const key = `${domain}:${page}`
     let found = pages.get(key)
@@ -93,19 +104,24 @@ async function build(
         },
       )
         .then((r) => r.picks)
-        .catch(() => [])
+        // A failed call isn't the end of a category: this page stops there, the next one retries.
+        .catch(() => null)
       pages.set(key, found)
     }
     return found
   }
-  /** The i-th pick in a category's queue; undefined past its end. */
-  const at = async (domain: FeedDomain, i: number): Promise<StoredPick | undefined> => {
+  /** The i-th pick in a category's queue, "end" past its last, "error" when Qloo didn't answer. */
+  const at = async (domain: FeedDomain, i: number): Promise<StoredPick | "end" | "error"> => {
     const stored = ctx.stored[domain] ?? []
-    if (i < stored.length) return stored[i]
+    const mine = stored[i]
+    if (mine) return mine
+    if (i < stored.length) return "end"
     const j = i - stored.length
     const page = 2 + Math.floor(j / take)
-    if (page > FEED.maxPages) return undefined
-    return (await qlooPage(domain, page))[j % take]
+    if (page > FEED.maxPages) return "end"
+    const list = await qlooPage(domain, page)
+    if (!list) return "error"
+    return list[j % take] ?? "end"
   }
 
   const used = new Set<string>()
@@ -120,12 +136,13 @@ async function build(
       let i = off[domain] ?? 0
       while (list.length < n) {
         const pick = await at(domain, i)
-        if (!pick) {
+        if (pick === "end") {
           dry.add(domain)
           break
         }
+        if (pick === "error") break
         i++
-        if (ctx.skip.has(pick.qlooId) || used.has(pick.qlooId)) continue
+        if (skip(pick.qlooId) || used.has(pick.qlooId)) continue
         used.add(pick.qlooId)
         list.push(pick)
       }
@@ -146,7 +163,9 @@ async function build(
   return {
     cards,
     domains,
-    next: anyLeft ? { page: cursor.page + 1, off, dry: [...dry] } : null,
+    next: anyLeft
+      ? { page: cursor.page + 1, off, dry: [...dry], ...(cursor.again ? { again: true } : {}) }
+      : null,
   }
 }
 
@@ -228,19 +247,18 @@ export async function feedPage(person: PersonRow, cursorParam?: string | null): 
       sparseDomains: r.sparseDomains,
     })),
     stored: taste.picks,
-    skip: new Set([
-      ...loveRows.map((r) => r.qlooId),
-      ...person.excludedIds,
-      ...seenRows.map((r) => r.qlooId),
-    ]),
+    never: new Set([...loveRows.map((r) => r.qlooId), ...person.excludedIds]),
+    seen: new Set(seenRows.map((r) => r.qlooId)),
     mix,
   }
 
+  let used = cursor
   let page = await build(ctx, cursor)
-  // Everything seen lately and the queues ran out: start over, letting seen cards back in.
-  if (!page.cards.length && (cursor.page > 0 || cursor.dry.length)) {
-    ctx.skip = new Set([...loveRows.map((r) => r.qlooId), ...person.excludedIds])
-    page = await build(ctx, START)
+  // Nothing new left anywhere: go round again from the start, letting cards seen lately back in.
+  // (Only once: a second pass that finds nothing is the end of the feed.)
+  if (!page.cards.length && !cursor.again) {
+    used = { ...START, again: true }
+    page = await build(ctx, used)
   }
   const media = await mediaFor(page.cards).catch(() => ({}) as Awaited<ReturnType<typeof mediaFor>>)
   const saved = new Set(savedRows.map((r) => r.qlooId))
@@ -252,7 +270,7 @@ export async function feedPage(person: PersonRow, cursorParam?: string | null): 
   // page's media once the answer has gone, so the swipe after it plays at once.
   await db
     .update(schema.people)
-    .set({ feedCursor: { key, cursor: encode(page.next ? cursor : START) } })
+    .set({ feedCursor: { key, cursor: encode(page.next ? used : START) } })
     .where(eq(schema.people.id, person.id))
   const next = page.next
   if (next)

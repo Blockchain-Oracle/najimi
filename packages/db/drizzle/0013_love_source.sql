@@ -1,0 +1,1 @@
+ALTER TABLE "loves" ADD COLUMN "source" text DEFAULT 'pick' NOT NULL;

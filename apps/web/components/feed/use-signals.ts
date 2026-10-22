@@ -21,7 +21,9 @@ export type Signal = {
 
 const URGENT = new Set<Signal["kind"]>(["love", "unlove", "hide", "save", "unsave"])
 
-export function useSignals(onSent?: (sent: Signal[], result: { retune?: boolean }) => void) {
+export type SignalResult = { retune?: boolean; full?: boolean }
+
+export function useSignals(onSent?: (sent: Signal[], result: SignalResult) => void) {
   const queue = useRef<Signal[]>([])
   const sentRef = useRef(onSent)
   sentRef.current = onSent

@@ -104,7 +104,8 @@
     "keepOne": "Keep at least one thing on",
     "done": "Done",
     "cardLabel": "{domain}: {name}",
-    "tapToPause": "Tap to pause or play"
+    "tapToPause": "Tap to pause or play",
+    "full": "Your taste is full. Let go of a love on your taste page to add this one."
   },
   "Player": {
     "play": "Play",

@@ -38,6 +38,8 @@ export type Track = {
   pickType?: string
 }
 
+export type PlayResult = "playing" | "blocked" | "superseded" | "failed"
+
 /** Whoever drives the queue right now (the feed): what next, previous and "ended" do. */
 export type QueueOwner = {
   next?: () => void
@@ -54,7 +56,7 @@ type PlayerApi = {
   unlocked: boolean
   failed: boolean
   /** Plays a track (or resumes); `queue` is what follows it when no screen drives the queue. */
-  play: (track?: Track, queue?: Track[]) => Promise<boolean>
+  play: (track?: Track, queue?: Track[]) => Promise<PlayResult>
   pause: () => void
   toggle: () => void
   seek: (seconds: number) => void
@@ -81,7 +83,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
   const audio = useRef<HTMLAudioElement>(null)
   const owner = useRef<QueueOwner | null>(null)
   const queue = useRef<Track[]>([])
-  const pending = useRef<Promise<void> | null>(null)
+  const request = useRef(0)
   const [track, setTrack] = useState<Track | null>(null)
   const trackRef = useRef<Track | null>(null)
   const [playing, setPlaying] = useState(false)
@@ -91,11 +93,13 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
   const [failed, setFailed] = useState(false)
   const [clock, setClock] = useState(0)
 
-  const play = useCallback(async (next?: Track, list?: Track[]) => {
-    if (list) queue.current = list
+  // The newest request wins: changing the source aborts a play() still starting, and that older
+  // call reports "superseded" instead of an error.
+  const play = useCallback(async (next?: Track, list?: Track[]): Promise<PlayResult> => {
+    const mine = ++request.current
     const el = audio.current
-    if (!el) return false
-    if (pending.current) await pending.current.catch(() => null)
+    if (!el) return "failed"
+    if (list) queue.current = list
     if (next && next.src !== trackRef.current?.src) {
       trackRef.current = next
       setTrack(next)
@@ -108,17 +112,16 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
       trackRef.current = next
       setTrack(next)
     }
-    if (!el.src) return false
+    if (!el.src) return "failed"
     try {
-      pending.current = el.play()
-      await pending.current
+      await el.play()
+      if (mine !== request.current) return "superseded"
       setUnlocked(true)
-      return true
-    } catch {
-      // Blocked until a tap (phones), or the source failed (the error event says which).
-      return false
-    } finally {
-      pending.current = null
+      return "playing"
+    } catch (error) {
+      if (mine !== request.current) return "superseded"
+      // Phones block sound until a tap; anything else is the source (the error event says so).
+      return (error as DOMException | null)?.name === "NotAllowedError" ? "blocked" : "failed"
     }
   }, [])
 

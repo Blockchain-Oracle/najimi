@@ -110,7 +110,12 @@ export function FeedView() {
     queryFn: ({ pageParam }) =>
       api<FeedPage>(`/api/feed${pageParam ? `?cursor=${encodeURIComponent(pageParam)}` : ""}`),
     initialPageParam: null as string | null,
-    getNextPageParam: (last) => last.next,
+    // Stop when a page brings nothing new (Qloo didn't answer, or only repeats came back): the
+    // next visit tries again, rather than asking over and over now.
+    getNextPageParam: (last, all) => {
+      const earlier = new Set(all.slice(0, -1).flatMap((p) => p.cards.map((c) => c.id)))
+      return last.cards.some((c) => !earlier.has(c.id)) ? last.next : null
+    },
     staleTime: Number.POSITIVE_INFINITY,
     gcTime: 30 * 60 * 1000,
     refetchOnWindowFocus: false,
@@ -125,7 +130,10 @@ export function FeedView() {
   const [weights, setWeights] = useState<Record<string, number>>({})
   const [mix, setMix] = useState<FeedMix | null>(null)
   const [active, setActive] = useState(lastActive)
-  const [songIndex, setSongIndex] = useState(0)
+  /** Which of a card's songs is on (an artist's top songs play in turn). */
+  const [song, setSong] = useState<{ id: string | null; index: number }>({ id: null, index: 0 })
+  /** The order of the cards once a love's weight moved (re-ranked once, then kept as you swipe). */
+  const [order, setOrder] = useState<string[] | null>(null)
   const [pinned, setPinned] = useState<string | null>(null)
   const [needsTap, setNeedsTap] = useState(false)
   const [refining, setRefining] = useState(false)
@@ -138,30 +146,45 @@ export function FeedView() {
     () => Object.fromEntries(loves.map((l) => [l.qlooId.toLowerCase(), l.weight])),
     [loves],
   )
-  const moved = Object.entries(weights).some(([id, w]) => base[id] !== w)
+  /** How well a card fits under the weights as they are now (explainability re-rank). */
+  const fitUnder = useCallback(
+    (now: Record<string, number>) => (c: Card) => (c.affinity ?? 0.5) * refit(c, base, now),
+    [base],
+  )
 
   // Every card once, minus the hidden ones. Once a love's weight moves, the cards ahead are
-  // re-ranked at once by how much each love drove them (Qloo refines them for the next pages).
+  // re-ranked at once (the order is kept from then on; new pages are ranked among themselves).
   const cards = useMemo(() => {
     const seen = new Set<string>()
     const all = pages
       .flatMap((p) => p.cards)
       .filter((c) => !hidden.has(c.id) && !seen.has(c.id) && seen.add(c.id))
-    if (!moved) return all
-    const now = { ...base, ...weights }
-    const fit = (c: Card) => (c.affinity ?? 0.5) * refit(c, base, now)
-    const fixed = all.slice(0, active + 1)
-    const ahead = all.slice(active + 1).sort((a, b) => fit(b) - fit(a))
-    return [...fixed, ...ahead]
-  }, [pages, hidden, moved, base, weights, active])
+    if (!order) return all
+    const byId = new Map(all.map((c) => [c.id, c]))
+    const placed = order.flatMap((id) => {
+      const c = byId.get(id)
+      return c ? [c] : []
+    })
+    const inOrder = new Set(order)
+    const fit = fitUnder({ ...base, ...weights })
+    const rest = all.filter((c) => !inOrder.has(c.id)).sort((a, b) => fit(b) - fit(a))
+    return [...placed, ...rest]
+  }, [pages, hidden, order, fitUnder, base, weights])
 
   const card = cards[active] ?? null
+  const songIndex = song.id === card?.id ? song.index : 0
   const cardsRef = useRef(cards)
   cardsRef.current = cards
   const activeRef = useRef(active)
   activeRef.current = active
 
-  const signal = useSignals()
+  // A love the server couldn't add (their taste is full of loves they picked) is taken back.
+  const signal = useSignals((sent, result) => {
+    if (!result.full) return
+    const refused = new Set(sent.filter((x) => x.kind === "love").map((x) => x.qlooId))
+    setLoved((s) => new Set([...s].filter((id) => !refused.has(id))))
+    toast(t("full"))
+  })
 
   const scrollTo = useCallback((index: number) => {
     const el = scroller.current
@@ -204,7 +227,6 @@ export function FeedView() {
     if (card && prev?.id !== card.id) {
       signal({ qlooId: card.id, type: card.type, kind: "seen" })
       shownAt.current = { id: card.id, type: card.type, at: now }
-      setSongIndex(0)
     }
     if (cards.length - active <= FEED.prefetchAt && feed.hasNextPage && !feed.isFetchingNextPage)
       void feed.fetchNextPage()
@@ -224,9 +246,9 @@ export function FeedView() {
       return
     }
     if (player.track?.id === track.id) return
-    void player.play(track, queueOf(current)).then((ok) => {
-      if (!ok && !player.unlocked) setNeedsTap(true)
-      if (ok && played.current !== current.id) {
+    void player.play(track, queueOf(current)).then((result) => {
+      if (result === "blocked") setNeedsTap(true)
+      if (result === "playing" && played.current !== current.id) {
         played.current = current.id
         signal({ qlooId: current.id, type: current.type, kind: "play" })
       }
@@ -241,7 +263,8 @@ export function FeedView() {
         previous: () => scrollTo(activeRef.current - 1),
         ended: () => {
           const current = cardsRef.current[activeRef.current]
-          if (current?.media?.kind === "songs") setSongIndex((i) => i + 1)
+          if (current?.media?.kind === "songs")
+            setSong((s) => ({ id: current.id, index: s.id === current.id ? s.index + 1 : 1 }))
           else scrollTo(activeRef.current + 1)
         },
       }),
@@ -251,8 +274,8 @@ export function FeedView() {
   const start = async () => {
     if (!card) return
     const track = trackOf(card, songIndex)
-    if (track && (await player.play(track, queueOf(card)))) setNeedsTap(false)
-    else setNeedsTap(false)
+    setNeedsTap(false)
+    if (track) await player.play(track, queueOf(card))
   }
 
   const isLoved = (c: Card) => loved.has(c.id)
@@ -375,6 +398,7 @@ export function FeedView() {
       await api("/api/feed/mix", { method: "PUT", json: { mix: next } }).catch(() => null)
       lastActive = 0
       setActive(0)
+      setOrder(null)
       scroller.current?.scrollTo({ top: 0 })
       await queryClient.resetQueries({ queryKey: qk.feed })
     }, 600)
@@ -383,7 +407,13 @@ export function FeedView() {
   const weightTimers = useRef(new Map<string, ReturnType<typeof setTimeout>>())
   const refineTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const onWeight = (l: FeedLove, weight: number) => {
-    setWeights((w) => ({ ...w, [l.qlooId.toLowerCase()]: weight }))
+    const now = { ...base, ...weights, [l.qlooId.toLowerCase()]: weight }
+    setWeights(now)
+    // Re-rank the cards ahead now; the ones behind and the one on screen stay where they are.
+    const fit = fitUnder(now)
+    const shown = cardsRef.current
+    const ahead = shown.slice(activeRef.current + 1).sort((a, b) => fit(b) - fit(a))
+    setOrder([...shown.slice(0, activeRef.current + 1), ...ahead].map((c) => c.id))
     const timers = weightTimers.current
     const pending = timers.get(l.id)
     if (pending) clearTimeout(pending)

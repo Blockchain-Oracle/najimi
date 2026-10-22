@@ -1,7 +1,7 @@
 import { FEED, TASTE, TASTE_DOMAINS } from "@najimi/config"
 import { db, schema } from "@najimi/db"
 import { enqueueDebounced } from "@najimi/jobs"
-import { and, asc, count, eq, lte } from "drizzle-orm"
+import { and, asc, count, eq, sql } from "drizzle-orm"
 import { z } from "zod"
 import { body, fail, json, withSession } from "@/lib/api"
 import { hidePick, selfOf } from "@/lib/people"
@@ -53,40 +53,61 @@ export async function POST(request: Request) {
   )
 
   let retune = false
+  let full = false
   for (const s of signals) {
     if (s.kind === "love" && s.name) {
-      const [{ n } = { n: 0 }] = await db
-        .select({ n: count() })
-        .from(schema.loves)
-        .where(eq(schema.loves.personId, self.id))
-      // A full taste makes room by letting go of its oldest light love (one the feed added).
-      if (n >= TASTE.seedsMax) {
-        const [oldest] = await db
+      const name = s.name
+      const result = await db.transaction(async (tx) => {
+        // One love at a time per person, so two quick batches can't both pass the cap.
+        await tx.execute(
+          sql`select 1 from ${schema.people} where ${schema.people.id} = ${self.id} for update`,
+        )
+        const [already] = await tx
           .select({ id: schema.loves.id })
           .from(schema.loves)
-          .where(and(eq(schema.loves.personId, self.id), lte(schema.loves.weight, FEED.loveWeight)))
-          .orderBy(asc(schema.loves.createdAt))
-          .limit(1)
-        if (!oldest) continue
-        await db.delete(schema.loves).where(eq(schema.loves.id, oldest.id))
-      }
-      await db
-        .insert(schema.loves)
-        .values({
+          .where(and(eq(schema.loves.personId, self.id), eq(schema.loves.qlooId, s.qlooId)))
+        if (already) return "already" as const
+        const [{ n } = { n: 0 }] = await tx
+          .select({ n: count() })
+          .from(schema.loves)
+          .where(eq(schema.loves.personId, self.id))
+        // A full taste makes room by letting go of the oldest love the feed added (never one they
+        // picked themselves).
+        if (n >= TASTE.seedsMax) {
+          const [oldest] = await tx
+            .select({ id: schema.loves.id })
+            .from(schema.loves)
+            .where(and(eq(schema.loves.personId, self.id), eq(schema.loves.source, "feed")))
+            .orderBy(asc(schema.loves.createdAt))
+            .limit(1)
+          if (!oldest) return "full" as const
+          await tx.delete(schema.loves).where(eq(schema.loves.id, oldest.id))
+        }
+        await tx.insert(schema.loves).values({
           personId: self.id,
           qlooId: s.qlooId,
           type: s.type,
-          name: s.name,
+          name,
           imageUrl: s.image ?? null,
           weight: FEED.loveWeight,
+          source: "feed",
         })
-        .onConflictDoNothing()
-      retune = true
+        return "added" as const
+      })
+      if (result === "added") retune = true
+      if (result === "full") full = true
     } else if (s.kind === "unlove") {
-      await db
+      const gone = await db
         .delete(schema.loves)
-        .where(and(eq(schema.loves.personId, self.id), eq(schema.loves.qlooId, s.qlooId)))
-      retune = true
+        .where(
+          and(
+            eq(schema.loves.personId, self.id),
+            eq(schema.loves.qlooId, s.qlooId),
+            eq(schema.loves.source, "feed"),
+          ),
+        )
+        .returning({ id: schema.loves.id })
+      if (gone.length) retune = true
     } else if (s.kind === "hide") {
       await hidePick(self.id, s.qlooId)
     } else if (s.kind === "save" && s.name) {
@@ -108,5 +129,5 @@ export async function POST(request: Request) {
   }
   if (retune)
     await enqueueDebounced("tasteRetune", { personId: self.id }, FEED.retuneSeconds, self.id)
-  return json({ ok: true, retune })
+  return json({ ok: true, retune, full })
 }

@@ -121,6 +121,8 @@ export const loves = pgTable(
     name: text().notNull(),
     imageUrl: text(),
     weight: integer().default(5).notNull(),
+    /** Where it came from: picked or imported by them, or loved in the feed (only these make room). */
+    source: text().$type<"pick" | "feed">().default("pick").notNull(),
     /** Domains this love returned nothing (or a 400) for; left out of those calls. */
     sparseDomains: text().array().default(sql`'{}'::text[]`).notNull(),
     createdAt: timestamp({ withTimezone: true }).defaultNow().notNull(),

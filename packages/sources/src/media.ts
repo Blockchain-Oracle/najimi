@@ -217,6 +217,13 @@ const rss = new XMLParser({
   trimValues: true,
 })
 
+/** A feed's date as ISO, or null when it can't be read (some feeds write dates their own way). */
+const dateOf = (raw: unknown): string | null => {
+  if (typeof raw !== "string") return null
+  const date = new Date(raw)
+  return Number.isNaN(date.getTime()) ? null : date.toISOString()
+}
+
 /** "1:02:03", "62:03" or "3723" → seconds. */
 const secondsOf = (raw: unknown): number | null => {
   if (typeof raw !== "string" && typeof raw !== "number") return null
@@ -248,7 +255,7 @@ function latestEpisode(xml: string): {
       title: String(item.title ?? "").trim(),
       audio,
       seconds: secondsOf(item["itunes:duration"]),
-      published: item.pubDate ? new Date(String(item.pubDate)).toISOString() : null,
+      published: dateOf(item.pubDate),
       image: image?.["@href"] ?? null,
     }
   }
