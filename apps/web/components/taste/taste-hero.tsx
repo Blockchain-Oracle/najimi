@@ -1,17 +1,15 @@
 "use client"
 
 import type { TasteWords } from "@najimi/db/schema"
-import { cn } from "@najimi/ui/lib/utils"
-import { BookOpen, Compass, Eye, MapPin, Moon, Sofa, UtensilsCrossed } from "lucide-react"
-import { motion } from "motion/react"
+import { MapPin } from "lucide-react"
 import { useTranslations } from "next-intl"
-import { Face, IDENTITY_BG } from "./face"
-import { type CardLove, LovesFan } from "./taste-card"
+import { Face } from "./face"
+import { type CardLove, LovesRow } from "./taste-card"
 
 /*
- * The top of a taste page: the person on their colour, their face large, and their taste read
- * aloud in one line made of Qloo's own words ("Minimalist looks, homey rooms, warm nights,
- * Caribbean plates."). Their loves fan out along the bottom edge.
+ * The top of a taste page, on the room itself: their face, their name, and their taste read aloud
+ * in one serif line made of Qloo's own words ("Minimalist looks, homey rooms, warm nights,
+ * Caribbean plates."), then the loves it came from, in a row.
  */
 
 const lower = (w: string | undefined) => w?.toLocaleLowerCase()
@@ -52,14 +50,12 @@ export function useTasteLine(words: TasteWords | null): string | null {
 
 export function TasteHero({
   person,
-  identity,
   look,
   words,
   loves,
   live,
 }: {
   person: { name: string; isSelf: boolean; city: string | null }
-  identity: string
   look: string | null
   words: TasteWords | null
   loves: CardLove[]
@@ -68,69 +64,42 @@ export function TasteHero({
   const t = useTranslations("Taste")
   const line = useTasteLine(words)
   return (
-    <section
-      className={cn(
-        "relative overflow-hidden rounded-sheet text-black shadow-paper",
-        IDENTITY_BG[identity] ?? "bg-violet",
-      )}
-    >
-      <div className="flex flex-col gap-5 p-6 pb-2">
-        <div className="flex items-center gap-4">
-          <motion.div
-            initial={{ scale: 0.7, rotate: -10, opacity: 0 }}
-            animate={{ scale: 1, rotate: 0, opacity: 1 }}
-            transition={{ type: "spring", stiffness: 220, damping: 16 }}
-          >
-            <Face
-              look={look}
-              identity={identity}
-              name={person.name}
-              size="xl"
-              className="ring-black/10"
-            />
-          </motion.div>
-          <div className="flex min-w-0 flex-col gap-1">
-            <p className="text-[11px] font-semibold tracking-wide uppercase opacity-70">
-              {person.isSelf ? t("mine") : t("theirs", { name: person.name })}
-            </p>
-            <h1 className="truncate font-title text-5xl leading-none">{person.name}</h1>
-            {person.city ? (
-              <p className="flex items-center gap-1 text-sm font-semibold opacity-75">
-                <MapPin className="size-3.5" /> {person.city}
-              </p>
-            ) : null}
-          </div>
-        </div>
-        {line ? (
-          <motion.p
-            key={line}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-            className="max-w-xl font-title text-2xl leading-tight"
-          >
-            {line}
-          </motion.p>
-        ) : live ? (
-          <p className="flex items-center gap-2 font-title text-2xl opacity-70">
-            <span className="size-2.5 animate-lime-pulse rounded-full bg-black" /> {t("computing")}
+    <section className="flex flex-col gap-6">
+      <div className="flex items-center gap-4">
+        <Face look={look} name={person.name} size="xl" />
+        <div className="flex min-w-0 flex-col gap-1.5">
+          <p className="text-[13px] text-text-3">
+            {person.isSelf ? t("mine") : t("theirs", { name: person.name })}
           </p>
-        ) : null}
+          <h1 className="truncate font-title text-[2.5rem] leading-none md:text-5xl">
+            {person.name}
+          </h1>
+          {person.city ? (
+            <p className="flex items-center gap-1 font-mono text-xs text-text-3">
+              <MapPin className="size-3.5" strokeWidth={1.5} /> {person.city}
+            </p>
+          ) : null}
+        </div>
       </div>
-      <LovesFan identity={identity} loves={loves} bare />
+      {line ? (
+        <p
+          key={line}
+          className="max-w-2xl animate-settle-in font-title text-[1.75rem] leading-[1.15] md:text-[2.25rem]"
+        >
+          {line}
+        </p>
+      ) : live ? (
+        <p className="flex items-center gap-2.5 font-title text-[1.75rem] text-text-3">
+          <span className="size-2 animate-signal-pulse rounded-full bg-signal" /> {t("computing")}
+        </p>
+      ) : null}
+      <LovesRow loves={loves} />
     </section>
   )
 }
 
-/** Each family of words with its own mark and tint, so the palette reads at a glance. */
-const FAMILIES = [
-  { key: "aesthetic", icon: Eye, tint: "bg-violet/15", dot: "bg-violet" },
-  { key: "decor", icon: Sofa, tint: "bg-butter/25", dot: "bg-butter" },
-  { key: "ambience", icon: Moon, tint: "bg-pink/15", dot: "bg-pink" },
-  { key: "style", icon: BookOpen, tint: "bg-cobalt/15", dot: "bg-cobalt" },
-  { key: "cuisine", icon: UtensilsCrossed, tint: "bg-orange/15", dot: "bg-orange" },
-  { key: "lifestyle", icon: Compass, tint: "bg-teal/15", dot: "bg-teal" },
-] as const
+/** The families of Qloo's words, in one voice: a quiet label, then the words as chips. */
+const FAMILIES = ["aesthetic", "decor", "ambience", "style", "cuisine", "lifestyle"] as const
 
 export function WordPalette({
   words,
@@ -141,37 +110,27 @@ export function WordPalette({
 }) {
   return (
     <dl className="flex flex-col gap-4">
-      {FAMILIES.filter((f) => words[f.key]?.length).map((f, row) => {
-        const Icon = f.icon
-        return (
-          <div key={f.key} className="flex flex-col gap-2">
-            <dt className="flex items-center gap-2 text-[11px] font-semibold tracking-wide text-paper-muted uppercase">
-              <span className={cn("grid size-5 place-items-center rounded-full text-black", f.dot)}>
-                <Icon className="size-3" />
+      {FAMILIES.filter((f) => words[f]?.length).map((f, row) => (
+        <div
+          key={f}
+          className="flex animate-settle-in flex-col gap-2"
+          style={{ "--enter-delay": `${row * 50}ms` } as React.CSSProperties}
+        >
+          <dt className="text-[11px] font-medium tracking-[0.08em] text-text-3 uppercase">
+            {labels[f]}
+          </dt>
+          <dd className="flex flex-wrap gap-1.5">
+            {words[f].slice(0, 6).map((w) => (
+              <span
+                key={w}
+                className="rounded-tag bg-raised px-2.5 py-1 text-[13px] text-text-2 shadow-sticker"
+              >
+                {w}
               </span>
-              {labels[f.key]}
-            </dt>
-            <dd className="flex flex-wrap gap-1.5">
-              {words[f.key].slice(0, 6).map((w, i) => (
-                <motion.span
-                  key={w}
-                  initial={{ opacity: 0, y: 8, scale: 0.9 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  transition={{
-                    delay: row * 0.08 + i * 0.04,
-                    type: "spring",
-                    stiffness: 300,
-                    damping: 22,
-                  }}
-                  className={cn("rounded-pill px-2.5 py-1 text-[13px] font-medium", f.tint)}
-                >
-                  {w}
-                </motion.span>
-              ))}
-            </dd>
-          </div>
-        )
-      })}
+            ))}
+          </dd>
+        </div>
+      ))}
     </dl>
   )
 }

@@ -46,32 +46,26 @@ export function LoveGrid({
 
   return (
     <div className="flex flex-col gap-6">
-      {/* Your hand: the picks, fanned. */}
-      <div className="flex h-36 items-end justify-center" aria-live="polite">
+      {/* Your picks, in a row above the grid. */}
+      <div className="flex h-32 items-end justify-center gap-2" aria-live="polite">
         <AnimatePresence initial={false}>
           {loves.length ? (
-            loves.map((l, i) => {
-              const offset = i - (loves.length - 1) / 2
+            loves.map((l) => {
               return (
                 <motion.button
                   key={l.qlooId}
                   type="button"
                   onClick={() => toggle(l)}
                   aria-label={t("removeLove", { name: l.name })}
-                  initial={{ y: 60, opacity: 0, rotate: 0 }}
-                  animate={{ y: Math.abs(offset) * 6, opacity: 1, rotate: offset * 7 }}
-                  exit={{ y: 60, opacity: 0 }}
-                  transition={{ type: "spring", stiffness: 300, damping: 22 }}
-                  className="group relative -mx-3 w-20 shrink-0 origin-bottom"
-                  style={{ zIndex: 10 - Math.abs(Math.round(offset)) }}
+                  layout
+                  initial={{ y: 8, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  exit={{ y: 8, opacity: 0 }}
+                  transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+                  className="group relative w-20 shrink-0"
                 >
-                  <Artwork
-                    src={l.image}
-                    name={l.name}
-                    shape="poster"
-                    className="rounded-tile shadow-sticker ring-2 ring-card"
-                  />
-                  <span className="absolute -top-2 -end-2 grid size-6 place-items-center rounded-full bg-card text-card-foreground opacity-0 shadow-paper transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
+                  <Artwork src={l.image} name={l.name} shape="poster" className="rounded-tile" />
+                  <span className="absolute -top-1.5 -end-1.5 grid size-5 place-items-center rounded-full bg-ink text-on-ink opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
                     <X className="size-3.5" />
                   </span>
                 </motion.button>
@@ -93,7 +87,7 @@ export function LoveGrid({
       <LoveSearch picked={picked} ensureSession={ensureSession} onPick={(hit) => toggle(hit)} />
 
       <div className="flex flex-col gap-3">
-        <p className="text-xs font-semibold tracking-wide text-text-3 uppercase">{t("popular")}</p>
+        <p className="text-[13px] text-text-3">{t("popular")}</p>
         <div className="grid grid-cols-3 gap-3 sm:grid-cols-4">
           {(popular.data?.hits ?? []).map((hit, i) => {
             const on = picked.has(hit.qlooId)
@@ -123,7 +117,7 @@ export function LoveGrid({
                     )}
                   />
                   {on ? (
-                    <span className="absolute end-1.5 top-1.5 grid size-6 place-items-center rounded-full bg-lime text-lime-foreground shadow-sticker">
+                    <span className="absolute end-1.5 top-1.5 grid size-6 place-items-center rounded-full bg-ink text-on-ink">
                       <Check className="size-4" />
                     </span>
                   ) : null}
@@ -140,7 +134,7 @@ export function LoveGrid({
                 <span
                   // biome-ignore lint/suspicious/noArrayIndexKey: placeholders while the tiles load
                   key={i}
-                  className="aspect-[2/3] animate-pulse rounded-tile bg-card/10"
+                  className="aspect-[2/3] animate-pulse rounded-tile bg-card"
                 />
               ))
             : null}

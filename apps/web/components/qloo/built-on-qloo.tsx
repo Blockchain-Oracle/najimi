@@ -41,7 +41,7 @@ export function BuiltOnQloo({ runId }: { runId: string | null }) {
         side="right"
         className="w-full max-w-md overflow-y-auto border-0 bg-sticker text-sticker-foreground sm:max-w-md"
       >
-        <SheetTitle className="font-title px-5 pt-5 text-xl text-white">
+        <SheetTitle className="font-title px-5 pt-5 text-[1.75rem] font-normal text-white">
           {t("builtOnQloo")}
         </SheetTitle>
         <ol className="flex flex-col gap-3 px-5 pb-6">

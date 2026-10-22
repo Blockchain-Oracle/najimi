@@ -37,7 +37,7 @@ export function MoreSheet({
         side="bottom"
         className="max-h-[85svh] rounded-t-sheet border-0 bg-background pb-[max(1rem,env(safe-area-inset-bottom))]"
       >
-        <SheetTitle className="font-title px-5 pt-5 text-xl">
+        <SheetTitle className="font-title px-5 pt-5 text-[1.75rem] font-normal">
           {seed ? t("moreLike", { name: seed.name }) : ""}
         </SheetTitle>
         <div className="flex snap-x gap-3 overflow-x-auto px-5 pt-2 pb-4">

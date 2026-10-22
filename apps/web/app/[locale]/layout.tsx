@@ -2,7 +2,12 @@ import { APP, DEFAULT_LOCALE } from "@najimi/config"
 import { env } from "@najimi/env/server"
 import { cn } from "@najimi/ui/lib/utils"
 import type { Metadata, Viewport } from "next"
-import { Bricolage_Grotesque, IBM_Plex_Sans, IBM_Plex_Sans_Arabic } from "next/font/google"
+import {
+  IBM_Plex_Mono,
+  IBM_Plex_Sans,
+  IBM_Plex_Sans_Arabic,
+  Instrument_Serif,
+} from "next/font/google"
 import { NextIntlClientProvider } from "next-intl"
 import { getTranslations } from "next-intl/server"
 import { routing } from "@/i18n/routing"
@@ -11,11 +16,19 @@ import { pageLocale } from "@/lib/page-locale"
 import { Providers } from "../providers"
 import "../globals.css"
 
-// The OurSpaces faces: Bricolage Grotesque for titles, IBM Plex Sans for everything you read,
-// and Plex Sans Arabic for Arabic (fetched only when Arabic text appears, by unicode-range).
-const bricolage = Bricolage_Grotesque({
-  subsets: ["latin", "latin-ext", "vietnamese"],
-  variable: "--font-bricolage",
+// Darkroom's faces: Instrument Serif for what a page is and what a person said about themselves,
+// IBM Plex Sans for everything you read and tap, Plex Mono for what the machine measured, and
+// Plex Sans Arabic for Arabic (fetched only when Arabic text appears, by unicode-range).
+const serif = Instrument_Serif({
+  subsets: ["latin", "latin-ext"],
+  weight: "400",
+  style: ["normal", "italic"],
+  variable: "--font-serif",
+})
+const mono = IBM_Plex_Mono({
+  subsets: ["latin", "latin-ext"],
+  weight: ["400", "500"],
+  variable: "--font-plex-mono",
 })
 const plex = IBM_Plex_Sans({
   subsets: ["latin", "latin-ext", "vietnamese"],
@@ -44,8 +57,8 @@ export async function generateMetadata({ params }: LayoutProps<"/[locale]">): Pr
 }
 
 export const viewport: Viewport = {
-  themeColor: "#0b0b0e",
-  colorScheme: "dark light",
+  themeColor: "#0d0c0b",
+  colorScheme: "dark",
 }
 
 export default async function RootLayout({ children, params }: LayoutProps<"/[locale]">) {
@@ -54,7 +67,7 @@ export default async function RootLayout({ children, params }: LayoutProps<"/[lo
     <html
       lang={locale}
       dir={dirOf(locale)}
-      className={cn("dark", bricolage.variable, plex.variable, plexArabic.variable)}
+      className={cn("dark", serif.variable, plex.variable, mono.variable, plexArabic.variable)}
       suppressHydrationWarning
     >
       <body className="min-h-svh">

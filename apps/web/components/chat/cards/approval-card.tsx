@@ -26,7 +26,7 @@ export function ApprovalCard({
       <p className="text-[11px] font-semibold tracking-wide text-paper-muted uppercase">
         {t("approveKicker")}
       </p>
-      <h3 className="font-title text-lg leading-tight">{title}</h3>
+      <h3 className="font-heading text-[17px] leading-snug">{title}</h3>
       {words.length ? (
         <ul className="flex flex-wrap gap-1">
           {words.map((w) => (

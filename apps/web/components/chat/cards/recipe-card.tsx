@@ -143,7 +143,9 @@ export function RecipeCard({
       </div>
       <Dialog open={cooking !== null} onOpenChange={(o) => (o ? null : setCooking(null))}>
         <DialogContent className="max-w-2xl rounded-sheet border-0 bg-card p-6 text-card-foreground">
-          <DialogTitle className="font-title text-xl">{recipe.title}</DialogTitle>
+          <DialogTitle className="font-title text-[1.75rem] font-normal">
+            {recipe.title}
+          </DialogTitle>
           {cooking !== null ? (
             <div className="flex min-h-56 flex-col justify-between gap-6">
               <p className="text-[11px] font-semibold tracking-wide text-paper-muted uppercase tnum">

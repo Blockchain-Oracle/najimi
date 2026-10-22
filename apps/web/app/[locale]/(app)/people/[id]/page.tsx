@@ -31,7 +31,7 @@ async function CarryOn({ next, userId }: { next: string; userId: string }) {
         <span className="text-xs font-semibold tracking-wide uppercase opacity-70">
           {t("carryOnHint")}
         </span>
-        <span className="font-title text-xl">{name ?? t("carryOn")}</span>
+        <span className="font-heading text-[17px]">{name ?? t("carryOn")}</span>
       </span>
       <ArrowRight className="size-6 shrink-0 rtl:rotate-180" />
     </Link>

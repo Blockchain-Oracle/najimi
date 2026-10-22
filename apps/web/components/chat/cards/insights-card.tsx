@@ -33,7 +33,7 @@ export function CardShell({
       <header className="flex flex-col gap-1.5">
         <div className="flex items-center gap-2">
           <QlooChip callId={callId} />
-          <h3 className="font-title text-lg leading-tight">{title}</h3>
+          <h3 className="font-heading text-[17px] leading-snug">{title}</h3>
         </div>
         {chips}
       </header>
@@ -46,16 +46,16 @@ export function CardSkeleton({ title, label }: { title?: string; label: string }
   return (
     <section className="flex flex-col gap-3 rounded-card bg-card/90 p-4 text-card-foreground shadow-paper">
       <div className="flex items-center gap-2">
-        <span className="size-2 animate-lime-pulse rounded-full bg-lime-ink" />
+        <span className="size-2 animate-signal-pulse rounded-full bg-signal" />
         {title ? (
           <span className="flex min-w-0 flex-col">
-            <span className="truncate font-title text-lg">{title}</span>
+            <span className="truncate font-heading text-[17px]">{title}</span>
             <TextShimmer tone="paper" className="text-xs font-semibold">
               {label}
             </TextShimmer>
           </span>
         ) : (
-          <TextShimmer tone="paper" className="font-title text-lg">
+          <TextShimmer tone="paper" className="font-heading text-[17px]">
             {label}
           </TextShimmer>
         )}
@@ -152,12 +152,7 @@ export function InsightsCard({
                 pick={p}
                 actions={share ? undefined : actions(p)}
                 className="animate-card-land border border-paper-foreground/8 shadow-none"
-                style={
-                  {
-                    "--tilt": `${(i % 3) - 1}deg`,
-                    animationDelay: `${i * 50}ms`,
-                  } as React.CSSProperties
-                }
+                style={{ animationDelay: `${i * 50}ms` }}
               />
             ))}
           </div>

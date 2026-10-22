@@ -39,7 +39,6 @@ export async function SharedTaste({ data }: { data: SharedTasteData }) {
       <div className="flex flex-col gap-8">
         <TasteHero
           person={{ name: data.name, isSelf: false, city: null }}
-          identity={data.identity}
           look={data.look}
           words={data.words}
           loves={data.loves}
@@ -48,7 +47,7 @@ export async function SharedTaste({ data }: { data: SharedTasteData }) {
         <section className="flex flex-col gap-6 rounded-card bg-card p-5 text-card-foreground shadow-paper">
           {data.words ? <WordPalette words={data.words} labels={labels} /> : null}
           <TasteMap
-            person={{ name: data.name, look: data.look, identity: data.identity }}
+            person={{ name: data.name, look: data.look }}
             loves={data.loves}
             bridges={data.bridges ?? []}
             picks={data.picks ?? {}}

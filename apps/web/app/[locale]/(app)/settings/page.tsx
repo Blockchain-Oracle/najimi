@@ -91,7 +91,7 @@ async function Mine() {
     <>
       <section className={card}>
         <div className="flex flex-col gap-1">
-          <h2 className="font-title text-xl">{t("mode")}</h2>
+          <h2 className="font-heading text-[17px]">{t("mode")}</h2>
           <p className="text-sm text-paper-muted">{t("modeHint")}</p>
         </div>
         <ModePicker initial={prefs?.mode ?? "ask"} />
@@ -99,7 +99,7 @@ async function Mine() {
 
       <section className={card}>
         <div className="flex flex-col gap-1">
-          <h2 className="font-title text-xl">{t("today")}</h2>
+          <h2 className="font-heading text-[17px]">{t("today")}</h2>
           <p className="text-sm text-paper-muted">{guest ? t("todayGuest") : t("todayMember")}</p>
         </div>
         {COUNTERS.map((c) => (
@@ -109,14 +109,14 @@ async function Mine() {
 
       <section className={card}>
         <div className="flex flex-col gap-1">
-          <h2 className="font-title text-xl">{t("links")}</h2>
+          <h2 className="font-heading text-[17px]">{t("links")}</h2>
           <p className="text-sm text-paper-muted">{t("linksHint")}</p>
         </div>
         <ShareLinks items={links} />
       </section>
 
       <section className={card}>
-        <h2 className="font-title text-xl">{t("account")}</h2>
+        <h2 className="font-heading text-[17px]">{t("account")}</h2>
         <p className="text-[15px]">
           {guest ? ta("guest") : ta("signedInAs", { email: user.email })}
         </p>
@@ -125,7 +125,7 @@ async function Mine() {
 
       <section className={`${card} ring-1 ring-destructive/30`}>
         <div className="flex flex-col gap-1">
-          <h2 className="font-title text-xl">{t("deleteHeading")}</h2>
+          <h2 className="font-heading text-[17px]">{t("deleteHeading")}</h2>
           <p className="text-sm text-paper-muted">{t("deleteHint")}</p>
         </div>
         <DeleteData />
@@ -141,7 +141,7 @@ export default async function SettingsPage() {
     <div className="mx-auto flex w-full max-w-xl flex-col gap-6 px-5 pb-16 md:px-0">
       <h1 className="font-title text-title-sm">{t("title")}</h1>
       <section className="flex items-center justify-between rounded-card bg-card p-5 text-card-foreground shadow-paper">
-        <span className="font-title text-xl">{t("language")}</span>
+        <span className="font-heading text-[17px]">{t("language")}</span>
         <LanguageMenu />
       </section>
       <Suspense fallback={<div className="h-96 animate-pulse rounded-card bg-card/10" aria-busy />}>

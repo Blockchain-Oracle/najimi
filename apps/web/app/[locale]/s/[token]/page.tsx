@@ -123,7 +123,7 @@ async function Shared({ params }: { params: Props["params"] }) {
         <img src={src(c.id, "display")} alt={c.title ?? ""} className="w-full rounded-sm" />
       )}
       <figcaption className="flex flex-col gap-1 px-1 pt-3 text-paper-foreground">
-        <span className="font-title text-xl">{c.title}</span>
+        <span className="font-heading text-[17px]">{c.title}</span>
         {c.words.length ? (
           <span className="text-sm text-paper-muted">
             {t("madeFrom", { words: c.words.join(" · ") })}
@@ -139,7 +139,7 @@ export default async function SharePage(props: Props) {
   return (
     <main className="mx-auto flex min-h-svh w-full max-w-3xl flex-col gap-6 px-5 py-8">
       <header className="flex items-center justify-between">
-        <Link href="/" className="font-title text-xl">
+        <Link href="/" className="font-title text-[22px]">
           najimi
         </Link>
         <Link

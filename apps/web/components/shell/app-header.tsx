@@ -69,7 +69,7 @@ export function AppHeader({ google, email }: { google: boolean; email: boolean }
   return (
     <header className="sticky top-0 z-40 bg-background/85 backdrop-blur-md">
       <div className="mx-auto flex h-16 w-full max-w-5xl items-center gap-3 px-5">
-        <Link href="/" className="font-title text-xl">
+        <Link href="/" className="font-title text-[22px]">
           najimi
         </Link>
         <Nav className="flex min-w-0 flex-1 items-center gap-1 ps-3 max-sm:hidden" />

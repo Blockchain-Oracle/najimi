@@ -60,7 +60,7 @@ export function ChatSidebar() {
               )}
             >
               {c.status === "generating" ? (
-                <span className="me-1.5 inline-block size-1.5 animate-lime-pulse rounded-full bg-lime align-middle" />
+                <span className="me-1.5 inline-block size-1.5 animate-signal-pulse rounded-full bg-signal align-middle" />
               ) : null}
               {c.title ?? t("untitled")}
             </Link>

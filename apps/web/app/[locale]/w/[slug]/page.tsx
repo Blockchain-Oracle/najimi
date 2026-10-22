@@ -1,11 +1,10 @@
-import { cn } from "@najimi/ui/lib/utils"
 import { ArrowRight, Camera, ListChecks, User } from "lucide-react"
 import type { Metadata } from "next"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import { getTranslations } from "next-intl/server"
 import { Suspense } from "react"
-import { WORKFLOW_LOOK } from "@/components/workflows/workflow-meta"
+import { WORKFLOW_ICON } from "@/components/workflows/workflow-meta"
 import { getSession } from "@/lib/session"
 import { isBuiltIn, runnableWorkflow, type WorkflowRow } from "@/lib/workflows"
 
@@ -48,23 +47,22 @@ async function Workflow({ params }: { params: Props["params"] }) {
   if (!w) notFound()
   const t = await getTranslations("Workflows")
   const { name, description, category } = await wordsOf(w)
-  const look = WORKFLOW_LOOK[w.slug]
-  const Icon = look?.icon ?? ListChecks
+  const Icon = WORKFLOW_ICON[w.slug] ?? ListChecks
   const steps = isBuiltIn(w) ? [] : w.instructions.split("\n").filter((s) => s.trim())
   return (
     <article className="overflow-hidden rounded-card bg-card text-card-foreground shadow-paper">
-      <div className={cn("grid h-44 place-items-center text-black", look?.tone ?? "bg-lime")}>
-        <Icon className="size-16" />
-      </div>
       <div className="flex flex-col gap-4 p-6">
-        <p className="text-[11px] font-semibold tracking-wide text-paper-muted uppercase">
+        <span className="grid size-11 place-items-center rounded-tile bg-raised shadow-sticker">
+          <Icon className="size-5 text-text-2" strokeWidth={1.5} />
+        </span>
+        <p className="font-mono text-xs text-text-3">
           {category}
           {w.runsCount > 0 ? ` · ${t("runs", { count: w.runsCount })}` : ""}
         </p>
         <h1 className="font-title text-title-sm leading-tight">{name}</h1>
         {description ? <p className="text-paper-muted">{description}</p> : null}
         {steps.length ? (
-          <ol className="flex flex-col gap-2 border-paper-foreground/10 border-t pt-4">
+          <ol className="flex flex-col gap-2 border-t border-border pt-4">
             {steps.map((s) => (
               <li key={s} className="text-[15px] leading-relaxed">
                 {s}
@@ -86,7 +84,7 @@ async function Workflow({ params }: { params: Props["params"] }) {
         </div>
         <Link
           href={`/c?workflow=${w.slug}`}
-          className="mt-2 inline-flex items-center justify-center gap-2 self-start rounded-pill bg-lime px-6 py-3 font-semibold text-lime-foreground shadow-sticker transition-transform hover:-translate-y-0.5"
+          className="mt-2 inline-flex items-center justify-center gap-2 self-start rounded-pill bg-ink px-6 py-3 font-semibold text-on-ink transition-opacity hover:opacity-90"
         >
           {t("runThis")} <ArrowRight className="size-4 rtl:rotate-180" />
         </Link>
@@ -101,14 +99,14 @@ export default async function WorkflowLinkPage(props: Props) {
   return (
     <main className="mx-auto flex min-h-svh w-full max-w-2xl flex-col gap-6 px-5 py-8">
       <header className="flex items-center justify-between">
-        <Link href="/" className="font-title text-xl">
+        <Link href="/" className="font-title text-[22px]">
           najimi
         </Link>
         <Link href="/workflows" className="text-sm font-semibold text-text-2 hover:text-foreground">
           {t("moreWorkflows")}
         </Link>
       </header>
-      <Suspense fallback={<div className="h-[28rem] animate-pulse rounded-card bg-card/10" />}>
+      <Suspense fallback={<div className="h-[28rem] animate-pulse rounded-card bg-card" />}>
         <Workflow params={props.params} />
       </Suspense>
       <p className="text-text-2">{t("pitch")}</p>

@@ -19,7 +19,7 @@ export function CopyLinkButton({ slug, className }: { slug: string; className?: 
         toast(t("linkCopied"), { description: link })
       }}
       className={cn(
-        "grid size-9 place-items-center rounded-full bg-black/15 text-black backdrop-blur-sm transition-colors hover:bg-black/25",
+        "grid size-8 place-items-center rounded-full text-text-3 transition-colors hover:bg-white/4 hover:text-foreground",
         className,
       )}
     >

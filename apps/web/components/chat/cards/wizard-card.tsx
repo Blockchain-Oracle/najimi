@@ -77,7 +77,7 @@ export function WizardCard({
   return (
     <section className="flex animate-card-land flex-col gap-4 rounded-card bg-card p-4 text-card-foreground shadow-paper">
       <header className="flex items-center justify-between gap-3">
-        <h3 className="font-title text-lg leading-tight">{input.title}</h3>
+        <h3 className="font-heading text-[17px] leading-snug">{input.title}</h3>
         <span className="sticker px-2.5 py-0.5 text-[11px] font-semibold tnum">
           {t("count", { current: step + 1, total: input.steps.length })}
         </span>

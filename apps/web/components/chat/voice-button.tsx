@@ -100,12 +100,12 @@ export function VoiceButton({
     >
       {state === "recording" ? (
         <>
-          <span className="size-2 animate-lime-pulse rounded-full bg-lime" />
+          <span className="size-2 animate-signal-pulse rounded-full bg-signal" />
           <span className="tnum">{`0:${String(seconds).padStart(2, "0")}`}</span>
           <Square className="size-3.5 fill-current" />
         </>
       ) : state === "working" ? (
-        <span className="size-2 animate-lime-pulse rounded-full bg-lime-ink" />
+        <span className="size-2 animate-signal-pulse rounded-full bg-signal" />
       ) : (
         <Mic className="size-5" />
       )}

@@ -238,7 +238,7 @@ export function ChatView(props: ChatViewProps) {
             })}
             {stillRunning ? (
               <p className="flex items-center gap-2 text-sm text-text-3">
-                <span className="size-2 animate-lime-pulse rounded-full bg-lime" />{" "}
+                <span className="size-2 animate-signal-pulse rounded-full bg-signal" />{" "}
                 {t("stillWorking")}
               </p>
             ) : null}
@@ -376,7 +376,8 @@ function CompareDialog({
               <p className="text-sm text-destructive">{error}</p>
             ) : (
               <p className="flex items-center gap-2 text-sm text-text-3">
-                <span className="size-2 animate-lime-pulse rounded-full bg-lime" /> {t("asking")}
+                <span className="size-2 animate-signal-pulse rounded-full bg-signal" />{" "}
+                {t("asking")}
               </p>
             )}
           </section>

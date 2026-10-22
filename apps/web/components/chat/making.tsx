@@ -57,13 +57,13 @@ export function Making({
             style={{ maskImage: mask, WebkitMaskImage: mask }}
           />
           <div
-            className="pointer-events-none absolute inset-x-0 h-10 bg-gradient-to-b from-transparent via-lime/40 to-transparent mix-blend-screen"
+            className="pointer-events-none absolute inset-x-0 h-10 bg-gradient-to-b from-transparent via-white/25 to-transparent mix-blend-screen"
             style={{ top: `calc(${progress}% - 1.25rem)` }}
           />
         </>
       ) : (
         <div className="absolute inset-0">
-          {["bg-lime/30", "bg-violet/40", "bg-pink/30"].map((tone, i) => (
+          {["bg-white/10", "bg-white/6", "bg-white/8"].map((tone, i) => (
             <motion.span
               key={tone}
               className={`absolute size-2/3 rounded-full blur-3xl ${tone}`}

@@ -77,7 +77,8 @@ export function SaveWorkflowDialog({
         {draft.isPending && !form.name ? (
           <div className="flex flex-col gap-3" aria-busy>
             <p className="flex items-center gap-2 text-sm text-paper-muted">
-              <span className="size-2 animate-lime-pulse rounded-full bg-lime" /> {t("drafting")}
+              <span className="size-2 animate-signal-pulse rounded-full bg-signal" />{" "}
+              {t("drafting")}
             </p>
             <div className="h-11 animate-pulse rounded-tile bg-paper-foreground/8" />
             <div className="h-11 animate-pulse rounded-tile bg-paper-foreground/8" />

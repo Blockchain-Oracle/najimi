@@ -29,7 +29,7 @@ export default async function DemoPage({ params }: PageProps<"/[locale]/demo">) 
   return (
     <main className="mx-auto flex min-h-svh w-full max-w-4xl flex-col gap-8 px-6 pb-16">
       <header className="flex h-16 items-center justify-between">
-        <Link href="/" className="font-title text-xl">
+        <Link href="/" className="font-title text-[22px]">
           {APP.name.toLowerCase()}
         </Link>
         <LanguageMenu />

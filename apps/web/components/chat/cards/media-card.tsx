@@ -67,7 +67,7 @@ export function ImageCard({ output, onAsk }: { output: ImageOut; onAsk: (text: s
   return (
     <section className="flex animate-card-land flex-col gap-3 rounded-card bg-card p-3 text-card-foreground shadow-paper">
       <header className="flex items-baseline justify-between gap-2 px-1">
-        <h3 className="font-title text-lg leading-tight">{output.title}</h3>
+        <h3 className="font-heading text-[17px] leading-snug">{output.title}</h3>
         <span className="text-xs text-paper-muted">
           <WithPerson text={(name) => t("forName", { name })} name={output.personName} />
         </span>
@@ -202,7 +202,7 @@ export function VideoCard({ output }: { output: VideoOut }) {
   const poster = output.posterCreationId ? creationUrl(output.posterCreationId) : undefined
   return (
     <section className="flex animate-card-land flex-col gap-3 rounded-card bg-card p-3 text-card-foreground shadow-paper">
-      <h3 className="font-title px-1 text-lg leading-tight">{output.title}</h3>
+      <h3 className="font-heading px-1 text-[17px] leading-snug">{output.title}</h3>
       {failed ? (
         <p className="rounded-tile bg-ash p-4 text-sm text-white">
           {failed === "refused" ? t("refused") : t("failed")}
@@ -227,7 +227,7 @@ export function VideoCard({ output }: { output: VideoOut }) {
           )}
           <span className="absolute inset-0 grid place-items-center">
             <span className="sticker flex items-center gap-2 px-3 py-1.5 text-sm font-semibold">
-              <span className="size-2 animate-lime-pulse rounded-full bg-lime" />
+              <span className="size-2 animate-signal-pulse rounded-full bg-signal" />
               {stage.stage === "running"
                 ? t("rendering")
                 : stage.position != null

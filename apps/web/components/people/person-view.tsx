@@ -182,7 +182,6 @@ export function PersonView({ data }: { data: PersonViewData }) {
       <div className="mx-5 md:mx-0">
         <TasteHero
           person={person}
-          identity={data.identity}
           look={person.look}
           words={words}
           loves={data.loves}
@@ -195,11 +194,11 @@ export function PersonView({ data }: { data: PersonViewData }) {
           <WordPalette words={words} labels={wordLabels} />
         ) : live ? (
           <p className="flex items-center gap-2 text-sm text-paper-muted">
-            <span className="size-2 animate-lime-pulse rounded-full bg-lime-ink" /> {t("computing")}
+            <span className="size-2 animate-signal-pulse rounded-full bg-signal" /> {t("computing")}
           </p>
         ) : null}
         <TasteMap
-          person={{ name: person.name, look: person.look, identity: data.identity }}
+          person={{ name: person.name, look: person.look }}
           loves={data.loves}
           bridges={bridges}
           picks={picks}
@@ -235,7 +234,7 @@ export function PersonView({ data }: { data: PersonViewData }) {
 
       {live && !firstReveal ? (
         <p className="sticker mx-5 flex w-fit items-center gap-2 px-3.5 py-2 text-xs font-semibold md:mx-0">
-          <span className="size-2 animate-lime-pulse rounded-full bg-lime" /> {t("updating")}
+          <span className="size-2 animate-signal-pulse rounded-full bg-signal" /> {t("updating")}
         </p>
       ) : null}
       {failed ? (
@@ -268,7 +267,7 @@ export function PersonView({ data }: { data: PersonViewData }) {
       ))}
 
       <section className="flex flex-col gap-3 px-5 md:px-0">
-        <h2 className="font-title text-xl">{t("saved")}</h2>
+        <h2 className="font-heading text-[17px]">{t("saved")}</h2>
         {data.saved.length ? (
           <div className="flex flex-wrap gap-2">
             {data.saved.map((s) => (

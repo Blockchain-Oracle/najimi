@@ -59,7 +59,7 @@ export function NewPerson() {
         </select>
       </div>
       <div className="flex flex-col gap-3">
-        <h2 className="font-title text-xl">{t("theirLoves")}</h2>
+        <h2 className="font-heading text-[17px]">{t("theirLoves")}</h2>
         <p className="text-sm text-text-2">{t("theirLovesHint")}</p>
         {loves.length ? (
           <div className="flex flex-wrap gap-2">

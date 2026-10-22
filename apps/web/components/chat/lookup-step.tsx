@@ -18,7 +18,7 @@ export function StepChip({
   return (
     <span className="inline-flex w-fit max-w-full items-center gap-1.5 rounded-pill border border-foreground/12 px-2.5 py-1 text-xs text-text-2">
       {running ? (
-        <span className="size-1.5 animate-lime-pulse rounded-full bg-lime" />
+        <span className="size-1.5 animate-signal-pulse rounded-full bg-signal" />
       ) : (
         <Icon className="size-3.5 shrink-0" />
       )}

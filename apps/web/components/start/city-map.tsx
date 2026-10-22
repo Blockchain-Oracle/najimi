@@ -133,7 +133,7 @@ export function CityMap({
       />
       {!ready ? (
         <div className="absolute inset-0 grid place-items-center text-sm text-text-3">
-          <span className="size-2 animate-lime-pulse rounded-full bg-lime" />
+          <span className="size-2 animate-signal-pulse rounded-full bg-signal" />
         </div>
       ) : null}
 

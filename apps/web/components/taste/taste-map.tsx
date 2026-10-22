@@ -17,17 +17,10 @@ type Bridge = { from: string; to: string; domain: string }
 type Love = { name: string; imageUrl: string | null }
 type Node = { name: string; image: string | null; ref: RefObject<HTMLDivElement | null> }
 
-const same = (a: string, b: string) => a.trim().toLowerCase() === b.trim().toLowerCase()
+/** The light that runs along each line: the signal, because the map is the run's result made visible. */
+const SIGNAL = "#D7FF3D"
 
-/** The beams run from lime ink into the person's own colour, so they read on cream paper. */
-const HEX: Record<string, string> = {
-  violet: "#7853FF",
-  pink: "#E9369D",
-  orange: "#FF7C42",
-  cobalt: "#3F70FF",
-  teal: "#13B8A6",
-  butter: "#FFB02E",
-}
+const same = (a: string, b: string) => a.trim().toLowerCase() === b.trim().toLowerCase()
 
 export function TasteMap({
   person,
@@ -35,7 +28,7 @@ export function TasteMap({
   bridges,
   picks,
 }: {
-  person: { name: string; look: string | null; identity: string }
+  person: { name: string; look: string | null }
   loves: Love[]
   bridges: Bridge[]
   picks: Record<string, StoredPick[]>
@@ -69,13 +62,16 @@ export function TasteMap({
   const dot = (n: Node, size: string) => (
     <div
       ref={n.ref}
-      className={cn("relative z-10 overflow-hidden rounded-full bg-ash ring-2 ring-card", size)}
+      className={cn(
+        "relative z-10 overflow-hidden rounded-full bg-raised ring-2 ring-background",
+        size,
+      )}
     >
       {n.image ? (
         // biome-ignore lint/performance/noImgElement: Qloo artwork from its own CDN
         <img src={n.image} alt="" className="size-full object-cover" loading="lazy" />
       ) : (
-        <span className="grid size-full place-items-center bg-kraft font-title text-sm text-kraft-foreground">
+        <span className="grid size-full place-items-center bg-raised text-xs font-medium text-text-2">
           {n.name.slice(0, 2)}
         </span>
       )}
@@ -84,12 +80,12 @@ export function TasteMap({
 
   return (
     <section className="flex flex-col gap-3">
-      <p className="text-[11px] font-semibold tracking-wide text-paper-muted uppercase">
+      <p className="text-[11px] font-medium tracking-[0.08em] text-text-3 uppercase">
         {t("bridges")}
       </p>
       <div
         ref={box}
-        className="relative flex items-center justify-between gap-2 py-2 text-paper-foreground"
+        className="relative flex items-center justify-between gap-2 py-2 text-foreground"
       >
         {links.map((l, i) => (
           <span key={`${l.from}-${l.to}`} className="contents">
@@ -101,9 +97,10 @@ export function TasteMap({
               delay={i * 0.6}
               duration={3.6}
               pathColor="currentColor"
-              pathWidth={2.5}
-              gradientStartColor="#3D6B00"
-              gradientStopColor={HEX[person.identity] ?? "#7853FF"}
+              pathWidth={1.5}
+              pathOpacity={0.14}
+              gradientStartColor={SIGNAL}
+              gradientStopColor={SIGNAL}
             />
             <AnimatedBeam
               containerRef={box}
@@ -113,9 +110,10 @@ export function TasteMap({
               delay={i * 0.6 + 0.9}
               duration={3.6}
               pathColor="currentColor"
-              pathWidth={2.5}
-              gradientStartColor={HEX[person.identity] ?? "#7853FF"}
-              gradientStopColor="#3D6B00"
+              pathWidth={1.5}
+              pathOpacity={0.14}
+              gradientStartColor={SIGNAL}
+              gradientStopColor={SIGNAL}
             />
           </span>
         ))}
@@ -131,7 +129,7 @@ export function TasteMap({
 
         <div className="flex flex-col items-center gap-1">
           <div ref={you} className="relative z-10">
-            <Face look={person.look} identity={person.identity} name={person.name} size="lg" />
+            <Face look={person.look} name={person.name} size="lg" />
           </div>
           <span className="text-[11px] font-semibold">{t("you")}</span>
         </div>

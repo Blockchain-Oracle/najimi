@@ -234,7 +234,7 @@ export function Message({
     <div className="flex flex-col gap-3">
       {thinking ? (
         <span className="flex items-center gap-2 text-sm">
-          <span className="size-2 animate-lime-pulse rounded-full bg-lime" />
+          <span className="size-2 animate-signal-pulse rounded-full bg-signal" />
           <TextShimmer>{t("thinking")}</TextShimmer>
         </span>
       ) : null}

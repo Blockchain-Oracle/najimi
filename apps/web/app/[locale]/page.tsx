@@ -1,14 +1,13 @@
 import { BUILT_IN_WORKFLOWS } from "@najimi/agent/workflows"
 import { APP } from "@najimi/config"
 import { db, schema } from "@najimi/db"
-import { cn } from "@najimi/ui/lib/utils"
 import { and, desc, eq } from "drizzle-orm"
-import { ArrowRight, Heart, Sparkles, Wand2 } from "lucide-react"
+import { ArrowRight, ChevronRight, Shapes } from "lucide-react"
 import Link from "next/link"
 import { getTranslations } from "next-intl/server"
 import { Suspense } from "react"
 import { LanguageMenu } from "@/components/language-menu"
-import { WORKFLOW_LOOK } from "@/components/workflows/workflow-meta"
+import { WORKFLOW_ICON } from "@/components/workflows/workflow-meta"
 import { pageLocale } from "@/lib/page-locale"
 import { selfOf } from "@/lib/people"
 import { getSession } from "@/lib/session"
@@ -20,7 +19,7 @@ async function MainAction({ start, open }: { start: string; open: string }) {
   return (
     <Link
       href={self ? `/people/${self.id}` : "/start"}
-      className="inline-flex items-center gap-2 rounded-pill bg-primary px-7 py-3.5 text-base font-semibold text-primary-foreground shadow-sticker transition-transform hover:-translate-y-0.5"
+      className="inline-flex items-center gap-2 rounded-pill bg-primary px-6 py-3 text-[15px] font-semibold text-primary-foreground transition-opacity hover:opacity-90"
     >
       {self ? open : start} <ArrowRight className="size-4 rtl:rotate-180" />
     </Link>
@@ -58,27 +57,19 @@ async function Showcase({ label }: { label: string }) {
             // biome-ignore lint/suspicious/noArrayIndexKey: the row is the list twice, for a seamless loop
             key={`${c.id}-${i}`}
             aria-hidden={i >= made.length}
-            className="print w-72 shrink-0 sm:w-80"
-            style={{ rotate: `${((i % 5) - 2) * 0.8}deg` }}
+            className="w-72 shrink-0 overflow-hidden rounded-card bg-card shadow-paper sm:w-80"
           >
             {/* biome-ignore lint/performance/noImgElement: public showcase renditions from our storage */}
             <img
               src={`/api/media/creation/${c.id}?v=thumb`}
               alt={c.title ?? ""}
               loading="lazy"
-              className="aspect-[4/3] w-full rounded-sm object-cover"
+              className="aspect-[4/3] w-full object-cover"
             />
-            <figcaption className="flex flex-col gap-1.5 px-1 pt-2.5 text-paper-foreground">
-              <span className="truncate font-title text-base">{c.title}</span>
-              <span className="flex flex-wrap gap-1">
-                {c.words.slice(0, 3).map((w) => (
-                  <span
-                    key={w}
-                    className="rounded-pill bg-paper-foreground/7 px-2 py-0.5 text-[11px] font-medium"
-                  >
-                    {w}
-                  </span>
-                ))}
+            <figcaption className="flex flex-col gap-1 px-3.5 py-3">
+              <span className="truncate font-heading text-[15px]">{c.title}</span>
+              <span className="truncate font-mono text-[11px] text-text-3">
+                {c.words.slice(0, 3).join(" · ")}
               </span>
             </figcaption>
           </figure>
@@ -88,11 +79,7 @@ async function Showcase({ label }: { label: string }) {
   )
 }
 
-const STEPS = [
-  { key: "love", icon: Heart, tone: "bg-pink" },
-  { key: "read", icon: Sparkles, tone: "bg-lime" },
-  { key: "make", icon: Wand2, tone: "bg-butter" },
-] as const
+const STEPS = ["love", "read", "make"] as const
 
 /** The front door (T22): what Najimi is, real things it made, how Qloo powers it, and the workflows. */
 export default async function Landing({ params }: PageProps<"/[locale]">) {
@@ -102,7 +89,7 @@ export default async function Landing({ params }: PageProps<"/[locale]">) {
   return (
     <main className="flex min-h-svh w-full flex-col pb-16">
       <header className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between gap-4 px-6">
-        <span className="font-title text-xl">{APP.name.toLowerCase()}</span>
+        <span className="font-title text-[22px]">{APP.name.toLowerCase()}</span>
         <nav className="flex items-center gap-2">
           <Link
             href="/demo"
@@ -121,7 +108,7 @@ export default async function Landing({ params }: PageProps<"/[locale]">) {
       </header>
 
       <section className="mx-auto flex w-full max-w-6xl flex-col gap-7 px-6 pt-14 pb-10 sm:pt-20">
-        <p className="sticker w-fit px-3 py-1 text-xs font-semibold">{t("kicker")}</p>
+        <p className="font-mono text-xs text-text-3">{t("kicker")}</p>
         <h1 className="font-title text-hero max-w-4xl">{t("title")}</h1>
         <p className="max-w-2xl text-lg text-text-2">{t("lede")}</p>
         <div className="flex flex-wrap items-center gap-4">
@@ -129,7 +116,7 @@ export default async function Landing({ params }: PageProps<"/[locale]">) {
             fallback={
               <Link
                 href="/start"
-                className="inline-flex items-center gap-2 rounded-pill bg-primary px-7 py-3.5 text-base font-semibold text-primary-foreground shadow-sticker"
+                className="inline-flex items-center gap-2 rounded-pill bg-primary px-6 py-3 text-[15px] font-semibold text-primary-foreground"
               >
                 {t("start")} <ArrowRight className="size-4 rtl:rotate-180" />
               </Link>
@@ -155,24 +142,17 @@ export default async function Landing({ params }: PageProps<"/[locale]">) {
           <h2 className="font-title text-title-sm">{t("howTitle")}</h2>
           <p className="max-w-2xl text-text-2">{t("howLede")}</p>
         </div>
-        <ol className="grid gap-4 md:grid-cols-3">
-          {STEPS.map(({ key, icon: Icon, tone }, i) => (
+        <ol className="overflow-hidden rounded-card bg-card shadow-paper md:grid md:grid-cols-3">
+          {STEPS.map((key, i) => (
             <li
               key={key}
-              className="flex flex-col gap-3 rounded-card bg-card p-5 text-card-foreground shadow-paper"
+              className="flex gap-4 border-b border-border p-5 last:border-b-0 md:border-e md:border-b-0 md:last:border-e-0"
             >
-              <span className="flex items-center gap-3">
-                <span
-                  className={cn("grid size-10 place-items-center rounded-tile text-black", tone)}
-                >
-                  <Icon className="size-5" />
-                </span>
-                <span className="text-xs font-semibold tracking-wide text-paper-muted uppercase">
-                  {i + 1}
-                </span>
+              <span className="font-mono text-xs text-text-3">{`0${i + 1}`}</span>
+              <span className="flex flex-col gap-1.5">
+                <h3 className="font-heading text-[17px]">{t(`steps.${key}.title`)}</h3>
+                <p className="text-[15px] text-text-2">{t(`steps.${key}.body`)}</p>
               </span>
-              <h3 className="font-title text-xl">{t(`steps.${key}.title`)}</h3>
-              <p className="text-[15px] text-paper-muted">{t(`steps.${key}.body`)}</p>
             </li>
           ))}
         </ol>
@@ -184,32 +164,33 @@ export default async function Landing({ params }: PageProps<"/[locale]">) {
           <h2 className="font-title text-title-sm">{tw("title")}</h2>
           <p className="max-w-2xl text-text-2">{tw("hint")}</p>
         </div>
-        <div className="flex snap-x gap-4 overflow-x-auto px-6 pb-4 [scrollbar-width:thin] lg:mx-auto lg:w-full lg:max-w-6xl">
-          {BUILT_IN_WORKFLOWS.map((w) => {
-            const look = WORKFLOW_LOOK[w.slug]
-            const Icon = look?.icon
-            return (
-              <Link
-                key={w.slug}
-                href={`/w/${w.slug}`}
-                className="group flex w-64 shrink-0 snap-start flex-col overflow-hidden rounded-card bg-card text-card-foreground shadow-paper transition-transform hover:-translate-y-1"
-              >
-                <span className={cn("grid h-24 place-items-center text-black", look?.tone)}>
-                  {Icon ? (
-                    <Icon className="size-9 transition-transform group-hover:scale-110" />
-                  ) : null}
-                </span>
-                <span className="flex flex-1 flex-col gap-1.5 p-4">
-                  <span className="font-title text-lg leading-tight">
-                    {tw(`items.${w.slug}.name` as "items.night-in.name")}
-                  </span>
-                  <span className="text-sm text-paper-muted">
-                    {tw(`items.${w.slug}.desc` as "items.night-in.desc")}
-                  </span>
-                </span>
-              </Link>
-            )
-          })}
+        <div className="mx-auto w-full max-w-6xl px-6">
+          <ul className="overflow-hidden rounded-card bg-card shadow-paper md:grid md:grid-cols-2">
+            {BUILT_IN_WORKFLOWS.map((w) => {
+              const Icon = WORKFLOW_ICON[w.slug] ?? Shapes
+              return (
+                <li key={w.slug} className="border-b border-border md:odd:border-e">
+                  <Link
+                    href={`/w/${w.slug}`}
+                    className="group flex items-start gap-3 px-4 py-3.5 transition-colors hover:bg-white/4"
+                  >
+                    <span className="grid size-9 shrink-0 place-items-center rounded-tile bg-raised shadow-sticker">
+                      <Icon className="size-[18px] text-text-2" strokeWidth={1.5} />
+                    </span>
+                    <span className="flex min-w-0 flex-col gap-0.5">
+                      <span className="font-heading text-[15px]">
+                        {tw(`items.${w.slug}.name` as "items.night-in.name")}
+                      </span>
+                      <span className="line-clamp-2 text-[13px] text-text-3">
+                        {tw(`items.${w.slug}.desc` as "items.night-in.desc")}
+                      </span>
+                    </span>
+                    <ChevronRight className="ms-auto mt-2.5 size-4 shrink-0 text-text-4 rtl:rotate-180" />
+                  </Link>
+                </li>
+              )
+            })}
+          </ul>
         </div>
       </section>
 

@@ -104,7 +104,7 @@ export function LoveSearch({
         {search.isFetching ? (
           <span
             role="status"
-            className="size-2 animate-lime-pulse rounded-full bg-lime"
+            className="size-2 animate-signal-pulse rounded-full bg-signal"
             aria-label={t("searching")}
           />
         ) : null}

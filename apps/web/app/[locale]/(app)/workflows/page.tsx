@@ -1,12 +1,11 @@
 import { BUILT_IN_WORKFLOWS } from "@najimi/agent/workflows"
-import { cn } from "@najimi/ui/lib/utils"
-import { BookmarkPlus, Camera, User } from "lucide-react"
+import { BookmarkPlus, Camera, Shapes, User } from "lucide-react"
 import Link from "next/link"
 import { getTranslations } from "next-intl/server"
 import { Suspense } from "react"
 import { CopyLinkButton } from "@/components/workflows/copy-link-button"
 import { MyWorkflows } from "@/components/workflows/my-workflows"
-import { WORKFLOW_LOOK } from "@/components/workflows/workflow-meta"
+import { WORKFLOW_ICON } from "@/components/workflows/workflow-meta"
 import { getSession } from "@/lib/session"
 import { ownWorkflows } from "@/lib/workflows"
 
@@ -19,13 +18,14 @@ async function Yours() {
   // Nobody finds "save a chat as a workflow" by accident: say where it lives until they have one.
   if (!rows.length)
     return (
-      <p className="flex items-start gap-2 rounded-tile border border-foreground/12 px-4 py-3 text-sm text-text-2">
-        <BookmarkPlus className="mt-0.5 size-4 shrink-0 text-lime" /> {t("yoursEmpty")}
+      <p className="flex items-start gap-3 rounded-card bg-card px-4 py-3.5 text-sm text-text-2 shadow-paper">
+        <BookmarkPlus className="mt-0.5 size-4 shrink-0 text-text-3" strokeWidth={1.5} />{" "}
+        {t("yoursEmpty")}
       </p>
     )
   return (
     <section className="flex flex-col gap-3">
-      <h2 className="font-title text-2xl">{t("yours")}</h2>
+      <h2 className="font-title text-[1.75rem]">{t("yours")}</h2>
       <MyWorkflows
         items={rows.map((w) => ({
           id: w.id,
@@ -53,54 +53,55 @@ export default async function WorkflowsPage() {
       <Suspense fallback={null}>
         <Yours />
       </Suspense>
-      <h2 className="-mb-3 font-title text-2xl">{t("readyMade")}</h2>
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {BUILT_IN_WORKFLOWS.map((w) => {
-          const look = WORKFLOW_LOOK[w.slug]
-          const Icon = look?.icon
-          return (
-            <div key={w.slug} className="relative">
-              <Link
-                href={`/c?workflow=${w.slug}`}
-                className="group flex h-full flex-col overflow-hidden rounded-card bg-card text-card-foreground shadow-paper transition-transform hover:-translate-y-1"
+      <section className="flex flex-col gap-3">
+        <h2 className="font-title text-[1.75rem]">{t("readyMade")}</h2>
+        <ul className="overflow-hidden rounded-card bg-card shadow-paper">
+          {BUILT_IN_WORKFLOWS.map((w) => {
+            const Icon = WORKFLOW_ICON[w.slug] ?? Shapes
+            return (
+              <li
+                key={w.slug}
+                className="flex items-center gap-1 border-b border-border pe-3 last:border-b-0"
               >
-                <div className={cn("grid h-28 place-items-center text-black", look?.tone)}>
-                  {Icon ? (
-                    <Icon className="size-10 transition-transform group-hover:scale-110" />
-                  ) : null}
-                </div>
-                <div className="flex flex-1 flex-col gap-2 p-4">
-                  <p className="text-[11px] font-semibold tracking-wide text-paper-muted uppercase">
-                    {t(`categories.${w.category}`)}
-                  </p>
-                  <h2 className="font-title text-xl leading-tight">
-                    {t(`items.${w.slug}.name` as "items.night-in.name")}
-                  </h2>
-                  <p className="text-sm text-paper-muted">
-                    {t(`items.${w.slug}.desc` as "items.night-in.desc")}
-                  </p>
-                  <div className="mt-auto flex items-center gap-2 pt-2 text-xs text-paper-muted">
-                    {w.needs.photo ? (
-                      <span className="inline-flex items-center gap-1">
-                        <Camera className="size-3.5" /> {t("needsPhoto")}
-                      </span>
-                    ) : null}
-                    {w.needs.person ? (
-                      <span className="inline-flex items-center gap-1">
-                        <User className="size-3.5" /> {t("needsPerson")}
-                      </span>
-                    ) : null}
-                    <span className="ms-auto rounded-pill bg-lime px-3 py-1 text-xs font-semibold text-lime-foreground">
-                      {t("run")}
+                <Link
+                  href={`/c?workflow=${w.slug}`}
+                  className="group flex min-w-0 flex-1 items-start gap-3 px-4 py-3.5 transition-colors hover:bg-white/4"
+                >
+                  <span className="grid size-9 shrink-0 place-items-center rounded-tile bg-raised shadow-sticker">
+                    <Icon className="size-[18px] text-text-2" strokeWidth={1.5} />
+                  </span>
+                  <span className="flex min-w-0 flex-col gap-0.5">
+                    <span className="font-heading text-[15px]">
+                      {t(`items.${w.slug}.name` as "items.night-in.name")}
                     </span>
-                  </div>
-                </div>
-              </Link>
-              <CopyLinkButton slug={w.slug} className="absolute end-3 top-3" />
-            </div>
-          )
-        })}
-      </div>
+                    <span className="line-clamp-2 text-[13px] text-text-3">
+                      {t(`items.${w.slug}.desc` as "items.night-in.desc")}
+                    </span>
+                    {w.needs.photo || w.needs.person ? (
+                      <span className="mt-1 flex items-center gap-3 font-mono text-[11px] text-text-3">
+                        {w.needs.photo ? (
+                          <span className="inline-flex items-center gap-1">
+                            <Camera className="size-3" strokeWidth={1.5} /> {t("needsPhoto")}
+                          </span>
+                        ) : null}
+                        {w.needs.person ? (
+                          <span className="inline-flex items-center gap-1">
+                            <User className="size-3" strokeWidth={1.5} /> {t("needsPerson")}
+                          </span>
+                        ) : null}
+                      </span>
+                    ) : null}
+                  </span>
+                  <span className="ms-auto mt-1 shrink-0 rounded-pill bg-ink px-3 py-1 text-xs font-semibold text-on-ink">
+                    {t("run")}
+                  </span>
+                </Link>
+                <CopyLinkButton slug={w.slug} />
+              </li>
+            )
+          })}
+        </ul>
+      </section>
     </div>
   )
 }

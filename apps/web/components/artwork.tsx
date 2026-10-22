@@ -56,7 +56,7 @@ export function Artwork({
           />
         </>
       ) : (
-        <span className="font-title absolute inset-0 flex items-end bg-kraft p-2.5 text-base leading-[0.95] break-words text-kraft-foreground">
+        <span className="absolute inset-0 flex items-end bg-raised p-2.5 text-[13px] leading-tight font-medium break-words text-text-2">
           {name}
         </span>
       )}

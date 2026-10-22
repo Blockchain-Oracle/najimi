@@ -56,7 +56,9 @@ export function LovesEditor({
         side="right"
         className="w-full overflow-y-auto border-0 bg-background sm:max-w-md"
       >
-        <SheetTitle className="font-title px-5 pt-5 text-xl">{t("addLove")}</SheetTitle>
+        <SheetTitle className="font-title px-5 pt-5 text-[1.75rem] font-normal">
+          {t("addLove")}
+        </SheetTitle>
         <div className="flex flex-col gap-5 px-5 pb-8" aria-busy={busy}>
           <LoveSearch
             picked={picked}

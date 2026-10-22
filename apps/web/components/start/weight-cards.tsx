@@ -2,7 +2,6 @@
 
 import { TASTE } from "@najimi/config"
 import { Slider } from "@najimi/ui/components/slider"
-import { motion } from "motion/react"
 import { useTranslations } from "next-intl"
 import type { LoveHit } from "@/app/api/qloo/search/route"
 import { Artwork } from "@/components/artwork"
@@ -23,41 +22,20 @@ export function WeightCards({
   onWeight: (qlooId: string, weight: number) => void
 }) {
   const t = useTranslations("Loves")
-  const span = TASTE.weightMax - TASTE.weightMin
   return (
-    <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3">
-      {loves.map((l, i) => {
-        const share = (l.weight - TASTE.weightMin) / span
-        return (
-          <motion.li
-            key={l.qlooId}
-            initial={{ opacity: 0, y: 16, rotate: (i % 2 ? 1 : -1) * 2 }}
-            animate={{ opacity: 1, y: 0, rotate: 0 }}
-            transition={{ delay: i * 0.06, type: "spring", stiffness: 220, damping: 20 }}
-            className="flex flex-col gap-3 rounded-card bg-card p-3 text-card-foreground shadow-paper"
-          >
-            <motion.div
-              animate={{ scale: 0.86 + share * 0.14 }}
-              transition={{ type: "spring", stiffness: 300, damping: 20 }}
-              className="relative"
-            >
-              <Artwork src={l.image} name={l.name} shape="poster" className="rounded-tile" />
-              <span
-                className="pointer-events-none absolute inset-0 rounded-tile ring-lime transition-[box-shadow]"
-                style={{
-                  boxShadow: `0 0 0 ${2 + share * 4}px rgb(201 255 61 / ${0.2 + share * 0.8})`,
-                }}
-              />
-              <motion.span
-                key={l.weight}
-                initial={{ scale: 1.4, opacity: 0.6 }}
-                animate={{ scale: 1, opacity: 1 }}
-                className="absolute end-2 bottom-2 grid size-10 place-items-center rounded-full bg-lime font-title text-lg text-lime-foreground shadow-sticker tnum"
-              >
-                {l.weight}
-              </motion.span>
-            </motion.div>
-            <span className="truncate text-sm font-semibold">{l.name}</span>
+    <ul className="overflow-hidden rounded-card bg-card shadow-paper">
+      {loves.map((l, i) => (
+        <li
+          key={l.qlooId}
+          className="flex animate-settle-in items-center gap-3 border-b border-border p-3 last:border-b-0"
+          style={{ "--enter-delay": `${i * 50}ms` } as React.CSSProperties}
+        >
+          <Artwork src={l.image} name={l.name} shape="poster" className="w-14 shrink-0" />
+          <div className="flex min-w-0 flex-1 flex-col gap-2.5">
+            <span className="flex items-baseline justify-between gap-3">
+              <span className="truncate font-heading text-[15px]">{l.name}</span>
+              <span className="font-mono text-sm text-text-2 tnum">{l.weight}</span>
+            </span>
             <Slider
               value={[l.weight]}
               min={TASTE.weightMin}
@@ -71,13 +49,13 @@ export function WeightCards({
                 onWeight(l.qlooId, next)
               }}
             />
-            <span className="flex justify-between text-[11px] text-paper-muted">
+            <span className="flex justify-between text-[11px] text-text-3">
               <span>{t("less")}</span>
               <span>{t("more")}</span>
             </span>
-          </motion.li>
-        )
-      })}
+          </div>
+        </li>
+      ))}
     </ul>
   )
 }

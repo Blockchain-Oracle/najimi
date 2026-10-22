@@ -19,7 +19,10 @@ export function CompareCard({ output }: { output: Output }) {
           </p>
           <ul className="flex flex-wrap gap-1">
             {output.onlyA.map((n) => (
-              <li key={n} className="rounded-pill bg-violet/15 px-2 py-0.5 text-xs">
+              <li
+                key={n}
+                className="rounded-tag bg-raised px-2 py-0.5 text-xs text-text-2 shadow-sticker"
+              >
                 {n}
               </li>
             ))}
@@ -49,7 +52,10 @@ export function CompareCard({ output }: { output: Output }) {
           </p>
           <ul className="flex flex-wrap gap-1">
             {output.onlyB.map((n) => (
-              <li key={n} className="rounded-pill bg-teal/15 px-2 py-0.5 text-xs">
+              <li
+                key={n}
+                className="rounded-tag bg-raised px-2 py-0.5 text-xs text-text-2 shadow-sticker"
+              >
                 {n}
               </li>
             ))}

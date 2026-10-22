@@ -86,7 +86,7 @@ export function AboutForm({
 
   return (
     <section className="flex flex-col gap-5 rounded-card bg-card p-5 text-card-foreground shadow-paper">
-      <h2 className="font-title text-xl">{t("about", { name: person.name })}</h2>
+      <h2 className="font-heading text-[17px]">{t("about", { name: person.name })}</h2>
       <div className="grid gap-4 sm:grid-cols-2">
         <label className="flex flex-col gap-1.5 text-sm font-semibold">
           {t("city")}

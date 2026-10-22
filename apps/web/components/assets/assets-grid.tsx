@@ -126,7 +126,9 @@ export function AssetsGrid() {
         <DialogContent className="max-h-[92svh] max-w-4xl overflow-y-auto rounded-sheet border-0 bg-background p-4 sm:max-w-4xl">
           {open ? (
             <>
-              <DialogTitle className="font-title text-xl">{open.title}</DialogTitle>
+              <DialogTitle className="font-title text-[1.75rem] font-normal">
+                {open.title}
+              </DialogTitle>
               {open.kind === "video" ? (
                 // biome-ignore lint/a11y/useMediaCaption: generated video with no speech
                 <video

@@ -41,54 +41,56 @@ export function MyWorkflows({ items }: { items: MyWorkflow[] }) {
   }
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <ul className="overflow-hidden rounded-card bg-card shadow-paper">
       {items.map((w) => {
         const isOpen = open.get(w.id) ?? w.public
         return (
-          <div
+          <li
             key={w.id}
-            className="flex flex-col overflow-hidden rounded-card bg-card text-card-foreground shadow-paper"
+            className="flex flex-col gap-2 border-b border-border px-4 py-3.5 last:border-b-0"
           >
-            <div className="relative grid h-20 place-items-center bg-lime text-black">
-              <ListChecks className="size-8" />
-              {isOpen ? <CopyLinkButton slug={w.slug} className="absolute end-3 top-3" /> : null}
+            <div className="flex items-start gap-3">
+              <span className="grid size-9 shrink-0 place-items-center rounded-tile bg-raised shadow-sticker">
+                <ListChecks className="size-[18px] text-text-2" strokeWidth={1.5} />
+              </span>
+              <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+                <span className="font-heading text-[15px]">{w.name}</span>
+                {w.description ? (
+                  <span className="line-clamp-2 text-[13px] text-text-3">{w.description}</span>
+                ) : null}
+                <span className="mt-1 font-mono text-[11px] text-text-3">
+                  {t("stepCount", { count: w.steps })}
+                  {w.runsCount ? ` · ${t("runs", { count: w.runsCount })}` : ""}
+                </span>
+              </span>
+              <Link
+                href={`/c?workflow=${w.slug}`}
+                className="mt-1 shrink-0 rounded-pill bg-ink px-3 py-1 text-xs font-semibold text-on-ink"
+              >
+                {t("run")}
+              </Link>
             </div>
-            <div className="flex flex-1 flex-col gap-2 p-4">
-              <p className="text-[11px] font-semibold tracking-wide text-paper-muted uppercase">
-                {t("stepCount", { count: w.steps })}
-                {w.runsCount ? ` · ${t("runs", { count: w.runsCount })}` : ""}
-              </p>
-              <h3 className="font-title text-xl leading-tight">{w.name}</h3>
-              {w.description ? <p className="text-sm text-paper-muted">{w.description}</p> : null}
-              <div className="mt-1 flex items-center gap-2 text-xs font-semibold">
-                <Switch
-                  checked={isOpen}
-                  onCheckedChange={(v) => void setPublic(w.id, v)}
-                  aria-label={t("public")}
-                />
-                {t("public")}
-              </div>
-              <div className="mt-auto flex items-center gap-2 pt-2">
-                <button
-                  type="button"
-                  aria-label={t("delete")}
-                  title={t("delete")}
-                  onClick={() => void remove(w)}
-                  className="grid size-8 place-items-center rounded-full text-paper-muted transition-colors hover:bg-paper-foreground/8 hover:text-destructive"
-                >
-                  <Trash2 className="size-4" />
-                </button>
-                <Link
-                  href={`/c?workflow=${w.slug}`}
-                  className="ms-auto rounded-pill bg-lime px-3 py-1 text-xs font-semibold text-lime-foreground"
-                >
-                  {t("run")}
-                </Link>
-              </div>
+            <div className="flex items-center gap-2 ps-12 text-xs text-text-2">
+              <Switch
+                checked={isOpen}
+                onCheckedChange={(v) => void setPublic(w.id, v)}
+                aria-label={t("public")}
+              />
+              {t("public")}
+              {isOpen ? <CopyLinkButton slug={w.slug} /> : null}
+              <button
+                type="button"
+                aria-label={t("delete")}
+                title={t("delete")}
+                onClick={() => void remove(w)}
+                className="ms-auto grid size-8 place-items-center rounded-full text-text-3 transition-colors hover:bg-white/4 hover:text-destructive"
+              >
+                <Trash2 className="size-4" strokeWidth={1.5} />
+              </button>
             </div>
-          </div>
+          </li>
         )
       })}
-    </div>
+    </ul>
   )
 }

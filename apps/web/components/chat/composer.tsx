@@ -25,7 +25,7 @@ import { AnimatePresence, motion } from "motion/react"
 import { useTranslations } from "next-intl"
 import { useEffect, useId, useRef, useState } from "react"
 import { Face } from "@/components/taste/face"
-import { WORKFLOW_LOOK, WORKFLOW_SLUGS } from "@/components/workflows/workflow-meta"
+import { WORKFLOW_ICON, WORKFLOW_SLUGS } from "@/components/workflows/workflow-meta"
 import { api } from "@/lib/fetcher"
 import { type Uploaded, uploadPhoto } from "@/lib/photo"
 import { sound } from "@/lib/sounds"
@@ -183,47 +183,54 @@ export function Composer({
   return (
     // biome-ignore lint/a11y/noStaticElementInteractions: dropping photos is a shortcut; the photo button is the accessible way
     <div
-      className="flex flex-col gap-2 rounded-sheet bg-card p-2.5 text-card-foreground shadow-paper outline-2 outline-transparent transition-[outline-color,translate] duration-200 ease-glide focus-within:-translate-y-0.5 focus-within:outline-lime"
+      className="relative flex flex-col gap-2 rounded-sheet bg-card p-2.5 text-card-foreground shadow-float outline-1 outline-transparent transition-[outline-color] duration-200 ease-glide focus-within:outline-white/20"
       onDragOver={(e) => e.preventDefault()}
       onDrop={(e) => {
         e.preventDefault()
         void add(e.dataTransfer.files)
       }}
     >
+      {/* While Najimi works, a thin signal line along the top edge: the only colour it wears. */}
+      {busy ? (
+        <span
+          aria-hidden
+          className="absolute inset-x-8 top-0 h-px animate-pulse bg-gradient-to-r from-transparent via-signal to-transparent"
+        />
+      ) : null}
       {photos.length || uploading ? (
         // Photos sit like prints laid on the table, each at its own slight angle.
         <div className="flex gap-3 px-1.5 pt-1.5">
           <AnimatePresence initial={false}>
-            {photos.map((p, i) => (
+            {photos.map((p) => (
               <motion.span
                 key={p.id}
                 layout
-                initial={{ opacity: 0, scale: 0.6, rotate: 0 }}
-                animate={{ opacity: 1, scale: 1, rotate: i % 2 ? 3 : -3 }}
-                exit={{ opacity: 0, scale: 0.6 }}
-                transition={{ type: "spring", stiffness: 380, damping: 22 }}
+                initial={{ opacity: 0, y: 4 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
                 className="relative"
               >
                 {/* biome-ignore lint/performance/noImgElement: a private, session-checked photo */}
                 <img
                   src={p.url}
                   alt=""
-                  className="size-16 rounded-tile object-cover shadow-sticker ring-3 ring-paper"
+                  className="size-14 rounded-tile object-cover shadow-sticker"
                 />
                 <button
                   type="button"
                   aria-label={t("removePhoto")}
                   onClick={() => setPhotos((all) => all.filter((x) => x.id !== p.id))}
-                  className="absolute -end-2 -top-2 grid size-6 place-items-center rounded-full bg-sticker text-white"
+                  className="absolute -end-1.5 -top-1.5 grid size-5 place-items-center rounded-full bg-ink text-on-ink"
                 >
-                  <X className="size-3.5" />
+                  <X className="size-3" />
                 </button>
               </motion.span>
             ))}
           </AnimatePresence>
           {Array.from({ length: uploading }, (_, i) => (
             // biome-ignore lint/suspicious/noArrayIndexKey: placeholders have no identity
-            <span key={i} className="size-16 animate-pulse rounded-tile bg-paper-foreground/10" />
+            <span key={i} className="size-14 animate-pulse rounded-tile bg-raised" />
           ))}
         </div>
       ) : null}
@@ -307,9 +314,7 @@ export function Composer({
           ) : null}
           <DropdownMenu>
             <DropdownMenuTrigger className="inline-flex max-w-44 min-w-0 items-center gap-1.5 rounded-pill py-1 ps-1 pe-2.5 text-sm font-semibold whitespace-nowrap hover:bg-paper-foreground/8">
-              {person ? (
-                <Face look={person.look} identity={person.identity} name={person.name} size="xs" />
-              ) : null}
+              {person ? <Face look={person.look} name={person.name} size="xs" /> : null}
               <span className="truncate">
                 {t("for", { name: person?.isSelf ? t("me") : (person?.name ?? "") })}
               </span>
@@ -318,7 +323,7 @@ export function Composer({
             <DropdownMenuContent side="top" align="start" className="min-w-48">
               {people.map((p) => (
                 <DropdownMenuItem key={p.id} onClick={() => onPerson(p.id)} className="gap-2.5">
-                  <Face look={p.look} identity={p.identity} name={p.name} size="xs" />
+                  <Face look={p.look} name={p.name} size="xs" />
                   {p.isSelf ? t("me") : p.name}
                   {p.id === person?.id ? <Check className="ms-auto size-4" /> : null}
                 </DropdownMenuItem>
@@ -326,7 +331,7 @@ export function Composer({
             </DropdownMenuContent>
           </DropdownMenu>
           {/* The mode as a switch: the one in use names itself, the others are a tap away. */}
-          <fieldset className="flex items-center rounded-pill bg-paper-foreground/6 p-0.5">
+          <fieldset className="flex items-center rounded-pill bg-raised p-0.5 shadow-sticker">
             <legend className="sr-only">{ts("mode")}</legend>
             {MODES.map(({ mode: m, icon: Icon }) => {
               const on = m === mode
@@ -335,8 +340,8 @@ export function Composer({
                   key={m}
                   title={t(`modeHints.${m}`)}
                   className={cn(
-                    "relative flex h-8 cursor-pointer items-center rounded-pill px-2 text-[13px] font-semibold whitespace-nowrap transition-colors has-focus-visible:outline-2 has-focus-visible:outline-lime-ink",
-                    on ? "text-card" : "text-paper-muted hover:text-paper-foreground",
+                    "relative flex h-8 cursor-pointer items-center rounded-pill px-2 text-[13px] font-medium whitespace-nowrap transition-colors has-focus-visible:outline-2 has-focus-visible:outline-signal",
+                    on ? "text-foreground" : "text-text-3 hover:text-foreground",
                   )}
                 >
                   <input
@@ -350,8 +355,8 @@ export function Composer({
                   {on ? (
                     <motion.span
                       layoutId={`mode-${uid}`}
-                      className="absolute inset-0 rounded-pill bg-paper-foreground"
-                      transition={{ type: "spring", stiffness: 420, damping: 34 }}
+                      className="absolute inset-0 rounded-pill bg-card shadow-sticker-lift"
+                      transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
                     />
                   ) : null}
                   <Icon className="relative size-4 shrink-0" />
@@ -378,7 +383,7 @@ export function Composer({
             <DropdownMenuTrigger
               aria-label={tw("pill")}
               title={tw("pill")}
-              className="inline-flex h-9 items-center gap-1.5 rounded-pill bg-paper-foreground/6 px-2.5 text-sm font-semibold whitespace-nowrap hover:bg-paper-foreground/10"
+              className="inline-flex h-9 items-center gap-1.5 rounded-pill px-2.5 text-sm font-medium whitespace-nowrap text-text-2 hover:bg-white/4 hover:text-foreground"
             >
               <Shapes className="size-4" />
               <span className="hidden sm:inline">{tw("pill")}</span>
@@ -386,21 +391,15 @@ export function Composer({
             </DropdownMenuTrigger>
             <DropdownMenuContent side="top" align="start" className="w-72">
               {WORKFLOW_SLUGS.map((slug) => {
-                const look = WORKFLOW_LOOK[slug]
-                const Icon = look?.icon
+                const Icon = WORKFLOW_ICON[slug]
                 return (
                   <DropdownMenuItem
                     key={slug}
                     onClick={() => onWorkflow(slug)}
                     className="items-start gap-2.5 py-2"
                   >
-                    <span
-                      className={cn(
-                        "grid size-8 shrink-0 place-items-center rounded-tile text-black",
-                        look?.tone,
-                      )}
-                    >
-                      {Icon ? <Icon className="size-4" /> : null}
+                    <span className="grid size-8 shrink-0 place-items-center rounded-tile bg-card shadow-sticker">
+                      {Icon ? <Icon className="size-4 text-text-2" strokeWidth={1.5} /> : null}
                     </span>
                     <span className="flex flex-col">
                       <span className="font-semibold">
@@ -426,7 +425,7 @@ export function Composer({
               type="button"
               onClick={onStop}
               aria-label={t("stop")}
-              className="grid size-10 place-items-center rounded-full bg-sticker text-white"
+              className="grid size-10 place-items-center rounded-full bg-ink text-on-ink transition-transform duration-200 active:scale-95"
             >
               <Square className="size-4 fill-current" />
             </button>
@@ -436,7 +435,7 @@ export function Composer({
               onClick={send}
               aria-label={t("send")}
               disabled={(!text.trim() && !photos.length) || uploading > 0}
-              className="grid size-10 place-items-center rounded-full bg-lime text-lime-foreground shadow-sticker transition-[translate,scale,opacity] duration-200 ease-snap enabled:hover:-translate-y-0.5 enabled:active:scale-90 disabled:scale-90 disabled:opacity-35"
+              className="grid size-10 place-items-center rounded-full bg-signal text-signal-foreground transition-[background-color,color,scale] duration-200 ease-glide enabled:active:scale-95 disabled:bg-raised disabled:text-text-4"
             >
               <ArrowUp className="size-5" />
             </button>

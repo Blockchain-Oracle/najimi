@@ -21,7 +21,7 @@ export function PickRail({
   const t = useTranslations("Taste")
   return (
     <section className="flex flex-col gap-3">
-      <h2 className="font-title px-5 text-xl md:px-0">{title}</h2>
+      <h2 className="font-heading px-5 text-[17px] md:px-0">{title}</h2>
       {picks?.length ? (
         <div className="-my-2 flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-px-5 px-5 py-3 [scrollbar-width:none] md:scroll-px-0 md:px-0">
           {picks.map((pick, i) => (
@@ -30,12 +30,7 @@ export function PickRail({
               pick={pick}
               actions={actionsFor?.(pick)}
               className="animate-card-land"
-              style={
-                {
-                  "--tilt": `${(i % 3) - 1}deg`,
-                  animationDelay: `${i * 60}ms`,
-                } as React.CSSProperties
-              }
+              style={{ animationDelay: `${i * 60}ms` }}
             />
           ))}
         </div>
