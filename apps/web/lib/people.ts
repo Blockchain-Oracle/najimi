@@ -38,7 +38,7 @@ export async function peopleOf(userId: string): Promise<PersonRow[]> {
 export async function personPage(userId: string, personId: string) {
   const person = await ownedPerson(userId, personId)
   if (!person) return null
-  const [loves, [taste], saved, [run]] = await Promise.all([
+  const [loves, [taste], saved, [run], [account]] = await Promise.all([
     db
       .select()
       .from(schema.loves)
@@ -55,8 +55,19 @@ export async function personPage(userId: string, personId: string) {
       .from(schema.runs)
       .innerJoin(schema.tastes, eq(schema.tastes.runId, schema.runs.id))
       .where(eq(schema.tastes.personId, personId)),
+    db
+      .select({ username: schema.user.displayUsername })
+      .from(schema.user)
+      .where(eq(schema.user.id, person.ownerId)),
   ])
-  return { person, loves, taste: taste ?? null, saved, runStatus: run?.status ?? null }
+  return {
+    person,
+    username: account?.username ?? null,
+    loves,
+    taste: taste ?? null,
+    saved,
+    runStatus: run?.status ?? null,
+  }
 }
 
 /** Starts recomputing a person's taste; the reveal watches the returned run. */

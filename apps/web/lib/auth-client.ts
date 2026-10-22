@@ -1,7 +1,9 @@
-import { anonymousClient, emailOTPClient } from "better-auth/client/plugins"
+import { anonymousClient, emailOTPClient, usernameClient } from "better-auth/client/plugins"
 import { createAuthClient } from "better-auth/react"
 
-export const authClient = createAuthClient({ plugins: [anonymousClient(), emailOTPClient()] })
+export const authClient = createAuthClient({
+  plugins: [anonymousClient(), emailOTPClient(), usernameClient()],
+})
 
 /** Makes sure there's a session: a guest is started the first time someone does anything. */
 export async function ensureSession(): Promise<void> {

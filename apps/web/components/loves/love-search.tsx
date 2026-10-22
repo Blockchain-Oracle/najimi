@@ -5,10 +5,11 @@ import { cn } from "@najimi/ui/lib/utils"
 import { keepPreviousData, useQuery } from "@tanstack/react-query"
 import { Check, Plus, Search } from "lucide-react"
 import { useTranslations } from "next-intl"
-import { useEffect, useId, useState } from "react"
+import { useId, useState } from "react"
 import type { LoveHit } from "@/app/api/qloo/search/route"
 import { Artwork, shapeOf } from "@/components/artwork"
 import { api } from "@/lib/fetcher"
+import { useDebounced } from "@/lib/use-debounced"
 
 export type { LoveHit }
 
@@ -17,15 +18,6 @@ const DOMAIN_OF = Object.fromEntries(TASTE_DOMAINS.map((d) => [d.type, d.key])) 
   string
 >
 export const domainOf = (type: string) => DOMAIN_OF[type] ?? "brand"
-
-function useDebounced<T>(value: T, ms: number): T {
-  const [settled, setSettled] = useState(value)
-  useEffect(() => {
-    const timer = setTimeout(() => setSettled(value), ms)
-    return () => clearTimeout(timer)
-  }, [value, ms])
-  return settled
-}
 
 /**
  * Search anything someone loves, across every Qloo domain, with artwork as they type (C1). The

@@ -34,6 +34,9 @@ export const env = createEnv({
     TOOL_APPROVAL_SECRET: z.string().min(32).optional(),
     /** fal.ai, for video (and image models once funded). */
     FAL_KEY: z.string().min(1).optional(),
+    // Taste imports and feed media (each feature hides until its key is set).
+    LASTFM_API_KEY: z.string().min(1).optional(),
+    TMDB_READ_TOKEN: z.string().min(1).optional(),
     /** ElevenLabs Scribe, for voice dictation. */
     ELEVENLABS_API_KEY: z.string().min(1).optional(),
     /** Resend, for sign-in codes. */

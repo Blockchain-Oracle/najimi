@@ -47,6 +47,8 @@ async function Person({ params, searchParams }: Pick<Props, "params" | "searchPa
             isSelf: page.person.isSelf,
             city: page.person.city,
             look: page.person.look,
+            aura: page.person.aura,
+            username: page.username,
           },
           identity: identityOf(page.person.id, page.person.look),
           loves: page.loves.map((l) => ({
@@ -62,6 +64,7 @@ async function Person({ params, searchParams }: Pick<Props, "params" | "searchPa
                 words: page.taste.words,
                 picks: page.taste.picks,
                 bridges: page.taste.bridges,
+                areas: page.taste.areas,
                 runId: page.taste.runId,
                 computedAt: page.taste.computedAt?.toISOString() ?? null,
               }

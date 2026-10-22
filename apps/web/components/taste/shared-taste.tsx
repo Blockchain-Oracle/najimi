@@ -12,6 +12,7 @@ export type SharedTasteData = {
   name: string
   identity: string
   look: string | null
+  aura: { c1: string; c2: string; c3: string } | null
   loves: { qlooId: string; name: string; imageUrl: string | null; type: string }[]
   words: TasteWords | null
   picks: Record<string, StoredPick[]> | null
@@ -40,6 +41,7 @@ export async function SharedTaste({ data }: { data: SharedTasteData }) {
         <TasteHero
           person={{ name: data.name, isSelf: false, city: null }}
           look={data.look}
+          aura={data.aura}
           words={data.words}
           loves={data.loves}
           live={false}

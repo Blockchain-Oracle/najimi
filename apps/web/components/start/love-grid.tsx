@@ -11,6 +11,7 @@ import { Artwork, shapeOf } from "@/components/artwork"
 import { domainOf, LoveSearch } from "@/components/loves/love-search"
 import { api } from "@/lib/fetcher"
 import { sound } from "@/lib/sounds"
+import { ImportPanel } from "./import-panel"
 
 /*
  * "Three things you love", Spotify's pick-3 gate made of Qloo's own artwork: tap tiles from a
@@ -86,6 +87,8 @@ export function LoveGrid({
 
       <LoveSearch picked={picked} ensureSession={ensureSession} onPick={(hit) => toggle(hit)} />
 
+      <ImportPanel picked={picked} onToggle={onToggle} ensureSession={ensureSession} />
+
       <div className="flex flex-col gap-3">
         <p className="text-[13px] text-text-3">{t("popular")}</p>
         <div className="grid grid-cols-3 gap-3 sm:grid-cols-4">
@@ -113,7 +116,7 @@ export function LoveGrid({
                     shape={shapeOf(hit.type) === "place" ? "square" : "poster"}
                     className={cn(
                       "transition-transform group-hover:-translate-y-0.5",
-                      on && "ring-[3px] ring-lime",
+                      on && "ring-[3px] ring-primary",
                     )}
                   />
                   {on ? (

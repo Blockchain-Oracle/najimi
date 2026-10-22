@@ -94,6 +94,7 @@ async function Shared({ params }: { params: Props["params"] }) {
           name: person.name,
           identity: identityOf(person.id, person.look),
           look: person.look,
+          aura: person.aura,
           loves: [...loves]
             .sort((a, b) => b.weight - a.weight)
             .map((l) => ({ qlooId: l.qlooId, name: l.name, imageUrl: l.imageUrl, type: l.type })),

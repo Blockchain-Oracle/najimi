@@ -11,6 +11,7 @@ import { useEffect, useRef, useState } from "react"
 import type { PlaceHit } from "@/app/api/qloo/places/route"
 import { api } from "@/lib/fetcher"
 import { sound } from "@/lib/sounds"
+import { useDebounced } from "@/lib/use-debounced"
 
 /*
  * "Where are you": a real map, after mapcn's MapLibre components (21st.dev, @mapcn), on
@@ -22,15 +23,6 @@ export type City = { name: string; lat: number; lon: number }
 
 const STYLE = "https://tiles.openfreemap.org/styles/dark"
 const WORLD = { center: [12, 20] as [number, number], zoom: 1.2 }
-
-function useDebounced<T>(value: T, ms: number): T {
-  const [settled, setSettled] = useState(value)
-  useEffect(() => {
-    const timer = setTimeout(() => setSettled(value), ms)
-    return () => clearTimeout(timer)
-  }, [value, ms])
-  return settled
-}
 
 export function CityMap({
   city,

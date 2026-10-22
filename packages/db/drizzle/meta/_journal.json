@@ -71,6 +71,20 @@
       "when": 1792667422136,
       "tag": "0009_clean_slate",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1792668676101,
+      "tag": "0010_usernames_and_aura",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1792669254625,
+      "tag": "0011_taste_areas",
+      "breakpoints": true
     }
   ]
 }

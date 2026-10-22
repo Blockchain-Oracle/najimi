@@ -43,18 +43,17 @@ export function LanguageMenu({ compact = false }: { compact?: boolean }) {
   )
   if (compact)
     return (
-      <label
+      <span
         title={t("label")}
         className="relative grid size-10 place-items-center rounded-full text-text-2 transition-colors hover:bg-card hover:text-foreground"
       >
         <Globe className="size-5" />
         {select}
-      </label>
+      </span>
     )
   return (
-    <label className="inline-flex items-center gap-2 rounded-pill bg-card px-3.5 py-2 text-sm">
-      <span className="sr-only">{t("label")}</span>
+    <span className="inline-flex items-center gap-2 rounded-pill bg-card px-3.5 py-2 text-sm">
       {select}
-    </label>
+    </span>
   )
 }

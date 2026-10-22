@@ -25,6 +25,15 @@ export type TasteWords = {
   dishes: string[]
 }
 
+/** An area where a taste lives in a city (from Qloo's heatmap), named by the places inside it. */
+export type TasteArea = {
+  name: string
+  lat: number
+  lon: number
+  affinity: number
+  places: string[]
+}
+
 /** One pick as stored on the taste page: always from Qloo, with the love that drove it. */
 export type StoredPick = {
   qlooId: string
@@ -54,7 +63,7 @@ export const userPrefs = pgTable("user_prefs", {
   ...timestamps,
 })
 
-/** A person's own taste profile (one per user, `isSelf`); replaced by owner-agnostic profiles in S02. */
+/** A person's own taste profile (one per user, `isSelf`): who they are and where. */
 export const people = pgTable(
   "people",
   {
@@ -68,6 +77,12 @@ export const people = pgTable(
     /** The face picked at sign-up (config LOOKS): it sets the identity colour. */
     look: text(),
     locale: text(),
+    /** A line about themselves, shown on their profile. */
+    bio: text(),
+    /** Who sees their taste and finds them: everyone, friends, or only them. */
+    visibility: text().$type<"public" | "friends" | "private">().default("public").notNull(),
+    /** Their taste colours, from their loves' artwork (orb, aura, washes). */
+    aura: jsonb().$type<{ c1: string; c2: string; c3: string }>(),
     /** Qloo ids marked "not for me": excluded from every later pick. */
     excludedIds: text().array().default(sql`'{}'::text[]`).notNull(),
     ...timestamps,
@@ -110,6 +125,8 @@ export const tastes = pgTable("tastes", {
   picks: jsonb().$type<Record<string, StoredPick[]>>(),
   /** Which domains the reveal bridged ("Fleabag → Louis Poulsen"). */
   bridges: jsonb().$type<{ from: string; to: string; domain: string }[]>(),
+  /** Where people with this taste are in their city: the strongest areas, named by Qloo's places. */
+  areas: jsonb().$type<TasteArea[]>(),
   computedAt: timestamp({ withTimezone: true }),
   runId: uuid().references(() => runs.id, { onDelete: "set null" }),
 })

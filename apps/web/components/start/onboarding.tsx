@@ -1,25 +1,37 @@
 "use client"
 
-import { LOOKS, type LookId, TASTE } from "@najimi/config"
+import { AUTH, LOOKS, type LookId, TASTE } from "@najimi/config"
 import { Button } from "@najimi/ui/components/button"
 import { cn } from "@najimi/ui/lib/utils"
+import { useQuery } from "@tanstack/react-query"
 import { ArrowLeft, ArrowRight } from "lucide-react"
 import { AnimatePresence, motion } from "motion/react"
 import { useRouter } from "next/navigation"
 import { useLocale, useTranslations } from "next-intl"
-import { useState, useTransition } from "react"
+import { useEffect, useState, useTransition } from "react"
 import { LanguageMenu } from "@/components/language-menu"
 import type { LoveHit } from "@/components/loves/love-search"
-import { ensureSession } from "@/lib/auth-client"
+import { authClient, ensureSession } from "@/lib/auth-client"
 import { api } from "@/lib/fetcher"
 import { primeSounds, sound } from "@/lib/sounds"
+import { useDebounced } from "@/lib/use-debounced"
 import { type City, CityMap } from "./city-map"
-import { LOOK_BG, LookCard, lookSrc } from "./look-card"
+import { LOOK_BG, LookCard, lookSrc, type UsernameState } from "./look-card"
 import { LoveGrid } from "./love-grid"
 import { WeightCards } from "./weight-cards"
 
 type Picked = LoveHit & { weight: number }
 const STEPS = 4
+
+/** A username from a name: lowercase letters, digits, dots and underscores (the plugin's rule). */
+const toUsername = (s: string) =>
+  s
+    .toLowerCase()
+    .normalize("NFKD")
+    .replace(/\s+/g, "_")
+    .replace(/[^a-z0-9._]/g, "")
+    .slice(0, AUTH.usernameMax)
+const USERNAME = new RegExp(`^[a-z0-9._]{${AUTH.usernameMin},${AUTH.usernameMax}}$`)
 
 /**
  * Meeting Najimi (C1): the face you'll wear and your name, your city on a map, three or more
@@ -37,6 +49,32 @@ export function Onboarding({ next }: { next: string | null }) {
   const [name, setName] = useState<string>(LOOKS[0].name)
   const [city, setCity] = useState<City | null>(null)
   const [loves, setLoves] = useState<Picked[]>([])
+  // The username follows the name until someone types their own.
+  const [username, setUsername] = useState(toUsername(LOOKS[0].name))
+  const [ownUsername, setOwnUsername] = useState(false)
+  useEffect(() => {
+    if (!ownUsername) setUsername(toUsername(name))
+  }, [name, ownUsername])
+  const settled = useDebounced(username, AUTH.usernameCheckDebounceMs)
+  const validUsername = USERNAME.test(username)
+  const availability = useQuery({
+    queryKey: ["username-free", settled],
+    enabled: USERNAME.test(settled),
+    staleTime: 30_000,
+    queryFn: async () => {
+      const r = await authClient.isUsernameAvailable({ username: settled })
+      return r.data?.available ?? false
+    },
+  })
+  const usernameState: UsernameState = !username
+    ? "empty"
+    : !validUsername
+      ? "invalid"
+      : settled !== username || availability.isPending
+        ? "checking"
+        : availability.data
+          ? "free"
+          : "taken"
   const [error, setError] = useState<string | null>(null)
   const [revealing, startReveal] = useTransition()
 
@@ -65,6 +103,11 @@ export function Onboarding({ next }: { next: string | null }) {
     startReveal(async () => {
       try {
         await ensureSession()
+        const claimed = await authClient.updateUser({ username, displayUsername: username })
+        if (claimed.error) {
+          setStep(1)
+          throw new Error(claimed.error.message ?? "")
+        }
         const { personId } = await api<{ personId: string; runId: string }>("/api/people", {
           json: {
             isSelf: true,
@@ -153,7 +196,18 @@ export function Onboarding({ next }: { next: string | null }) {
           </div>
 
           {step === 1 ? (
-            <LookCard look={look} name={name} onLook={setLook} onName={setName} />
+            <LookCard
+              look={look}
+              name={name}
+              onLook={setLook}
+              onName={setName}
+              username={username}
+              usernameState={usernameState}
+              onUsername={(value) => {
+                setOwnUsername(true)
+                setUsername(value.toLowerCase().replace(/[^a-z0-9._]/g, ""))
+              }}
+            />
           ) : null}
           {step === 2 ? (
             <CityMap city={city} onCity={setCity} ensureSession={ensureSession} />
@@ -190,7 +244,11 @@ export function Onboarding({ next }: { next: string | null }) {
             <span />
           )}
           {step === 1 ? (
-            <Button size="lg" disabled={!name.trim()} onClick={() => go(2)}>
+            <Button
+              size="lg"
+              disabled={!name.trim() || usernameState !== "free"}
+              onClick={() => go(2)}
+            >
               {t("next")} <ArrowRight className="rtl:-scale-x-100" />
             </Button>
           ) : step === 2 ? (

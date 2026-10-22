@@ -1,0 +1,1 @@
+ALTER TABLE "tastes" ADD COLUMN "areas" jsonb;

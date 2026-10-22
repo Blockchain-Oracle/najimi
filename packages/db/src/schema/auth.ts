@@ -1,7 +1,7 @@
 import { relations } from "drizzle-orm"
 import { boolean, index, pgTable, text, timestamp } from "drizzle-orm/pg-core"
 
-// Better Auth's own tables, in the shape its CLI generates (plus the anonymous plugin's flag).
+// Better Auth's own tables, in the shape its CLI generates (plus the anonymous and username plugins).
 
 export const user = pgTable("user", {
   id: text("id").primaryKey(),
@@ -15,6 +15,9 @@ export const user = pgTable("user", {
     .$onUpdate(() => /* @__PURE__ */ new Date())
     .notNull(),
   isAnonymous: boolean("is_anonymous").default(false),
+  // The username plugin: a unique, lowercased handle people find you by, and how you wrote it.
+  username: text("username").unique(),
+  displayUsername: text("display_username"),
 })
 
 export const session = pgTable(

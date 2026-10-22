@@ -1,7 +1,7 @@
 "use client"
 
 import { TASTE_DOMAINS } from "@najimi/config"
-import type { StoredPick, TasteWords } from "@najimi/db/schema"
+import type { StoredPick, TasteArea, TasteWords } from "@najimi/db/schema"
 import { Button } from "@najimi/ui/components/button"
 import { toast } from "@najimi/ui/components/sonner"
 import { Share2 } from "lucide-react"
@@ -16,6 +16,7 @@ import { PickRail } from "@/components/picks/pick-rail"
 import { BuiltOnQloo } from "@/components/qloo/built-on-qloo"
 import { TasteHero, WordPalette } from "@/components/taste/taste-hero"
 import { TasteMap } from "@/components/taste/taste-map"
+import { YourPeople } from "@/components/taste/your-people"
 import { api } from "@/lib/fetcher"
 import { shareLink } from "@/lib/share-link"
 import { sound } from "@/lib/sounds"
@@ -30,6 +31,10 @@ export type PersonViewData = {
     isSelf: boolean
     city: string | null
     look: string | null
+    /** Their taste colours, from their loves' artwork (null until the first reveal). */
+    aura: { c1: string; c2: string; c3: string } | null
+    /** How friends find them (@juno); null for someone without one yet. */
+    username: string | null
   }
   identity: string
   loves: EditableLove[]
@@ -37,6 +42,7 @@ export type PersonViewData = {
     words: TasteWords | null
     picks: Record<string, StoredPick[]> | null
     bridges: { from: string; to: string; domain: string }[] | null
+    areas: TasteArea[] | null
     runId: string | null
     computedAt: string | null
   } | null
@@ -62,6 +68,8 @@ export function PersonView({ data }: { data: PersonViewData }) {
   const [words, setWords] = useState<TasteWords | null>(data.taste?.words ?? null)
   const [picks, setPicks] = useState<Record<string, StoredPick[]>>(data.taste?.picks ?? {})
   const [bridges, setBridges] = useState(data.taste?.bridges ?? [])
+  const [aura, setAura] = useState(person.aura)
+  const [areas, setAreas] = useState<TasteArea[]>(data.taste?.areas ?? [])
   const [saved, setSaved] = useState(() => new Set(data.saved.map((s) => s.qlooId)))
   const [more, setMore] = useState<{ pick: StoredPick; domain: string } | null>(null)
 
@@ -77,7 +85,9 @@ export function PersonView({ data }: { data: PersonViewData }) {
           ...prev,
           [event.data.domain as string]: event.data.picks as StoredPick[],
         }))
-      } else if (event.type === "bridges") setBridges(event.data.bridges as typeof bridges)
+      } else if (event.type === "aura") setAura(event.data.aura as NonNullable<typeof aura>)
+      else if (event.type === "areas") setAreas(event.data.areas as TasteArea[])
+      else if (event.type === "bridges") setBridges(event.data.bridges as typeof bridges)
       else if (event.type === "status") {
         const status = event.data.status as string
         if (status === "done") {
@@ -181,11 +191,18 @@ export function PersonView({ data }: { data: PersonViewData }) {
         <TasteHero
           person={person}
           look={person.look}
+          aura={aura}
           words={words}
           loves={data.loves}
           live={live}
         />
       </div>
+
+      {person.city && areas.length ? (
+        <div className="mx-5 md:mx-0">
+          <YourPeople city={person.city} areas={areas} />
+        </div>
+      ) : null}
 
       <section className="mx-5 flex flex-col gap-6 rounded-card bg-card p-5 text-card-foreground shadow-paper md:mx-0">
         {words ? (

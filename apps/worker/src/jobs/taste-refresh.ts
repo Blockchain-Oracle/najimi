@@ -2,8 +2,16 @@ import { TASTE_DOMAINS } from "@najimi/config"
 import { db, schema } from "@najimi/db"
 import type { StoredPick } from "@najimi/db/schema"
 import { emit, setRunStatus } from "@najimi/live"
-import { type Domain, type Love, profilePicks, profileWords } from "@najimi/qloo"
+import {
+  type Domain,
+  explore,
+  type Love,
+  nameAreas,
+  profilePicks,
+  profileWords,
+} from "@najimi/qloo"
 import { asc, eq, sql } from "drizzle-orm"
+import { auraFrom } from "../palette"
 
 /** The loves a taste was computed from, as a key: a different key means the taste is stale. */
 export const lovesKeyOf = (loves: { qlooId: string; weight: number }[]) =>
@@ -56,7 +64,17 @@ export async function tasteRefresh(personId: string, runId: string): Promise<voi
   await db
     .insert(schema.tastes)
     .values({ personId, runId, lovesKey: key })
-    .onConflictDoUpdate({ target: schema.tastes.personId, set: { runId } })
+    .onConflictDoUpdate({ target: schema.tastes.personId, set: { runId, lovesKey: key } })
+
+  // Their colours, from the artwork of what they love most (the orb, the aura, the washes).
+  const art = [...rows]
+    .sort((a, b) => b.weight - a.weight)
+    .flatMap((r) => (r.imageUrl ? [r.imageUrl] : []))
+  const aura = await auraFrom(art).catch(() => null)
+  if (aura) {
+    await db.update(schema.people).set({ aura }).where(eq(schema.people.id, personId))
+    await emit(runId, "aura", { aura })
+  }
 
   await emit(runId, "stage", { stage: "words" })
   const { words } = await profileWords(loves, ctx)
@@ -85,6 +103,33 @@ export async function tasteRefresh(personId: string, runId: string): Promise<voi
     }),
   )
 
+  // Where people with this taste are in their city: Qloo's heatmap, its strongest areas named by
+  // the places inside them that fit this taste.
+  let areas: Awaited<ReturnType<typeof nameAreas>> = []
+  if (person.city) {
+    await emit(runId, "stage", { stage: "areas" })
+    try {
+      const signal = { entities: loves.map((l) => ({ id: l.qlooId, weight: l.weight })) }
+      const map = await explore(
+        { filterType: "urn:heatmap", signal, filter: { city: person.city } },
+        loves,
+        { ...ctx, purpose: `Where your people are in ${person.city}` },
+      )
+      if (map.kind === "heatmap" && map.points.length)
+        areas = await nameAreas(
+          map.points,
+          signal,
+          loves,
+          { ...ctx, purpose: `Naming the areas in ${person.city}` },
+          3,
+          person.city,
+        )
+    } catch {
+      areas = []
+    }
+    await emit(runId, "areas", { areas })
+  }
+
   // What the taste bridged: from a love in one domain to the top pick in another.
   const bridges = TASTE_DOMAINS.flatMap(({ key: domain }) => {
     const top = picks[domain]?.[0]
@@ -97,6 +142,7 @@ export async function tasteRefresh(personId: string, runId: string): Promise<voi
       .set({
         picks,
         bridges,
+        areas,
         computedAt: new Date(),
         version: sql`${schema.tastes.version} + 1`,
       })

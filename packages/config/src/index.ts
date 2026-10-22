@@ -48,6 +48,11 @@ export const AUTH = {
   /** When the sweep runs (cron, UTC) and how many guests one run takes. */
   guestSweepCron: "17 3 * * *",
   guestSweepBatch: 200,
+  /** Usernames: lowercase letters, digits, dots and underscores (the plugin's default rule). */
+  usernameMin: 3,
+  usernameMax: 24,
+  /** Wait this long after typing before checking a username is free. */
+  usernameCheckDebounceMs: 350,
 } as const
 
 export const QUERY = {
@@ -333,3 +338,16 @@ export const SOUNDS = {
   storageKey: "najimi:interface-sounds",
 } as const
 export type UiSound = keyof typeof SOUNDS.files
+
+/** Bringing taste in from elsewhere (Letterboxd, Goodreads, Last.fm, pasted handles). */
+export const IMPORTS = {
+  /** Things one import offers to keep. */
+  maxItems: 15,
+  /** Handles one paste may hold. */
+  maxHandles: 30,
+  fetchTimeoutMs: 10_000,
+  maxFeedBytes: 2 * 1024 * 1024,
+  /** Imports one person may run per minute. */
+  perMinute: 12,
+  userAgent: "Mozilla/5.0 (compatible; Najimi/1.0; +https://najimi.84.46.247.92.sslip.io)",
+} as const

@@ -69,7 +69,32 @@
     "skipCity": "Skip for now",
     "handEmpty": "Tap three things you love",
     "popular": "Loved right now",
-    "removeLove": "Remove {name}"
+    "removeLove": "Remove {name}",
+    "importTitle": "Bring your taste",
+    "importHint": "Already keep it somewhere? Najimi reads it by name: no sign-in, nothing posted.",
+    "sources": {
+      "letterboxd": "Letterboxd",
+      "goodreads": "Goodreads",
+      "lastfm": "Last.fm",
+      "handles": "X or Instagram"
+    },
+    "placeholders": {
+      "letterboxd": "Your Letterboxd username",
+      "goodreads": "Your Goodreads profile link",
+      "lastfm": "Your Last.fm username",
+      "handles": "burnaboy, instagram.com/nike…"
+    },
+    "bring": "Bring it in",
+    "bringing": "Reading it and finding each one in Qloo…",
+    "importFound": "Qloo knows {found} of {tried}. Tap what's you.",
+    "importNone": "Qloo didn't recognise any of these. Try another name.",
+    "addAll": "Add all",
+    "usernameLabel": "Your username",
+    "usernameHint": "How friends find you.",
+    "usernameTaken": "Taken. Try another.",
+    "usernameInvalid": "3–24 letters, numbers, dots or underscores.",
+    "usernameFree": "It's yours.",
+    "usernameChecking": "Checking…"
   },
   "Loves": {
     "searchPlaceholder": "Search anything you love…",
@@ -138,7 +163,9 @@
     "share": "Share this taste",
     "linkCopied": "Link copied",
     "line": "{look} looks, {rooms} rooms, {mood} nights, {food} plates.",
-    "you": "You"
+    "you": "You",
+    "peopleIn": "Where your people are in {city}",
+    "knownFor": "Near {places}."
   },
   "Pick": {
     "because": "because you love {name}",

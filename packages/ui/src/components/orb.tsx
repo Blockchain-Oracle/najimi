@@ -37,9 +37,7 @@ export function Orb({ size = 192, colors, working = false, className, label }: P
   const finalContrast = size < TINY ? 1.1 : small ? Math.max(contrast * 1.2, 1.3) : contrast
   return (
     <span
-      role={label ? "img" : undefined}
-      aria-label={label}
-      aria-hidden={label ? undefined : true}
+      {...(label ? { role: "img", "aria-label": label } : { "aria-hidden": true })}
       data-mask={mask === "0%" ? "none" : undefined}
       className={cn("najimi-orb", className)}
       style={

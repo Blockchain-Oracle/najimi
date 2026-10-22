@@ -218,7 +218,8 @@ export type Area = { name: string; lat: number; lon: number; affinity: number; p
 /**
  * Names a heatmap's hottest areas the way Qloo itself would: cells are grouped by a 6-character
  * geohash (about 1 km), the strongest groups are kept, and each is named after the neighbourhood of
- * the places inside it that fit this taste best.
+ * the places inside it that fit this taste best. An area whose places name no neighbourhood (or
+ * only the city itself) is left out: it's never named after a hotel or a shop.
  */
 export async function nameAreas(
   points: { lat: number; lon: number; geohash: string; affinity: number }[],
@@ -226,7 +227,9 @@ export async function nameAreas(
   loves: Love[],
   ctx: CallContext = {},
   count = 3,
+  city?: string | null,
 ): Promise<Area[]> {
+  const cityName = city?.split(",")[0]?.trim().toLowerCase()
   const groups = new Map<string, { sum: number; n: number; lat: number; lon: number }>()
   for (const p of points) {
     const key = p.geohash.slice(0, 6)
@@ -262,12 +265,15 @@ export async function nameAreas(
         { ...ctx, purpose: "Name an area on the map" },
       ).catch(() => null)
       const picks = r?.kind === "entities" ? r.picks : []
-      const hoods = picks.map((p) => p.area).filter((c): c is string => Boolean(c))
+      const hoods = picks
+        .map((p) => p.area)
+        .filter((c): c is string => typeof c === "string" && c.toLowerCase() !== cityName)
       const name = hoods.sort(
         (a, b) => hoods.filter((h) => h === b).length - hoods.filter((h) => h === a).length,
       )[0]
+      if (!name) return null
       return {
-        name: name ?? picks[0]?.name ?? g.geohash,
+        name,
         lat: g.lat,
         lon: g.lon,
         affinity: g.affinity,
@@ -276,5 +282,7 @@ export async function nameAreas(
     }),
   )
   const seen = new Set<string>()
-  return named.filter((a) => !seen.has(a.name) && seen.add(a.name)).slice(0, count)
+  return named
+    .filter((a): a is Area => a !== null && !seen.has(a.name) && Boolean(seen.add(a.name)))
+    .slice(0, count)
 }

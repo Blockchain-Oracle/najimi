@@ -1,0 +1,25 @@
+{
+  "name": "@najimi/connectors",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --test src/*.test.ts"
+  },
+  "dependencies": {
+    "@najimi/config": "workspace:*",
+    "@najimi/env": "workspace:*",
+    "@najimi/qloo": "workspace:*",
+    "fast-xml-parser": "5.11.2"
+  },
+  "devDependencies": {
+    "@najimi/typescript-config": "workspace:*",
+    "@types/node": "catalog:",
+    "tsx": "catalog:",
+    "typescript": "catalog:"
+  }
+}

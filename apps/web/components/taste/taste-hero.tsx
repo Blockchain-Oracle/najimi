@@ -1,15 +1,17 @@
 "use client"
 
 import type { TasteWords } from "@najimi/db/schema"
+import { Orb } from "@najimi/ui/components/orb"
 import { MapPin } from "lucide-react"
 import { useTranslations } from "next-intl"
 import { Face } from "./face"
 import { type CardLove, LovesRow } from "./taste-card"
 
 /*
- * The top of a taste page, on the room itself: their face, their name, and their taste read aloud
- * in one serif line made of Qloo's own words ("Minimalist looks, homey rooms, warm nights,
- * Caribbean plates."), then the loves it came from, in a row.
+ * The top of a taste page: their face on their aura (an orb lit in the colours of what they love,
+ * with a wash of the same colours behind), their name, and their taste read aloud in one line of
+ * Qloo's own words ("Minimalist looks, homey rooms, warm nights, Caribbean plates."), then the
+ * loves it came from, in a row.
  */
 
 const lower = (w: string | undefined) => w?.toLocaleLowerCase()
@@ -51,12 +53,14 @@ export function useTasteLine(words: TasteWords | null): string | null {
 export function TasteHero({
   person,
   look,
+  aura,
   words,
   loves,
   live,
 }: {
-  person: { name: string; isSelf: boolean; city: string | null }
+  person: { name: string; isSelf: boolean; city: string | null; username?: string | null }
   look: string | null
+  aura: { c1: string; c2: string; c3: string } | null
   words: TasteWords | null
   loves: CardLove[]
   live: boolean
@@ -64,9 +68,23 @@ export function TasteHero({
   const t = useTranslations("Taste")
   const line = useTasteLine(words)
   return (
-    <section className="flex flex-col gap-6">
-      <div className="flex items-center gap-4">
-        <Face look={look} name={person.name} size="xl" />
+    <section className="relative flex flex-col gap-6">
+      {/* A wash of their colours behind the top of the page. */}
+      <span
+        aria-hidden
+        className="pointer-events-none absolute -inset-x-10 -top-16 -z-10 h-72 opacity-40 blur-3xl transition-[background] duration-700 dark:opacity-30"
+        style={{
+          background: `radial-gradient(60% 70% at 15% 30%, ${aura?.c1 ?? "var(--color-aura-1)"}, transparent 70%), radial-gradient(50% 60% at 55% 20%, ${aura?.c2 ?? "var(--color-aura-2)"}, transparent 70%), radial-gradient(45% 55% at 85% 40%, ${aura?.c3 ?? "var(--color-aura-3)"}, transparent 70%)`,
+        }}
+      />
+      <div className="flex items-center gap-5">
+        {/* Their face on their aura: the orb glows as a ring around it. */}
+        <span className="relative grid size-32 shrink-0 place-items-center">
+          <Orb size={128} colors={aura ?? undefined} working={live} className="absolute inset-0" />
+          <span className="relative">
+            <Face look={look} name={person.name} size="xl" />
+          </span>
+        </span>
         <div className="flex min-w-0 flex-col gap-1.5">
           <p className="text-[13px] text-text-3">
             {person.isSelf ? t("mine") : t("theirs", { name: person.name })}
@@ -74,9 +92,16 @@ export function TasteHero({
           <h1 className="truncate font-title text-[2.5rem] leading-none md:text-5xl">
             {person.name}
           </h1>
-          {person.city ? (
-            <p className="flex items-center gap-1 font-mono text-xs text-text-3">
-              <MapPin className="size-3.5" strokeWidth={1.5} /> {person.city}
+          {person.username || person.city ? (
+            <p className="flex items-center gap-3 text-sm text-text-3">
+              {person.username ? (
+                <span className="font-semibold text-text-2">@{person.username}</span>
+              ) : null}
+              {person.city ? (
+                <span className="flex items-center gap-1">
+                  <MapPin className="size-3.5" strokeWidth={1.8} /> {person.city}
+                </span>
+              ) : null}
             </p>
           ) : null}
         </div>

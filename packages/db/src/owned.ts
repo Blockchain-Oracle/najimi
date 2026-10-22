@@ -28,6 +28,25 @@ import {
 export async function reownUserData(db: Db, fromUserId: string, toUserId: string): Promise<void> {
   if (fromUserId === toUserId) return
   await db.transaction(async (tx) => {
+    // The handle the guest chose moves too, unless the account already has one.
+    const [from] = await tx
+      .select({ username: user.username, displayUsername: user.displayUsername })
+      .from(user)
+      .where(eq(user.id, fromUserId))
+    const [to] = await tx
+      .select({ username: user.username })
+      .from(user)
+      .where(eq(user.id, toUserId))
+    if (from?.username && !to?.username) {
+      await tx
+        .update(user)
+        .set({ username: null, displayUsername: null })
+        .where(eq(user.id, fromUserId))
+      await tx
+        .update(user)
+        .set({ username: from.username, displayUsername: from.displayUsername })
+        .where(eq(user.id, toUserId))
+    }
     // Preferences: the account's win.
     const [existingPrefs] = await tx
       .select({ userId: userPrefs.userId })

@@ -9,7 +9,7 @@ import { betterAuth } from "better-auth"
 import { drizzleAdapter } from "better-auth/adapters/drizzle"
 import { APIError, createAuthMiddleware } from "better-auth/api"
 import { nextCookies } from "better-auth/next-js"
-import { anonymous, emailOTP } from "better-auth/plugins"
+import { anonymous, emailOTP, username } from "better-auth/plugins"
 import { allow } from "@/lib/rate-limit"
 
 /** Google sign-in is offered only when its keys are set; guests and email codes always work. */
@@ -96,6 +96,8 @@ export const auth = betterAuth({
         )
       },
     }),
+    // A unique handle people find you by (lowercased; how you wrote it is kept for display).
+    username({ minUsernameLength: AUTH.usernameMin, maxUsernameLength: AUTH.usernameMax }),
     nextCookies(), // must stay last
   ],
 })
