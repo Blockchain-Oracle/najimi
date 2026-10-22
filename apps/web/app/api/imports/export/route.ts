@@ -1,6 +1,7 @@
 import { IMPORTS, TASTE_DOMAINS } from "@najimi/config"
 import { resolve } from "@najimi/connectors"
 import { EXPORT_MAX } from "@najimi/connectors/exports"
+import { db, schema } from "@najimi/db"
 import { z } from "zod"
 import type { LoveHit } from "@/app/api/qloo/search/route"
 import { body, fail, json, withSession } from "@/lib/api"
@@ -56,5 +57,18 @@ export async function POST(request: Request) {
       caption: f.caption,
       from: f.from,
     }))
+  // The feed's card shows when its data last came in.
+  if (parsed.data.platform !== "spotify")
+    await db
+      .insert(schema.socialActions)
+      .values({
+        userId: auth.session.user.id,
+        platform: parsed.data.platform,
+        kind: "read",
+        target: "import",
+        label: `${hits.length} found`,
+        status: "done",
+      })
+      .catch(() => undefined)
   return json({ hits, tried: parsed.data.candidates.length })
 }

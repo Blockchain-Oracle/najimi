@@ -7,7 +7,7 @@ import { useTranslations } from "next-intl"
 import { useState } from "react"
 import { siX } from "simple-icons"
 import { BrandIcon } from "@/components/brands/brand-icon"
-import { useSocials } from "@/components/connect/accounts"
+import { useSocials } from "@/components/connect/use-feeds"
 
 /*
  * A post Najimi wrote for someone on X: the exact words as they'll appear, from the account
