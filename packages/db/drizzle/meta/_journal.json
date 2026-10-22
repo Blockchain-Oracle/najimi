@@ -120,6 +120,13 @@
       "when": 1792673460188,
       "tag": "0016_llm_cost",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1792674504842,
+      "tag": "0017_social",
+      "breakpoints": true
     }
   ]
 }

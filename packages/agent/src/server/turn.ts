@@ -12,7 +12,7 @@ import {
   streamText,
   toUIMessageStream,
 } from "ai"
-import { and, asc, eq } from "drizzle-orm"
+import { and, asc, desc, eq } from "drizzle-orm"
 import { contextBlock, RULES } from "../instructions"
 import { agentModel, brainModelId, costOf } from "../models"
 import { toolDefs } from "../tools"
@@ -140,6 +140,37 @@ export async function runTurn(chatId: string): Promise<void> {
             reason: `${counter}:${n}:${Math.max(left(counter), 0)}`,
           } as const)
 
+  // A circle or DM: who's in it, with a few of each one's loves.
+  let room: Parameters<typeof contextBlock>[0]["room"] = null
+  if (chat.kind !== "agent") {
+    const members = await db
+      .select({ name: schema.people.name, city: schema.people.city, personId: schema.people.id })
+      .from(schema.chatMembers)
+      .innerJoin(
+        schema.people,
+        and(eq(schema.people.ownerId, schema.chatMembers.userId), eq(schema.people.isSelf, true)),
+      )
+      .where(eq(schema.chatMembers.chatId, chatId))
+    const memberLoves = await Promise.all(
+      members.map((m) =>
+        db
+          .select({ name: schema.loves.name })
+          .from(schema.loves)
+          .where(eq(schema.loves.personId, m.personId))
+          .orderBy(desc(schema.loves.weight))
+          .limit(5),
+      ),
+    )
+    room = {
+      kind: chat.kind,
+      name: chat.name,
+      members: members.map((m, i) => ({
+        name: m.name,
+        city: m.city,
+        loves: (memberLoves[i] ?? []).map((l) => l.name),
+      })),
+    }
+  }
   const tools = buildTools({ userId: by, guest, chatId, person }, () => assistantId)
   const abort = new AbortController()
   // Stop: someone asked Najimi to stop; checked while it answers.
@@ -168,13 +199,21 @@ export async function runTurn(chatId: string): Promise<void> {
           words: taste?.words ?? null,
         },
         screen: lastHuman?.metadata?.screen ?? null,
+        room,
         photos,
         creations: made,
       })}`,
-      messages: await convertToModelMessages(await forModel(by, messages), {
-        tools,
-        ignoreIncompleteToolCalls: true,
-      }),
+      // Room notices ("Juno joined") are for people, not the model (it takes no system messages).
+      messages: await convertToModelMessages(
+        await forModel(
+          by,
+          messages.filter((m) => m.role !== "system"),
+        ),
+        {
+          tools,
+          ignoreIncompleteToolCalls: true,
+        },
+      ),
       tools,
       abortSignal: abort.signal,
       experimental_toolApprovalSecret: approvalSecret(),

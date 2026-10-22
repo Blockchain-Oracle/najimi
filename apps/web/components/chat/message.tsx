@@ -4,10 +4,12 @@ import type { NajimiTools, NajimiUIMessage } from "@najimi/agent"
 import { cn } from "@najimi/ui/lib/utils"
 import { useTranslations } from "next-intl"
 import { Streamdown } from "streamdown"
+import { Face } from "@/components/taste/face"
 import { CardBoundary } from "./card-boundary"
 import { ApprovalCard } from "./cards/approval-card"
 import { BriefCard } from "./cards/brief-card"
 import { CompareCard } from "./cards/compare-card"
+import { GroupFitCard } from "./cards/group-fit-card"
 import { CardSkeleton, InsightsCard } from "./cards/insights-card"
 import { ImageCard } from "./cards/media-card"
 import { SteerCard } from "./cards/steer-card"
@@ -96,6 +98,10 @@ function ToolPart({
       if (part.state === "output-error") return failed
       return <CardSkeleton title={title} label={t("preparing")} />
     }
+    case "tool-groupFit":
+      if (part.state === "output-available") return <GroupFitCard output={part.output} />
+      if (part.state === "output-error") return failed
+      return <CardSkeleton title={part.input?.title} label={t("asking")} />
     case "tool-steerFeed":
       if (part.state === "output-available")
         return <SteerCard output={part.output} fresh={streaming} />
@@ -116,12 +122,41 @@ export function Message({
   message,
   actions,
   streaming,
+  from,
 }: {
   message: NajimiUIMessage
   actions: MessageActions
   streaming: boolean
+  /** In a room with people: who said it (someone else's messages sit on the left, with their face). */
+  from?: { mine: boolean; name: string; look: string | null } | null
 }) {
   const t = useTranslations("Cards")
+  if (message.role === "system") {
+    const text = message.parts
+      .map((p) => (p.type === "text" ? p.text : ""))
+      .join(" ")
+      .trim()
+    return <p className="text-center text-[12px] text-text-3">{text}</p>
+  }
+  if (message.role === "user" && from && !from.mine) {
+    const text = message.parts
+      .map((p) => (p.type === "text" ? p.text : ""))
+      .join("\n")
+      .trim()
+    return (
+      <div className="flex items-end gap-2">
+        <Face look={from.look} name={from.name} size="sm" />
+        <div className="flex max-w-[85%] flex-col gap-1">
+          <span className="ps-1 text-[12px] font-semibold text-text-3">{from.name}</span>
+          {text ? (
+            <p className="rounded-card rounded-es-[4px] bg-card px-4 py-2.5 text-[15px] whitespace-pre-wrap">
+              {text}
+            </p>
+          ) : null}
+        </div>
+      </div>
+    )
+  }
   if (message.role === "user") {
     const photos = message.parts.filter((p) => p.type === "file")
     const text = message.parts

@@ -9,6 +9,10 @@ import { chatExists, createAgentRoom, ownedChat } from "@/lib/chat/store"
 import { isLocale } from "@/lib/i18n"
 import { selfOf } from "@/lib/people"
 import { allow } from "@/lib/rate-limit"
+import { notify } from "@/lib/social"
+
+/** Calling Najimi in a room: "@najimi", or a message that starts with its name. */
+const MENTION = /(^|\s)@najimi\b|^\s*najimi\b/i
 
 const UPLOAD_URL = /^\/api\/media\/upload\/([0-9a-f-]{36})\?v=(original|display)$/
 
@@ -86,9 +90,10 @@ export async function POST(request: Request, ctx: RouteContext<"/api/rooms/[id]/
   if (!(await ownsUploads(user.id, uploadIds))) return fail("Unknown photo", 404)
   if (chat.status === "generating") return fail("Najimi is still answering", 409)
 
-  // Najimi answers in its own conversations; a turn takes from today's allowance.
+  // Najimi answers in its own conversations, and in a circle or a DM when someone calls it
+  // ("@najimi", "Najimi, …"); a turn takes from today's allowance.
   const guest = Boolean((user as { isAnonymous?: boolean | null }).isAnonymous)
-  const answers = chat.kind === "agent"
+  const answers = chat.kind === "agent" || MENTION.test(text)
   if (answers && !(await charge(user.id, guest, "turns")))
     return fail("That's all the chat for today. Come back tomorrow, or sign in for more.", 429)
 
@@ -116,6 +121,26 @@ export async function POST(request: Request, ctx: RouteContext<"/api/rooms/[id]/
   // A resent message (a retry after a dropped connection) is already there.
   if (!row) return json({ ok: true, chatId: chat.id })
   await publishMessage(chat.id, toUI(row))
+  await db
+    .update(schema.chats)
+    .set({ lastActiveAt: new Date() })
+    .where(eq(schema.chats.id, chat.id))
   if (answers) await enqueue("agentTurn", { chatId: chat.id }, chat.id)
+  // The other person in a DM hears about it.
+  if (chat.kind === "dm") {
+    const others = await db
+      .select({ userId: schema.chatMembers.userId })
+      .from(schema.chatMembers)
+      .where(eq(schema.chatMembers.chatId, chat.id))
+    for (const o of others)
+      if (o.userId !== user.id)
+        await notify({
+          userId: o.userId,
+          kind: "message",
+          actorId: user.id,
+          chatId: chat.id,
+          data: { text: text.slice(0, 120) },
+        })
+  }
   return json({ ok: true, chatId: chat.id }, 202)
 }

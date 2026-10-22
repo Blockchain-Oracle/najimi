@@ -88,6 +88,7 @@ export function Composer({
   onStop,
   ideas = [],
   initialText,
+  placeholder: placeholderText,
 }: {
   /** The signed-in person (their face sits on the composer). */
   person?: ChatPerson
@@ -100,6 +101,8 @@ export function Composer({
   ideas?: string[]
   /** Text already typed in when the composer opens. */
   initialText?: string
+  /** What the empty box says (rooms with people say how to call Najimi). */
+  placeholder?: string
 }) {
   const t = useTranslations("Chat")
   const ts = useTranslations("Settings")
@@ -158,7 +161,7 @@ export function Composer({
     input.current?.style.setProperty("height", "auto")
   }
 
-  const placeholder = t("placeholder", { name: person?.name ?? "" })
+  const placeholder = placeholderText ?? t("placeholder", { name: person?.name ?? "" })
   const lines = [placeholder, ...ideas]
   const shown = lines[tick % lines.length]
 

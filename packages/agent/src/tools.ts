@@ -312,6 +312,33 @@ export const toolDefs = {
     }),
   }),
 
+  groupFit: tool({
+    description:
+      "In a circle: find something for everyone in the room (a place tonight, a film, music, a trip) from all their tastes blended equally, and score each pick against each member's own taste, so you can say who it fits and why. Use it for 'find us a spot tonight', 'what should we watch', 'a playlist for all of us'. Places default to the asker's city; pass Qloo tag ids (from qlooTags) for kinds like rooftop bar or suya.",
+    inputSchema: z.object({
+      title: z
+        .string()
+        .max(80)
+        .describe('The card title, in the reply language ("Tonight in Lekki").'),
+      kind: z.enum(entityKeys),
+      city: z.string().max(80).optional(),
+      tags: z.array(z.string().max(120)).max(4).optional(),
+      take: z.number().int().min(3).max(8).optional(),
+    }),
+    outputSchema: z.object({
+      title: z.string(),
+      kind: z.string(),
+      members: z.array(z.object({ name: z.string(), look: z.string().nullable() })),
+      picks: z.array(
+        pickSchema.extend({
+          fits: z.array(z.object({ name: z.string(), fit: z.number().nullable() })),
+        }),
+      ),
+      callId: z.string().nullable(),
+      note: z.string().nullable(),
+    }),
+  }),
+
   steerFeed: tool({
     description:
       "Tune the person's feed when they ask for more or less of something: turn categories up, down or off (level 0 off, 1 less, 2 normal, 3 more), add something to their taste (often the card they're looking at: 'more like this', 'I love this'), or make one of their loves count more or less. Their feed restarts on the new mix at once. Use it for 'less films', 'no podcasts', 'more music like this', 'more of Burna Boy'.",

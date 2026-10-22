@@ -49,6 +49,8 @@ async function Person({ params, searchParams }: Pick<Props, "params" | "searchPa
             look: page.person.look,
             aura: page.person.aura,
             username: page.username,
+            bio: page.person.bio,
+            visibility: page.person.visibility,
           },
           identity: identityOf(page.person.id, page.person.look),
           loves: page.loves.map((l) => ({

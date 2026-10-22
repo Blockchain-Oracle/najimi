@@ -1,5 +1,6 @@
 import { sql } from "drizzle-orm"
 import {
+  boolean,
   date,
   index,
   integer,
@@ -28,6 +29,10 @@ export const chats = pgTable(
     kind: text().$type<"agent" | "circle" | "dm">().default("agent").notNull(),
     /** A circle's name (agent chats use `title`, written by Najimi). */
     name: text(),
+    /** A circle's invite link (`/join/<token>`); rotating it stops the old link. */
+    inviteToken: text(),
+    /** Anyone can find and join a public circle. */
+    public: boolean().default(false).notNull(),
     /** Who the chat makes things for. */
     personId: uuid().references(() => people.id, { onDelete: "set null" }),
     title: text(),
@@ -42,7 +47,10 @@ export const chats = pgTable(
     lastActiveAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
     ...timestamps,
   },
-  (t) => [index("chats_owner_active_idx").on(t.ownerId, t.lastActiveAt)],
+  (t) => [
+    index("chats_owner_active_idx").on(t.ownerId, t.lastActiveAt),
+    uniqueIndex("chats_invite_idx").on(t.inviteToken),
+  ],
 )
 
 /** Who is in a room, and how far they've read. */

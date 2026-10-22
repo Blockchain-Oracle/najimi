@@ -18,6 +18,7 @@ const sized = (url: string | null, width: number) =>
 const POSTER = new Set(["urn:entity:movie", "urn:entity:tv_show", "urn:entity:book"])
 
 export function PickSheet({
+  readOnly = false,
   pick,
   loves,
   saved,
@@ -26,6 +27,8 @@ export function PickSheet({
   onMore,
   onNotForMe,
 }: {
+  /** Someone else's pick: look and open, nothing to change. */
+  readOnly?: boolean
   pick: StoredPick | null
   loves: ShareLove[]
   saved: boolean
@@ -76,24 +79,30 @@ export function PickSheet({
           </div>
           <ShareBars shares={pick.shares ?? []} loves={loves} />
           <div className="flex gap-2">
-            <button type="button" className={action} onClick={onToggleSave} aria-pressed={saved}>
-              <Bookmark className={cn("size-5", saved && "fill-current")} />
-              {saved ? tp("unsave") : tp("save")}
-            </button>
-            <button type="button" className={action} onClick={onMore}>
-              <Sparkles className="size-5" />
-              {tp("more")}
-            </button>
+            {readOnly ? null : (
+              <button type="button" className={action} onClick={onToggleSave} aria-pressed={saved}>
+                <Bookmark className={cn("size-5", saved && "fill-current")} />
+                {saved ? tp("unsave") : tp("save")}
+              </button>
+            )}
+            {readOnly ? null : (
+              <button type="button" className={action} onClick={onMore}>
+                <Sparkles className="size-5" />
+                {tp("more")}
+              </button>
+            )}
             {open ? (
               <a className={action} href={open} target="_blank" rel="noopener noreferrer">
                 <ExternalLink className="size-5" />
                 {tp("open")}
               </a>
             ) : null}
-            <button type="button" className={cn(action, "text-[#FF6B7A]")} onClick={onNotForMe}>
-              <EyeOff className="size-5" />
-              {tp("notForMe")}
-            </button>
+            {readOnly ? null : (
+              <button type="button" className={cn(action, "text-[#FF6B7A]")} onClick={onNotForMe}>
+                <EyeOff className="size-5" />
+                {tp("notForMe")}
+              </button>
+            )}
           </div>
         </div>
       ) : null}

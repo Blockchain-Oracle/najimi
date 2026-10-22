@@ -6,7 +6,7 @@ import { Suspense } from "react"
 import { z } from "zod"
 import { ChatView } from "@/components/chat/chat-view"
 import { chatPageData } from "@/lib/chat/page-data"
-import { ownedChat } from "@/lib/chat/store"
+import { membersOf, ownedChat } from "@/lib/chat/store"
 import { getSession } from "@/lib/session"
 
 async function ExistingChat({ params }: { params: PageProps<"/[locale]/c/[id]">["params"] }) {
@@ -18,15 +18,20 @@ async function ExistingChat({ params }: { params: PageProps<"/[locale]/c/[id]">[
   if (!chat) notFound()
   // The stream starts after the newest event, read before the messages: nothing falls between.
   const after = await lastEventId(topic.room(chat.id))
-  const [data, messages] = await Promise.all([
+  const [data, messages, members] = await Promise.all([
     chatPageData(session.user.id, chat.personId),
     roomMessages(chat.id, { limit: ROOMS.pageSize }),
+    chat.kind === "agent" ? Promise.resolve([]) : membersOf(chat.id),
   ])
   if (!data.self) redirect("/start")
   return (
     <ChatView
       key={chat.id}
       chatId={chat.id}
+      kind={chat.kind}
+      name={chat.name}
+      members={members}
+      invite={chat.kind === "circle" && chat.inviteToken ? `/join/${chat.inviteToken}` : null}
       isNew={false}
       title={chat.title}
       messages={messages}

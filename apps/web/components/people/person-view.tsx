@@ -7,7 +7,7 @@ import { Orb } from "@najimi/ui/components/orb"
 import { Sheet, SheetContent, SheetTitle } from "@najimi/ui/components/sheet"
 import { toast } from "@najimi/ui/components/sonner"
 import { cn } from "@najimi/ui/lib/utils"
-import { Bookmark, MapPin, Pencil, Play, Share2 } from "lucide-react"
+import { Bookmark, MapPin, MessageCircle, Pencil, Play, Share2 } from "lucide-react"
 import { LayoutGroup, motion } from "motion/react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
@@ -24,9 +24,11 @@ import { api } from "@/lib/fetcher"
 import { shareLink } from "@/lib/share-link"
 import { sound } from "@/lib/sounds"
 import { type RunEvent, useRunEvents } from "@/lib/use-run"
-import { AboutForm } from "./about-form"
 import { type EditableLove, LovesEditor } from "./loves-editor"
+import { MatchCard } from "./match-card"
+import { FollowButton } from "./person-row"
 import { PickSheet } from "./pick-sheet"
+import { ProfileForm } from "./profile-form"
 import { Grid, GridTile, KindChips, kindOf, weave } from "./taste-grid"
 
 export type PersonViewData = {
@@ -40,6 +42,8 @@ export type PersonViewData = {
     aura: { c1: string; c2: string; c3: string } | null
     /** How friends find them (@juno); null for someone without one yet. */
     username: string | null
+    bio?: string | null
+    visibility?: "public" | "friends" | "private"
   }
   identity: string
   loves: EditableLove[]
@@ -64,13 +68,26 @@ type Tab = "taste" | "loves" | "kept"
  * numbers, one clear action; then tabs of artwork, never lists of words. Their taste is computed
  * live (the words land, then each domain's picks), watched over the run's event stream.
  */
-export function PersonView({ data }: { data: PersonViewData }) {
+/** Someone else's profile, as the viewer sees it. */
+export type OtherView = {
+  userId: string
+  username: string
+  relation: { following: boolean; friends: boolean }
+  followers: number
+  /** The viewer's own face, for the match. */
+  me: { name: string; look: string | null; aura: { c1: string; c2: string; c3: string } | null }
+}
+
+export function PersonView({ data, other }: { data: PersonViewData; other?: OtherView }) {
   const t = useTranslations("Taste")
   const tp = useTranslations("Pick")
+  const ts = useTranslations("Social")
   const router = useRouter()
   const { person } = data
   const [runId, setRunId] = useState(data.taste?.runId ?? null)
-  const [live, setLive] = useState(Boolean(data.runStatus && LIVE.has(data.runStatus)))
+  /** Your own profile (editable, live while your taste computes) or someone else's. */
+  const mine = !other
+  const [live, setLive] = useState(mine && Boolean(data.runStatus && LIVE.has(data.runStatus)))
   const [failed, setFailed] = useState(data.runStatus === "failed")
   const [words, setWords] = useState<TasteWords | null>(data.taste?.words ?? null)
   const [picks, setPicks] = useState<Record<string, StoredPick[]>>(data.taste?.picks ?? {})
@@ -209,10 +226,12 @@ export function PersonView({ data }: { data: PersonViewData }) {
     dishes: t("words.dishes"),
   }
   const picksCount = Object.values(picks).reduce((n, list) => n + list.length, 0)
-  const stats: { key: Tab; value: number; label: string }[] = [
+  const stats: { key: Tab | "followers"; value: number; label: string }[] = [
     { key: "loves", value: data.loves.length, label: t("statLoves") },
     { key: "taste", value: picksCount, label: t("statPicks") },
-    { key: "kept", value: kept.length, label: t("statKept") },
+    other
+      ? { key: "followers", value: other.followers, label: ts("statFollowers") }
+      : { key: "kept", value: kept.length, label: t("statKept") },
   ]
   const tabs: { key: Tab; label: string }[] = [
     { key: "taste", label: t("tabTaste") },
@@ -253,6 +272,7 @@ export function PersonView({ data }: { data: PersonViewData }) {
               </span>
             ) : null}
           </p>
+          {person.bio ? <p className="max-w-sm text-[15px] text-foreground">{person.bio}</p> : null}
         </div>
         {line ? (
           <button
@@ -273,7 +293,7 @@ export function PersonView({ data }: { data: PersonViewData }) {
             <button
               key={s.key}
               type="button"
-              onClick={() => setTab(s.key)}
+              onClick={() => (s.key !== "followers" ? setTab(s.key) : undefined)}
               className="flex flex-col items-center gap-0.5"
             >
               <dt className="sr-only">{s.label}</dt>
@@ -283,7 +303,28 @@ export function PersonView({ data }: { data: PersonViewData }) {
           ))}
         </dl>
         <div className="flex w-full max-w-sm items-center gap-2">
-          {person.isSelf ? (
+          {other ? (
+            <>
+              <span className="flex flex-1 [&>button]:h-11 [&>button]:w-full [&>button]:justify-center [&>button]:text-[15px]">
+                <FollowButton userId={other.userId} initial={other.relation} />
+              </span>
+              <button
+                type="button"
+                aria-label={ts("message")}
+                title={ts("message")}
+                onClick={async () => {
+                  const { chatId } = await api<{ chatId: string }>("/api/rooms/dm", {
+                    json: { username: other.username },
+                  })
+                  router.push(`/c/${chatId}`)
+                }}
+                className={round}
+              >
+                <MessageCircle className="size-4.5" />
+              </button>
+            </>
+          ) : null}
+          {mine ? (
             <Link
               href="/feed"
               className="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-pill bg-primary text-[15px] font-semibold text-primary-foreground transition-opacity hover:opacity-90"
@@ -291,9 +332,11 @@ export function PersonView({ data }: { data: PersonViewData }) {
               <Play className="size-4 fill-current" /> {t("playTaste")}
             </Link>
           ) : null}
-          <Link href="/c" aria-label={t("askSelf")} title={t("askSelf")} className={round}>
-            <Orb size={26} />
-          </Link>
+          {mine ? (
+            <Link href="/c" aria-label={t("askSelf")} title={t("askSelf")} className={round}>
+              <Orb size={26} />
+            </Link>
+          ) : null}
           <button
             type="button"
             aria-label={t("share")}
@@ -303,7 +346,7 @@ export function PersonView({ data }: { data: PersonViewData }) {
           >
             <Share2 className="size-4.5" />
           </button>
-          {person.isSelf ? (
+          {mine ? (
             <button
               type="button"
               aria-label={t("edit")}
@@ -335,6 +378,12 @@ export function PersonView({ data }: { data: PersonViewData }) {
           </div>
         ) : null}
       </section>
+
+      {other && person.username ? (
+        <div className="mx-5 md:mx-0">
+          <MatchCard username={other.username} me={other.me} them={person} />
+        </div>
+      ) : null}
 
       {person.city && areas.length ? (
         <div className="mx-5 md:mx-0">
@@ -422,7 +471,7 @@ export function PersonView({ data }: { data: PersonViewData }) {
                 />
               ))}
             </Grid>
-            {person.isSelf ? (
+            {mine ? (
               <div className="px-5 md:px-0">
                 <LovesEditor personId={person.id} loves={data.loves} onChanged={startRun} />
               </div>
@@ -469,6 +518,7 @@ export function PersonView({ data }: { data: PersonViewData }) {
       </div>
 
       <PickSheet
+        readOnly={!mine}
         pick={opened}
         loves={shareLoves}
         saved={opened ? isKept(opened.qlooId) : false}
@@ -511,13 +561,21 @@ export function PersonView({ data }: { data: PersonViewData }) {
           <SheetTitle className="font-title pt-5 text-[1.75rem] font-normal">
             {t("edit")}
           </SheetTitle>
-          <AboutForm
-            person={person}
-            onRun={(id) => {
-              startRun(id)
-              setEditing(false)
-            }}
-          />
+          <div className="pt-2">
+            <ProfileForm
+              person={{
+                id: person.id,
+                name: person.name,
+                city: person.city,
+                bio: person.bio ?? null,
+                visibility: person.visibility ?? "public",
+              }}
+              onRun={(id) => {
+                startRun(id)
+                setEditing(false)
+              }}
+            />
+          </div>
         </SheetContent>
       </Sheet>
     </div>

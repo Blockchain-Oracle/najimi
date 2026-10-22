@@ -1,10 +1,14 @@
 import { and, eq, lt, sql } from "drizzle-orm"
 import type { Db } from "./index"
 import {
+  chatMembers,
   chats,
   creations,
+  follows,
   llmCalls,
   mediaJobs,
+  messages,
+  notifications,
   people,
   qlooCalls,
   runs,
@@ -72,6 +76,35 @@ export async function reownUserData(db: Db, fromUserId: string, toUserId: string
       await tx.update(table).set({ ownerId: toUserId }).where(eq(table.ownerId, fromUserId))
     }
     await tx.update(qlooCalls).set({ userId: toUserId }).where(eq(qlooCalls.userId, fromUserId))
+    // Rooms they're in, what they said, who they follow and who follows them, their news. A row
+    // the account already has (the same room, the same follow) stays once.
+    await tx.execute(sql`
+      insert into ${chatMembers} (chat_id, user_id, role, last_read_at, joined_at)
+      select chat_id, ${toUserId}, role, last_read_at, joined_at from ${chatMembers}
+      where user_id = ${fromUserId}
+      on conflict do nothing`)
+    await tx.delete(chatMembers).where(eq(chatMembers.userId, fromUserId))
+    await tx.update(messages).set({ authorId: toUserId }).where(eq(messages.authorId, fromUserId))
+    await tx.execute(sql`
+      insert into ${follows} (follower_id, followee_id, created_at)
+      select ${toUserId}, followee_id, created_at from ${follows}
+      where follower_id = ${fromUserId} and followee_id <> ${toUserId}
+      on conflict do nothing`)
+    await tx.execute(sql`
+      insert into ${follows} (follower_id, followee_id, created_at)
+      select follower_id, ${toUserId}, created_at from ${follows}
+      where followee_id = ${fromUserId} and follower_id <> ${toUserId}
+      on conflict do nothing`)
+    await tx.delete(follows).where(eq(follows.followerId, fromUserId))
+    await tx.delete(follows).where(eq(follows.followeeId, fromUserId))
+    await tx
+      .update(notifications)
+      .set({ userId: toUserId })
+      .where(eq(notifications.userId, fromUserId))
+    await tx
+      .update(notifications)
+      .set({ actorId: toUserId })
+      .where(eq(notifications.actorId, fromUserId))
     await tx.update(llmCalls).set({ userId: toUserId }).where(eq(llmCalls.userId, fromUserId))
 
     // Usage: summed per day, so signing in never resets the day's allowance.

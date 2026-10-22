@@ -37,7 +37,8 @@
     "start": "Start",
     "guest": "Guest",
     "label": "Sections",
-    "feed": "Feed"
+    "feed": "Feed",
+    "people": "People"
   },
   "Feed": {
     "title": "For you",
@@ -135,6 +136,59 @@
     "placeholder": "Message Najimi…",
     "send": "Send",
     "stop": "Stop"
+  },
+  "Social": {
+    "title": "People",
+    "search": "Search by @username or name",
+    "results": "People",
+    "noOne": "Nobody by that name yet.",
+    "follow": "Follow",
+    "following": "Following",
+    "friends": "Friends",
+    "message": "Message",
+    "circles": "Your circles",
+    "newCircle": "New circle",
+    "circleName": "Name it (Friday crew, Book club…)",
+    "addFriends": "Bring friends in",
+    "inviteLater": "Invite people with the circle's link once it's made.",
+    "createCircle": "Start the circle",
+    "members": "{count, plural, one {# person} other {# people}}",
+    "friendsTitle": "Friends",
+    "noFriends": "Follow someone and when they follow you back, you're friends.",
+    "twins": "People with your taste",
+    "inCommon": "{count} things in common",
+    "figures": "In culture, with your taste",
+    "inbox": "News",
+    "inboxEmpty": "Nothing new yet.",
+    "someone": "Someone",
+    "noticeFollow": "{who} followed you",
+    "noticeJoined": "{who} joined {name}",
+    "noticeInvite": "{who} added you to {name}",
+    "noticeMessage": "{who}: {text}",
+    "noticeMention": "{who} mentioned you",
+    "youAnd": "You & {name}",
+    "tasteMatch": "taste match",
+    "noMatch": "Add a few loves to see how you match.",
+    "bothLove": "You both love",
+    "bothAre": "You're both",
+    "statFollowers": "Followers",
+    "hidden": "{name}'s taste is just for their friends.",
+    "inviteGone": "That invite isn't valid any more."
+  },
+  "Profile": {
+    "name": "Name",
+    "bio": "About you",
+    "bioHint": "One line people see on your profile",
+    "city": "City",
+    "whoSees": "Who sees your taste",
+    "public": "Everyone",
+    "publicHint": "Anyone can find you and see your taste.",
+    "friends": "Friends",
+    "friendsHint": "Only people you follow who follow you back.",
+    "private": "Only me",
+    "privateHint": "Nobody finds you; your taste is yours alone.",
+    "save": "Save",
+    "saved": "Saved"
   },
   "Start": {
     "step": "{current} of {total}",
@@ -341,16 +395,16 @@
     "title": "Settings",
     "language": "Language",
     "account": "Account",
-    "mode": "When Najimi makes things",
-    "modeHint": "For new chats. Each chat can still change its own from the composer.",
+    "mode": "When Najimi acts for you",
+    "modeHint": "Before it makes a picture or books anything. Each chat can change its own.",
     "saved": "Saved",
     "saveFailed": "That didn't save. Try again.",
     "today": "Today",
     "todayGuest": "A guest's day. Sign in for more, and to keep everything you make. It resets at midnight (UTC).",
     "todayMember": "Your day's allowance. It resets at midnight (UTC).",
     "counters": {
-      "turns": "Chat messages",
-      "images": "Images",
+      "turns": "Messages to Najimi",
+      "images": "Pictures",
       "videos": "Videos"
     },
     "deleteHeading": "Delete all my data",
@@ -386,14 +440,14 @@
     "removePhoto": "Remove photo",
     "me": "me",
     "modes": {
-      "ask": "Ask before making",
-      "auto": "Make automatically",
-      "plan": "Plan only"
+      "ask": "Ask me first",
+      "auto": "Just do it",
+      "plan": "Only suggest"
     },
     "modeHints": {
-      "ask": "Shows what it will make, and the cost, before it makes anything.",
-      "auto": "Makes images and videos straight away (daily allowance applies).",
-      "plan": "Never makes images or videos; describes them instead."
+      "ask": "Shows what it will make or book, and the cost, before it does.",
+      "auto": "Goes ahead (your daily allowance applies).",
+      "plan": "Never makes or books anything; describes it instead."
     },
     "copy": "Copy",
     "copied": "Copied",
@@ -422,7 +476,7 @@
     "modesShort": {
       "ask": "Ask first",
       "auto": "Auto",
-      "plan": "Plan only"
+      "plan": "Suggest"
     },
     "outOfCredit": "Najimi's AI provider is out of credit right now. It will be back once it's topped up.",
     "dictate": "Talk instead of typing",
@@ -432,7 +486,18 @@
     "shareChat": "Share this chat",
     "linkCopied": "Link copied",
     "share": "Share",
-    "thinking": "Najimi is thinking…"
+    "thinking": "Najimi is thinking…",
+    "roomPlaceholder": "Message {name}… (@najimi for ideas)",
+    "roomHello": "Say hi to {name}",
+    "roomHint": "Najimi is in here too: start a message with @najimi and it answers for everyone.",
+    "askSpot": "@najimi find us a spot tonight",
+    "askFilm": "@najimi a film for all of us",
+    "askMusic": "@najimi music for all of us",
+    "invite": "Invite with a link",
+    "inviteHint": "Anyone with the link can join this circle",
+    "you": "you",
+    "youAllLove": "Loved in this circle",
+    "youAllAre": "You're all"
   },
   "Cards": {
     "asking": "Asking Qloo…",
@@ -470,7 +535,8 @@
     "planOnly": "Plan only: “{title}” wasn't made.",
     "declined": "Not made: “{title}”.",
     "preparing": "Preparing…",
-    "nothingFor": "Asked Qloo for “{title}”: nothing yet"
+    "nothingFor": "Asked Qloo for “{title}”: nothing yet",
+    "fitFor": "How well it fits {name}"
   },
   "Asked": {
     "city": "in {v}",

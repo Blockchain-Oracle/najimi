@@ -25,6 +25,10 @@ export const personInput = z.object({
     .nullable()
     .optional(),
   locale: z.string().max(8).nullable().optional(),
+  /** A line about themselves, on their profile. */
+  bio: z.string().trim().max(160).nullable().optional(),
+  /** Who sees their taste and finds them. */
+  visibility: z.enum(["public", "friends", "private"]).optional(),
 })
 
 export const pickInput = z.object({

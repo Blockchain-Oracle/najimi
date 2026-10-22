@@ -4,11 +4,14 @@ import { enqueue, enqueueDebounced } from "@najimi/jobs"
 import {
   audiences,
   compare,
+  type Domain,
   type ExploreInput,
   explore,
   findTags,
   type Love,
   nameAreas,
+  profileInsights,
+  profilePicks,
   search,
 } from "@najimi/qloo"
 import { tool } from "ai"
@@ -556,6 +559,109 @@ export function buildTools(ctx: TurnContext, messageId: () => string | undefined
         )
           .map(([f, w]) => `${f}: ${w.join(", ")}`)
           .join("; ")}. Loves: ${output.loves.map((l) => l.name).join(", ")}.`,
+      }),
+    }),
+
+    groupFit: tool({
+      ...toolDefs.groupFit,
+      execute: async (input) => {
+        const empty = (note: string) => ({
+          title: input.title,
+          kind: input.kind,
+          members: [],
+          picks: [],
+          callId: null,
+          note,
+        })
+        // Everyone in the room, each with their own loves.
+        const members = await db
+          .select({
+            name: schema.people.name,
+            look: schema.people.look,
+            personId: schema.people.id,
+            city: schema.people.city,
+          })
+          .from(schema.chatMembers)
+          .innerJoin(
+            schema.people,
+            and(
+              eq(schema.people.ownerId, schema.chatMembers.userId),
+              eq(schema.people.isSelf, true),
+            ),
+          )
+          .where(eq(schema.chatMembers.chatId, ctx.chatId))
+        if (members.length < 2) return empty("Only works in a circle with two or more people.")
+        const lovesBy = await Promise.all(members.map((m) => lovesOf(m.personId)))
+        // Blended equally: each member's loves add up to the same weight, whoever loves more things.
+        const blend = new Map<string, Love>()
+        for (const loves of lovesBy) {
+          const total = loves.reduce((n, l) => n + l.weight, 0) || 1
+          for (const l of loves) {
+            const w = (l.weight / total) * TASTE.weightMax
+            const seen = blend.get(l.qlooId)
+            blend.set(l.qlooId, { ...l, weight: (seen?.weight ?? 0) + w })
+          }
+        }
+        const blended = [...blend.values()]
+          .sort((a, b) => b.weight - a.weight)
+          .slice(0, 24)
+          .map((l) => ({ ...l, weight: Math.max(1, Math.round(l.weight)) }))
+        const city = input.city ?? ctx.person.city ?? members.find((m) => m.city)?.city ?? null
+        const domain = input.kind as Domain
+        const found = await profilePicks(
+          blended,
+          domain,
+          { city, take: input.take ?? 5, tags: input.tags },
+          call(`Something for everyone in the circle: ${input.title}`),
+        ).catch(() => null)
+        const picks = found?.picks ?? []
+        if (!picks.length)
+          return {
+            ...empty("Qloo has nothing for all of them here; try another angle."),
+            members: members.map((m) => ({ name: m.name, look: m.look })),
+          }
+        // Each member's own fit for each pick (Qloo scores the shortlist against their taste).
+        const ids = picks.map((p) => p.qlooId)
+        const fits = await Promise.all(
+          lovesBy.map((loves, i) =>
+            loves.length
+              ? profileInsights(
+                  loves,
+                  {
+                    filterType: TYPE_OF[domain] ?? `urn:entity:${domain}`,
+                    only: ids,
+                    take: ids.length,
+                  },
+                  call(`How each pick fits ${members[i]?.name ?? "a member"}`),
+                )
+                  .then((r) => new Map(r.items.map((it) => [it.entityId, it.affinity])))
+                  .catch(() => new Map<string, number | null>())
+              : Promise.resolve(new Map<string, number | null>()),
+          ),
+        )
+        return {
+          title: input.title,
+          kind: input.kind,
+          members: members.map((m) => ({ name: m.name, look: m.look })),
+          picks: picks.map((p) => ({
+            ...p,
+            area: p.area ?? null,
+            fits: members.map((m, i) => ({ name: m.name, fit: fits[i]?.get(p.qlooId) ?? null })),
+          })),
+          callId: found?.callId ?? null,
+          note: null,
+        }
+      },
+      toModelOutput: ({ output }) => ({
+        type: "text",
+        value: output.picks.length
+          ? `For everyone (shown as a card): ${output.picks
+              .map(
+                (p, i) =>
+                  `${i + 1}. ${p.name}${p.area ? ` (${p.area})` : ""} — ${p.fits.map((f) => `${f.name} ${f.fit != null ? `${Math.round(f.fit * 100)}%` : "?"}`).join(", ")}`,
+              )
+              .join("; ")}. Say which one you'd pick for the room and who it fits best, by name.`
+          : (output.note ?? "Nothing found."),
       }),
     }),
 

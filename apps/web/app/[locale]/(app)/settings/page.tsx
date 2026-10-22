@@ -6,13 +6,17 @@ import { redirect } from "next/navigation"
 import { getTranslations } from "next-intl/server"
 import { Suspense } from "react"
 import { LanguageMenu } from "@/components/language-menu"
+import { AuraFace } from "@/components/people/person-row"
+import { ProfileForm } from "@/components/people/profile-form"
 import { DeleteData } from "@/components/settings/delete-data"
 import { ModePicker } from "@/components/settings/mode-picker"
 import { type ShareItem, ShareLinks } from "@/components/settings/share-links"
+import { selfOf } from "@/lib/people"
 import { getSession } from "@/lib/session"
 
-const card = "flex flex-col gap-4 rounded-card bg-card p-5 text-card-foreground shadow-paper"
-const COUNTERS = ["turns", "images", "videos"] as const
+const card = "flex flex-col gap-4 rounded-card bg-card p-5 text-card-foreground"
+/** Videos are switched off (MEDIA.video.enabled), so their counter isn't shown. */
+const COUNTERS = ["turns", "images"] as const
 
 /** One day's allowance, used against the limit (rule 6). */
 function Meter({ label, used, limit }: { label: string; used: number; limit: number }) {
@@ -21,14 +25,18 @@ function Meter({ label, used, limit }: { label: string; used: number; limit: num
     <div className="flex flex-col gap-1.5">
       <div className="flex items-baseline justify-between text-sm">
         <span className="font-semibold">{label}</span>
-        <span className="tnum text-paper-muted">
+        <span className="tnum text-text-3">
           {used} / {limit}
         </span>
       </div>
       {/* The numbers above say it; the bar is for the eye. */}
-      <div aria-hidden className="h-2 overflow-hidden rounded-pill bg-paper-foreground/8">
+      <div aria-hidden className="h-2 overflow-hidden rounded-pill bg-secondary">
         <div
-          className={share >= 1 ? "h-full bg-destructive" : "h-full bg-lime-ink"}
+          className={
+            share >= 1
+              ? "h-full bg-destructive"
+              : "h-full bg-[linear-gradient(90deg,var(--color-aura-1),var(--color-aura-2))]"
+          }
           style={{ width: `${share * 100}%` }}
         />
       </div>
@@ -81,18 +89,46 @@ async function Mine() {
   const ta = await getTranslations("Auth")
   const user = session.user as typeof session.user & { isAnonymous?: boolean | null }
   const guest = Boolean(user.isAnonymous)
-  const [[prefs], used, links] = await Promise.all([
+  const [[prefs], used, links, self, [account]] = await Promise.all([
     db.select().from(schema.userPrefs).where(eq(schema.userPrefs.userId, user.id)),
     usageToday(user.id),
     sharesOf(user.id, t("untitled")),
+    selfOf(user.id),
+    db
+      .select({ username: schema.user.displayUsername })
+      .from(schema.user)
+      .where(eq(schema.user.id, user.id)),
   ])
   const limits = guest ? ALLOWANCE.guest : ALLOWANCE.member
   return (
     <>
+      {self ? (
+        <section className={card}>
+          <div className="flex items-center gap-3">
+            <AuraFace person={self} size="md" />
+            <span className="flex min-w-0 flex-col">
+              <span className="truncate font-heading text-[17px]">{self.name}</span>
+              {account?.username ? (
+                <span className="text-[13px] text-text-3">@{account.username}</span>
+              ) : null}
+            </span>
+          </div>
+          <ProfileForm
+            person={{
+              id: self.id,
+              name: self.name,
+              city: self.city,
+              bio: self.bio,
+              visibility: self.visibility,
+            }}
+          />
+        </section>
+      ) : null}
+
       <section className={card}>
         <div className="flex flex-col gap-1">
           <h2 className="font-heading text-[17px]">{t("mode")}</h2>
-          <p className="text-sm text-paper-muted">{t("modeHint")}</p>
+          <p className="text-sm text-text-3">{t("modeHint")}</p>
         </div>
         <ModePicker initial={prefs?.mode ?? "ask"} />
       </section>
@@ -100,7 +136,7 @@ async function Mine() {
       <section className={card}>
         <div className="flex flex-col gap-1">
           <h2 className="font-heading text-[17px]">{t("today")}</h2>
-          <p className="text-sm text-paper-muted">{guest ? t("todayGuest") : t("todayMember")}</p>
+          <p className="text-sm text-text-3">{guest ? t("todayGuest") : t("todayMember")}</p>
         </div>
         {COUNTERS.map((c) => (
           <Meter key={c} label={t(`counters.${c}`)} used={used[c]} limit={limits[c]} />
@@ -110,7 +146,7 @@ async function Mine() {
       <section className={card}>
         <div className="flex flex-col gap-1">
           <h2 className="font-heading text-[17px]">{t("links")}</h2>
-          <p className="text-sm text-paper-muted">{t("linksHint")}</p>
+          <p className="text-sm text-text-3">{t("linksHint")}</p>
         </div>
         <ShareLinks items={links} />
       </section>
@@ -120,13 +156,13 @@ async function Mine() {
         <p className="text-[15px]">
           {guest ? ta("guest") : ta("signedInAs", { email: user.email })}
         </p>
-        {guest ? <p className="text-sm text-paper-muted">{ta("hint")}</p> : null}
+        {guest ? <p className="text-sm text-text-3">{ta("hint")}</p> : null}
       </section>
 
       <section className={`${card} ring-1 ring-destructive/30`}>
         <div className="flex flex-col gap-1">
           <h2 className="font-heading text-[17px]">{t("deleteHeading")}</h2>
-          <p className="text-sm text-paper-muted">{t("deleteHint")}</p>
+          <p className="text-sm text-text-3">{t("deleteHint")}</p>
         </div>
         <DeleteData />
       </section>
@@ -134,13 +170,13 @@ async function Mine() {
   )
 }
 
-/** Settings (T21): language, how chats make things, today's allowance, and delete all my data. */
+/** Settings: you (profile and who sees it), how Najimi acts, language, today, links, your data. */
 export default async function SettingsPage() {
   const t = await getTranslations("Settings")
   return (
     <div className="mx-auto flex w-full max-w-xl flex-col gap-6 px-5 pb-16 md:px-0">
       <h1 className="font-title text-title-sm">{t("title")}</h1>
-      <section className="flex items-center justify-between rounded-card bg-card p-5 text-card-foreground shadow-paper">
+      <section className="flex items-center justify-between rounded-card bg-card p-5 text-card-foreground">
         <span className="font-heading text-[17px]">{t("language")}</span>
         <LanguageMenu />
       </section>
