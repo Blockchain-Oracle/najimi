@@ -8,7 +8,7 @@ import { useState } from "react"
 import { api } from "@/lib/fetcher"
 
 const field =
-  "w-full rounded-tile bg-paper px-3.5 py-2.5 text-paper-foreground outline-none ring-1 ring-paper-foreground/10 placeholder:text-paper-muted focus:ring-2 focus:ring-ring"
+  "w-full rounded-tile bg-card px-3.5 py-3 text-foreground outline-none ring-1 ring-border placeholder:text-text-4 focus:ring-2 focus:ring-ring"
 
 /** Where someone is: their city decides the places and the map. A new city recomputes places. */
 export function AboutForm({
@@ -40,8 +40,7 @@ export function AboutForm({
   }
 
   return (
-    <section className="flex flex-col gap-5 rounded-card bg-card p-5 text-card-foreground shadow-paper">
-      <h2 className="font-heading text-[17px]">{t("about", { name: person.name })}</h2>
+    <section className="flex flex-col gap-5 pt-2">
       <label className="flex flex-col gap-1.5 text-sm font-semibold">
         {t("city")}
         <input

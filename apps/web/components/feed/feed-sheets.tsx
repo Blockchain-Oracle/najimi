@@ -1,12 +1,10 @@
 "use client"
 
-import { Dialog } from "@base-ui/react/dialog"
 import { FEED, TASTE } from "@najimi/config"
 import { cn } from "@najimi/ui/lib/utils"
-import { EyeOff, Heart, Loader2, X } from "lucide-react"
+import { EyeOff, Heart, Loader2 } from "lucide-react"
 import { motion } from "motion/react"
 import { useTranslations } from "next-intl"
-import type { ReactNode } from "react"
 import { siApplemusic, siImdb, siSpotify } from "simple-icons"
 import { BrandIcon } from "@/components/brands/brand-icon"
 import { CallDetails } from "@/components/qloo/call-details"
@@ -17,57 +15,17 @@ import {
   type FeedLove,
   type FeedMix,
 } from "@/lib/feed-shared"
+import { DarkSheet } from "./dark-sheet"
 import { Fader } from "./fader"
 import { DOMAIN_ICON } from "./feed-card"
 import { Knob } from "./knob"
+import { ShareBars } from "./share-bars"
 
 /*
  * The feed's sheets, dark like the feed itself: why a card is here (each love's share and the
  * Qloo call), tuning the feed (categories and what drives it), more actions, and the trailer
  * (YouTube's player, visible and started by a tap, as its terms ask).
  */
-
-function DarkSheet({
-  open,
-  onOpenChange,
-  title,
-  children,
-  className,
-}: {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  title: string
-  children: ReactNode
-  className?: string
-}) {
-  return (
-    <Dialog.Root open={open} onOpenChange={onOpenChange}>
-      <Dialog.Portal>
-        <Dialog.Backdrop className="fixed inset-0 z-[60] bg-black/50 backdrop-blur-[2px] transition-opacity duration-200 data-ending-style:opacity-0 data-starting-style:opacity-0" />
-        <Dialog.Popup
-          className={cn(
-            "fixed inset-x-0 bottom-0 z-[61] mx-auto flex max-h-[88svh] w-full max-w-lg flex-col overflow-hidden rounded-t-sheet bg-[#121214] text-white shadow-float transition duration-300 ease-out data-ending-style:translate-y-full data-starting-style:translate-y-full md:bottom-6 md:rounded-sheet",
-            className,
-          )}
-        >
-          <div className="mx-auto mt-2.5 h-1 w-10 shrink-0 rounded-full bg-white/20" />
-          <div className="flex items-center justify-between px-5 pt-3 pb-2">
-            <Dialog.Title className="font-title text-[22px]">{title}</Dialog.Title>
-            <Dialog.Close
-              aria-label="Close"
-              className="grid size-9 place-items-center rounded-full bg-white/10 hover:bg-white/15"
-            >
-              <X className="size-4" />
-            </Dialog.Close>
-          </div>
-          <div className="overflow-y-auto px-5 pb-[max(1.25rem,env(safe-area-inset-bottom))]">
-            {children}
-          </div>
-        </Dialog.Popup>
-      </Dialog.Portal>
-    </Dialog.Root>
-  )
-}
 
 /** Why this card: its match, then how much each love pulled it in (explainability). */
 export function WhySheet({
@@ -80,12 +38,6 @@ export function WhySheet({
   onClose: () => void
 }) {
   const t = useTranslations("Feed")
-  const byId = new Map(loves.map((l) => [l.qlooId.toLowerCase(), l]))
-  const shares = (card?.shares ?? [])
-    .map((s) => ({ ...s, love: byId.get(s.id.toLowerCase()) }))
-    .filter((s) => s.love)
-    .sort((a, b) => b.share - a.share)
-  const total = shares.reduce((sum, s) => sum + s.share, 0) || 1
   return (
     <DarkSheet
       open={Boolean(card)}
@@ -99,41 +51,7 @@ export function WhySheet({
               ? t("whyLead", { value: Math.round(card.affinity * 100) })
               : t("whyNone")}
           </p>
-          {shares.length ? (
-            <ul className="flex flex-col gap-3">
-              {shares.map((s) => {
-                const pct = Math.round((s.share / total) * 100)
-                return (
-                  <li key={s.id} className="flex items-center gap-3">
-                    {s.love?.image ? (
-                      // biome-ignore lint/performance/noImgElement: remote artwork thumbnail
-                      <img
-                        src={s.love.image}
-                        alt=""
-                        className="size-10 shrink-0 rounded-[10px] object-cover"
-                      />
-                    ) : (
-                      <span className="grid size-10 shrink-0 place-items-center rounded-[10px] bg-white/10">
-                        <Heart className="size-4" />
-                      </span>
-                    )}
-                    <div className="flex min-w-0 flex-1 flex-col gap-1.5">
-                      <div className="flex items-baseline justify-between gap-2">
-                        <span className="truncate text-[14px] font-semibold">{s.love?.name}</span>
-                        <span className="text-[13px] text-white/70 tabular-nums">{pct}%</span>
-                      </div>
-                      <span className="h-1.5 overflow-hidden rounded-full bg-white/10">
-                        <span
-                          className="block h-full rounded-full bg-[linear-gradient(90deg,var(--color-aura-1),var(--color-aura-2))]"
-                          style={{ width: `${pct}%` }}
-                        />
-                      </span>
-                    </div>
-                  </li>
-                )
-              })}
-            </ul>
-          ) : null}
+          <ShareBars shares={card.shares} loves={loves} />
           <div className="flex flex-col gap-2 rounded-card bg-white/5 p-4">
             <p className="text-[11px] font-semibold tracking-[0.08em] text-white/55 uppercase">
               {t("evidence")}

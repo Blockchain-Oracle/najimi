@@ -219,7 +219,7 @@
   "Taste": {
     "mine": "Your taste",
     "theirs": "{name}'s taste",
-    "madeOf": "What your taste is made of",
+    "madeOf": "Your taste in words",
     "words": {
       "aesthetic": "Look",
       "lifestyle": "Life",
@@ -248,7 +248,18 @@
     "line": "{look} looks, {rooms} rooms, {mood} nights, {food} plates.",
     "you": "You",
     "peopleIn": "Where your people are in {city}",
-    "knownFor": "Near {places}."
+    "knownFor": "Near {places}.",
+    "playTaste": "Play my taste",
+    "edit": "Edit profile",
+    "statLoves": "Loves",
+    "statPicks": "Picks",
+    "statKept": "Kept",
+    "tabTaste": "Taste",
+    "tabLoves": "Loves",
+    "tabKept": "Kept",
+    "all": "All",
+    "keptEmpty": "Tap the bookmark on anything in your feed and it lands here.",
+    "keptCta": "Open my feed"
   },
   "Pick": {
     "because": "because you love {name}",
@@ -268,7 +279,8 @@
     "undo": "Undo",
     "moreLike": "More like {name}",
     "loading": "Finding more…",
-    "actions": "More actions"
+    "actions": "More actions",
+    "matchWord": "match"
   },
   "Evidence": {
     "title": "The Qloo call behind this",

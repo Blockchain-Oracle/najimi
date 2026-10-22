@@ -3,18 +3,21 @@
 import { TASTE_DOMAINS } from "@najimi/config"
 import type { StoredPick, TasteArea, TasteWords } from "@najimi/db/schema"
 import { Button } from "@najimi/ui/components/button"
+import { Orb } from "@najimi/ui/components/orb"
+import { Sheet, SheetContent, SheetTitle } from "@najimi/ui/components/sheet"
 import { toast } from "@najimi/ui/components/sonner"
-import { Share2 } from "lucide-react"
+import { cn } from "@najimi/ui/lib/utils"
+import { Bookmark, MapPin, Pencil, Play, Share2 } from "lucide-react"
+import { LayoutGroup, motion } from "motion/react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { useCallback, useMemo, useState } from "react"
-import { LovePill } from "@/components/loves/love-pill"
 import { MoreSheet } from "@/components/picks/more-sheet"
 import type { PickActions } from "@/components/picks/pick-card"
-import { PickRail } from "@/components/picks/pick-rail"
 import { BuiltOnQloo } from "@/components/qloo/built-on-qloo"
-import { TasteHero, WordPalette } from "@/components/taste/taste-hero"
+import { Face } from "@/components/taste/face"
+import { useTasteLine, WordPalette } from "@/components/taste/taste-hero"
 import { TasteMap } from "@/components/taste/taste-map"
 import { YourPeople } from "@/components/taste/your-people"
 import { api } from "@/lib/fetcher"
@@ -23,6 +26,8 @@ import { sound } from "@/lib/sounds"
 import { type RunEvent, useRunEvents } from "@/lib/use-run"
 import { AboutForm } from "./about-form"
 import { type EditableLove, LovesEditor } from "./loves-editor"
+import { PickSheet } from "./pick-sheet"
+import { Grid, GridTile, KindChips, kindOf, weave } from "./taste-grid"
 
 export type PersonViewData = {
   person: {
@@ -51,15 +56,17 @@ export type PersonViewData = {
 }
 
 const LIVE = new Set(["queued", "running", "waiting"])
+type Tab = "taste" | "loves" | "kept"
 
 /**
- * A person's taste page and its live reveal (C1): the words land first, then each domain's picks as
- * Qloo answers, watched over the run's event stream. Every change to their loves starts a new run.
+ * A person's profile (after Sora's and TikTok's profiles, Refero 261b3605, 9d54f8a6, and Airbuds'
+ * music identity, cdb87543): their face on their aura, who they are, their taste in one line, the
+ * numbers, one clear action; then tabs of artwork, never lists of words. Their taste is computed
+ * live (the words land, then each domain's picks), watched over the run's event stream.
  */
 export function PersonView({ data }: { data: PersonViewData }) {
   const t = useTranslations("Taste")
   const tp = useTranslations("Pick")
-  const td = useTranslations("Domains")
   const router = useRouter()
   const { person } = data
   const [runId, setRunId] = useState(data.taste?.runId ?? null)
@@ -70,8 +77,14 @@ export function PersonView({ data }: { data: PersonViewData }) {
   const [bridges, setBridges] = useState(data.taste?.bridges ?? [])
   const [aura, setAura] = useState(person.aura)
   const [areas, setAreas] = useState<TasteArea[]>(data.taste?.areas ?? [])
-  const [saved, setSaved] = useState(() => new Set(data.saved.map((s) => s.qlooId)))
+  const [kept, setKept] = useState(data.saved)
+  const [tab, setTab] = useState<Tab>("taste")
+  const [kind, setKind] = useState<string | null>(null)
+  const [opened, setOpened] = useState<StoredPick | null>(null)
   const [more, setMore] = useState<{ pick: StoredPick; domain: string } | null>(null)
+  const [editing, setEditing] = useState(false)
+  const [wordsOpen, setWordsOpen] = useState(false)
+  const line = useTasteLine(words)
 
   const onEvent = useCallback(
     (event: RunEvent) => {
@@ -116,19 +129,30 @@ export function PersonView({ data }: { data: PersonViewData }) {
       for (const p of list) map.set(p.qlooId, domain)
     return map
   }, [picks])
+  const woven = useMemo(() => weave(picks), [picks])
+  const kinds = useMemo(
+    () => TASTE_DOMAINS.map((d) => d.key as string).filter((k) => picks[k]?.length),
+    [picks],
+  )
+  const shown = kind ? (picks[kind] ?? []) : woven
+  const isKept = (id: string) => kept.some((k) => k.qlooId === id)
+  const shareLoves = data.loves.map((l) => ({ qlooId: l.qlooId, name: l.name, image: l.imageUrl }))
 
   const toggleSave = async (pick: StoredPick) => {
-    const isSaved = saved.has(pick.qlooId)
-    setSaved((s) => {
-      const next = new Set(s)
-      if (isSaved) next.delete(pick.qlooId)
-      else next.add(pick.qlooId)
-      return next
-    })
+    const was = isKept(pick.qlooId)
+    setKept((list) =>
+      was
+        ? list.filter((k) => k.qlooId !== pick.qlooId)
+        : [
+            { qlooId: pick.qlooId, type: pick.type, name: pick.name, imageUrl: pick.image },
+            ...list,
+          ],
+    )
+    sound(was ? "tap" : "place")
     try {
       await api(`/api/people/${person.id}/saved`, {
-        method: isSaved ? "DELETE" : "POST",
-        json: isSaved
+        method: was ? "DELETE" : "POST",
+        json: was
           ? { qlooId: pick.qlooId }
           : { qlooId: pick.qlooId, type: pick.type, name: pick.name, image: pick.image },
       })
@@ -138,6 +162,7 @@ export function PersonView({ data }: { data: PersonViewData }) {
   }
 
   const notForMe = async (pick: StoredPick) => {
+    setOpened(null)
     const domain = domainOf.get(pick.qlooId)
     const before = domain ? picks[domain] : undefined
     if (domain)
@@ -168,7 +193,7 @@ export function PersonView({ data }: { data: PersonViewData }) {
   const actionsFor =
     (domain: string) =>
     (pick: StoredPick): PickActions => ({
-      saved: saved.has(pick.qlooId),
+      saved: isKept(pick.qlooId),
       onToggleSave: () => toggleSave(pick),
       onMore: () => setMore({ pick, domain }),
       onNotForMe: () => notForMe(pick),
@@ -183,20 +208,133 @@ export function PersonView({ data }: { data: PersonViewData }) {
     cuisine: t("words.cuisine"),
     dishes: t("words.dishes"),
   }
-  const firstReveal = live && !data.taste?.computedAt
+  const picksCount = Object.values(picks).reduce((n, list) => n + list.length, 0)
+  const stats: { key: Tab; value: number; label: string }[] = [
+    { key: "loves", value: data.loves.length, label: t("statLoves") },
+    { key: "taste", value: picksCount, label: t("statPicks") },
+    { key: "kept", value: kept.length, label: t("statKept") },
+  ]
+  const tabs: { key: Tab; label: string }[] = [
+    { key: "taste", label: t("tabTaste") },
+    { key: "loves", label: t("tabLoves") },
+    { key: "kept", label: t("tabKept") },
+  ]
+  const round =
+    "grid size-11 shrink-0 place-items-center rounded-full bg-card text-foreground transition-colors hover:bg-secondary"
 
   return (
-    <div className="flex flex-col gap-10 pb-16">
-      <div className="mx-5 md:mx-0">
-        <TasteHero
-          person={person}
-          look={person.look}
-          aura={aura}
-          words={words}
-          loves={data.loves}
-          live={live}
+    <div className="flex flex-col gap-8 pb-16">
+      {/* Who they are. */}
+      <section className="relative flex flex-col items-center gap-4 px-5 pt-2 text-center md:px-0">
+        <span
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 -top-16 -z-10 mx-auto h-80 max-w-xl opacity-45 blur-3xl transition-[background] duration-700 dark:opacity-35"
+          style={{
+            background: `radial-gradient(55% 65% at 25% 35%, ${aura?.c1 ?? "var(--color-aura-1)"}, transparent 70%), radial-gradient(50% 60% at 55% 20%, ${aura?.c2 ?? "var(--color-aura-2)"}, transparent 70%), radial-gradient(45% 55% at 80% 45%, ${aura?.c3 ?? "var(--color-aura-3)"}, transparent 70%)`,
+          }}
         />
-      </div>
+        <span className="relative grid size-36 place-items-center">
+          <Orb size={144} colors={aura ?? undefined} working={live} className="absolute inset-0" />
+          <span className="relative">
+            <Face look={person.look} name={person.name} size="xl" />
+          </span>
+        </span>
+        <div className="flex flex-col items-center gap-1">
+          <h1 className="font-title text-[2.25rem] leading-none md:text-[2.75rem]">
+            {person.name}
+          </h1>
+          <p className="flex items-center gap-3 text-[14px] text-text-3">
+            {person.username ? (
+              <span className="font-semibold text-text-2">@{person.username}</span>
+            ) : null}
+            {person.city ? (
+              <span className="flex items-center gap-1">
+                <MapPin className="size-3.5" strokeWidth={1.8} /> {person.city}
+              </span>
+            ) : null}
+          </p>
+        </div>
+        {line ? (
+          <button
+            type="button"
+            onClick={() => setWordsOpen(true)}
+            className="max-w-md text-[16px] leading-snug text-text-2 transition-colors hover:text-foreground"
+          >
+            {line}
+          </button>
+        ) : live ? (
+          <p className="flex items-center gap-2 text-[15px] text-text-3">
+            <span className="size-2 animate-pulse rounded-full bg-[var(--color-aura-1)]" />
+            {t("computing")}
+          </p>
+        ) : null}
+        <dl className="flex items-center gap-8">
+          {stats.map((s) => (
+            <button
+              key={s.key}
+              type="button"
+              onClick={() => setTab(s.key)}
+              className="flex flex-col items-center gap-0.5"
+            >
+              <dt className="sr-only">{s.label}</dt>
+              <dd className="font-title text-[22px] leading-none tabular-nums">{s.value}</dd>
+              <span className="text-[12px] text-text-3">{s.label}</span>
+            </button>
+          ))}
+        </dl>
+        <div className="flex w-full max-w-sm items-center gap-2">
+          {person.isSelf ? (
+            <Link
+              href="/feed"
+              className="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-pill bg-primary text-[15px] font-semibold text-primary-foreground transition-opacity hover:opacity-90"
+            >
+              <Play className="size-4 fill-current" /> {t("playTaste")}
+            </Link>
+          ) : null}
+          <Link href="/c" aria-label={t("askSelf")} title={t("askSelf")} className={round}>
+            <Orb size={26} />
+          </Link>
+          <button
+            type="button"
+            aria-label={t("share")}
+            title={t("share")}
+            onClick={() => void shareLink("person", person.id, t("linkCopied"))}
+            className={round}
+          >
+            <Share2 className="size-4.5" />
+          </button>
+          {person.isSelf ? (
+            <button
+              type="button"
+              aria-label={t("edit")}
+              title={t("edit")}
+              onClick={() => setEditing(true)}
+              className={round}
+            >
+              <Pencil className="size-4.5" />
+            </button>
+          ) : null}
+        </div>
+        {live && data.taste?.computedAt ? (
+          <p className="text-[13px] text-text-3">{t("updating")}</p>
+        ) : null}
+        {failed ? (
+          <div className="flex items-center gap-3">
+            <p className="text-sm text-destructive">{t("failed")}</p>
+            <Button
+              size="sm"
+              onClick={async () =>
+                startRun(
+                  (await api<{ runId: string }>(`/api/people/${person.id}/refresh`, { json: {} }))
+                    .runId,
+                )
+              }
+            >
+              {t("retry")}
+            </Button>
+          </div>
+        ) : null}
+      </section>
 
       {person.city && areas.length ? (
         <div className="mx-5 md:mx-0">
@@ -204,100 +342,145 @@ export function PersonView({ data }: { data: PersonViewData }) {
         </div>
       ) : null}
 
-      <section className="mx-5 flex flex-col gap-6 rounded-card bg-card p-5 text-card-foreground shadow-paper md:mx-0">
-        {words ? (
-          <WordPalette words={words} labels={wordLabels} />
-        ) : live ? (
-          <p className="flex items-center gap-2 text-sm text-paper-muted">
-            <span className="size-2 animate-signal-pulse rounded-full bg-signal" /> {t("computing")}
-          </p>
+      {bridges.length ? (
+        <section className="mx-5 rounded-card bg-card p-5 md:mx-0">
+          <TasteMap
+            person={{ name: person.name, look: person.look }}
+            loves={data.loves}
+            bridges={bridges}
+            picks={picks}
+          />
+        </section>
+      ) : null}
+
+      {/* The tabs. */}
+      <section className="flex flex-col gap-4">
+        <LayoutGroup id="profile-tabs">
+          <div role="tablist" className="mx-5 flex border-b border-border md:mx-0">
+            {tabs.map((x) => (
+              <button
+                key={x.key}
+                type="button"
+                role="tab"
+                aria-selected={tab === x.key}
+                onClick={() => setTab(x.key)}
+                className={cn(
+                  "relative flex-1 py-3 text-[15px] font-semibold transition-colors",
+                  tab === x.key ? "text-foreground" : "text-text-3 hover:text-text-2",
+                )}
+              >
+                {x.label}
+                {tab === x.key ? (
+                  <motion.span
+                    layoutId="profile-tab"
+                    className="absolute inset-x-6 -bottom-px h-0.5 rounded-full bg-foreground"
+                  />
+                ) : null}
+              </button>
+            ))}
+          </div>
+        </LayoutGroup>
+
+        {tab === "taste" ? (
+          <div className="flex flex-col gap-3">
+            {kinds.length > 1 ? <KindChips kinds={kinds} value={kind} onChange={setKind} /> : null}
+            {shown.length ? (
+              <Grid>
+                {shown.map((p, i) => (
+                  <GridTile
+                    key={p.qlooId}
+                    index={i}
+                    item={{ id: p.qlooId, type: p.type, name: p.name, image: p.image }}
+                    onOpen={() => setOpened(p)}
+                  />
+                ))}
+              </Grid>
+            ) : live ? (
+              <Grid>
+                {Array.from({ length: 9 }, (_, i) => (
+                  // biome-ignore lint/suspicious/noArrayIndexKey: placeholders have no identity
+                  <span key={i} className="aspect-square animate-pulse bg-card" />
+                ))}
+              </Grid>
+            ) : (
+              <p className="px-5 text-sm text-text-3 md:px-0">
+                {kind === "place" && !person.city ? t("needsCity") : t("empty")}
+              </p>
+            )}
+          </div>
         ) : null}
-        <TasteMap
-          person={{ name: person.name, look: person.look }}
-          loves={data.loves}
-          bridges={bridges}
-          picks={picks}
-        />
-        <div className="flex flex-col gap-2">
-          <p className="text-[11px] font-semibold tracking-wide text-paper-muted uppercase">
-            {t("loves")}
-          </p>
-          <div className="flex flex-wrap items-center gap-2">
-            {data.loves.map((l) => (
-              <LovePill key={l.id} name={l.name} image={l.imageUrl} type={l.type} />
-            ))}
-            <LovesEditor personId={person.id} loves={data.loves} onChanged={startRun} />
+
+        {tab === "loves" ? (
+          <div className="flex flex-col gap-3">
+            <Grid>
+              {data.loves.map((l, i) => (
+                <GridTile
+                  key={l.id}
+                  index={i}
+                  item={{ id: l.qlooId, type: l.type, name: l.name, image: l.imageUrl }}
+                  onOpen={() => setTab("loves")}
+                />
+              ))}
+            </Grid>
+            {person.isSelf ? (
+              <div className="px-5 md:px-0">
+                <LovesEditor personId={person.id} loves={data.loves} onChanged={startRun} />
+              </div>
+            ) : null}
           </div>
-        </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <Link
-            href="/c"
-            className="rounded-pill bg-lime px-4 py-2 text-sm font-semibold text-lime-foreground shadow-sticker transition-transform hover:-translate-y-px"
-          >
-            {t("askSelf")}
-          </Link>
-          <button
-            type="button"
-            onClick={() => void shareLink("person", person.id, t("linkCopied"))}
-            className="inline-flex items-center gap-1.5 rounded-pill px-3 py-2 text-sm font-semibold text-paper-foreground ring-1 ring-paper-foreground/15 transition-colors hover:bg-paper-foreground/6"
-          >
-            <Share2 className="size-4" /> {t("share")}
-          </button>
-          <BuiltOnQloo runId={runId} />
-        </div>
+        ) : null}
+
+        {tab === "kept" ? (
+          kept.length ? (
+            <Grid>
+              {kept.map((k, i) => (
+                <GridTile
+                  key={k.qlooId}
+                  index={i}
+                  item={{ id: k.qlooId, type: k.type, name: k.name, image: k.imageUrl }}
+                  onOpen={() => {
+                    const pick = Object.values(picks)
+                      .flat()
+                      .find((p) => p.qlooId === k.qlooId)
+                    if (pick) setOpened(pick)
+                  }}
+                />
+              ))}
+            </Grid>
+          ) : (
+            <div className="mx-5 flex flex-col items-center gap-4 rounded-card bg-card px-6 py-10 text-center md:mx-0">
+              <span className="relative grid size-16 place-items-center rounded-full bg-secondary">
+                <Bookmark className="size-7" />
+              </span>
+              <p className="max-w-xs text-[15px] text-text-2">{t("keptEmpty")}</p>
+              <Link
+                href="/feed"
+                className="inline-flex h-10 items-center gap-2 rounded-pill bg-primary px-5 text-[14px] font-semibold text-primary-foreground"
+              >
+                <Play className="size-4 fill-current" /> {t("keptCta")}
+              </Link>
+            </div>
+          )
+        ) : null}
       </section>
 
-      {live && !firstReveal ? (
-        <p className="sticker mx-5 flex w-fit items-center gap-2 px-3.5 py-2 text-xs font-semibold md:mx-0">
-          <span className="size-2 animate-signal-pulse rounded-full bg-signal" /> {t("updating")}
-        </p>
-      ) : null}
-      {failed ? (
-        <div className="mx-5 flex items-center gap-3 md:mx-0">
-          <p className="text-sm text-destructive">{t("failed")}</p>
-          <Button
-            variant="sticker"
-            size="sm"
-            onClick={async () =>
-              startRun(
-                (await api<{ runId: string }>(`/api/people/${person.id}/refresh`, { json: {} }))
-                  .runId,
-              )
-            }
-          >
-            {t("retry")}
-          </Button>
-        </div>
-      ) : null}
-
-      {TASTE_DOMAINS.map(({ key }) => (
-        <PickRail
-          key={key}
-          title={td(key)}
-          picks={picks[key]}
-          loading={live}
-          emptyText={key === "place" && !person.city ? t("needsCity") : t("empty")}
-          actionsFor={actionsFor(key)}
-        />
-      ))}
-
-      <section className="flex flex-col gap-3 px-5 md:px-0">
-        <h2 className="font-heading text-[17px]">{t("saved")}</h2>
-        {data.saved.length ? (
-          <div className="flex flex-wrap gap-2">
-            {data.saved.map((s) => (
-              <LovePill key={s.qlooId} name={s.name} image={s.imageUrl} type={s.type} />
-            ))}
-          </div>
-        ) : (
-          <p className="text-sm text-text-3">{t("nothingSaved")}</p>
-        )}
-      </section>
-
-      <div className="px-5 md:px-0">
-        <AboutForm person={person} onRun={startRun} />
+      <div className="flex justify-center px-5 md:px-0">
+        <BuiltOnQloo runId={runId} />
       </div>
 
+      <PickSheet
+        pick={opened}
+        loves={shareLoves}
+        saved={opened ? isKept(opened.qlooId) : false}
+        onClose={() => setOpened(null)}
+        onToggleSave={() => opened && void toggleSave(opened)}
+        onMore={() => {
+          if (!opened) return
+          setMore({ pick: opened, domain: domainOf.get(opened.qlooId) ?? kindOf(opened.type) })
+          setOpened(null)
+        }}
+        onNotForMe={() => opened && void notForMe(opened)}
+      />
       <MoreSheet
         personId={person.id}
         seed={more?.pick ?? null}
@@ -305,6 +488,38 @@ export function PersonView({ data }: { data: PersonViewData }) {
         onClose={() => setMore(null)}
         actionsFor={actionsFor(more?.domain ?? "brand")}
       />
+
+      {/* Their taste in Qloo's words, all of them, a tap away from the line. */}
+      <Sheet open={wordsOpen} onOpenChange={setWordsOpen}>
+        <SheetContent
+          side="bottom"
+          className="max-h-[85svh] overflow-y-auto rounded-t-sheet border-0 bg-background px-5 pb-[max(1.25rem,env(safe-area-inset-bottom))]"
+        >
+          <SheetTitle className="font-title pt-5 text-[1.75rem] font-normal">
+            {t("madeOf")}
+          </SheetTitle>
+          {words ? <WordPalette words={words} labels={wordLabels} /> : null}
+        </SheetContent>
+      </Sheet>
+
+      {/* Edit: where they are (more fields arrive with friends and circles). */}
+      <Sheet open={editing} onOpenChange={setEditing}>
+        <SheetContent
+          side="bottom"
+          className="max-h-[85svh] overflow-y-auto rounded-t-sheet border-0 bg-background px-5 pb-[max(1.25rem,env(safe-area-inset-bottom))]"
+        >
+          <SheetTitle className="font-title pt-5 text-[1.75rem] font-normal">
+            {t("edit")}
+          </SheetTitle>
+          <AboutForm
+            person={person}
+            onRun={(id) => {
+              startRun(id)
+              setEditing(false)
+            }}
+          />
+        </SheetContent>
+      </Sheet>
     </div>
   )
 }
