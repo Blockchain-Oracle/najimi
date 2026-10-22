@@ -444,7 +444,7 @@ function People({ w, twinFace }: { w: Wrapped; twinFace: string | null }) {
             <div style={{ display: "flex", fontSize: 64, fontWeight: 600 }}>{w.twin.name}</div>
             <div
               style={{ display: "flex", fontSize: 34, color: C.signal }}
-            >{`${w.twin.shared} loves in common`}</div>
+            >{`${w.twin.shared} ${w.twin.shared === 1 ? "love" : "loves"} in common`}</div>
           </div>
         </div>
       ) : null}

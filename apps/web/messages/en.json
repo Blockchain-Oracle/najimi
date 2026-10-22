@@ -6,11 +6,55 @@
   "Landing": {
     "kicker": "Built on Qloo's taste AI",
     "title": "Find your people by what you love.",
-    "lede": "Tell Najimi a few things you love. It reads your taste through Qloo, plays it back as music and culture, shows where your people are, and puts an agent in your chats that plans, plays and books with your friends.",
     "start": "Start — it's free",
-    "continue": "Play my feed",
+    "startShort": "Start",
+    "continue": "Open Najimi",
+    "moments": {
+      "feed": {
+        "kicker": "Your feed",
+        "title": "Your taste, played back.",
+        "chip1": "Because you love The Decemberists",
+        "chip2": "Songs, films, places, podcasts"
+      },
+      "city": {
+        "kicker": "Earth",
+        "title": "See where your people are.",
+        "chip1": "Victoria Island",
+        "chip2": "Every square a taste"
+      },
+      "games": {
+        "kicker": "Circles",
+        "title": "Play your taste with friends.",
+        "chip1": "Guess my wavelength",
+        "chip2": "Najimi plays too"
+      },
+      "night": {
+        "kicker": "Plans",
+        "title": "Najimi plans the night. And books it.",
+        "chip1": "Roma Lagos · 71% your crew",
+        "chip2": "Calls the venue for you"
+      },
+      "business": {
+        "kicker": "Business",
+        "title": "Meet the people who love your place.",
+        "chip1": "Afrobeats Fridays",
+        "chip2": "Every idea backed by Qloo"
+      },
+      "graph": {
+        "kicker": "Graph",
+        "title": "Pull your taste apart.",
+        "chip1": "The Shins → In Waves",
+        "chip2": "What if you loved it more?"
+      }
+    },
+    "wrapped": {
+      "kicker": "Wrapped",
+      "title": "Your year in taste, made for Stories."
+    },
+    "closing": "Your people are already here.",
     "footer": "Najimi, made for the Qloo hackathon.",
-    "builtOn": "Built on Qloo"
+    "builtOn": "Built on Qloo",
+    "openShort": "Open"
   },
   "Language": {
     "label": "Language",
