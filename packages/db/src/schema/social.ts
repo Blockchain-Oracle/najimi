@@ -129,6 +129,8 @@ export const reports = pgTable(
     chatId: uuid(),
     reason: text().$type<"spam" | "abuse" | "fake" | "other">().notNull(),
     note: text(),
+    /** When someone looked at it (the owner gets an email per report). */
+    reviewedAt: timestamp({ withTimezone: true }),
     createdAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
   },
   (t) => [index("reports_target_idx").on(t.targetId)],

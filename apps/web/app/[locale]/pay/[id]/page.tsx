@@ -1,4 +1,3 @@
-import { paymentMode } from "@najimi/booking/nuitee"
 import { Orb } from "@najimi/ui/components/orb"
 import { notFound, redirect } from "next/navigation"
 import { Suspense } from "react"
@@ -20,7 +19,6 @@ async function Pay({ params }: Pick<Props, "params">) {
     <PayView
       booking={bookingView(booking)}
       secretKey={data.secretKey ?? ""}
-      mode={paymentMode()}
       holder={
         data.holder ?? {
           email:

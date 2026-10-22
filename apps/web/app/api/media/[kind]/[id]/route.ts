@@ -1,6 +1,6 @@
 import { db, schema } from "@najimi/db"
 import { getStream, type MediaVariant, verifyMediaSignature } from "@najimi/storage"
-import { and, eq, isNull } from "drizzle-orm"
+import { and, eq, isNull, sql } from "drizzle-orm"
 import { z } from "zod"
 import { fail } from "@/lib/api"
 import { getSession } from "@/lib/session"
@@ -59,8 +59,25 @@ async function sharedCreation(id: string, token: string | null): Promise<boolean
   return c?.chatId === share.refId
 }
 
+/** Whether this photo was sent in a room the viewer belongs to (it sits in a message's parts). */
+async function sharedInRoom(uploadId: string, viewerId: string): Promise<boolean> {
+  const [hit] = await db
+    .select({ one: sql<number>`1` })
+    .from(schema.messages)
+    .innerJoin(
+      schema.chatMembers,
+      and(
+        eq(schema.chatMembers.chatId, schema.messages.chatId),
+        eq(schema.chatMembers.userId, viewerId),
+      ),
+    )
+    .where(sql`${schema.messages.parts}::text like ${`%/api/media/upload/${uploadId}?%`}`)
+    .limit(1)
+  return Boolean(hit)
+}
+
 /**
- * Photos and creations, streamed from private storage. Readable by their owner, by anyone holding
+ * Photos and creations, streamed from private storage. Readable by their owner, by the members of a room it was sent in, by anyone holding
  * a signed link (providers, for a few hours) or a live share token (creations only, never the
  * person's own photo), or by everyone when public (samples, public creations).
  */
@@ -86,6 +103,8 @@ export async function GET(request: Request, ctx: RouteContext<"/api/media/[kind]
   if (!allowed) {
     const session = await getSession()
     allowed = session?.user.id === found.ownerId
+    // A photo someone shared in a room is readable by that room's members.
+    if (!allowed && session && kind === "upload") allowed = await sharedInRoom(id, session.user.id)
   }
   if (!allowed) return fail("Not found", 404)
 

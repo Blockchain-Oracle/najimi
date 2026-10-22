@@ -10,17 +10,30 @@ import { cn } from "@najimi/ui/lib/utils"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { MoreHorizontal, Plus, Search } from "lucide-react"
 import Link from "next/link"
-import { useParams, useRouter } from "next/navigation"
+import { useParams } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { useState } from "react"
 import { api } from "@/lib/fetcher"
+import { useNewChat } from "@/lib/new-chat"
 
-type ChatItem = { id: string; title: string | null; status: string; lastActiveAt: string }
+type ChatItem = {
+  id: string
+  title: string | null
+  name: string | null
+  kind: "agent" | "circle" | "dm"
+  other: string | null
+  status: string
+  lastActiveAt: string
+}
+
+/** What a room is called: a circle by its name, a DM by the other person, a chat with Najimi by its title. */
+const labelOf = (c: ChatItem) =>
+  c.kind === "circle" ? c.name : c.kind === "dm" ? c.other : c.title
 
 /** Every chat, newest first, searchable; rename and delete from each row's menu. */
 export function ChatSidebar({ onPick }: { onPick?: () => void } = {}) {
   const t = useTranslations("Chat")
-  const router = useRouter()
+  const newChat = useNewChat()
   const params = useParams<{ id?: string }>()
   const queryClient = useQueryClient()
   const [q, setQ] = useState("")
@@ -34,13 +47,16 @@ export function ChatSidebar({ onPick }: { onPick?: () => void } = {}) {
 
   return (
     <nav className="flex h-full flex-col gap-3 p-3">
-      <Link
-        href="/c"
-        onClick={onPick}
+      <button
+        type="button"
+        onClick={() => {
+          onPick?.()
+          newChat()
+        }}
         className="inline-flex items-center justify-center gap-2 rounded-pill bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground"
       >
         <Plus className="size-4" /> {t("newChat")}
-      </Link>
+      </button>
       <label className="flex items-center gap-2 rounded-pill bg-secondary px-3 py-2 text-sm">
         <Search className="size-4 text-text-3" />
         <input
@@ -64,7 +80,7 @@ export function ChatSidebar({ onPick }: { onPick?: () => void } = {}) {
               {c.status === "generating" ? (
                 <span className="me-1.5 inline-block size-1.5 animate-signal-pulse rounded-full bg-signal align-middle" />
               ) : null}
-              {c.title ?? t("untitled")}
+              {labelOf(c) ?? t("untitled")}
             </Link>
             <DropdownMenu>
               <DropdownMenuTrigger
@@ -74,22 +90,26 @@ export function ChatSidebar({ onPick }: { onPick?: () => void } = {}) {
                 <MoreHorizontal className="size-4" />
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem
-                  onClick={async () => {
-                    const title = window.prompt(t("rename"), c.title ?? "")?.trim()
-                    if (!title) return
-                    await api(`/api/chats/${c.id}`, { method: "PATCH", json: { title } })
-                    await refresh()
-                  }}
-                >
-                  {t("rename")}
-                </DropdownMenuItem>
+                {c.kind === "agent" ? (
+                  <DropdownMenuItem
+                    onClick={async () => {
+                      const title = window.prompt(t("rename"), c.title ?? "")?.trim()
+                      if (!title) return
+                      await api(`/api/chats/${c.id}`, { method: "PATCH", json: { title } })
+                      await refresh()
+                    }}
+                  >
+                    {t("rename")}
+                  </DropdownMenuItem>
+                ) : null}
                 <DropdownMenuItem
                   onClick={async () => {
                     if (!window.confirm(t("confirmDelete"))) return
                     await api(`/api/chats/${c.id}`, { method: "DELETE" })
                     await refresh()
-                    if (params.id === c.id) router.push("/c")
+                    // The chat on screen (its address may be /c/<id> without the router knowing).
+                    if (params.id === c.id || window.location.pathname.endsWith(`/c/${c.id}`))
+                      newChat()
                   }}
                 >
                   {t("delete")}

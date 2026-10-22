@@ -114,9 +114,13 @@ function Phone({
 }
 
 async function banner() {
-  const [feed, earth, game, business, graph] = await Promise.all(
-    ["feed", "earth", "game", "business", "graph"].map(capture),
-  )
+  const [feed, earth, game, business, graph] = await Promise.all([
+    capture("feed"),
+    capture("earth"),
+    capture("game"),
+    capture("business"),
+    capture("graph"),
+  ])
   return new ImageResponse(
     <div
       style={{

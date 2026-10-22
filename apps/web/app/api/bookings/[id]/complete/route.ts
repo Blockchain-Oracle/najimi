@@ -1,6 +1,7 @@
 import { setBooking } from "@najimi/agent/server"
 import { book, bookingByReference } from "@najimi/booking/nuitee"
 import { db, schema } from "@najimi/db"
+import { enqueueAt } from "@najimi/jobs"
 import { and, eq } from "drizzle-orm"
 import { fail, json, withSession } from "@/lib/api"
 import { bookingView, ownedBooking } from "@/lib/bookings"
@@ -70,5 +71,8 @@ export async function POST(_: Request, ctx: RouteContext<"/api/bookings/[id]/com
     },
     `Booked: ${claimed.title}, ${booked.checkin} to ${booked.checkout}${booked.confirmation ? ` (confirmation ${booked.confirmation})` : ""}.`,
   )
+  // Paid but not confirmed yet: the worker asks Nuitee again until it settles.
+  if (done?.status === "paid")
+    await enqueueAt("bookingCheck", { bookingId: done.id }, new Date(Date.now() + 10 * 60_000))
   return json({ booking: done ? bookingView(done) : null })
 }

@@ -1,6 +1,6 @@
 import "server-only"
 import { db, schema } from "@najimi/db"
-import { and, asc, desc, eq, ilike, inArray, sql } from "drizzle-orm"
+import { and, asc, desc, eq, ilike, inArray, or, sql } from "drizzle-orm"
 
 /*
  * Rooms as a person sees them: the ones they're in. Every room route checks membership through
@@ -72,13 +72,22 @@ export type ChatListItem = {
   kind: ChatRow["kind"]
   status: ChatRow["status"]
   lastActiveAt: Date
+  /** A DM's other person (their name is the DM's name). */
+  other: string | null
 }
 
-/** The rooms someone is in, most recently active first; `q` searches titles. */
+/** The rooms someone is in, most recently active first; `q` searches titles, circle names and people. */
 export async function chatsOf(
   userId: string,
-  opts: { q?: string; limit?: number } = {},
+  opts: { q?: string; limit?: number; kind?: ChatRow["kind"] } = {},
 ): Promise<ChatListItem[]> {
+  const other = sql<string | null>`(
+    select ${schema.people.name} from ${schema.chatMembers} as m
+    join ${schema.people} on ${schema.people.ownerId} = m.user_id and ${schema.people.isSelf}
+    where m.chat_id = ${schema.chats.id} and m.user_id <> ${userId}
+    limit 1
+  )`
+  const q = opts.q ? `%${opts.q.replace(/[%_]/g, "")}%` : null
   return db
     .select({
       id: schema.chats.id,
@@ -87,13 +96,17 @@ export async function chatsOf(
       kind: schema.chats.kind,
       status: schema.chats.status,
       lastActiveAt: schema.chats.lastActiveAt,
+      other,
     })
     .from(schema.chatMembers)
     .innerJoin(schema.chats, eq(schema.chats.id, schema.chatMembers.chatId))
     .where(
       and(
         eq(schema.chatMembers.userId, userId),
-        opts.q ? ilike(schema.chats.title, `%${opts.q.replace(/[%_]/g, "")}%`) : undefined,
+        opts.kind ? eq(schema.chats.kind, opts.kind) : undefined,
+        q
+          ? or(ilike(schema.chats.title, q), ilike(schema.chats.name, q), sql`${other} ilike ${q}`)
+          : undefined,
       ),
     )
     .orderBy(desc(schema.chats.lastActiveAt))

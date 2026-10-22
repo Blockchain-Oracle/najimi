@@ -12,9 +12,8 @@ import { env } from "@najimi/env/server"
 const SEARCH = "https://api.liteapi.travel/v3.0"
 const BOOK = "https://book.liteapi.travel/v3.0"
 
-export const hotelsOn = () => Boolean(env.NUITEE_API_KEY)
-/** The payment sheet's mode follows the key Nuitee issued (live keys start `prod_`). */
-export const paymentMode = () => (env.NUITEE_API_KEY?.startsWith("sand_") ? "sandbox" : "live")
+/** Real bookings only: a sandbox key (`sand_…`) doesn't switch hotels on. */
+export const hotelsOn = () => Boolean(env.NUITEE_API_KEY && !env.NUITEE_API_KEY.startsWith("sand_"))
 
 type Money = { amount: number; currency: string }
 /** Nuitee gives money as a list in some answers and a single object in others. */
@@ -26,11 +25,12 @@ async function call<T>(
   path: string,
   init: { method?: string; body?: unknown; timeoutMs?: number } = {},
 ) {
-  if (!env.NUITEE_API_KEY) throw new Error("Hotel booking isn't connected yet")
+  const key = env.NUITEE_API_KEY
+  if (!key || !hotelsOn()) throw new Error("Hotel booking isn't connected yet")
   const res = await fetch(`${base}${path}`, {
     method: init.method ?? (init.body === undefined ? "GET" : "POST"),
     headers: {
-      "X-API-Key": env.NUITEE_API_KEY,
+      "X-API-Key": key,
       accept: "application/json",
       ...(init.body === undefined ? {} : { "content-type": "application/json" }),
     },

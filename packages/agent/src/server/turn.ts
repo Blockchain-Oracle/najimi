@@ -74,6 +74,15 @@ export async function runTurn(chatId: string): Promise<void> {
   ])
   if (!person) return
   const guest = Boolean(author?.isAnonymous)
+  // Your own chat keeps its own mode; in a circle or DM the person who asked brings theirs.
+  const [prefs] =
+    chat.kind === "agent"
+      ? [null]
+      : await db
+          .select({ mode: schema.userPrefs.mode })
+          .from(schema.userPrefs)
+          .where(eq(schema.userPrefs.userId, by))
+  const mode = chat.kind === "agent" ? chat.mode : (prefs?.mode ?? "ask")
 
   const validated = await safeValidateUIMessages<NajimiUIMessage>({
     messages: stored,
@@ -133,9 +142,9 @@ export async function runTurn(chatId: string): Promise<void> {
     (guest ? ALLOWANCE.guest : ALLOWANCE.member)[counter] - today[counter]
   /** Ask mode: an approval card with the cost; Plan only: never; Make automatically: straight away. */
   const approval = (counter: "images", n: number) =>
-    chat.mode === "plan"
+    mode === "plan"
       ? ({ type: "denied", reason: "plan" } as const)
-      : chat.mode === "auto"
+      : mode === "auto"
         ? ("not-applicable" as const)
         : ({
             type: "user-approval",
@@ -201,7 +210,7 @@ export async function runTurn(chatId: string): Promise<void> {
       instructions: `${RULES}\n\n${contextBlock({
         locale: chat.locale,
         today: todayIn(tz),
-        mode: chat.mode,
+        mode,
         person: {
           id: person.id,
           name: person.name,

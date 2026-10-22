@@ -202,6 +202,7 @@ export function Message({
     return <p className="text-center text-[12px] text-text-3">{text}</p>
   }
   if (message.role === "user" && from && !from.mine) {
+    const photos = message.parts.filter((p) => p.type === "file")
     const text = message.parts
       .map((p) => (p.type === "text" ? p.text : ""))
       .join("\n")
@@ -211,6 +212,16 @@ export function Message({
         <Face look={from.look} name={from.name} size="sm" />
         <div className="flex max-w-[85%] flex-col gap-1">
           <span className="ps-1 text-[12px] font-semibold text-text-3">{from.name}</span>
+          {photos.length ? (
+            <div className="flex flex-wrap gap-2">
+              {photos.map((p) =>
+                p.type === "file" ? (
+                  // biome-ignore lint/performance/noImgElement: a member-checked photo from the room
+                  <img key={p.url} src={p.url} alt="" className="print h-28 w-auto object-cover" />
+                ) : null,
+              )}
+            </div>
+          ) : null}
           {text ? (
             <p className="rounded-card rounded-es-[4px] bg-card px-4 py-2.5 text-[15px] whitespace-pre-wrap">
               {text}

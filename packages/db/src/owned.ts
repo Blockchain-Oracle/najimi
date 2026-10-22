@@ -147,7 +147,15 @@ export async function reownUserData(db: Db, fromUserId: string, toUserId: string
         and not exists (select 1 from ${blocks} c where c.blocker_id = ${toUserId}
           and c.blocked_id = b.blocked_id)`)
     await tx.delete(blocks).where(eq(blocks.blockerId, fromUserId))
+    // Blocks against them and reports about them follow the person too.
+    await tx.execute(sql`
+      update ${blocks} b set blocked_id = ${toUserId}
+      where b.blocked_id = ${fromUserId}
+        and not exists (select 1 from ${blocks} c where c.blocked_id = ${toUserId}
+          and c.blocker_id = b.blocker_id)`)
+    await tx.delete(blocks).where(eq(blocks.blockedId, fromUserId))
     await tx.update(reports).set({ reporterId: toUserId }).where(eq(reports.reporterId, fromUserId))
+    await tx.update(reports).set({ targetId: toUserId }).where(eq(reports.targetId, fromUserId))
     // Connected accounts (the account's own connection wins a clash) and what was done with them.
     await tx.execute(sql`
       update ${connectorSessions} c set user_id = ${toUserId}
@@ -179,12 +187,15 @@ export async function reownUserData(db: Db, fromUserId: string, toUserId: string
 
     // Usage: summed per day, so signing in never resets the day's allowance.
     await tx.execute(sql`
-      insert into ${usageDays} (user_id, day, turns, images, videos)
-      select ${toUserId}, day, turns, images, videos from ${usageDays} where user_id = ${fromUserId}
+      insert into ${usageDays} (user_id, day, turns, images, videos, calls, holds)
+      select ${toUserId}, day, turns, images, videos, calls, holds
+      from ${usageDays} where user_id = ${fromUserId}
       on conflict (user_id, day) do update set
         turns = ${usageDays}.turns + excluded.turns,
         images = ${usageDays}.images + excluded.images,
-        videos = ${usageDays}.videos + excluded.videos`)
+        videos = ${usageDays}.videos + excluded.videos,
+        calls = ${usageDays}.calls + excluded.calls,
+        holds = ${usageDays}.holds + excluded.holds`)
     await tx.delete(usageDays).where(eq(usageDays.userId, fromUserId))
   })
 }

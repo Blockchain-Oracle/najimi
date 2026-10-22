@@ -93,7 +93,8 @@ export function Composer({
   /** The signed-in person (their face sits on the composer). */
   person?: ChatPerson
   mode: Mode
-  onMode: (mode: Mode) => void
+  /** Only in your own chat with Najimi: in a circle each person keeps their own setting. */
+  onMode?: (mode: Mode) => void
   busy: boolean
   onSend: (text: string, photos: Uploaded[]) => void
   onStop: () => void
@@ -132,7 +133,7 @@ export function Composer({
   const pickMode = (next: Mode) => {
     if (next === mode) return
     sound("tap")
-    onMode(next)
+    onMode?.(next)
     setHint(next)
   }
 
@@ -294,58 +295,60 @@ export function Composer({
               }}
             />
           </label>
-          {photos.length === 0 ? (
+          {onMode && photos.length === 0 ? (
             <SamplePicker onPick={(sample) => setPhotos((p) => [...p, sample])} />
           ) : null}
           {/* The mode as a switch: the one in use names itself, the others are a tap away. */}
-          <fieldset className="flex items-center rounded-pill bg-raised p-0.5 shadow-sticker">
-            <legend className="sr-only">{ts("mode")}</legend>
-            {MODES.map(({ mode: m, icon: Icon }) => {
-              const on = m === mode
-              return (
-                <label
-                  key={m}
-                  title={t(`modeHints.${m}`)}
-                  className={cn(
-                    "relative flex h-8 cursor-pointer items-center rounded-pill px-2 text-[13px] font-medium whitespace-nowrap transition-colors has-focus-visible:outline-2 has-focus-visible:outline-signal",
-                    on ? "text-foreground" : "text-text-3 hover:text-foreground",
-                  )}
-                >
-                  <input
-                    type="radio"
-                    name={`mode-${uid}`}
-                    value={m}
-                    checked={on}
-                    onChange={() => pickMode(m)}
-                    className="sr-only"
-                  />
-                  {on ? (
-                    <motion.span
-                      layoutId={`mode-${uid}`}
-                      className="absolute inset-0 rounded-pill bg-card shadow-sticker-lift"
-                      transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+          {onMode ? (
+            <fieldset className="flex items-center rounded-pill bg-raised p-0.5 shadow-sticker">
+              <legend className="sr-only">{ts("mode")}</legend>
+              {MODES.map(({ mode: m, icon: Icon }) => {
+                const on = m === mode
+                return (
+                  <label
+                    key={m}
+                    title={t(`modeHints.${m}`)}
+                    className={cn(
+                      "relative flex h-8 cursor-pointer items-center rounded-pill px-2 text-[13px] font-medium whitespace-nowrap transition-colors has-focus-visible:outline-2 has-focus-visible:outline-signal",
+                      on ? "text-foreground" : "text-text-3 hover:text-foreground",
+                    )}
+                  >
+                    <input
+                      type="radio"
+                      name={`mode-${uid}`}
+                      value={m}
+                      checked={on}
+                      onChange={() => pickMode(m)}
+                      className="sr-only"
                     />
-                  ) : null}
-                  <Icon className="relative size-4 shrink-0" />
-                  <AnimatePresence initial={false}>
                     {on ? (
                       <motion.span
-                        initial={{ width: 0, opacity: 0 }}
-                        animate={{ width: "auto", opacity: 1 }}
-                        exit={{ width: 0, opacity: 0 }}
-                        transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
-                        className="relative overflow-hidden ps-1.5"
-                      >
-                        {t(`modesShort.${m}`)}
-                      </motion.span>
-                    ) : (
-                      <span className="sr-only">{t(`modesShort.${m}`)}</span>
-                    )}
-                  </AnimatePresence>
-                </label>
-              )
-            })}
-          </fieldset>
+                        layoutId={`mode-${uid}`}
+                        className="absolute inset-0 rounded-pill bg-card shadow-sticker-lift"
+                        transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+                      />
+                    ) : null}
+                    <Icon className="relative size-4 shrink-0" />
+                    <AnimatePresence initial={false}>
+                      {on ? (
+                        <motion.span
+                          initial={{ width: 0, opacity: 0 }}
+                          animate={{ width: "auto", opacity: 1 }}
+                          exit={{ width: 0, opacity: 0 }}
+                          transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+                          className="relative overflow-hidden ps-1.5"
+                        >
+                          {t(`modesShort.${m}`)}
+                        </motion.span>
+                      ) : (
+                        <span className="sr-only">{t(`modesShort.${m}`)}</span>
+                      )}
+                    </AnimatePresence>
+                  </label>
+                )
+              })}
+            </fieldset>
+          ) : null}
         </div>
         <div className="flex shrink-0 items-center gap-1.5">
           <VoiceButton

@@ -2,10 +2,11 @@ import { askUserOutput, type NajimiUIMessage } from "@najimi/agent"
 import { saveAndPublish, toUI } from "@najimi/agent/server"
 import { db, schema } from "@najimi/db"
 import { enqueue } from "@najimi/jobs"
-import { and, eq } from "drizzle-orm"
+import { and, desc, eq, lte } from "drizzle-orm"
 import { z } from "zod"
 import { body, fail, json, withSession } from "@/lib/api"
 import { ownedChat } from "@/lib/chat/store"
+import { outcomeOf, saveOutcome } from "@/lib/outcomes"
 
 const input = z.union([
   z.object({
@@ -48,6 +49,25 @@ export async function POST(request: Request, ctx: RouteContext<"/api/rooms/[id]/
   if (row?.role !== "assistant" || row.status !== "waiting")
     return fail("That card was already answered", 409)
 
+  // An approval (a call, a post, a picture) is the yes of the person who asked for it: the author
+  // of the last message before Najimi's turn. Anyone in the room may answer a question card.
+  if ("approval" in data && chat.kind !== "agent") {
+    const [asker] = await db
+      .select({ authorId: schema.messages.authorId })
+      .from(schema.messages)
+      .where(
+        and(
+          eq(schema.messages.chatId, chat.id),
+          eq(schema.messages.role, "user"),
+          lte(schema.messages.createdAt, row.createdAt),
+        ),
+      )
+      .orderBy(desc(schema.messages.createdAt))
+      .limit(1)
+    if (asker?.authorId && asker.authorId !== auth.session.user.id)
+      return fail("Only the person who asked can say yes to this", 403)
+  }
+
   let found = false
   const parts = (row.parts as Part[]).map((p) => {
     if (
@@ -80,6 +100,19 @@ export async function POST(request: Request, ctx: RouteContext<"/api/rooms/[id]/
       p.state === "approval-requested" ||
       (p.type === "tool-askUser" && p.state === "input-available"),
   )
+  // "How was it?" (a follow-up card): the answer is kept on the booking or night it was about.
+  if ("answer" in data && data.answer.toolCallId.startsWith("follow_")) {
+    const meta = (row.metadata ?? {}) as { bookingId?: string; planId?: string }
+    const card = (row.parts as Part[]).find((p) => p.toolCallId === data.answer.toolCallId) as
+      | (Part & { input?: { steps?: { options?: { id: string; label: string }[] }[] } })
+      | undefined
+    const outcome = outcomeOf(
+      card?.input?.steps?.[0]?.options,
+      data.answer.output.answers[0]?.choices[0],
+    )
+    if (outcome) await saveOutcome(auth.session.user.id, meta, outcome)
+  }
+
   const message = toUI({ ...row, parts })
   await saveAndPublish(chat.id, message, stillWaiting ? "waiting" : "resume")
   if (!stillWaiting) await enqueue("agentTurn", { chatId: chat.id }, chat.id)

@@ -99,6 +99,8 @@ export const people = pgTable(
     bio: text(),
     /** Who sees their taste and finds them: everyone, friends, or only them. */
     visibility: text().$type<"public" | "friends" | "private">().default("public").notNull(),
+    /** On the taste-twin radar for people nearby: off until they turn it on. */
+    radar: boolean().default(false).notNull(),
     /** Their taste colours, from their loves' artwork (orb, aura, washes). */
     aura: jsonb().$type<{ c1: string; c2: string; c3: string }>(),
     /** Qloo ids marked "not for me": excluded from every later pick. */

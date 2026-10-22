@@ -71,6 +71,8 @@ export const plans = pgTable(
     stops: jsonb().$type<PlanStop[]>().notNull(),
     route: jsonb().$type<PlanRoute | null>(),
     status: text().$type<"draft" | "booked" | "done">().default("draft").notNull(),
+    /** "How was it?", answered the day after: loved, fine, not, skipped. The Passport counts it then. */
+    outcome: text(),
     /** A public link (`/plan/<token>`), for sending to people outside the app. */
     token: text().notNull(),
     createdAt: timestamp({ withTimezone: true }).defaultNow().notNull(),

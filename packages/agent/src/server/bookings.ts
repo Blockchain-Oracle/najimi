@@ -113,6 +113,60 @@ export async function askHowItWent(booking: Booking, agentChatId: string | null)
   return Boolean(row)
 }
 
+type Plan = typeof schema.plans.$inferSelect
+
+/**
+ * The day after a night out (or the end of a trip) that wasn't booked through Najimi: the same
+ * "How was it?" card in its room. The answer is kept on the plan; the Passport counts it then.
+ */
+export async function askHowPlanWent(plan: Plan, agentChatId: string | null) {
+  const chatId = plan.chatId ?? agentChatId
+  await db.update(schema.plans).set({ status: "done" }).where(eq(schema.plans.id, plan.id))
+  if (!chatId) return false
+  const what = plan.kind === "trip" ? `the trip to ${plan.city ?? plan.title}` : plan.title
+  const [row] = await db
+    .insert(schema.messages)
+    .values({
+      id: `msg_follow_plan_${plan.id}`,
+      chatId,
+      role: "assistant",
+      status: "waiting",
+      parts: [
+        { type: "text", text: `How was ${what}?` },
+        {
+          type: "tool-askUser",
+          toolCallId: `follow_plan_${plan.id.slice(0, 12)}`,
+          state: "input-available",
+          input: {
+            title: `How was ${what}?`,
+            steps: [
+              {
+                id: "outcome",
+                question: `How was ${what}?`,
+                options: [
+                  { id: "loved", label: "Loved it" },
+                  { id: "fine", label: "It was fine" },
+                  { id: "not", label: "Not for me" },
+                  { id: "skipped", label: "We didn't go" },
+                ],
+              },
+            ],
+          },
+        },
+      ],
+      metadata: { planId: plan.id },
+    })
+    .onConflictDoNothing()
+    .returning()
+  if (!row) return false
+  await publishMessage(chatId, toUI(row))
+  await db
+    .update(schema.chats)
+    .set({ status: "waiting", lastActiveAt: new Date() })
+    .where(eq(schema.chats.id, chatId))
+  return true
+}
+
 /** A table call's outcome, applied once (the webhook and the fallback check may both arrive). */
 export async function applyCallResult(
   booking: Booking,

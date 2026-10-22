@@ -5,12 +5,13 @@ import { Sheet, SheetContent, SheetTitle } from "@najimi/ui/components/sheet"
 import { toast } from "@najimi/ui/components/sonner"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { Copy, Gamepad2, History, Plus, RotateCcw, Share2, UserPlus } from "lucide-react"
-import Link from "next/link"
 import { useTranslations } from "next-intl"
 import { Suspense, useEffect, useRef, useState } from "react"
 import { GameSheet } from "@/components/games/game-sheet"
+import { ProfileLink } from "@/components/people/profile-link"
 import { Face } from "@/components/taste/face"
 import { api } from "@/lib/fetcher"
+import { useNewChat } from "@/lib/new-chat"
 import type { Uploaded } from "@/lib/photo"
 import { type RoomStatus, useRoom } from "@/lib/use-room"
 import { ChatProvider, shareChat } from "./chat-context"
@@ -68,6 +69,7 @@ const textOf = (m: NajimiUIMessage) =>
  */
 export function ChatView(props: ChatViewProps) {
   const t = useTranslations("Chat")
+  const newChat = useNewChat()
   const queryClient = useQueryClient()
   const [mode, setMode] = useState<Mode>(props.mode)
   const [title, setTitle] = useState(props.title)
@@ -94,6 +96,7 @@ export function ChatView(props: ChatViewProps) {
     initialStatus: props.status,
     after: props.after,
     me: props.me,
+    kind,
     onTitle: (next) => {
       setTitle(next)
       void queryClient.invalidateQueries({ queryKey: ["chats"] })
@@ -153,18 +156,23 @@ export function ChatView(props: ChatViewProps) {
             <h1 className="min-w-0 flex-1 truncate text-center text-[15px] font-semibold">
               {title ?? (messages.length ? t("untitled") : "")}
             </h1>
+          ) : kind === "dm" ? (
+            // A DM's title is the other person: it opens their profile when they have one.
+            <ProfileLink
+              username={others[0]?.username}
+              className="flex min-w-0 flex-1 items-center justify-center gap-2"
+            >
+              {others[0] ? <Face look={others[0].look} name={others[0].name} size="xs" /> : null}
+              <h1 className="truncate text-[15px] font-semibold">{roomTitle}</h1>
+            </ProfileLink>
           ) : (
             <button
               type="button"
-              onClick={() =>
-                kind === "dm" && others[0]?.username
-                  ? window.location.assign(`/u/${others[0].username}`)
-                  : setMembersOpen(true)
-              }
+              onClick={() => setMembersOpen(true)}
               className="flex min-w-0 flex-1 items-center justify-center gap-2"
             >
               <span className="flex -space-x-2">
-                {(kind === "dm" ? others : (props.members ?? [])).slice(0, 4).map((m) => (
+                {(props.members ?? []).slice(0, 4).map((m) => (
                   <span key={m.userId} className="rounded-full ring-2 ring-background">
                     <Face look={m.look} name={m.name} size="xs" />
                   </span>
@@ -184,14 +192,15 @@ export function ChatView(props: ChatViewProps) {
               <Gamepad2 className="size-5" />
             </button>
           )}
-          <Link
-            href="/c"
+          <button
+            type="button"
+            onClick={newChat}
             aria-label={t("newChat")}
             title={t("newChat")}
             className="grid size-10 place-items-center rounded-full text-text-2 transition-colors hover:bg-card hover:text-foreground"
           >
             <Plus className="size-5" />
-          </Link>
+          </button>
         </header>
 
         <div
@@ -299,7 +308,7 @@ export function ChatView(props: ChatViewProps) {
             <Composer
               person={props.people[0]}
               mode={mode}
-              onMode={changeMode}
+              onMode={kind === "agent" ? changeMode : undefined}
               busy={busy}
               onSend={(text, photos) => void send(text, photos)}
               onStop={() => void room.stop()}
@@ -360,8 +369,8 @@ export function ChatView(props: ChatViewProps) {
             <ul className="mt-3 flex flex-col">
               {(props.members ?? []).map((m) => (
                 <li key={m.userId}>
-                  <Link
-                    href={m.username ? `/u/${m.username}` : "#"}
+                  <ProfileLink
+                    username={m.username}
                     className="flex items-center gap-3 rounded-tile px-1 py-2 hover:bg-card"
                   >
                     <Face look={m.look} name={m.name} size="sm" />
@@ -374,7 +383,7 @@ export function ChatView(props: ChatViewProps) {
                         <span className="text-[13px] text-text-3">@{m.username}</span>
                       ) : null}
                     </span>
-                  </Link>
+                  </ProfileLink>
                 </li>
               ))}
             </ul>

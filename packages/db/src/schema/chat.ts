@@ -85,8 +85,8 @@ export const messages = pgTable(
       .notNull()
       .references(() => chats.id, { onDelete: "cascade" }),
     role: text().$type<"user" | "assistant" | "system">().notNull(),
-    /** The person who wrote it (null for Najimi, or someone who has since left). */
-    authorId: text().references(() => user.id, { onDelete: "set null" }),
+    /** The person who wrote it (null for Najimi). Deleting their account deletes what they wrote. */
+    authorId: text().references(() => user.id, { onDelete: "cascade" }),
     parts: jsonb().$type<unknown[]>().default([]).notNull(),
     metadata: jsonb().$type<Record<string, unknown>>(),
     /** done; streaming; waiting (a card needs an answer); resume (answered, Najimi carries on); failed. */

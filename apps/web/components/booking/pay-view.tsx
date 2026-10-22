@@ -47,12 +47,10 @@ function loadSdk(): Promise<void> {
 export function PayView({
   booking,
   secretKey,
-  mode,
   holder: initial,
 }: {
   booking: BookingView
   secretKey: string
-  mode: "live" | "sandbox"
   holder: Record<string, string>
 }) {
   const t = useTranslations("Booking")
@@ -94,7 +92,8 @@ export function PayView({
         const Pay = window.LiteAPIPayment
         if (!Pay) throw new Error("The payment sheet didn't load")
         new Pay({
-          publicKey: mode,
+          // Real payments only (Nuitee's sheet is merchant of record).
+          publicKey: "live",
           appearance: { theme: "flat" },
           options: { business: { name: "Najimi" } },
           targetElement: "#nuitee-pay",
@@ -104,7 +103,7 @@ export function PayView({
       })
       .catch((e: Error) => toast(e.message))
       .finally(() => setLoading(false))
-  }, [step, mode, secretKey, booking.id])
+  }, [step, secretKey, booking.id])
 
   const save = async () => {
     setSaving(true)

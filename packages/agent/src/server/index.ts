@@ -1,6 +1,7 @@
 export {
   applyCallResult,
   askHowItWent,
+  askHowPlanWent,
   callNotAnswered,
   setBooking,
   tellBooking,

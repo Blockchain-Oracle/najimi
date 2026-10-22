@@ -12,9 +12,12 @@ async function NewChat({ ask }: { ask: Promise<string | undefined> }) {
   if (!session) redirect(back)
   const data = await chatPageData(session.user.id, null)
   if (!data.self || !data.person) redirect(back)
+  // Keyed by its id: a second "new chat" never inherits the first one's state.
+  const chatId = randomUUID()
   return (
     <ChatView
-      chatId={randomUUID()}
+      key={chatId}
+      chatId={chatId}
       isNew
       title={null}
       messages={[]}

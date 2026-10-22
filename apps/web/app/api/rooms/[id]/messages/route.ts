@@ -2,17 +2,17 @@ import { charge, ownsUploads, publishMessage, roomMessages, toUI } from "@najimi
 import { DEFAULT_LOCALE, ROOMS } from "@najimi/config"
 import { db, schema } from "@najimi/db"
 import { enqueue } from "@najimi/jobs"
-import { and, eq, gte, isNull } from "drizzle-orm"
+import { and, eq, gte, isNull, ne } from "drizzle-orm"
 import { z } from "zod"
 import { body, fail, json, withSession } from "@/lib/api"
 import { chatExists, createAgentRoom, ownedChat } from "@/lib/chat/store"
 import { isLocale } from "@/lib/i18n"
+import { callsNajimi } from "@/lib/mention"
 import { selfOf } from "@/lib/people"
 import { allow } from "@/lib/rate-limit"
-import { notify } from "@/lib/social"
+import { blockedWith, notify } from "@/lib/social"
 
 /** Calling Najimi in a room: "@najimi", or a message that starts with its name. */
-const MENTION = /(^|\s)@najimi\b|^\s*najimi\b/i
 
 const UPLOAD_URL = /^\/api\/media\/upload\/([0-9a-f-]{36})\?v=(original|display)$/
 
@@ -98,7 +98,18 @@ export async function POST(request: Request, ctx: RouteContext<"/api/rooms/[id]/
   // Najimi answers in its own conversations, and in a circle or a DM when someone calls it
   // ("@najimi", "Najimi, …"); a turn takes from today's allowance.
   const guest = Boolean((user as { isAnonymous?: boolean | null }).isAnonymous)
-  const answers = chat.kind === "agent" || MENTION.test(text)
+  const answers = callsNajimi(chat.kind, text)
+
+  // Blocking holds in rooms you already share: a DM with someone either of you blocked is closed,
+  // and in a circle they don't hear about each other's messages.
+  const blocked = chat.kind === "agent" ? new Set<string>() : await blockedWith(user.id)
+  if (chat.kind === "dm" && blocked.size) {
+    const [other] = await db
+      .select({ userId: schema.chatMembers.userId })
+      .from(schema.chatMembers)
+      .where(and(eq(schema.chatMembers.chatId, chat.id), ne(schema.chatMembers.userId, user.id)))
+    if (other && blocked.has(other.userId)) return fail("You can't message here", 403)
+  }
   if (answers && !(await charge(user.id, guest, "turns")))
     return fail("That's all the chat for today. Come back tomorrow, or sign in for more.", 429)
 
@@ -124,7 +135,7 @@ export async function POST(request: Request, ctx: RouteContext<"/api/rooms/[id]/
     .onConflictDoNothing()
     .returning()
   // A resent message (a retry after a dropped connection) is already there.
-  if (!row) return json({ ok: true, chatId: chat.id })
+  if (!row) return json({ ok: true, chatId: chat.id, answers })
   await publishMessage(chat.id, toUI(row))
   await db
     .update(schema.chats)
@@ -155,7 +166,7 @@ export async function POST(request: Request, ctx: RouteContext<"/api/rooms/[id]/
       .where(eq(schema.chatMembers.chatId, chat.id))
     const since = new Date(Date.now() - ROOMS.notifyQuietMs)
     for (const m of members) {
-      if (m.userId === user.id) continue
+      if (m.userId === user.id || blocked.has(m.userId)) continue
       const [recent] = await db
         .select({ id: schema.notifications.id })
         .from(schema.notifications)
@@ -179,5 +190,5 @@ export async function POST(request: Request, ctx: RouteContext<"/api/rooms/[id]/
       })
     }
   }
-  return json({ ok: true, chatId: chat.id }, 202)
+  return json({ ok: true, chatId: chat.id, answers }, 202)
 }

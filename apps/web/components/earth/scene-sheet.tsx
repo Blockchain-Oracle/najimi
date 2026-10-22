@@ -4,9 +4,9 @@ import type { Scene } from "@najimi/qloo"
 import { Sheet, SheetContent, SheetTitle } from "@najimi/ui/components/sheet"
 import { useQuery } from "@tanstack/react-query"
 import { MapPin, MessageCircle, Moon, Store } from "lucide-react"
-import Link from "next/link"
 import { useTranslations } from "next-intl"
 import { useAgent } from "@/components/agent/agent-context"
+import { ProfileLink } from "@/components/people/profile-link"
 import { Face } from "@/components/taste/face"
 import { api } from "@/lib/fetcher"
 
@@ -233,16 +233,16 @@ export function SceneSheet({ spot, onClose }: { spot: SceneSpot | null; onClose:
                 <Row title={t("locals")}>
                   <div className="flex flex-wrap gap-3">
                     {scene.data.people.map((p) => (
-                      <Link
+                      <ProfileLink
                         key={p.userId}
-                        href={p.username ? `/u/${p.username}` : "#"}
+                        username={p.username}
                         className="flex w-14 flex-col items-center gap-1"
                       >
                         <Face look={p.look} name={p.name} size="md" />
                         <span className="w-full truncate text-center text-[12px] font-semibold">
                           {p.name}
                         </span>
-                      </Link>
+                      </ProfileLink>
                     ))}
                   </div>
                 </Row>

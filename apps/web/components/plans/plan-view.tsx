@@ -6,7 +6,7 @@ import type { PlanRoute, PlanStop } from "@najimi/db/schema"
 import { toast } from "@najimi/ui/components/sonner"
 import { CalendarPlus, Car, Footprints, MapPin, Navigation, Phone, Share2, X } from "lucide-react"
 import type { Map as MapLibreMap } from "maplibre-gl"
-import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { useEffect, useMemo, useRef, useState } from "react"
 import { useAgent } from "@/components/agent/agent-context"
@@ -62,6 +62,7 @@ function pin(n: number) {
 }
 
 export function PlanView({ plan, signedIn }: { plan: Plan; signedIn: boolean }) {
+  const router = useRouter()
   const t = useTranslations("Plans")
   const agent = useAgent()
   const box = useRef<HTMLDivElement>(null)
@@ -161,6 +162,13 @@ export function PlanView({ plan, signedIn }: { plan: Plan; signedIn: boolean }) 
   const dateOf = (iso: string | null | undefined) =>
     iso ? new Date(iso).toISOString().slice(0, 10) : new Date().toISOString().slice(0, 10)
 
+  // Back to where you came from (the chat that made it); a shared link opened cold goes home.
+  const close = () => {
+    const fromHere = document.referrer.startsWith(window.location.origin)
+    if (fromHere && window.history.length > 1) router.back()
+    else router.push(signedIn ? "/c" : "/")
+  }
+
   return (
     <main className="dark min-h-dvh bg-background text-foreground">
       <div className="relative h-[46svh] w-full">
@@ -168,13 +176,14 @@ export function PlanView({ plan, signedIn }: { plan: Plan; signedIn: boolean }) 
           <div ref={box} className="size-full" />
         </div>
         <div className="pointer-events-none absolute inset-x-0 top-0 flex justify-between p-4 pt-[max(env(safe-area-inset-top),16px)]">
-          <Link
-            href={signedIn ? "/c" : "/"}
+          <button
+            type="button"
+            onClick={close}
             aria-label={t("open")}
             className="glass pointer-events-auto grid size-10 place-items-center rounded-full"
           >
             <X className="size-5" />
-          </Link>
+          </button>
           <button
             type="button"
             onClick={() => void share()}

@@ -39,7 +39,7 @@ export const gameRounds = pgTable(
     chatId: uuid().references(() => chats.id, { onDelete: "cascade" }),
     /** Whose taste it's about (Blind Taste: null, it's each player's own). */
     subjectId: text().references(() => user.id, { onDelete: "cascade" }),
-    createdBy: text().references(() => user.id, { onDelete: "set null" }),
+    createdBy: text().references(() => user.id, { onDelete: "cascade" }),
     items: jsonb().$type<GameItem[]>().notNull(),
     /** The challenge link (`/play/<token>`): anyone can play, no account needed. */
     token: text().notNull(),

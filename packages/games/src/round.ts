@@ -141,7 +141,7 @@ export async function roundView(roundToken: string, player: Player | null) {
     /** Who's playing (null for a guest who hasn't answered yet). */
     me,
     signedIn: Boolean(player && "userId" in player),
-    items: publicItems(round.items) as PublicItem[],
+    items: publicItems(round.items, round.kind) as PublicItem[],
     reveals: revealsOf(round, answered),
     done: answered.length >= round.items.length,
     score: mine?.score ?? 0,

@@ -15,8 +15,21 @@ export const GAME_KINDS = [
 /** What a player sees before answering: everything but the truth. */
 export type PublicItem = Omit<GameItem, "truth">
 
-export const publicItems = (items: GameItem[]): PublicItem[] =>
-  items.map(({ truth: _truth, ...rest }) => rest)
+/**
+ * The items without their truths. In "How well do you know me" the item *is* the right answer (the
+ * subject's own love, also one of the options), so its identity goes and the options are numbered.
+ */
+export const publicItems = (items: GameItem[], kind: GameKind): PublicItem[] =>
+  items.map(({ truth: _truth, ...rest }) =>
+    kind === "knowme"
+      ? {
+          ...rest,
+          qlooId: "",
+          name: "",
+          options: rest.options?.map((o, i) => ({ ...o, id: String(i) })),
+        }
+      : rest,
+  )
 
 /** Blind Taste's three answers: no, maybe, love. Qloo's 0–100 falls into the same three. */
 export const BLIND_BANDS = { love: 72, maybe: 55 } as const

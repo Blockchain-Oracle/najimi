@@ -14,11 +14,26 @@ const item = (truth: number, options?: string[]): GameItem => ({
 })
 
 test("a player never sees the truth before answering", () => {
-  const visible = publicItems([item(80), item(1, ["a", "b", "c"])])
+  const visible = publicItems([item(80), item(1, ["a", "b", "c"])], "wavelength")
   for (const v of visible) assert.equal("truth" in v, false)
   assert.deepEqual(
     visible[1]?.options?.map((o) => o.id),
     ["a", "b", "c"],
+  )
+})
+
+test("how well do you know me hides which option is the subject's own love", () => {
+  const right = item(1, ["decoy-1", "id-1", "decoy-2"])
+  const [v] = publicItems([right], "knowme")
+  assert.equal(v?.qlooId, "")
+  assert.equal(v?.name, "")
+  assert.deepEqual(
+    v?.options?.map((o) => o.id),
+    ["0", "1", "2"],
+  )
+  assert.equal(
+    v?.options?.some((o) => o.id === "id-1"),
+    false,
   )
 })
 

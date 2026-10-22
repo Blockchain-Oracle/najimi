@@ -2,7 +2,7 @@ import "server-only"
 import { db, schema } from "@najimi/db"
 import type { TasteWords } from "@najimi/db/schema"
 import { TITLES } from "@najimi/games/round"
-import { and, desc, eq, gte, inArray, isNotNull, lt, sql } from "drizzle-orm"
+import { and, desc, eq, gte, inArray, isNotNull, isNull, lt, ne, or, sql } from "drizzle-orm"
 
 /*
  * The Taste Passport (W21): a year of culture, stamped as it happened. Every stamp is something
@@ -62,6 +62,8 @@ export async function stampsOf(userId: string, year: number): Promise<Stamp[]> {
       .where(
         and(
           eq(schema.plans.ownerId, userId),
+          // A night or trip stamps once you said how it was (not "we didn't go").
+          inArray(schema.plans.outcome, ["loved", "fine", "not"]),
           isNotNull(schema.plans.startsAt),
           gte(schema.plans.startsAt, from),
           lt(schema.plans.startsAt, until),
@@ -74,6 +76,7 @@ export async function stampsOf(userId: string, year: number): Promise<Stamp[]> {
         and(
           eq(schema.bookings.ownerId, userId),
           inArray(schema.bookings.status, ["confirmed", "completed"]),
+          or(isNull(schema.bookings.outcome), ne(schema.bookings.outcome, "skipped")),
           isNotNull(schema.bookings.startsAt),
           gte(schema.bookings.startsAt, from),
           lt(schema.bookings.startsAt, until),

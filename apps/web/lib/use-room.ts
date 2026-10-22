@@ -3,6 +3,7 @@
 import type { NajimiUIMessage, Screen } from "@najimi/agent"
 import { useCallback, useEffect, useRef, useState } from "react"
 import { api } from "@/lib/fetcher"
+import { callsNajimi, type RoomKind } from "@/lib/mention"
 
 export type RoomStatus = "idle" | "generating" | "waiting" | "stopping"
 
@@ -28,6 +29,7 @@ export function useRoom({
   initialStatus,
   after,
   me,
+  kind = "agent",
   onTitle,
 }: {
   chatId: string
@@ -36,6 +38,8 @@ export function useRoom({
   /** The room's newest event when the page was made: the stream starts after it. */
   after: number
   me: string
+  /** In a circle or DM only a message that calls Najimi starts a turn; anything else is just said. */
+  kind?: RoomKind
   onTitle?: (title: string) => void
 }) {
   const [messages, setMessages] = useState(initial)
@@ -97,10 +101,15 @@ export function useRoom({
           ...(screen ? { screen } : {}),
         },
       })
-      setStatus("generating")
+      const answering = callsNajimi(kind, text)
+      if (answering) setStatus("generating")
       try {
         const tz = Intl.DateTimeFormat().resolvedOptions().timeZone
-        await api(`/api/rooms/${chatId}/messages`, { json: { id, text, files, screen, tz } })
+        const sent = await api<{ answers?: boolean }>(`/api/rooms/${chatId}/messages`, {
+          json: { id, text, files, screen, tz },
+        })
+        // The server has the last word on whether Najimi answers (it may not, e.g. out of turns).
+        if (sent.answers === false) setStatus((s) => (s === "generating" ? "idle" : s))
         setLive(true)
       } catch (e) {
         setMessages((list) => list.filter((m) => m.id !== id))
@@ -110,7 +119,7 @@ export function useRoom({
       }
       return true
     },
-    [chatId, me, upsert],
+    [chatId, me, kind, upsert],
   )
 
   const answer = useCallback(

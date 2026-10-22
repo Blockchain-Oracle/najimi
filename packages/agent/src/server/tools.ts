@@ -25,7 +25,7 @@ import {
 } from "@najimi/qloo"
 import { normalisePhone, venuePhone } from "@najimi/sources"
 import { tool } from "ai"
-import { and, asc, count, eq } from "drizzle-orm"
+import { and, asc, count, eq, or } from "drizzle-orm"
 import type { z } from "zod"
 import { type insightsInput, type Pick, toolDefs } from "../tools"
 import { startBusiness } from "./business"
@@ -171,6 +171,20 @@ const FILTER_TYPE: Record<string, string> = {
 }
 
 /** The tools of one turn, each bound to the user and their taste. */
+/** Whether two people follow each other (what "friends" means for who sees a taste). */
+async function followEachOther(a: string, b: string): Promise<boolean> {
+  const rows = await db
+    .select({ followerId: schema.follows.followerId })
+    .from(schema.follows)
+    .where(
+      or(
+        and(eq(schema.follows.followerId, a), eq(schema.follows.followeeId, b)),
+        and(eq(schema.follows.followerId, b), eq(schema.follows.followeeId, a)),
+      ),
+    )
+  return rows.length === 2
+}
+
 export function buildTools(ctx: TurnContext, messageId: () => string | undefined) {
   const call = (purpose: string) => ({
     userId: ctx.userId,
@@ -1055,13 +1069,34 @@ export function buildTools(ctx: TurnContext, messageId: () => string | undefined
         let subject: { name: string; look: string | null } | null = null
         if (input.about && input.kind !== "blind" && input.kind !== "twins") {
           const [row] = await db
-            .select({ id: schema.user.id, name: schema.people.name, look: schema.people.look })
+            .select({
+              id: schema.user.id,
+              name: schema.people.name,
+              look: schema.people.look,
+              visibility: schema.people.visibility,
+            })
             .from(schema.user)
             .innerJoin(
               schema.people,
               and(eq(schema.people.ownerId, schema.user.id), eq(schema.people.isSelf, true)),
             )
             .where(eq(schema.user.username, input.about.replace(/^@/, "").toLowerCase()))
+          // The same rule as their profile: a private taste is theirs; "friends" means you follow
+          // each other.
+          const seen =
+            row &&
+            (row.id === ctx.userId ||
+              row.visibility === "public" ||
+              (row.visibility === "friends" && (await followEachOther(ctx.userId, row.id))))
+          if (row && !seen)
+            return {
+              token: null,
+              kind: input.kind,
+              title: TITLES[input.kind],
+              subject: null,
+              count: 0,
+              note: "Their taste is private, so there's no game about them.",
+            }
           if (row) {
             subjectId = row.id
             subject = { name: row.name, look: row.look }

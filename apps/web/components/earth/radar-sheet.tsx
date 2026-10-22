@@ -4,8 +4,8 @@ import { Sheet, SheetContent, SheetTitle } from "@najimi/ui/components/sheet"
 import { cn } from "@najimi/ui/lib/utils"
 import { useQuery } from "@tanstack/react-query"
 import { motion, useReducedMotion } from "motion/react"
-import Link from "next/link"
 import { useTranslations } from "next-intl"
+import { ProfileLink } from "@/components/people/profile-link"
 import { Face } from "@/components/taste/face"
 import { api } from "@/lib/fetcher"
 
@@ -122,17 +122,14 @@ export function RadarSheet({
                 className="absolute -translate-x-1/2 -translate-y-1/2 rtl:translate-x-1/2"
                 style={at(i, r)}
               >
-                <Link
-                  href={p.username ? `/u/${p.username}` : "#"}
-                  className="flex flex-col items-center gap-1"
-                >
+                <ProfileLink username={p.username} className="flex flex-col items-center gap-1">
                   <span className="rounded-full ring-2 ring-white/80">
                     <Face look={p.look} name={p.name} size="sm" />
                   </span>
                   <span className="rounded-pill bg-black/70 px-1.5 text-[11px] font-semibold whitespace-nowrap">
                     {p.name}
                   </span>
-                </Link>
+                </ProfileLink>
               </motion.span>
             )
           })}
@@ -172,15 +169,15 @@ export function RadarSheet({
 
         <div className="mt-4 flex flex-col gap-1">
           {twins.slice(0, 5).map((p) => (
-            <Link
+            <ProfileLink
               key={p.userId}
-              href={p.username ? `/u/${p.username}` : "#"}
+              username={p.username}
               className="flex items-center gap-3 rounded-tile px-2 py-2 hover:bg-white/5"
             >
               <Face look={p.look} name={p.name} size="sm" />
               <span className="flex-1 text-[15px] font-semibold">{p.name}</span>
               <span className="text-[13px] text-text-3">{t("inCommon", { count: p.shared })}</span>
-            </Link>
+            </ProfileLink>
           ))}
           {radar.data && !twins.length ? (
             <p className="text-[14px] text-text-3">{t("radarEmpty")}</p>
