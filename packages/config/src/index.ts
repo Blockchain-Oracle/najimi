@@ -157,6 +157,21 @@ const HOUR_S = 60 * 60
 
 /** Images and video (generation providers, sizes, polling). */
 export const MEDIA = {
+  /**
+   * Images run on fal when there's a fal key: FLUX 2 Edit kept the room exactly and relit it as
+   * asked for about 2.4¢ (a side-by-side on the sample bedroom, 2026-10-22, beat Nano Banana,
+   * Seedream 4.5 and OpenAI at 8× the price). Without a fal key, OpenAI below.
+   */
+  fal: {
+    editModel: "fal-ai/flux-2/edit",
+    model: "fal-ai/flux-2",
+    /** About 1.2 megapixels: sharp on a phone, priced per megapixel. */
+    sizes: {
+      landscape: { width: 1344, height: 896 },
+      portrait: { width: 896, height: 1344 },
+      square: { width: 1088, height: 1088 },
+    },
+  },
   image: {
     provider: "openai",
     /** New images (a dish, a mood, an outfit): the low-cost image model. */
@@ -171,6 +186,8 @@ export const MEDIA = {
     timeoutMs: 3 * 60 * 1000,
   },
   video: {
+    /** Off until someone decides to pay for video; a fal key alone doesn't turn it on. */
+    enabled: false,
     provider: "fal",
     /** FLUX 3 Max image-to-video is on promotion until 7 Nov 2026; Kling 3.0 after. */
     model: "blackforestlabs/flux-3-max/image-to-video",

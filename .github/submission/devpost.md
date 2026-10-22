@@ -37,7 +37,7 @@ Then the taste becomes material: a `tasteBrief` picks the words that matter for 
 - **Next.js 16** (App Router, partial prerendering) and **AI SDK 7**: one chat route streams tool cards, saves after every step, and keeps running if the page closes. Approvals for anything that costs are signed so they can't be forged.
 - A **pg-boss** worker on **Postgres 17** runs the taste reveal, image and video jobs, chat titles and a nightly guest sweep; live progress travels through Postgres `LISTEN/NOTIFY` to pages as server-sent events.
 - A Qloo client with stable-key caching, in-flight de-duplication and a per-call log (the source of every "Qloo" chip).
-- OpenAI for the agent and images, fal for video (built, waiting on a key), ElevenLabs for voice, openFDA for labels, Resend for sign-in codes; media in **RustFS** (S3) behind signed links.
+- OpenAI (`gpt-6-luna`) for the agent; **FLUX 2 on fal** for images, picked in a side-by-side on the same room for keeping it intact; video built on fal and switched off; ElevenLabs for voice, openFDA for labels, Resend for sign-in codes; media in **RustFS** (S3) behind signed links.
 - next-intl with twelve catalogs filled by a translation script that only accepts answers keeping each message's ICU structure.
 - Everything runs as containers on **Coolify**.
 
@@ -61,7 +61,7 @@ Taste data is most useful as **vocabulary**. A list of picks is a dead end; the 
 
 ## What's next
 
-- Turn video on (the pipeline is built) for short films of a restyled room or a taste.
+- Switch video on (the pipeline is built) for short films of a restyled room or a taste.
 - Couples and households: one plan that fits two tastes, using `qlooCompare`.
 - Shopping lists and store availability near you for the products and recipes it suggests.
 - Native share sheets and saved rooms you can come back to.

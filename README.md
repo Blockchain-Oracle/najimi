@@ -68,9 +68,9 @@ You can check it: every Qloo card has a **Qloo** chip that opens the exact reque
 
 | Capability | How |
 | --- | --- |
-| Chat agent | AI SDK 7 with OpenAI; up to 10 tool steps per turn; approvals for anything that costs |
-| Restyles and new images | OpenAI image models; your photo is kept private, results get thumb and display renditions |
-| Short films | fal image-to-video (FLUX 3 Max, then Kling 3.0 from 7 November) through a queue and a poller; **built, switched off until a `FAL_KEY` is set** |
+| Chat agent | AI SDK 7 with OpenAI `gpt-6-luna`; up to 10 tool steps per turn; approvals for anything that costs |
+| Restyles and new images | FLUX 2 on fal (FLUX 2 Edit keeps your room and changes the light, about 2–3¢ an image; OpenAI as a fallback); results get thumb and display renditions |
+| Short films | fal image-to-video through a queue and a poller; **built, switched off** (`MEDIA.video.enabled`) because a clip costs far more than an image |
 | Lighting plans, recipes, meal plans | Structured tools: kelvin, lumens, layers, an electrician's brief; IDDSI texture levels, serving temperature |
 | Real products | Brands from Qloo; product pages read from each brand's own site (JSON-LD), only items with a price |
 | Medication notes | The FDA label via openFDA (interactions such as vitamin K with warfarin) |
@@ -96,7 +96,7 @@ On a local copy of the same code:
 
 Limits, plainly:
 
-- **Video is off** until a fal.ai key is set; Najimi doesn't offer it until then.
+- **Video is built but off**; Najimi offers images instead until it's switched on.
 - The beta languages are machine-translated (checked for structure, not by native speakers).
 - Product search reads brands' own sites, so a brand without product pages, or without prices, shows none.
 - Medication notes quote the label; they are not medical advice.

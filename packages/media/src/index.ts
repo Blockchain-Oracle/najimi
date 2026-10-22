@@ -5,9 +5,10 @@ import { env } from "@najimi/env/server"
 import { generateImage } from "ai"
 
 /*
- * Making media. Images run on OpenAI (the funded key): an edit keeps the person's real room or
- * object and changes its look; a new image makes a scene from words. Video runs on fal.ai,
- * submitted to its queue and checked by the worker's poller, so a render outlives a restart.
+ * Making media. Images run on fal.ai (FLUX 2) when there's a fal key, else OpenAI: an edit keeps
+ * the person's real room or object and changes its look; a new image makes a scene from words.
+ * Video runs on fal.ai, submitted to its queue and checked by the worker's poller, so a render
+ * outlives a restart; it stays off until MEDIA.video.enabled.
  */
 
 /** The provider wouldn't make it (a safety refusal): shown kindly, and the allowance comes back. */
@@ -18,13 +19,15 @@ export class MediaRefused extends Error {
   }
 }
 
-export const imagesReady = () => Boolean(env.OPENAI_API_KEY)
-export const videoReady = () => Boolean(env.FAL_KEY)
+export const imagesReady = () => Boolean(env.FAL_KEY || env.OPENAI_API_KEY)
+export const videoReady = () => MEDIA.video.enabled && Boolean(env.FAL_KEY)
 
 const openai = () =>
   createOpenAI({ apiKey: env.OPENAI_API_KEY ?? "", baseURL: AGENT.baseUrls.openai })
 
 const REFUSAL = /(content[_ ]policy|safety|moderation|not allowed|rejected)/i
+
+const fal = () => createFalClient({ credentials: env.FAL_KEY, retry: { maxRetries: 0 } } as never)
 
 export type Aspect = "landscape" | "portrait" | "square"
 const SIZE: Record<Aspect, `${number}x${number}`> = {
@@ -38,6 +41,64 @@ const SIZE: Record<Aspect, `${number}x${number}`> = {
  * look); without, a new image. Bytes in, bytes out.
  */
 export async function makeImages(input: {
+  prompt: string
+  n: number
+  aspect: Aspect
+  source?: Uint8Array
+}): Promise<{ images: Uint8Array[]; mime: string; model: string }> {
+  return env.FAL_KEY ? falImages(input) : openaiImages(input)
+}
+
+type FalImage = { url: string; content_type?: string }
+
+/** FLUX 2 on fal: the source photo goes to fal's storage, the results come back as links. */
+async function falImages(input: {
+  prompt: string
+  n: number
+  aspect: Aspect
+  source?: Uint8Array
+}): Promise<{ images: Uint8Array[]; mime: string; model: string }> {
+  const model = input.source ? MEDIA.fal.editModel : MEDIA.fal.model
+  const client = fal()
+  const imageUrls = input.source
+    ? [
+        await client.storage.upload(
+          new Blob([new Uint8Array(input.source)], { type: "image/jpeg" }),
+        ),
+      ]
+    : undefined
+  let data: { images?: FalImage[]; has_nsfw_concepts?: boolean[] }
+  try {
+    const result = await client.subscribe(model, {
+      input: {
+        prompt: input.prompt,
+        ...(imageUrls ? { image_urls: imageUrls } : {}),
+        num_images: input.n,
+        image_size: MEDIA.fal.sizes[input.aspect],
+        output_format: "jpeg",
+      },
+      abortSignal: AbortSignal.timeout(MEDIA.image.timeoutMs),
+    } as never)
+    data = result.data as typeof data
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error)
+    if (REFUSAL.test(message)) throw new MediaRefused()
+    throw error
+  }
+  // A result the safety checker caught comes back blank: treat it as a refusal, not a picture.
+  const kept = (data.images ?? []).filter((_, i) => !data.has_nsfw_concepts?.[i])
+  if (!kept.length && data.images?.length) throw new MediaRefused()
+  const images = await Promise.all(
+    kept.map(async (img) => {
+      const response = await fetch(img.url, { signal: AbortSignal.timeout(60_000) })
+      if (!response.ok) throw new Error(`fal image download failed: ${response.status}`)
+      return new Uint8Array(await response.arrayBuffer())
+    }),
+  )
+  return { images, mime: kept[0]?.content_type ?? "image/jpeg", model }
+}
+
+async function openaiImages(input: {
   prompt: string
   n: number
   aspect: Aspect
@@ -67,8 +128,6 @@ export async function makeImages(input: {
 }
 
 // ── Video (fal.ai queue) ────────────────────────────────────────────────────────────────────
-
-const fal = () => createFalClient({ credentials: env.FAL_KEY, retry: { maxRetries: 0 } } as never)
 
 /** The video model for today (FLUX 3 Max on promotion until 7 Nov 2026, then Kling 3.0). */
 export const videoModel = () =>
