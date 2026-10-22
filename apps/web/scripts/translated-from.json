@@ -550,7 +550,9 @@
     "Demo.steps.share.title": "Share it",
     "Demo.steps.share.body": "Send the chat or the result; it unfurls with a picture, and never shows your own photo.",
     "Demo.cta": "Start with Relight my room",
-    "Demo.docs": "Read the docs"
+    "Demo.docs": "Read the docs",
+    "Taste.line": "{look} looks, {rooms} rooms, {mood} nights, {food} plates.",
+    "Taste.you": "You"
   },
   "es": {
     "Meta.tagline": "The taste copilot.",
@@ -1103,7 +1105,9 @@
     "Demo.steps.share.title": "Share it",
     "Demo.steps.share.body": "Send the chat or the result; it unfurls with a picture, and never shows your own photo.",
     "Demo.cta": "Start with Relight my room",
-    "Demo.docs": "Read the docs"
+    "Demo.docs": "Read the docs",
+    "Taste.line": "{look} looks, {rooms} rooms, {mood} nights, {food} plates.",
+    "Taste.you": "You"
   },
   "ha": {
     "Meta.tagline": "The taste copilot.",
@@ -1656,7 +1660,9 @@
     "Demo.steps.share.title": "Share it",
     "Demo.steps.share.body": "Send the chat or the result; it unfurls with a picture, and never shows your own photo.",
     "Demo.cta": "Start with Relight my room",
-    "Demo.docs": "Read the docs"
+    "Demo.docs": "Read the docs",
+    "Taste.line": "{look} looks, {rooms} rooms, {mood} nights, {food} plates.",
+    "Taste.you": "You"
   },
   "yo": {
     "Meta.tagline": "The taste copilot.",
@@ -2209,7 +2215,9 @@
     "Demo.steps.share.title": "Share it",
     "Demo.steps.share.body": "Send the chat or the result; it unfurls with a picture, and never shows your own photo.",
     "Demo.cta": "Start with Relight my room",
-    "Demo.docs": "Read the docs"
+    "Demo.docs": "Read the docs",
+    "Taste.line": "{look} looks, {rooms} rooms, {mood} nights, {food} plates.",
+    "Taste.you": "You"
   },
   "hi": {
     "Meta.tagline": "The taste copilot.",
@@ -2762,7 +2770,9 @@
     "Demo.steps.share.title": "Share it",
     "Demo.steps.share.body": "Send the chat or the result; it unfurls with a picture, and never shows your own photo.",
     "Demo.cta": "Start with Relight my room",
-    "Demo.docs": "Read the docs"
+    "Demo.docs": "Read the docs",
+    "Taste.line": "{look} looks, {rooms} rooms, {mood} nights, {food} plates.",
+    "Taste.you": "You"
   },
   "sw": {
     "Meta.tagline": "The taste copilot.",
@@ -3315,7 +3325,9 @@
     "Demo.steps.share.title": "Share it",
     "Demo.steps.share.body": "Send the chat or the result; it unfurls with a picture, and never shows your own photo.",
     "Demo.cta": "Start with Relight my room",
-    "Demo.docs": "Read the docs"
+    "Demo.docs": "Read the docs",
+    "Taste.line": "{look} looks, {rooms} rooms, {mood} nights, {food} plates.",
+    "Taste.you": "You"
   },
   "ig": {
     "Meta.tagline": "The taste copilot.",
@@ -3868,7 +3880,9 @@
     "Demo.steps.share.title": "Share it",
     "Demo.steps.share.body": "Send the chat or the result; it unfurls with a picture, and never shows your own photo.",
     "Demo.cta": "Start with Relight my room",
-    "Demo.docs": "Read the docs"
+    "Demo.docs": "Read the docs",
+    "Taste.line": "{look} looks, {rooms} rooms, {mood} nights, {food} plates.",
+    "Taste.you": "You"
   },
   "ja": {
     "Meta.tagline": "The taste copilot.",
@@ -4421,7 +4435,9 @@
     "Demo.steps.share.title": "Share it",
     "Demo.steps.share.body": "Send the chat or the result; it unfurls with a picture, and never shows your own photo.",
     "Demo.cta": "Start with Relight my room",
-    "Demo.docs": "Read the docs"
+    "Demo.docs": "Read the docs",
+    "Taste.line": "{look} looks, {rooms} rooms, {mood} nights, {food} plates.",
+    "Taste.you": "You"
   },
   "zh": {
     "Meta.tagline": "The taste copilot.",
@@ -4974,6 +4990,8 @@
     "Demo.steps.share.title": "Share it",
     "Demo.steps.share.body": "Send the chat or the result; it unfurls with a picture, and never shows your own photo.",
     "Demo.cta": "Start with Relight my room",
-    "Demo.docs": "Read the docs"
+    "Demo.docs": "Read the docs",
+    "Taste.line": "{look} looks, {rooms} rooms, {mood} nights, {food} plates.",
+    "Taste.you": "You"
   }
 }

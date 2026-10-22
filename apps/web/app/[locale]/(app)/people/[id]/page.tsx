@@ -55,6 +55,7 @@ async function Person({ params, searchParams }: Pick<Props, "params" | "searchPa
             name: page.person.name,
             isSelf: page.person.isSelf,
             city: page.person.city,
+            look: page.person.look,
             ageBand: page.person.ageBand,
             constraints: page.person.constraints,
           },

@@ -159,7 +159,9 @@
     "askFor": "Rịọ maka {name}",
     "askSelf": "Jụọ Najimi",
     "share": "Kesaa mmasị a",
-    "linkCopied": "E depụtaghachila link"
+    "linkCopied": "E depụtaghachila link",
+    "line": "Ọdịdị {look}, {rooms} ime ụlọ, abalị {mood}, efere {food}.",
+    "you": "Gị"
   },
   "Pick": {
     "because": "n'ihi na ị hụrụ {name} n'anya",

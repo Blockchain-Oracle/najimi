@@ -159,7 +159,9 @@
     "askFor": "Pedir para {name}",
     "askSelf": "Pedir ao Najimi",
     "share": "Compartilhar esse gosto",
-    "linkCopied": "Link copiado"
+    "linkCopied": "Link copiado",
+    "line": "Estilo {look}, ambientes {rooms}, noites {mood}, cozinha {food}.",
+    "you": "Você"
   },
   "Pick": {
     "because": "porque você ama {name}",

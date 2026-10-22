@@ -159,7 +159,9 @@
     "askFor": "{name} के लिए पूछें",
     "askSelf": "Najimi से पूछें",
     "share": "यह पसंद शेयर करें",
-    "linkCopied": "लिंक कॉपी हुआ"
+    "linkCopied": "लिंक कॉपी हुआ",
+    "line": "{look} अंदाज़, {rooms} कमरे, {mood} शामें, {food} खाना।",
+    "you": "आप"
   },
   "Pick": {
     "because": "क्योंकि आपको {name} बेहद पसंद है",

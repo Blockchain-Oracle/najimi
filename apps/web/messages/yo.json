@@ -159,7 +159,9 @@
     "askFor": "Béèrè fún {name}",
     "askSelf": "Béèrè lọ́wọ́ Najimi",
     "share": "Pín ìfẹ́ràn yìí",
-    "linkCopied": "A ti ṣe ẹ̀dà link"
+    "linkCopied": "A ti ṣe ẹ̀dà link",
+    "line": "Àwọn {look} ìrísí, àwọn yàrá {rooms}, àwọn alẹ́ {mood}, àwọn àwo oúnjẹ {food}.",
+    "you": "Ìwọ"
   },
   "Pick": {
     "because": "nítorí o fẹ́ràn {name}",

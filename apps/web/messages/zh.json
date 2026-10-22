@@ -159,7 +159,9 @@
     "askFor": "为 {name} 问问",
     "askSelf": "问问 Najimi",
     "share": "分享这份品味",
-    "linkCopied": "链接已复制"
+    "linkCopied": "链接已复制",
+    "line": "{look}的风格，{rooms}的房间，{mood}的夜晚，{food}美食。",
+    "you": "你"
   },
   "Pick": {
     "because": "因为你喜欢 {name}",

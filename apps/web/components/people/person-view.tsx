@@ -4,7 +4,7 @@ import { TASTE_DOMAINS } from "@najimi/config"
 import type { Constraints, StoredPick, TasteWords } from "@najimi/db/schema"
 import { Button } from "@najimi/ui/components/button"
 import { toast } from "@najimi/ui/components/sonner"
-import { MapPin, Share2 } from "lucide-react"
+import { Share2 } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
@@ -14,9 +14,11 @@ import { MoreSheet } from "@/components/picks/more-sheet"
 import type { PickActions } from "@/components/picks/pick-card"
 import { PickRail } from "@/components/picks/pick-rail"
 import { BuiltOnQloo } from "@/components/qloo/built-on-qloo"
-import { LovesFan, TasteWordsView } from "@/components/taste/taste-card"
+import { TasteHero, WordPalette } from "@/components/taste/taste-hero"
+import { TasteMap } from "@/components/taste/taste-map"
 import { api } from "@/lib/fetcher"
 import { shareLink } from "@/lib/share-link"
+import { sound } from "@/lib/sounds"
 import { type RunEvent, useRunEvents } from "@/lib/use-run"
 import { AboutForm } from "./about-form"
 import { type EditableLove, LovesEditor } from "./loves-editor"
@@ -27,6 +29,7 @@ export type PersonViewData = {
     name: string
     isSelf: boolean
     city: string | null
+    look: string | null
     ageBand: string | null
     constraints: Constraints
   }
@@ -66,16 +69,21 @@ export function PersonView({ data }: { data: PersonViewData }) {
 
   const onEvent = useCallback(
     (event: RunEvent) => {
-      if (event.type === "words") setWords(event.data.words as TasteWords)
-      else if (event.type === "picks")
+      // The reveal is heard as well as seen: words land, each domain clicks in, the end rings.
+      if (event.type === "words") {
+        setWords(event.data.words as TasteWords)
+        sound("place")
+      } else if (event.type === "picks") {
+        sound("tap")
         setPicks((prev) => ({
           ...prev,
           [event.data.domain as string]: event.data.picks as StoredPick[],
         }))
-      else if (event.type === "bridges") setBridges(event.data.bridges as typeof bridges)
+      } else if (event.type === "bridges") setBridges(event.data.bridges as typeof bridges)
       else if (event.type === "status") {
         const status = event.data.status as string
         if (status === "done") {
+          sound("promote")
           setLive(false)
           router.refresh()
         } else if (status === "failed") {
@@ -171,70 +179,57 @@ export function PersonView({ data }: { data: PersonViewData }) {
 
   return (
     <div className="flex flex-col gap-10 pb-16">
-      <section className="mx-5 overflow-hidden rounded-card bg-card text-card-foreground shadow-paper md:mx-0">
-        <LovesFan identity={data.identity} loves={data.loves} />
-        <div className="flex flex-col gap-5 p-5">
-          <div className="flex flex-col gap-1">
-            <p className="text-[11px] font-semibold tracking-wide text-paper-muted uppercase">
-              {person.isSelf ? t("mine") : t("theirs", { name: person.name })}
-            </p>
-            <h1 className="font-title text-title-sm">{person.name}</h1>
-            {person.city ? (
-              <p className="flex items-center gap-1 text-sm text-paper-muted">
-                <MapPin className="size-3.5" /> {person.city}
-              </p>
-            ) : null}
-          </div>
-          {words ? (
-            <TasteWordsView words={words} labels={wordLabels} />
-          ) : live ? (
-            <p className="flex items-center gap-2 text-sm text-paper-muted">
-              <span className="size-2 animate-lime-pulse rounded-full bg-lime-ink" />{" "}
-              {t("computing")}
-            </p>
-          ) : null}
-          {bridges.length ? (
-            <div className="flex flex-col gap-1.5">
-              <p className="text-[11px] font-semibold tracking-wide text-paper-muted uppercase">
-                {t("bridges")}
-              </p>
-              <ul className="flex flex-wrap gap-x-4 gap-y-1 text-sm">
-                {bridges.slice(0, 4).map((b) => (
-                  <li key={`${b.domain}-${b.to}`}>
-                    <span className="text-paper-muted">{td(b.domain as "artist")}: </span>
-                    {t("bridged", { from: b.from, to: b.to })}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ) : null}
-          <div className="flex flex-col gap-2">
-            <p className="text-[11px] font-semibold tracking-wide text-paper-muted uppercase">
-              {t("loves")}
-            </p>
-            <div className="flex flex-wrap items-center gap-2">
-              {data.loves.map((l) => (
-                <LovePill key={l.id} name={l.name} image={l.imageUrl} type={l.type} />
-              ))}
-              <LovesEditor personId={person.id} loves={data.loves} onChanged={startRun} />
-            </div>
-          </div>
+      <div className="mx-5 md:mx-0">
+        <TasteHero
+          person={person}
+          identity={data.identity}
+          look={person.look}
+          words={words}
+          loves={data.loves}
+          live={live}
+        />
+      </div>
+
+      <section className="mx-5 flex flex-col gap-6 rounded-card bg-card p-5 text-card-foreground shadow-paper md:mx-0">
+        {words ? (
+          <WordPalette words={words} labels={wordLabels} />
+        ) : live ? (
+          <p className="flex items-center gap-2 text-sm text-paper-muted">
+            <span className="size-2 animate-lime-pulse rounded-full bg-lime-ink" /> {t("computing")}
+          </p>
+        ) : null}
+        <TasteMap
+          person={{ name: person.name, look: person.look, identity: data.identity }}
+          loves={data.loves}
+          bridges={bridges}
+          picks={picks}
+        />
+        <div className="flex flex-col gap-2">
+          <p className="text-[11px] font-semibold tracking-wide text-paper-muted uppercase">
+            {t("loves")}
+          </p>
           <div className="flex flex-wrap items-center gap-2">
-            <Link
-              href={`/c?for=${person.id}`}
-              className="rounded-pill bg-lime px-4 py-2 text-sm font-semibold text-lime-foreground shadow-sticker transition-transform hover:-translate-y-px"
-            >
-              {person.isSelf ? t("askSelf") : t("askFor", { name: person.name })}
-            </Link>
-            <button
-              type="button"
-              onClick={() => void shareLink("person", person.id, t("linkCopied"))}
-              className="inline-flex items-center gap-1.5 rounded-pill px-3 py-2 text-sm font-semibold text-paper-foreground ring-1 ring-paper-foreground/15 transition-colors hover:bg-paper-foreground/6"
-            >
-              <Share2 className="size-4" /> {t("share")}
-            </button>
-            <BuiltOnQloo runId={runId} />
+            {data.loves.map((l) => (
+              <LovePill key={l.id} name={l.name} image={l.imageUrl} type={l.type} />
+            ))}
+            <LovesEditor personId={person.id} loves={data.loves} onChanged={startRun} />
           </div>
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <Link
+            href={`/c?for=${person.id}`}
+            className="rounded-pill bg-lime px-4 py-2 text-sm font-semibold text-lime-foreground shadow-sticker transition-transform hover:-translate-y-px"
+          >
+            {person.isSelf ? t("askSelf") : t("askFor", { name: person.name })}
+          </Link>
+          <button
+            type="button"
+            onClick={() => void shareLink("person", person.id, t("linkCopied"))}
+            className="inline-flex items-center gap-1.5 rounded-pill px-3 py-2 text-sm font-semibold text-paper-foreground ring-1 ring-paper-foreground/15 transition-colors hover:bg-paper-foreground/6"
+          >
+            <Share2 className="size-4" /> {t("share")}
+          </button>
+          <BuiltOnQloo runId={runId} />
         </div>
       </section>
 

@@ -159,7 +159,9 @@
     "askFor": "{name}のために頼む",
     "askSelf": "Najimiに頼む",
     "share": "この好みを共有",
-    "linkCopied": "リンクをコピーしました"
+    "linkCopied": "リンクをコピーしました",
+    "line": "{look}なスタイル、{rooms}な部屋、{mood}な夜、{food}料理。",
+    "you": "あなた"
   },
   "Pick": {
     "because": "{name}が好きだからです",

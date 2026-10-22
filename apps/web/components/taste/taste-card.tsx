@@ -14,14 +14,23 @@ const IDENTITY_BG: Record<string, string> = {
 }
 
 /** The loves, fanned like a hand of cards on the person's identity colour (the Showcase card). */
-export function LovesFan({ loves, identity }: { loves: CardLove[]; identity: string }) {
+export function LovesFan({
+  loves,
+  identity,
+  bare = false,
+}: {
+  loves: CardLove[]
+  identity: string
+  /** No band of its own: it sits on a surface that already wears the colour. */
+  bare?: boolean
+}) {
   const shown = loves.slice(0, 7)
   const mid = (shown.length - 1) / 2
   return (
     <div
       className={cn(
-        "relative flex h-44 items-end justify-center overflow-hidden rounded-t-card pb-4",
-        IDENTITY_BG[identity],
+        "relative flex h-44 items-end justify-center overflow-hidden pb-4",
+        bare ? "" : cn("rounded-t-card", IDENTITY_BG[identity]),
       )}
     >
       {shown.map((love, i) => {

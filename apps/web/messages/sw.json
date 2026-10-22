@@ -159,7 +159,9 @@
     "askFor": "Omba kwa ajili ya {name}",
     "askSelf": "Uliza Najimi",
     "share": "Shiriki mapendeleo haya",
-    "linkCopied": "Kiungo kimenakiliwa"
+    "linkCopied": "Kiungo kimenakiliwa",
+    "line": "Mtindo {look}, vyumba {rooms}, jioni {mood}, vyakula vya {food}.",
+    "you": "Wewe"
   },
   "Pick": {
     "because": "kwa sababu unapenda {name}",

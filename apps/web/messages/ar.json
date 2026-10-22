@@ -159,7 +159,9 @@
     "askFor": "اسأل لـ {name}",
     "askSelf": "اسأل ناجيمي",
     "share": "شارك هذا الذوق",
-    "linkCopied": "تم نسخ الرابط"
+    "linkCopied": "تم نسخ الرابط",
+    "line": "مظهر {look}، غرف {rooms}، أمسيات {mood}، وأطباق {food}.",
+    "you": "أنت"
   },
   "Pick": {
     "because": "لأنك تحب {name}",

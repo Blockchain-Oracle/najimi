@@ -159,7 +159,9 @@
     "askFor": "Nemi {name}",
     "askSelf": "Tambayi Najimi",
     "share": "Raba wannan zaɓin",
-    "linkCopied": "An kwafi link"
+    "linkCopied": "An kwafi link",
+    "line": "{look} salo, ɗakuna {rooms}, dare {mood}, faranti {food}.",
+    "you": "Kai"
   },
   "Pick": {
     "because": "don kana son {name}",
