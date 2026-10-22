@@ -28,6 +28,7 @@ import { tool } from "ai"
 import { and, asc, count, eq } from "drizzle-orm"
 import type { z } from "zod"
 import { type insightsInput, type Pick, toolDefs } from "../tools"
+import { startBusiness } from "./business"
 import { charge, refund } from "./usage"
 
 /** Who a turn acts for and on: the signed-in user, their chat and their own taste profile. */
@@ -863,6 +864,31 @@ export function buildTools(ctx: TurnContext, messageId: () => string | undefined
           }
         } catch (error) {
           return { ...base, offers: [], note: (error as Error).message }
+        }
+      },
+    }),
+
+    businessPlan: tool({
+      ...toolDefs.businessPlan,
+      execute: async (input, { toolCallId }) => {
+        try {
+          const b = await startBusiness(
+            ctx.userId,
+            {
+              name: input.name,
+              kind: input.kind,
+              city: input.city,
+              address: input.address,
+              site: input.website,
+              instagram: input.instagram,
+              audience: input.audience,
+              decision: input.decision,
+            },
+            { chatId: ctx.chatId, toolCallId },
+          )
+          return { businessId: b.id, runId: b.runId, name: b.name, note: null }
+        } catch (error) {
+          return { businessId: null, runId: null, name: input.name, note: (error as Error).message }
         }
       },
     }),

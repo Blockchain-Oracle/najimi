@@ -333,7 +333,8 @@
     "keptEmpty": "Tap the bookmark on anything in your feed and it lands here.",
     "keptCta": "Open my feed",
     "graph": "Your taste graph",
-    "feeds": "Your feeds"
+    "feeds": "Your feeds",
+    "business": "Your business"
   },
   "Pick": {
     "because": "because you love {name}",
@@ -559,7 +560,10 @@
     "postOpen": "See it on X",
     "postOnX": "Post on X",
     "postDeclined": "Didn't post it.",
-    "postWriting": "Writing your post"
+    "postWriting": "Writing your post",
+    "businessBuilding": "Building the plan for {name}",
+    "businessOpen": "Open the plan",
+    "businessStarting": "Opening the business"
   },
   "Asked": {
     "city": "in {v}",
@@ -601,7 +605,8 @@
     "watch": "What should I watch tonight?",
     "eat": "Where should I eat in {city} this weekend?",
     "hidden": "Find me hidden gems I'd love",
-    "trip": "Where should I travel next?"
+    "trip": "Where should I travel next?",
+    "business": "I run a business. Who are my customers?"
   },
   "Make": {
     "approveKicker": "Ready to make",
@@ -799,7 +804,9 @@
     "radarTitle": "Taste twin radar",
     "radarLine": "People here with your taste, closest in the middle; on the edge, people in culture Qloo predicts for you.",
     "inCommon": "{count, plural, one {# thing} other {# things}} in common",
-    "radarEmpty": "No one here shares your taste yet. Invite a friend, or play a game in the Lounge."
+    "radarEmpty": "No one here shares your taste yet. Invite a friend, or play a game in the Lounge.",
+    "businessHere": "Plan a business here",
+    "askBusiness": "I run (or want to open) a business around {where}. Help me plan it."
   },
   "Graph": {
     "title": "Taste graph",
@@ -1004,5 +1011,80 @@
     "readAnyone": "Read this account",
     "alsoFrom": "Also from",
     "bringFrom": "Bring in what you follow on {name}"
+  },
+  "Business": {
+    "title": "Your business",
+    "new": "New plan",
+    "start": "Get my plan",
+    "emptyTitle": "Who really comes, and what would bring more of them?",
+    "emptyLine": "Najimi reads your business and the taste of the people who love places like it, then gives you a plan you can act on this week.",
+    "newTitle": "Your business",
+    "fieldName": "Its name",
+    "fieldKind": "What it is",
+    "fieldCity": "City",
+    "fieldArea": "Street or area",
+    "fieldSite": "Website or @instagram (optional)",
+    "fieldAudience": "Who do you think comes? (optional)",
+    "fieldDecision": "What are you deciding? (optional)",
+    "kinds": {
+      "café": "Café",
+      "restaurant": "Restaurant",
+      "bar": "Bar",
+      "salon": "Salon",
+      "shop": "Shop",
+      "studio": "Studio",
+      "electrician": "Electrician"
+    },
+    "build": "Build my plan",
+    "building": "Building the plan",
+    "buildingShort": "Building…",
+    "failedShort": "Couldn't build it",
+    "failed": "Something went wrong. Try again.",
+    "tryAgain": "Try again",
+    "step": {
+      "site": "Reading the website",
+      "match": "Finding it in Qloo",
+      "fans": "What its people love",
+      "areas": "Where they are in the city",
+      "scene": "The street around it",
+      "rising": "What's rising nearby",
+      "plan": "Writing the plan"
+    },
+    "statWhere": "Its people cluster in",
+    "statWho": "Leaning",
+    "statRising": "Rising nearby",
+    "gender": {
+      "male": "men",
+      "female": "women"
+    },
+    "ideas": "What to do",
+    "fansLove": "Its people also love",
+    "kind": {
+      "music": "Music",
+      "film": "Film",
+      "tv": "TV",
+      "books": "Books",
+      "podcasts": "Podcasts",
+      "brands": "Brands",
+      "places": "Places"
+    },
+    "street": "You and the street around you",
+    "onlyFans": "Only your people",
+    "both": "Both",
+    "onlyStreet": "Only the street",
+    "streetPlaces": "Around you: {names}",
+    "rising": "Rising near you",
+    "partners": "Who to team up with",
+    "posts": "Posts to try",
+    "copy": "Copy",
+    "copied": "Copied",
+    "postOnX": "Post",
+    "builtOn": "Built on Qloo · {count} calls",
+    "share": "Share",
+    "linkCopied": "Link copied",
+    "rebuild": "Build it again",
+    "ask": "Ask Najimi",
+    "askAbout": "Talk me through the plan for {name}. Where should I start this week?",
+    "yourOwn": "Get a plan for your business"
   }
 }

@@ -13,6 +13,7 @@ import {
   type TasteItem,
   toPick,
 } from "@najimi/qloo"
+import { geocode } from "@najimi/sources"
 import { routeThrough } from "./mapbox"
 import { type Show, showsNear } from "./shows"
 import { zonedTime } from "./time"
@@ -367,6 +368,10 @@ export async function planTrip(input: {
 
 /** Where an area is (a neighbourhood, a town): Qloo's own localities first, then its places. */
 export async function locate(query: string, ctx: CallContext) {
+  // OpenStreetMap first when it names a neighbourhood or street precisely ("Yaba" is in Lagos,
+  // not Japan); then Qloo's own localities; then OpenStreetMap's broader answer.
+  const osm = await geocode(query).catch(() => null)
+  if (osm?.precise) return { name: osm.name, lat: osm.lat, lon: osm.lon }
   for (const types of [["urn:entity:locality"], ["urn:entity:place"]]) {
     const r = await search(
       { query, types, take: 3 },
@@ -375,5 +380,5 @@ export async function locate(query: string, ctx: CallContext) {
     const hit = r?.data.find((i) => i.location)
     if (hit?.location) return { name: hit.name, lat: hit.location.lat, lon: hit.location.lon }
   }
-  return null
+  return osm ? { name: osm.name, lat: osm.lat, lon: osm.lon } : null
 }

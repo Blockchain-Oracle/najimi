@@ -95,6 +95,20 @@ export const QUEUES = {
     options: { retryLimit: 1, retryDelay: 600, expireInSeconds: 15 * 60 },
     send: {},
   },
+  /** A business's plan (W19): its fans, where they are, its street, what's rising, the plan. */
+  businessBuild: {
+    name: "business-build",
+    payload: z.object({ businessId: z.uuid() }),
+    options: { policy: "stately", retryLimit: 0, expireInSeconds: 10 * 60 },
+    send: { heartbeatSeconds: JOBS.heartbeatSeconds },
+  },
+  /** Mondays: each business's plan again, and what changed around it, told to its owner. */
+  businessWeekly: {
+    name: "business-weekly",
+    payload: z.object({}),
+    options: { retryLimit: 1, retryDelay: 600, expireInSeconds: 60 * 60 },
+    send: {},
+  },
   /**
    * "Do it for me" on one platform: today's tune-up follows, done slowly with the person's own
    * session, each one reported as it happens. One run per person and platform at a time.

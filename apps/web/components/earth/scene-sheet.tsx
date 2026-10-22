@@ -3,7 +3,7 @@
 import type { Scene } from "@najimi/qloo"
 import { Sheet, SheetContent, SheetTitle } from "@najimi/ui/components/sheet"
 import { useQuery } from "@tanstack/react-query"
-import { MapPin, MessageCircle, Moon } from "lucide-react"
+import { MapPin, MessageCircle, Moon, Store } from "lucide-react"
 import Link from "next/link"
 import { useTranslations } from "next-intl"
 import { useAgent } from "@/components/agent/agent-context"
@@ -132,6 +132,17 @@ export function SceneSheet({ spot, onClose }: { spot: SceneSpot | null; onClose:
           >
             <MessageCircle className="size-4" />
             {t("askNajimi")}
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              onClose()
+              agent.ask(t("askBusiness", { where }))
+            }}
+            className="glass col-span-2 flex h-11 items-center justify-center gap-2 rounded-pill text-[14px] font-semibold"
+          >
+            <Store className="size-4" />
+            {t("businessHere")}
           </button>
         </div>
 

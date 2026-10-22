@@ -4,7 +4,8 @@ export type Starter = { key: string; args?: Record<string, string> }
 
 /**
  * The empty chat's first suggestions (a pure function, no model call), ranked by what this person
- * loves: a reader gets books first, a music lover a playlist, anyone with a city the places.
+ * loves: a reader gets books first, a music lover a playlist, anyone with a city the places; and
+ * always a way into business mode.
  */
 export function startersFor(input: { loveTypes: string[]; city: string | null }): Starter[] {
   const has = (type: string) => input.loveTypes.includes(`urn:entity:${type}`)
@@ -15,5 +16,6 @@ export function startersFor(input: { loveTypes: string[]; city: string | null })
   if (has("movie") || has("tv_show")) out.push({ key: "watch" })
   if (input.city) out.push({ key: "eat", args: { city: input.city } })
   out.push({ key: "hidden" }, { key: "trip" })
-  return out.slice(0, 5)
+  // Business mode is always one tap away (W19).
+  return [...out.slice(0, 4), { key: "business" }]
 }

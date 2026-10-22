@@ -10,6 +10,7 @@ import {
   Music2,
   Plane,
   ScanFace,
+  Store,
   UtensilsCrossed,
 } from "lucide-react"
 import type { CSSProperties } from "react"
@@ -38,6 +39,7 @@ const STARTER_ICON: Record<string, typeof Gem> = {
   eat: UtensilsCrossed,
   hidden: Gem,
   trip: Plane,
+  business: Store,
 }
 
 /*

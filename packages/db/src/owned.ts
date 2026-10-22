@@ -2,6 +2,7 @@ import { and, eq, lt, sql } from "drizzle-orm"
 import type { Db } from "./index"
 import {
   bookings,
+  businesses,
   chatMembers,
   chats,
   connectorSessions,
@@ -131,6 +132,7 @@ export async function reownUserData(db: Db, fromUserId: string, toUserId: string
       where t.user_id = ${fromUserId}
         and not exists (select 1 from ${tuneUps} u where u.user_id = ${toUserId} and u.day = t.day)`)
     await tx.delete(tuneUps).where(eq(tuneUps.userId, fromUserId))
+    await tx.update(businesses).set({ ownerId: toUserId }).where(eq(businesses.ownerId, fromUserId))
     // Connected accounts (the account's own connection wins a clash) and what was done with them.
     await tx.execute(sql`
       update ${connectorSessions} c set user_id = ${toUserId}

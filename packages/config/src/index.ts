@@ -459,6 +459,40 @@ export const SOCIAL = {
 } as const
 
 /**
+ * Business mode (W19): what a plan reads from Qloo for a business — its fans' taste across
+ * kinds, where they cluster in its city, its street's scene and what's rising around it.
+ */
+export const BUSINESS = {
+  /** The kinds of things its fans' taste is read across. */
+  kinds: [
+    "urn:entity:artist",
+    "urn:entity:movie",
+    "urn:entity:tv_show",
+    "urn:entity:book",
+    "urn:entity:podcast",
+    "urn:entity:brand",
+    "urn:entity:place",
+  ],
+  perKind: 8,
+  /** How far from its address the business itself is looked for in Qloo (miles: /search's unit). */
+  matchRadiusMiles: 5,
+  /** Comparable places stand in for a business Qloo doesn't know yet. */
+  comparables: 5,
+  comparableRadiusMeters: 4000,
+  /** How far "around it" reaches for its scene and what's rising. */
+  aroundMeters: 2500,
+  areas: 5,
+  /** Map cells kept for the plan page. */
+  cells: 400,
+  /** Characters of the site's own words read. */
+  siteChars: 6000,
+  /** Plans one owner may build a day. */
+  perDay: 6,
+  /** Mondays: what changed around each business. */
+  weeklyCron: "0 9 * * 1",
+} as const
+
+/**
  * The feed (W4): culture from your taste, a card at a time, music every two or three cards. Each
  * category's share is a dial (0 off … 3 more); pages come from the stored picks, then Qloo's next
  * pages for that category.

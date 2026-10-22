@@ -1,5 +1,5 @@
-import { runTurn } from "@najimi/agent/server"
-import { AUTH, GAMES, MEDIA, ROOMS } from "@najimi/config"
+import { buildBusiness, runTurn } from "@najimi/agent/server"
+import { AUTH, BUSINESS, GAMES, MEDIA, ROOMS } from "@najimi/config"
 import { migrateDatabase } from "@najimi/db/migrate"
 import { ensureLounge } from "@najimi/games/lounge"
 import { boss, type Payload, QUEUES, RETIRED_QUEUES } from "@najimi/jobs"
@@ -7,6 +7,7 @@ import { emit, setRunStatus, sweepLiveEvents } from "@najimi/live"
 import { deleteKeys } from "@najimi/storage"
 import { closeInterruptedRuns } from "./interrupted"
 import { bookingCheck, followUps } from "./jobs/bookings"
+import { businessWeekly } from "./jobs/business"
 import { chatTitle } from "./jobs/chat-title"
 import { dailyDrop } from "./jobs/daily-drop"
 import { guestsCleanup } from "./jobs/forget"
@@ -132,6 +133,21 @@ async function main() {
     await tuneUpNudge()
   })
   await queues.schedule(QUEUES.tuneUpNudge.name, "0 8 * * *", {}, { tz: "UTC" })
+
+  // Business plans (W19), one build per business at a time; Mondays, each again with what changed.
+  await queues.work<Payload<"businessBuild">>(
+    QUEUES.businessBuild.name,
+    { localConcurrency: 3 },
+    async ([job]) => {
+      if (!job) return
+      await buildBusiness(QUEUES.businessBuild.payload.parse(job.data).businessId)
+    },
+  )
+  await queues.work(QUEUES.businessWeekly.name, async ([job]) => {
+    if (!job) return
+    await businessWeekly()
+  })
+  await queues.schedule(QUEUES.businessWeekly.name, BUSINESS.weeklyCron, {}, { tz: "UTC" })
 
   // "Do it for me": each person's platforms, on their own morning, one run at a time each.
   await queues.work<Payload<"socialRun">>(

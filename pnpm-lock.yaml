@@ -456,6 +456,9 @@ importers:
       '@najimi/qloo':
         specifier: workspace:*
         version: link:../qloo
+      '@najimi/sources':
+        specifier: workspace:*
+        version: link:../sources
       drizzle-orm:
         specifier: 'catalog:'
         version: 0.45.4(@opentelemetry/api@1.9.1)(kysely@0.29.7)(pg@8.23.1)(postgres@3.4.9)

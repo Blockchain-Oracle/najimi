@@ -8,6 +8,7 @@ import { Face } from "@/components/taste/face"
 import { CardBoundary } from "./card-boundary"
 import { ApprovalCard } from "./cards/approval-card"
 import { BriefCard } from "./cards/brief-card"
+import { BusinessCard } from "./cards/business-card"
 import { CallApproval, CallCard } from "./cards/call-card"
 import { CompareCard } from "./cards/compare-card"
 import { GameCard } from "./cards/game-card"
@@ -138,6 +139,10 @@ function ToolPart({
         return <CallCard input={part.input ?? {}} output={part.output} />
       if (part.state === "output-error") return failed
       return <CardSkeleton title={part.input?.venue} label={t("dialling")} />
+    case "tool-businessPlan":
+      if (part.state === "output-available") return <BusinessCard output={part.output} />
+      if (part.state === "output-error") return failed
+      return <CardSkeleton title={part.input?.name} label={t("businessStarting")} />
     case "tool-postToX":
       if (part.state === "approval-requested")
         return (

@@ -15,6 +15,7 @@ import {
   Play,
   Radio,
   Share2,
+  Store,
   Waypoints,
 } from "lucide-react"
 import { LayoutGroup, motion } from "motion/react"
@@ -344,6 +345,16 @@ export function PersonView({ data, other }: { data: PersonViewData; other?: Othe
           {mine ? (
             <Link href="/connect" aria-label={t("feeds")} title={t("feeds")} className={round}>
               <Radio className="size-4.5" />
+            </Link>
+          ) : null}
+          {mine ? (
+            <Link
+              href="/business"
+              aria-label={t("business")}
+              title={t("business")}
+              className={round}
+            >
+              <Store className="size-4.5" />
             </Link>
           ) : null}
           {mine ? (

@@ -166,6 +166,8 @@ function Inbox({ initialUnread, after }: { initialUnread: number; after: number 
                       if (n.kind === "tuneup") router.push("/connect")
                       else if (typeof n.data.token === "string")
                         router.push(`/play/${n.data.token}`)
+                      else if (typeof n.data.businessId === "string")
+                        router.push(`/business/${n.data.businessId}`)
                       else if (typeof n.data.bookingId === "string" && !n.chatId)
                         router.push(`/pay/${n.data.bookingId}/done`)
                       else if (n.chatId) router.push(`/c/${n.chatId}`)

@@ -474,6 +474,31 @@ export const toolDefs = {
     }),
   }),
 
+  businessPlan: tool({
+    description:
+      "Build a plan for the asker's business (Business mode): who its fans are and what else they love, where they cluster in the city, its street's own scene, what's rising around it, and ideas (menu, music, nights, partners, posts) each backed by Qloo. Call it once you know what it is, its name and where it is (city, plus street or area); a website, who they think their customers are and the decision they're weighing make it sharper. It takes about a minute; the card shows each step and opens the plan.",
+    inputSchema: z.object({
+      name: z.string().min(1).max(120),
+      kind: z
+        .string()
+        .min(2)
+        .max(60)
+        .describe("What it is, in plain words: café, barbershop, electrician…"),
+      city: z.string().max(80),
+      address: z.string().max(160).optional().describe("Street or neighbourhood."),
+      website: z.string().max(300).optional(),
+      instagram: z.string().max(60).optional(),
+      audience: z.string().max(240).optional().describe("Who they think their customers are."),
+      decision: z.string().max(240).optional().describe("What they're trying to decide."),
+    }),
+    outputSchema: z.object({
+      businessId: z.string().nullable(),
+      runId: z.string().nullable(),
+      name: z.string(),
+      note: z.string().nullable(),
+    }),
+  }),
+
   postToX: tool({
     description:
       "Post on X for the person asking: a post in their own voice (plain, specific, no hashtag spam, under 280 characters) about what they asked for or something from their taste. They see the exact post and approve it first. It goes out from their connected X; without one, the card gives them a one-tap link to post it themselves.",
