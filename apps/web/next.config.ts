@@ -12,6 +12,9 @@ const nextConfig: NextConfig = {
   // typedRoutes stays off: with every page under app/[locale] and no locale in the URL, it can't
   // type the real hrefs ("/", "/start").
   devIndicators: false,
+  // Qloo's artwork through the image optimiser: small, cached and same-origin (images.qloo.com
+  // refuses requests that carry an Origin, so a canvas couldn't load it straight and still be saved).
+  images: { remotePatterns: [{ protocol: "https", hostname: "images.qloo.com" }] },
   // Local only: 127.0.0.1 is a second origin (no cookies), to walk sign-up as a stranger.
   allowedDevOrigins: ["127.0.0.1"],
   // Workspace packages ship TypeScript source; Next compiles them with the app.
@@ -20,6 +23,8 @@ const nextConfig: NextConfig = {
     "@najimi/config",
     "@najimi/db",
     "@najimi/email",
+    "@najimi/games",
+    "@najimi/geo",
     "@najimi/env",
     "@najimi/jobs",
     "@najimi/live",

@@ -331,7 +331,8 @@
     "tabKept": "Kept",
     "all": "All",
     "keptEmpty": "Tap the bookmark on anything in your feed and it lands here.",
-    "keptCta": "Open my feed"
+    "keptCta": "Open my feed",
+    "graph": "Your taste graph"
   },
   "Pick": {
     "because": "because you love {name}",
@@ -782,5 +783,31 @@
     "radarLine": "People here with your taste, closest in the middle; on the edge, people in culture Qloo predicts for you.",
     "inCommon": "{count, plural, one {# thing} other {# things}} in common",
     "radarEmpty": "No one here shares your taste yet. Invite a friend, or play a game in the Lounge."
+  },
+  "Graph": {
+    "title": "Taste graph",
+    "history": "Through time",
+    "save": "Save the graph",
+    "saveFailed": "Couldn't save the picture",
+    "overlay": "Lay over",
+    "shareCount": "{count, plural, =0 {Nothing in common yet} one {# thing you share glows} other {# things you share glow}}",
+    "then": "Your first love",
+    "now": "Now",
+    "whatIf": "What if: {count, plural, one {# love} other {# loves}} moved",
+    "refining": "Qloo is refining your taste…",
+    "undo": "Undo",
+    "makeReal": "Make it real",
+    "refined": "Your taste is refined",
+    "error": "Something went wrong. Try again.",
+    "aLove": "You love",
+    "aPick": "Qloo's pick for you",
+    "grown": "Grown from the graph",
+    "counts": "How much it counts",
+    "countsHint": "Turn it and watch the picks it carries grow or fade.",
+    "notYours": "Only they can turn their loves.",
+    "because": "Because you love",
+    "grow": "Grow from here",
+    "askNajimi": "Ask Najimi",
+    "ask": "Tell me about {name}: why is it in my taste, and what else like it would I love?"
   }
 }

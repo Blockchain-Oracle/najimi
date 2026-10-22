@@ -237,6 +237,27 @@ export const EARTH = {
   style: "https://tiles.openfreemap.org/styles/dark",
 } as const
 
+/** The Graph (W13): a taste you can pull apart and grow. */
+export const GRAPH = {
+  /** Things Qloo ties to a node when it grows, per kind asked. */
+  expandTake: 4,
+  /** Grows one person may ask for per minute. */
+  expandPerMinute: 20,
+  /** When a node grows, Qloo is also asked across to one other kind of thing. */
+  across: {
+    "urn:entity:artist": "urn:entity:place",
+    "urn:entity:place": "urn:entity:artist",
+    "urn:entity:movie": "urn:entity:artist",
+    "urn:entity:tv_show": "urn:entity:movie",
+    "urn:entity:book": "urn:entity:movie",
+    "urn:entity:podcast": "urn:entity:book",
+    "urn:entity:brand": "urn:entity:place",
+    "urn:entity:videogame": "urn:entity:movie",
+  },
+  /** Nodes drawn at most (the force layout's comfort zone). */
+  maxNodes: 250,
+} as const
+
 const HOUR_S = 60 * 60
 
 /** Images and video (generation providers, sizes, polling). */

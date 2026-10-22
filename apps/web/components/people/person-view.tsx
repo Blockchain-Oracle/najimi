@@ -7,7 +7,7 @@ import { Orb } from "@najimi/ui/components/orb"
 import { Sheet, SheetContent, SheetTitle } from "@najimi/ui/components/sheet"
 import { toast } from "@najimi/ui/components/sonner"
 import { cn } from "@najimi/ui/lib/utils"
-import { Bookmark, MapPin, MessageCircle, Pencil, Play, Share2 } from "lucide-react"
+import { Bookmark, MapPin, MessageCircle, Pencil, Play, Share2, Waypoints } from "lucide-react"
 import { LayoutGroup, motion } from "motion/react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
@@ -330,6 +330,11 @@ export function PersonView({ data, other }: { data: PersonViewData; other?: Othe
               className="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-pill bg-primary text-[15px] font-semibold text-primary-foreground transition-opacity hover:opacity-90"
             >
               <Play className="size-4 fill-current" /> {t("playTaste")}
+            </Link>
+          ) : null}
+          {mine ? (
+            <Link href="/graph" aria-label={t("graph")} title={t("graph")} className={round}>
+              <Waypoints className="size-4.5" />
             </Link>
           ) : null}
           {mine ? (
