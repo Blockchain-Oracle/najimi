@@ -1,0 +1,48 @@
+---
+title: Najimi, the agent
+description: What it can do in your chats, how it works, and what it always asks first.
+---
+
+Najimi is one of the room. In your own chat it answers you; in a circle it answers whoever calls it (`@najimi`) and speaks for everyone there, by name. It knows your taste, the taste of everyone in the room, the screen you were on when you opened it, your plans and bookings, and the accounts you connected.
+
+<Flow
+  label="One turn"
+  steps={[
+    { title: "You ask", note: "\"Plan our Saturday\" or \"less films\"" },
+    { title: "Najimi composes tools", note: "Qloo first, then plans, bookings, games, posts", accent: true },
+    { title: "Cards in the chat", note: "Each step shown as it runs" },
+    { title: "It follows up", note: "Booked? How was it? What changed?" },
+  ]}
+/>
+
+## What it can do
+
+| Tool | What it does |
+| --- | --- |
+| `qlooSearch`, `qlooInsights`, `qlooTags`, `qlooCompare`, `qlooAudiences` | Qloo's whole surface: find anything, ask for recommendations of any kind with any signals and filters, read taste words, compare two tastes, use audiences. |
+| `tasteBrief` | The words a plan or a picture is built from, shown before it's used. |
+| `groupFit` | Something for the whole room (a spot tonight, a film), scored for each member. |
+| `steerFeed` | "More like this", "less films", "no podcasts": the feed reshapes. |
+| `startGame` | Wavelength, How well do you know me, Taste twins, Blind Taste. |
+| `planNight`, `planTrip` | A night out or days in a city: stops, route, fit per person, shows that night. |
+| `findHotels` | Real rooms and prices near an area, booked in Nuitee's own payment sheet. |
+| `callToBook` | Phones a venue for a table (an AI voice call you approve first). |
+| `businessPlan` | Builds a plan for your business from Qloo, step by step. |
+| `postToX` | Drafts a post in your voice and posts it from your connected X once you say yes. |
+| `makeImage` | Restyles a photo you share, or makes a new picture from your taste words. |
+| `askUser` | One card with up to three questions, when an answer really changes the result. |
+
+## The rules it follows
+
+- **Qloo or nothing.** Every recommendation comes from a Qloo result in the chat. If Qloo has nothing, it says so and tries another way.
+- **It asks before anything real.** A phone call, a post in your name and (in *Ask first* mode) a picture all wait for your yes, with exactly what will happen shown first. Hotels are only ever paid in Nuitee's own sheet.
+- **It never claims what isn't done.** A booking is confirmed when its card says so, not before.
+- **It follows up.** Calls report back into the chat. The day after a night or a stay, it asks how it was, and the answer shapes your taste. A business plan started in a chat comes back to that chat with its first move.
+
+## Every screen, one agent
+
+Open Najimi from any screen and it already knows what's there: the card on your feed, the square on Earth, the node in your graph, the plan you're reading. "More like this" means that.
+
+## Models
+
+Planning, booking and business turns use a strong model; light work (titles, reading posts for names, quick replies) uses a small, cheap one. Every model call is logged with its cost, and Settings shows what Najimi's thinking cost you this month.

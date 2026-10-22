@@ -5,36 +5,40 @@ description: What Najimi keeps, what it shares, and how to delete all of it.
 
 ## What's kept
 
-- **Your account:** a guest account, or your email or Google sign-in.
-- **People and tastes:** names, cities, loves and weights, taste words and picks, and each person's About (diet, allergies, texture, medications) if you add it.
-- **Chats:** your messages and Najimi's answers.
-- **Photos and creations:** in private storage. Nobody can open your photos but you.
-- **Usage:** today's count of messages, images and videos, for the allowance.
+- **Your account:** a guest account, or an email sign-in, and your username.
+- **Your taste:** your loves and their weights, your taste words and picks, what you loved or skipped in the feed, your city if you give one.
+- **Chats:** your messages, Najimi's answers, and the circles you're in.
+- **Plans, bookings and games:** what you planned, booked and played (so Najimi can follow up and stamp your Passport).
+- **Connected accounts:** if you connect X or Instagram, your session is **sealed** (AES-256-GCM) the moment it arrives, opened only on the server to act for you, never shown again, and deleted when you disconnect.
+- **Businesses:** what you told Najimi about them and the plans it built.
+- **Usage:** today's counts for the allowance, and what the models cost for you.
 
 ## What leaves Najimi
 
-To answer, Najimi sends what's needed and nothing more:
+Only what's needed for the thing you asked:
 
 | Service | What it gets |
 | --- | --- |
-| Qloo | Qloo ids of your loves and their weights, tags, a city when you ask about places. Never your name. |
-| OpenAI | The conversation and context for the reply. |
-| fal | Your photo and the prompt when you ask for a restyle; the prompt for a new picture. |
-| OpenFreeMap | Your browser loads its map tiles when you pick your city at sign-up. |
-| ElevenLabs | The recording, when you dictate. |
+| Qloo | Qloo ids of your loves and their weights, tags, a city or a point on the map. Never your name. |
+| OpenAI | The conversation and context for a reply; a feed screenshot you score (it's read, never kept). |
+| Nuitee | Your name, email and phone when you book a room. You pay in Nuitee's own sheet; Najimi never sees your card. |
+| ElevenLabs and Twilio | The venue's number, your first name and the booking details, for a call you approved. |
+| X and Instagram | Your own session, only to read what you follow and act when you said so. |
+| Mapbox, Ticketmaster, Apple, TMDB, Wikidata, OpenStreetMap | Places, times and names to look up. Never who you are. |
+| Your push service (Apple, Google, Mozilla) | The notification itself, sent to the phone you turned push on for. |
+
+## Who sees your taste
+
+**Settings → Who sees your taste**: everyone, only friends (people who follow each other), or only you. Private tastes don't appear in search, twins, the radar or the map.
+
+**Block** someone from their profile and you disappear from each other: search, twins, the radar, the map and profiles. Follows stop, and neither of you can message the other. **Report** keeps a note for review and blocks them too.
 
 ## Sharing
 
-Nothing is public until you share it, and a share shows only what it says:
-
-- **A creation:** the result. Never your own photo.
-- **A chat:** the words and cards. Your photos are removed before the page is built.
-- **A taste:** loves, words, connections and picks. Never your city.
-
-**Settings → Your share links** lists every live link. **Stop sharing** ends one at once.
+Nothing is public until you share it, and a share shows only what it says: a taste card (never your city), a game, a plan, a business plan, your Wrapped. **Settings → Your share links** lists every live link; **Stop sharing** ends one at once.
 
 ## Deleting
 
-**Settings → Delete all my data** removes your account and everything in it: your taste, chats, photos, creations and share links. Rows go first, in one transaction, then the stored files. It can't be undone.
+**Settings → Delete all my data** removes your account and everything in it: your taste, chats, plans, games, connected sessions, businesses, push subscriptions, files and share links. It can't be undone.
 
 Guest accounts nobody has used for 30 days are deleted the same way, every night.
