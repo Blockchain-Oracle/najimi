@@ -1,5 +1,6 @@
 /**
- * tokens.json → generated/tokens.css (custom properties, light on :root, dark on .dark),
+ * tokens.json → generated/tokens.css (custom properties: light on :root, dark when the device
+ * prefers it unless `.light` is set, and always under `.dark`),
  * generated/theme.css (a Tailwind v4 `@theme inline` bridge) and generated/tokens.ts.
  * Run through `pnpm --filter @najimi/tokens build`; never edit generated/ by hand.
  */
@@ -29,6 +30,13 @@ const css = `${HEADER}
   color-scheme: light;
 ${colourBlock("light")}
 ${scalars}
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not(.light) {
+    color-scheme: dark;
+${colourBlock("dark").replaceAll("\n  ", "\n    ").replace(/^ {2}/, "    ")}
+  }
 }
 
 .dark {

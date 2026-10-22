@@ -35,7 +35,8 @@
     "signOut": "Sign out",
     "me": "You",
     "start": "Start",
-    "guest": "Guest"
+    "guest": "Guest",
+    "label": "Sections"
   },
   "Start": {
     "step": "{current} of {total}",

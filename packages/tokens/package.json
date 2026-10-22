@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "description": "Najimi design tokens (the OurSpaces language): one tokens.json → CSS custom properties, a Tailwind v4 theme and a TS export, dark (default) and light, behind a WCAG contrast gate.",
+  "description": "Najimi design tokens (\"Your taste is the colour\"): one tokens.json → CSS custom properties, a Tailwind v4 theme and a TS export, light and dark following the device, behind a WCAG contrast gate.",
   "exports": {
     ".": "./generated/tokens.ts",
     "./tokens.css": "./generated/tokens.css",

@@ -1,4 +1,5 @@
 import { APP } from "@najimi/config"
+import { Orb } from "@najimi/ui/components/orb"
 import { ArrowRight } from "lucide-react"
 import Link from "next/link"
 import { getTranslations } from "next-intl/server"
@@ -33,23 +34,34 @@ export default async function Landing({ params }: PageProps<"/[locale]">) {
         <LanguageMenu />
       </header>
 
-      <section className="mx-auto flex w-full max-w-6xl flex-1 flex-col justify-center gap-7 px-6 py-14">
-        <p className="font-mono text-xs text-text-3">{t("kicker")}</p>
-        <h1 className="font-title text-hero max-w-4xl">{t("title")}</h1>
-        <p className="max-w-2xl text-lg text-text-2">{t("lede")}</p>
-        <div className="flex flex-wrap items-center gap-4">
-          <Suspense
-            fallback={
-              <Link
-                href="/start"
-                className="inline-flex items-center gap-2 rounded-pill bg-primary px-6 py-3 text-[15px] font-semibold text-primary-foreground"
-              >
-                {t("start")} <ArrowRight className="size-4 rtl:rotate-180" />
-              </Link>
-            }
-          >
-            <MainAction start={t("start")} open={t("continue")} />
-          </Suspense>
+      <section className="mx-auto grid w-full max-w-6xl flex-1 items-center gap-10 px-6 py-10 md:grid-cols-[1.15fr_1fr] md:py-14">
+        {/* Najimi's orb, in the agent's own colours; on a phone it sits above the words. */}
+        <div className="relative grid place-items-center md:order-2">
+          <span
+            aria-hidden
+            className="absolute size-[min(70vw,22rem)] rounded-full bg-aura-2/25 blur-3xl"
+          />
+          <Orb size={260} className="relative max-md:hidden" working />
+          <Orb size={180} className="relative md:hidden" working />
+        </div>
+        <div className="flex flex-col gap-7">
+          <p className="font-mono text-xs text-text-3">{t("kicker")}</p>
+          <h1 className="font-title text-hero max-w-4xl">{t("title")}</h1>
+          <p className="max-w-2xl text-lg text-text-2">{t("lede")}</p>
+          <div className="flex flex-wrap items-center gap-4">
+            <Suspense
+              fallback={
+                <Link
+                  href="/start"
+                  className="inline-flex items-center gap-2 rounded-pill bg-primary px-6 py-3 text-[15px] font-semibold text-primary-foreground"
+                >
+                  {t("start")} <ArrowRight className="size-4 rtl:rotate-180" />
+                </Link>
+              }
+            >
+              <MainAction start={t("start")} open={t("continue")} />
+            </Suspense>
+          </div>
         </div>
       </section>
 

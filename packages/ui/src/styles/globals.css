@@ -1,38 +1,44 @@
-/* Tailwind, the Najimi tokens (Darkroom) and the shadcn bridge: what every page needs. */
+/* Tailwind, the Najimi tokens ("Your taste is the colour") and the shadcn bridge. */
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 @import "@najimi/tokens/tokens.css";
 @import "@najimi/tokens/theme.css";
 
-/* Dark only: .dark is always on <html>. */
-@custom-variant dark (&:is(.dark *));
+/* Dark follows the device, unless <html> carries .light or .dark (an explicit choice). */
+@custom-variant dark {
+  &:where(.dark, .dark *) {
+    @slot;
+  }
+  @media (prefers-color-scheme: dark) {
+    &:where(:not(.light, .light *)) {
+      @slot;
+    }
+  }
+}
 
 @source "../../../../apps/web/**/*.{ts,tsx}";
 @source "../**/*.{ts,tsx}";
 @source "../../../../apps/web/node_modules/streamdown/dist/*.js";
 
 @theme {
-  /* Darkroom: depth is canvas → panel → raised plus a 1px hairline, never a cast shadow. The old
-     sticker/paper names now draw that hairline, so every card and pill gets an edge, not a drop. */
-  --shadow-sticker: 0 0 0 1px rgb(255 255 255 / 0.08);
-  --shadow-sticker-lift: 0 0 0 1px rgb(255 255 255 / 0.14);
-  --shadow-paper: 0 0 0 1px rgb(255 255 255 / 0.08);
-  --shadow-slip: 0 0 0 1px rgb(255 255 255 / 0.08);
-  /* The one real shadow: things that float over the page (the composer, popovers, sheets). */
-  --shadow-float: 0 0 0 1px rgb(255 255 255 / 0.14), 0 8px 24px rgb(0 0 0 / 0.5);
-  /* One easing everywhere: out, never overshooting. The old names stay as aliases. */
-  --ease-glide: cubic-bezier(0.16, 1, 0.3, 1);
-  --ease-pop: cubic-bezier(0.16, 1, 0.3, 1);
-  --ease-snap: cubic-bezier(0.16, 1, 0.3, 1);
+  /* Depth: surfaces step by tone; only things that float (tab bar, player, sheets, popovers) cast a
+     shadow. The old names (sticker, paper, slip) are hairlines in the new frame. */
+  --shadow-sticker: 0 0 0 1px var(--color-line);
+  --shadow-sticker-lift: 0 0 0 1px var(--color-line-strong);
+  --shadow-paper: 0 0 0 1px var(--color-line);
+  --shadow-slip: 0 0 0 1px var(--color-line);
+  --shadow-float: 0 0 0 1px var(--color-glass-line), 0 10px 30px -6px rgb(0 0 0 / 0.22);
+  --shadow-lift: 0 1px 2px rgb(0 0 0 / 0.06), 0 8px 24px -8px rgb(0 0 0 / 0.18);
+  --ease-glide: var(--motion-ease-out);
+  --ease-pop: var(--motion-ease-pop);
+  --ease-snap: var(--motion-ease-snap);
 
   --animate-card-land: card-land 320ms var(--ease-glide) both;
   --animate-settle-in: settle-in 320ms var(--ease-glide) var(--enter-delay, 0ms) both;
-  /* The signal breathing: Najimi is working. */
-  --animate-lime-pulse: lime-pulse 1.1s ease-out infinite;
-  --animate-signal-pulse: lime-pulse 1.1s ease-out infinite;
-  /* A row that drifts past forever (the landing's creations); the row holds two copies. */
-  --animate-marquee: marquee 70s linear infinite;
+  /* Najimi is working: the signal breathes. */
+  --animate-lime-pulse: signal-pulse 1.1s ease-out infinite;
+  --animate-signal-pulse: signal-pulse 1.1s ease-out infinite;
 
   /* Entrances fade and rise 4px: no scale, no tilt. `card-land` moves transform, so a hover lift
      (Tailwind's translate) still works on the same element. */
@@ -56,20 +62,12 @@
       translate: 0 0;
     }
   }
-  @keyframes marquee {
-    from {
-      transform: translateX(0);
-    }
-    to {
-      transform: translateX(-50%);
-    }
-  }
-  @keyframes lime-pulse {
+  @keyframes signal-pulse {
     0% {
-      box-shadow: 0 0 0 0 rgb(215 255 61 / 0.5);
+      box-shadow: 0 0 0 0 color-mix(in oklab, var(--color-signal) 50%, transparent);
     }
     100% {
-      box-shadow: 0 0 0 8px rgb(215 255 61 / 0);
+      box-shadow: 0 0 0 8px color-mix(in oklab, var(--color-signal) 0%, transparent);
     }
   }
 }
@@ -93,40 +91,58 @@
   }
   /* Scripts our faces don't cover use the system's own (next/font would emit hundreds of slices). */
   :root:lang(ja) {
-    --font-plex: "Hiragino Sans", "Yu Gothic", "Noto Sans JP", system-ui;
-    --font-serif: "Hiragino Mincho ProN", "Yu Mincho", "Noto Serif JP", serif;
+    --font-funnel-sans: "Hiragino Sans", "Yu Gothic", "Noto Sans JP", system-ui;
+    --font-funnel-display: "Hiragino Sans", "Yu Gothic", "Noto Sans JP", system-ui;
   }
   :root:lang(zh) {
-    --font-plex: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", system-ui;
-    --font-serif: "Songti SC", "Noto Serif SC", serif;
+    --font-funnel-sans: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", system-ui;
+    --font-funnel-display: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", system-ui;
   }
   :root:lang(hi) {
-    --font-plex: "Kohinoor Devanagari", "Nirmala UI", "Noto Sans Devanagari", system-ui;
-    --font-serif: "Kohinoor Devanagari", "Nirmala UI", "Noto Serif Devanagari", serif;
+    --font-funnel-sans: "Kohinoor Devanagari", "Nirmala UI", "Noto Sans Devanagari", system-ui;
+    --font-funnel-display: "Kohinoor Devanagari", "Nirmala UI", "Noto Sans Devanagari", system-ui;
   }
 }
 
-/* Titles: Instrument Serif at its one weight. For what a page is and what a person said about
-   themselves; card and row titles are Plex 600 (font-heading). */
+/* Titles: Funnel Display 800, never below 24px. Card and row titles are Funnel Sans 600. */
 @utility font-title {
   font-family: var(--font-display);
-  font-weight: 400;
+  font-weight: 800;
   letter-spacing: var(--tracking-display);
 }
 @utility font-heading {
   font-family: var(--font-sans);
   font-weight: 600;
-  letter-spacing: 0;
+  letter-spacing: -0.01em;
 }
 
-/* A photo or render on the table: square-cornered, a hairline, nothing else (no paper, no tape). */
+/* Floating glass: the tab bar, the player, sheets over content. */
+@utility glass {
+  background: var(--color-glass);
+  -webkit-backdrop-filter: saturate(1.6) blur(18px);
+  backdrop-filter: saturate(1.6) blur(18px);
+  box-shadow: var(--shadow-float);
+}
+
+/* A wash of the artwork's colour (set --tint on the element from data), fading into the canvas. */
+@utility tint-wash {
+  background:
+    radial-gradient(
+      120% 80% at 50% 0%,
+      color-mix(in oklab, var(--tint, var(--color-tint)) 55%, transparent),
+      transparent 70%
+    ),
+    var(--color-background);
+}
+
+/* A photo or artwork: rounded, with a hairline. */
 @utility print {
   position: relative;
   border-radius: var(--n-radius-tile);
   box-shadow: 0 0 0 1px var(--color-line);
 }
 
-/* Raised chrome (the user's bubble, small controls): a step up from the panel, with a hairline. */
+/* Raised chrome (the user's bubble, small controls): a step up from the surface, with a hairline. */
 @utility sticker {
   background: var(--color-raised);
   color: var(--color-ink);
@@ -145,7 +161,7 @@
   }
 }
 
-/* Model replies: quiet markdown on the wall (bold and links stand out, nothing else shouts). */
+/* Model replies: quiet markdown (bold and links stand out, nothing else shouts). */
 @utility prose-najimi {
   & p + p {
     margin-top: 0.75em;
@@ -169,5 +185,100 @@
   }
   & ol {
     list-style: decimal;
+  }
+}
+
+/* The orb (packages/ui/src/components/orb.tsx), after 21st.dev's Siri Orb by educalvolpz. */
+@property --orb-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+@layer components {
+  .najimi-orb {
+    display: inline-grid;
+    grid-template-areas: "stack";
+    flex-shrink: 0;
+    overflow: hidden;
+    border-radius: 50%;
+    position: relative;
+    isolation: isolate;
+  }
+  .najimi-orb::before,
+  .najimi-orb::after {
+    content: "";
+    display: block;
+    grid-area: stack;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+  }
+  .najimi-orb::before {
+    background:
+      conic-gradient(
+        from calc(var(--orb-angle) * 2) at 25% 70%,
+        var(--orb-c3),
+        transparent 20% 80%,
+        var(--orb-c3)
+      ),
+      conic-gradient(
+        from calc(var(--orb-angle) * 2) at 45% 75%,
+        var(--orb-c2),
+        transparent 30% 60%,
+        var(--orb-c2)
+      ),
+      conic-gradient(
+        from calc(var(--orb-angle) * -3) at 80% 20%,
+        var(--orb-c1),
+        transparent 40% 60%,
+        var(--orb-c1)
+      ),
+      conic-gradient(
+        from calc(var(--orb-angle) * 2) at 15% 5%,
+        var(--orb-c2),
+        transparent 10% 90%,
+        var(--orb-c2)
+      ),
+      conic-gradient(
+        from calc(var(--orb-angle) * 1) at 20% 80%,
+        var(--orb-c1),
+        transparent 10% 90%,
+        var(--orb-c1)
+      ),
+      conic-gradient(
+        from calc(var(--orb-angle) * -2) at 85% 10%,
+        var(--orb-c3),
+        transparent 20% 80%,
+        var(--orb-c3)
+      );
+    box-shadow: inset var(--orb-bg) 0 0 var(--orb-spread) calc(var(--orb-spread) * 0.2);
+    filter: blur(var(--orb-blur)) contrast(var(--orb-contrast));
+    animation: orb-turn var(--orb-duration) linear infinite;
+  }
+  .najimi-orb::after {
+    background-image: radial-gradient(
+      circle at center,
+      var(--orb-bg) var(--orb-dot),
+      transparent var(--orb-dot)
+    );
+    background-size: calc(var(--orb-dot) * 2) calc(var(--orb-dot) * 2);
+    -webkit-backdrop-filter: blur(calc(var(--orb-blur) * 2)) contrast(calc(var(--orb-contrast) * 2));
+    backdrop-filter: blur(calc(var(--orb-blur) * 2)) contrast(calc(var(--orb-contrast) * 2));
+    mix-blend-mode: overlay;
+    mask-image: radial-gradient(black var(--orb-mask), transparent 75%);
+  }
+  .najimi-orb[data-mask="none"]::after {
+    mask-image: none;
+  }
+}
+
+@keyframes orb-turn {
+  to {
+    --orb-angle: 360deg;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .najimi-orb::before {
+    animation: none;
   }
 }

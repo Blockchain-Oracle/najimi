@@ -11,7 +11,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
     <QueryClientProvider client={queryClient}>
       {/* Respect the system "reduce motion" setting everywhere: movement goes, fades stay. */}
       <MotionConfig reducedMotion="user">{children}</MotionConfig>
-      <Toaster theme="dark" position="bottom-center" />
+      <Toaster theme="system" position="bottom-center" />
     </QueryClientProvider>
   )
 }
