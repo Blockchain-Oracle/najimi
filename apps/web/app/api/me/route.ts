@@ -22,7 +22,7 @@ export async function PATCH(request: Request) {
 
 /**
  * Delete all my data (T21): the account and everything in it (people, tastes, chats, photos,
- * creations, workflows, share links), then the session cookie. It can't be undone.
+ * creations, share links), then the session cookie. It can't be undone.
  */
 export async function DELETE() {
   const auth = await withSession()

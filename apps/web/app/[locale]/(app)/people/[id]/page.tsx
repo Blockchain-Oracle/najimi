@@ -7,21 +7,12 @@ import { PersonView } from "@/components/people/person-view"
 import { safeNext } from "@/lib/next-path"
 import { identityOf, personPage } from "@/lib/people"
 import { getSession } from "@/lib/session"
-import { isBuiltIn, runnableWorkflow } from "@/lib/workflows"
 
 type Props = PageProps<"/[locale]/people/[id]">
 
-/** After the reveal, someone who came from a shared workflow link carries on to it. */
-async function CarryOn({ next, userId }: { next: string; userId: string }) {
+/** After the reveal, someone who came from a shared link carries on to it. */
+async function CarryOn({ next }: { next: string }) {
   const t = await getTranslations("Start")
-  const slug = /^\/c\?workflow=([a-z0-9-]+)$/.exec(next)?.[1]
-  const workflow = slug ? await runnableWorkflow(userId, slug) : null
-  const tw = await getTranslations("Workflows")
-  const name = workflow
-    ? isBuiltIn(workflow)
-      ? tw(`items.${workflow.slug}.name` as "items.night-in.name")
-      : workflow.name
-    : null
   return (
     <Link
       href={next}
@@ -31,7 +22,7 @@ async function CarryOn({ next, userId }: { next: string; userId: string }) {
         <span className="text-xs font-semibold tracking-wide uppercase opacity-70">
           {t("carryOnHint")}
         </span>
-        <span className="font-heading text-[17px]">{name ?? t("carryOn")}</span>
+        <span className="font-heading text-[17px]">{t("carryOn")}</span>
       </span>
       <ArrowRight className="size-6 shrink-0 rtl:rotate-180" />
     </Link>
@@ -47,7 +38,7 @@ async function Person({ params, searchParams }: Pick<Props, "params" | "searchPa
   const next = page.person.isSelf ? safeNext((await searchParams).next) : null
   return (
     <div className="flex flex-col gap-6">
-      {next ? <CarryOn next={next} userId={session.user.id} /> : null}
+      {next ? <CarryOn next={next} /> : null}
       <PersonView
         data={{
           person: {
@@ -56,8 +47,6 @@ async function Person({ params, searchParams }: Pick<Props, "params" | "searchPa
             isSelf: page.person.isSelf,
             city: page.person.city,
             look: page.person.look,
-            ageBand: page.person.ageBand,
-            constraints: page.person.constraints,
           },
           identity: identityOf(page.person.id, page.person.look),
           loves: page.loves.map((l) => ({

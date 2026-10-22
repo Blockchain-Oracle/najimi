@@ -7,7 +7,7 @@ import {
   DropdownMenuTrigger,
 } from "@najimi/ui/components/dropdown-menu"
 import { cn } from "@najimi/ui/lib/utils"
-import { Images, MessageCircle, Settings2, Shapes, Users } from "lucide-react"
+import { MessageCircle, Settings2, UserRound } from "lucide-react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
@@ -16,11 +16,10 @@ import { SignInSheet } from "@/components/auth/sign-in-sheet"
 import { LanguageMenu } from "@/components/language-menu"
 import { authClient } from "@/lib/auth-client"
 
+/** `match` is the path prefix that lights the item up (your taste page lives at /people/[id]). */
 const NAV = [
-  { href: "/c", key: "chat", icon: MessageCircle },
-  { href: "/people", key: "people", icon: Users },
-  { href: "/workflows", key: "workflows", icon: Shapes },
-  { href: "/assets", key: "assets", icon: Images },
+  { href: "/c", match: "/c", key: "chat", icon: MessageCircle },
+  { href: "/me", match: "/people", key: "me", icon: UserRound },
 ] as const
 
 /** Where you can go, as words in the header row; where you are is in ink. */
@@ -30,10 +29,10 @@ function NavLinks({ pathname }: { pathname: string | null }) {
     <Link
       key={item.href}
       href={item.href}
-      aria-current={pathname?.startsWith(item.href) ? "page" : undefined}
+      aria-current={pathname?.startsWith(item.match) ? "page" : undefined}
       className={cn(
         "shrink-0 rounded-tile px-2.5 py-1.5 text-sm font-medium whitespace-nowrap transition-colors",
-        pathname?.startsWith(item.href) ? "text-foreground" : "text-text-3 hover:text-foreground",
+        pathname?.startsWith(item.match) ? "text-foreground" : "text-text-3 hover:text-foreground",
       )}
     >
       {t(item.key)}
@@ -45,7 +44,7 @@ function NavLinks({ pathname }: { pathname: string | null }) {
 function TabLinks({ pathname }: { pathname: string | null }) {
   const t = useTranslations("Nav")
   return NAV.map((item) => {
-    const here = pathname?.startsWith(item.href)
+    const here = pathname?.startsWith(item.match)
     const Icon = item.icon
     return (
       <Link
@@ -86,7 +85,7 @@ function Nav({ className }: { className?: string }) {
 function TabBar() {
   return (
     <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-card/95 pb-[env(safe-area-inset-bottom)] backdrop-blur-md sm:hidden">
-      <div className="grid h-14 grid-cols-4">
+      <div className="grid h-14 grid-cols-2">
         <Suspense fallback={<TabLinks pathname={null} />}>
           <CurrentTabs />
         </Suspense>

@@ -9,7 +9,6 @@ import { guestsCleanup } from "./jobs/forget"
 import { mediaGenerate, pollVideos } from "./jobs/media"
 import { tasteRefresh } from "./jobs/taste-refresh"
 import { seedSamples } from "./samples"
-import { seedWorkflows } from "./workflows"
 
 /*
  * The worker: every slow job runs here, never inside a web request. It applies the
@@ -23,7 +22,6 @@ async function main() {
   await migrateDatabase()
   await closeInterruptedRuns()
   await seedSamples().catch((error) => console.error("[worker] samples", error))
-  await seedWorkflows().catch((error) => console.error("[worker] workflows", error))
   const queues = await boss({ worker: true })
   for (const name of RETIRED_QUEUES) {
     if (await queues.getQueue(name)) await queues.deleteQueue(name)

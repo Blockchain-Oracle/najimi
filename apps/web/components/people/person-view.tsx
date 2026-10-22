@@ -1,7 +1,7 @@
 "use client"
 
 import { TASTE_DOMAINS } from "@najimi/config"
-import type { Constraints, StoredPick, TasteWords } from "@najimi/db/schema"
+import type { StoredPick, TasteWords } from "@najimi/db/schema"
 import { Button } from "@najimi/ui/components/button"
 import { toast } from "@najimi/ui/components/sonner"
 import { Share2 } from "lucide-react"
@@ -30,8 +30,6 @@ export type PersonViewData = {
     isSelf: boolean
     city: string | null
     look: string | null
-    ageBand: string | null
-    constraints: Constraints
   }
   identity: string
   loves: EditableLove[]
@@ -216,10 +214,10 @@ export function PersonView({ data }: { data: PersonViewData }) {
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <Link
-            href={`/c?for=${person.id}`}
+            href="/c"
             className="rounded-pill bg-lime px-4 py-2 text-sm font-semibold text-lime-foreground shadow-sticker transition-transform hover:-translate-y-px"
           >
-            {person.isSelf ? t("askSelf") : t("askFor", { name: person.name })}
+            {t("askSelf")}
           </Link>
           <button
             type="button"

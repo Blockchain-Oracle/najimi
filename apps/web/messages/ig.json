@@ -1,36 +1,11 @@
 {
-  "Meta": {
-    "tagline": "Onye enyemaka mmasị gị.",
-    "description": "Gwa Najimi ihe ị hụrụ n’anya. Ọ na-emere gị ihe dabara ná ndụ gị — ọkụ ọhụrụ n’ụlọ gị, nri abalị nne gị, akwụkwọ ọzọ ị ga-agụ — ma na-egosi data mmasị Qloo n’azụ nhọrọ ọ bụla."
-  },
+  "Meta": {},
   "Landing": {
     "kicker": "E ji AI mmasị Qloo wuo ya",
-    "title": "Onye enyemaka mmasị gị.",
-    "lede": "Gwa Najimi ihe atọ ị hụrụ n'anya. Ọ na-eji Qloo amata mmasị gị, wee meere gị ihe dabara ndụ gị: ọkụ ọhụrụ n'ọnụ ụlọ gị, nri abalị nne gị, akwụkwọ ọzọ ị ga-agụ, abalị ịnọ n'ụlọ. Nhọrọ ọ bụla na-egosi data Qloo e ji mee ya.",
     "start": "Malite — ọ bụ n’efu",
     "continue": "Mepee mmasị m",
-    "seeWorkflows": "Lee ihe ọ pụrụ ime",
-    "showcase": "Ihe Najimi mere",
-    "howTitle": "Otu o si arụ ọrụ",
-    "howLede": "Mmasị gị abụghị otu ụdị. Qloo na-ejikọ ihe ị hụrụ n'anya n'egwu, fim, akwụkwọ, ebe na ụdị ahịa; Najimi na-eme ha ka ha bụrụ ihe ị pụrụ iji.",
-    "steps": {
-      "love": {
-        "title": "Gwa ya ihe ị hụrụ n'anya",
-        "body": "Ihe atọ ma ọ bụ karịa: akwụkwọ, onye nka, ihe nkiri, ebe. Kwuo mkpa nke ọ bụla."
-      },
-      "read": {
-        "title": "Qloo na-aghọta mmasị gị",
-        "body": "Okwu kọwara mmasị gị (mma, ọnọdụ obi, nri) na nhọrọ sitere n'akụkụ iri, ozugbo, na ihe mere e ji họrọ nke ọ bụla."
-      },
-      "make": {
-        "title": "Najimi na-eme ka ọ dị adị",
-        "body": "Ụdị ọhụrụ maka foto gị, atụmatụ ọkụ onye ọkụ eletrik pụrụ ịrụ, ngwaahịa dị adị, ntụziaka nri nwere ịdị nro kwesịrị ekwesị, playlist, ebe."
-      }
-    },
-    "proof": "Tụlee azịza ọ bụla na nke otu ajụjụ ahụ na-enweghị mmasị gị: ihe dị iche bụ Qloo.",
     "footer": "Najimi, e mere maka hackathon Qloo.",
-    "builtOn": "E ji Qloo wuo ya",
-    "demo": "Nlele ngosi"
+    "builtOn": "E ji Qloo wuo ya"
   },
   "Language": {
     "label": "Asụsụ",
@@ -49,14 +24,9 @@
     "failed": "Ebugoghị ya: {reason}"
   },
   "Nav": {
-    "people": "Ndị mmadụ",
-    "chat": "Mkparịta ụka",
-    "assets": "Akụrụngwa",
-    "workflows": "Usoro ọrụ",
     "settings": "Ntọala",
     "signIn": "Banye",
     "signOut": "Pụọ",
-    "me": "Mụ",
     "start": "Malite",
     "guest": "Ọbịa"
   },
@@ -156,7 +126,6 @@
     "nothingSaved": "O nwebeghị ihe echekwara. Pịa akara nchekwa n'ihe ọ bụla a họọrọ.",
     "builtOnQloo": "Ewuru na Qloo",
     "callsCount": "{count, plural, other {Oku Qloo #}}",
-    "askFor": "Rịọ maka {name}",
     "askSelf": "Jụọ Najimi",
     "share": "Kesaa mmasị a",
     "linkCopied": "E depụtaghachila link",
@@ -198,51 +167,13 @@
   "People": {
     "title": "Ndị mmadụ",
     "hint": "Chekwaa mmasị onye ị na-emere ihe: nne gị, onye gị na ya nọ, onye ahịa.",
-    "someoneNew": "Onye ọhụrụ",
-    "newTitle": "Ònye ka ị na-emere ihe?",
     "you": "Gị",
     "save": "Chekwaa",
     "saving": "Na-echekwa…",
-    "delete": "Wepụ {name}",
-    "confirmDelete": "Wepụ {name} na ihe niile e mere maka ya?",
     "about": "Banyere {name}",
     "city": "Obodo",
     "language": "Asụsụ",
-    "age": "Afọ",
-    "ages": {
-      "24_and_younger": "24 ma ọ bụ obere",
-      "25_to_29": "25–29",
-      "30_to_34": "30–34",
-      "35_to_44": "35–44",
-      "45_to_54": "45–54",
-      "55_and_older": "55 ma ọ bụ karịa"
-    },
-    "notSet": "Ahọpụtabeghị",
-    "constraints": "Ihe ị ga-eburu n'uche",
-    "diet": "Ụdị nri",
-    "dietPlaceholder": "anaghị eri anụ, halal…",
-    "allergies": "Ihe na-akpata nfụkasị",
-    "allergiesPlaceholder": "ahụekere, azụ nwere shei…",
-    "texture": "Otú nri dị (IDDSI)",
-    "textures": {
-      "3": "3 · E mere ka ọ bụrụ mmiri",
-      "4": "4 · E gwerela nke ọma",
-      "5": "5 · E gbubiri ntakịrị, dị mmiri",
-      "6": "6 · Dị nro, hà otu ata",
-      "7": "7 · Nke nkịtị",
-      "none": "Nke ọ bụla"
-    },
-    "serveWarm": "Nye ya mgbe ọ dị ṅara ṅara, ọ bụghị ọkụ",
-    "medications": "Ọgwụ (aha izugbe)",
-    "medicationsPlaceholder": "warfarin, atorvastatin…",
-    "medicationsNote": "Naanị iji chọọ ozi nri n'akara FDA. Ọ bụghị ndụmọdụ ahụike.",
-    "budget": "Ego a ga-emefu",
-    "notes": "Ihe e chetara",
-    "commaHint": "Jiri kọma kewaa",
-    "theirLoves": "Gịnị ka ha hụrụ n'anya?",
-    "theirLovesHint": "Akwụkwọ, ihe nkiri, onye ọbụ abụ, nri — atọ ma ọ bụ karịa kacha mma.",
-    "revealTheirs": "Gosi mmasị ha",
-    "openTaste": "Meghee ihe ndị na-amasị gị"
+    "age": "Afọ"
   },
   "Auth": {
     "title": "Chekwaa mmasị gị",
@@ -281,7 +212,6 @@
     "deleteHint": "Akaụntụ gị na ihe niile dị na ya ga-apụ kpamkpam.",
     "delete": "Hichapụ data m niile",
     "deleteTitle": "Hichapụ ihe niile?",
-    "deleteWhat": "Akaụntụ gị, ndị ị na-edebe mmasị ha, mmasị ha na ihe ha hụrụ n'anya, nkata ọ bụla, foto gị, ihe niile Najimi mere, usoro ọrụ gị na njikọ ịkekọrịta gị.",
     "deleteFinal": "Njikọ ị kesara ga-akwụsị ịrụ ọrụ ozugbo. A pụghị iweghachi ihe ndị a.",
     "keep": "Debe ya",
     "deleteConfirm": "Hichapụ ihe niile",
@@ -308,7 +238,6 @@
     "stop": "Kwụsị",
     "addPhoto": "Tinye foto",
     "removePhoto": "Wepụ foto",
-    "for": "Maka {name}",
     "me": "m",
     "modes": {
       "ask": "Jụọ tupu ịmepụta",
@@ -323,12 +252,6 @@
     "copy": "Detuo",
     "copied": "E depụtagoro",
     "regenerate": "Gbalịa ọzọ",
-    "fork": "Nkata ọhụrụ site ebe a",
-    "compare": "Tụlee na-enweghị mmasị",
-    "compareTitle": "Otu ajụjụ ahụ, na mmasị na enweghị ya",
-    "withoutTaste": "AI izugbe, enweghị data mmasị",
-    "withTaste": "Najimi, na Qloo",
-    "asking": "Na-ajụ…",
     "stillWorking": "Ka na-arụ ọrụ na nke a…",
     "interrupted": "Azịza a akwụsịghị.",
     "error": "Ọ dị ihe mebiri.",
@@ -362,7 +285,6 @@
     "voiceFailed": "Anyị anụghị nke ahụ. Nwaa ọzọ.",
     "shareChat": "Kekọrịta nkata a",
     "linkCopied": "E depụtagoro link",
-    "saveWorkflow": "Chekwaa ka usoro ọrụ",
     "share": "Kesaa"
   },
   "Cards": {
@@ -373,7 +295,6 @@
     "lookedUp": "Achọgharịrị “{q}” na Qloo",
     "lookedUpTags": "Achọtara mkpado Qloo maka “{q}”",
     "lookedUpAudiences": "Achọgharịrị ndị na-eso Qloo",
-    "remembered": "E chetara maka {name}: {value}",
     "briefFor": "Ihe ndị mejupụtara mmasị {name}, site na Qloo",
     "shared": "E kekọrịtara",
     "only": "Naanị {name}",
@@ -402,12 +323,6 @@
     "planOnly": "Naanị atụmatụ: emeghị “{title}”.",
     "declined": "Emeghị: “{title}”.",
     "preparing": "Na-akwadebe…",
-    "planning": "Na-ahazi ọkụ…",
-    "shopping": "Na-achọ na saịtị ụlọ ọrụ ndị ahụ…",
-    "cooking": "Na-ede usoro isi nri…",
-    "readingLabel": "Na-agụ akara FDA…",
-    "savedPerson": "E debere mmasị {name} →",
-    "savingPerson": "Na-emere {name} profaịlụ…",
     "nothingFor": "A jụrụ Qloo maka “{title}”: ọ dịbeghị ihe"
   },
   "Asked": {
@@ -449,7 +364,6 @@
     "playlist": "Meere m playlist maka Sọnde mmiri ozuzo",
     "watch": "Gịnị ka m ga-ekiri n'abalị a?",
     "eat": "Ebee ka m ga-eri nri na {city} na ngwụcha izu a?",
-    "both": "Gịnị ga-amasị mụ na {name} abụọ?",
     "hidden": "Chọta ihe ọma zoro ezo ga-amasị m",
     "trip": "Ebee ka m ga-eme njem ọzọ?"
   },
@@ -483,196 +397,13 @@
     "before": "Tupu",
     "after": "Mgbe"
   },
-  "Assets": {
-    "title": "Ihe e mepụtara",
-    "hint": "Ihe niile Najimi meere gị na ndị ị na-emere ihe.",
-    "kinds": {
-      "all": "Niile",
-      "image": "Onyonyo",
-      "video": "Vidio"
-    },
-    "empty": "E mebeghị ihe ọ bụla. Gbanwee ụdị foto ma ọ bụ rịọ nri, mmetụta, ụlọ.",
-    "startMaking": "Mee ihe",
-    "more": "Bunye ndị ọzọ",
-    "madeFrom": "E ji nke a mee ya",
-    "openChat": "Mepee nkata ya",
-    "delete": "Hichapụ",
-    "confirmDelete": "Hichapụ nke a kpamkpam?"
-  },
   "Share": {
     "cta": "Mee nke gị",
     "madeFrom": "E sitere n'ihe mmadụ hụrụ n'anya mee ya: {words}",
     "pitch": "Najimi na-esi na Qloo amata ihe ndị mmadụ hụrụ n'anya, wee meere ha ihe dabara ndụ ha.",
     "chatTitle": "Nkata Najimi",
-    "moreWorkflows": "Usoro ọrụ ndị ọzọ",
     "creationTitle": "E ji Najimi mee ya",
     "tasteTitle": "Ihe {name} hụrụ n'anya"
-  },
-  "Home": {
-    "planFor": "Maka {room} nke {name}",
-    "layers": {
-      "ambient": "Ìhè zuru ebe",
-      "task": "Ìhè ọrụ",
-      "accent": "Ìhè nṅomi",
-      "decorative": "Ìhè ịchọ mma"
-    },
-    "controls": {
-      "switch": "switch",
-      "dimmer": "dimmer",
-      "smart": "smart",
-      "plug-in": "plug-in"
-    },
-    "dimmable": "enwere ike ibelata ìhè",
-    "notDimmable": "enweghị ike ibelata ìhè",
-    "forElectrician": "Maka onye ọkụ eletrik gị",
-    "copyBrief": "Depụtaghachi nchịkọta",
-    "copied": "E depụtaghachila nchịkọta",
-    "circuits": "Sekit",
-    "switching": "Ịgbanye na ịgbanyụ",
-    "dimmers": "Dimmers",
-    "lookHint": "Ezigbo {category} si na saịtị nke akara ọ bụla.",
-    "brandOnly": "Gaa n'ụlọ ahịa akara ahụ",
-    "sendElectrician": "Zigara onye ọkụ eletrik gị",
-    "linkCopied": "E depụtaghachila njikọ — zigara onye ọkụ eletrik gị"
-  },
-  "Food": {
-    "minutes": "Nkeji {n}",
-    "serve": {
-      "hot": "Nye ya ka ọ dị ọkụ",
-      "warm": "Nye ya ka ọ dịtụ ọkụ",
-      "lukewarm": "Nye ya ka ọ dị ṅara ṅara",
-      "cold": "Nye ya ka ọ dị oyi"
-    },
-    "forName": "maka {name}",
-    "ingredients": "Ngwakọta",
-    "method": "Usoro",
-    "texture": "Ọdịdị nri",
-    "fewer": "Belata oke nri",
-    "more": "Mụbaa oke nri",
-    "cookMode": "Ụdị isi nri",
-    "dishPhoto": "Gosi m nri ahụ",
-    "photoAsk": "Mee foto nke “{title}”",
-    "planWeek": "Hazie izu",
-    "weekAsk": "Hazie nri otu izu dị ka “{title}”, tinyere ndepụta ịzụ ahịa",
-    "step": "Nzọụkwụ {n} n'ime {total}",
-    "back": "Laghachi",
-    "next": "Nzọụkwụ ọzọ",
-    "done": "Emechaala",
-    "shopping": "Ndepụta ịzụ ahịa",
-    "medsTitle": "Ihe gbasara nri na ọgwụ maka {name}",
-    "label": "Akara FDA, {date}",
-    "noLabel": "Achọtaghị akara FDA maka aha a. Lelee aha ọgwụ nkịtị.",
-    "noFoodNotes": "Akara ahụ enweghị ihe gbasara nri ma ọ bụ ihe ọṅụṅụ.",
-    "pharmacist": "E si n'akara ọgwụ FDA nweta okwu ndị a. Nke a abụghị ndụmọdụ ahụike: jụọ onye na-ahụ maka ọgwụ ma ọ bụ dọkịta tupu ị gbanwee ihe mmadụ na-eri."
-  },
-  "Workflows": {
-    "title": "Usoro ọrụ",
-    "hint": "Usoro akwadoro maka ọrụ ndị ka ibu. Nke ọ bụla na-arụ na nkata, maka gị ma ọ bụ onye ọ bụla ị na-emere ihe.",
-    "pill": "Usoro ọrụ",
-    "run": "Malite",
-    "needsPhoto": "foto",
-    "needsPerson": "onye a ga-esiri nri",
-    "categories": {
-      "home": "Ụlọ",
-      "food": "Nri",
-      "culture": "Omenala",
-      "style": "Ejiji",
-      "film": "Ihe nkiri",
-      "mine": "Onye ọrụ Najimi mere ya"
-    },
-    "items": {
-      "relight-my-room": {
-        "name": "Gbanwee ọkụ ụlọ m",
-        "desc": "Ụlọ gị, ọkụ masịrị gị: ọnọdụ abụọ, atụmatụ onye ọkụ eletrik ga-arụnye, oriọna ndị dị adị, na egwu.",
-        "start": "Gbanwee ọkụ ụlọ m"
-      },
-      "make-it-mine": {
-        "name": "Mee ya ka ọ masị m",
-        "desc": "See ihe ọ bụla foto (tebụl, shelf, iko), hụ ya n'ụdị masịrị gị, tinyere ngwaahịa ndị dị adị.",
-        "start": "Mee nke a ka ọ masị m"
-      },
-      "cook-for": {
-        "name": "Siere nri…",
-        "desc": "Ụzọ esi nri ga-amasị mmadụ, n'ịdị nro na okpomọkụ kwesịrị ekwesị, na ndụmọdụ ọgwụ sitere na akara FDA.",
-        "start": "Nyere m isiri mmadụ nri"
-      },
-      "next-read": {
-        "name": "Ọgụgụ ọzọ",
-        "desc": "Akwụkwọ masịrị gị, ụwa nke kacha mma, playlist maka ịgụ akwụkwọ na ebe ị ga-agụ ya.",
-        "start": "Gịnị ka m ga-agụ ọzọ?"
-      },
-      "dress-me": {
-        "name": "Yiri m uwe",
-        "desc": "Uwe masịrị gị, nke sitere n'ụdị azụmahịa dị adị, na playlist maka ịkwadebe.",
-        "start": "Yiri m uwe"
-      },
-      "my-taste-film": {
-        "name": "Ihe nkiri mmasị m",
-        "desc": "Ihe nkiri dị mkpirikpi gbasara onye ị bụ, e ji okwu mmasị gị mee, tinyere egwu ya.",
-        "start": "Mee ihe nkiri mmasị m"
-      },
-      "night-in": {
-        "name": "Abalị n'ụlọ",
-        "desc": "Mgbede zuru ezu: ihe ị ga-ekiri, nụ, rie, na ụlọ a kwadebere maka ya.",
-        "start": "Hazie abalị n'ụlọ"
-      }
-    },
-    "runMine": "Malite workflow m “{name}”:",
-    "yours": "Nke gị",
-    "runs": "{count, plural, other {ejirila ya ugboro #}}",
-    "runThis": "Malite workflow a",
-    "newHere": "Ị bụ onye ọhụrụ ebe a? Buru ụzọ gwa Najimi ihe atọ ị hụrụ n'anya. Ọ na-ewe otu nkeji, workflow amalitezie.",
-    "copyLink": "Detuo link",
-    "linkCopied": "E depụtala link",
-    "stepCount": "{count, plural, other {nzọụkwụ #}}",
-    "public": "Onye ọ bụla nwere link nwere ike iji ya",
-    "delete": "Hichapụ",
-    "deleteConfirm": "Hichapụ “{name}”? Mkparịta ụka e ji ya mee ga-adị.",
-    "saveTitle": "Chekwaa dị ka workflow",
-    "saveHint": "Jiri nke a ọzọ mgbe ọ bụla, maka gị ma ọ bụ onye ị na-emere ihe. Najimi si na mkparịta ụka a dee nzọụkwụ ndị a; hazie ha ka ha dịrị gị.",
-    "drafting": "Najimi na-ede nzọụkwụ ndị a…",
-    "name": "Aha",
-    "description": "Ihe ọ na-enye gị",
-    "steps": "Nzọụkwụ",
-    "stepsHint": "Otu n'ahịrị ọ bụla. Mgbe ị malitere, a na-eziga ha dị ka ozi mbụ gị, ya mere dee ha ka ị ga-esi rịọ.",
-    "cancel": "Kagbuo",
-    "save": "Chekwaa workflow",
-    "saving": "Na-echekwa…",
-    "saved": "E chekwaala workflow",
-    "savedShared": "E depụtala link: {link}",
-    "savedPrivate": "Ọ dị na Workflows, n'okpuru Nke gị.",
-    "seeYours": "Mepee",
-    "saveFailed": "E chekwaghị ya. Nwaa ọzọ.",
-    "readyMade": "A kwadebere ya",
-    "yoursEmpty": "Workflows nke gị ga-apụta ebe a. N'okpuru azịza ọ bụla n'ime chat, “Chekwaa dị ka workflow” na-eme ka chat ahụ bụrụ nke ị nwere ike ịrụ ọzọ ma ọ bụ kesaa."
-  },
-  "Demo": {
-    "title": "Lee Najimi ka ọ na-arụ ọrụ",
-    "lede": "Site n'ihe atọ na-amasị gị ruo n'ime ụlọ a gbanwere ọkụ: ihe ndị na-amasị gị sitere na Qloo, ụdị ọhụrụ abụọ nke ime ụlọ n'ezie, atụmatụ ọkụ, oriọna n'ezie na egwu.",
-    "coverAlt": "Najimi na ekwentị: ime ụlọ ihi ụra tupu na mgbe e mesịrị, nke e nyere ọkụ n'ụdị ọkụ abụọ na-ekpo ọkụ",
-    "pendingTitle": "Ndekọ ngosi na-abịa n'oge na-adịghị anya",
-    "pendingBody": "Ruo mgbe ọ bịara, soro otu ụzọ ahụ n'onwe gị na ngwa dị n'okpuru. Ọ na-ewe ihe dị ka nkeji atọ, achọghịkwa akaụntụ.",
-    "pathTitle": "Nwalee ya n'ime nkeji atọ",
-    "steps": {
-      "start": {
-        "title": "Gwa ya ihe atọ na-amasị gị",
-        "body": "Akwụkwọ, onye na-ese egwu, ma ọ bụ ihe nkiri. Kwuo ego ole nke ọ bụla dị gị mkpa."
-      },
-      "taste": {
-        "title": "Lelee ka ihe ndị na-amasị gị si apụta",
-        "body": "Okwu na nhọrọ gị si na Qloo abịa ozugbo, nke ọ bụla na ihe mere i ji hụ ya n'anya."
-      },
-      "relight": {
-        "title": "Gbanwee ọkụ n'ime ụlọ",
-        "body": "Họrọ ime ụlọ nlele (ma ọ bụ foto nke gị), kwuo ihe e ji ya eme, nweta ụdị ọhụrụ abụọ, atụmatụ ọkụ na oriọna n'ezie."
-      },
-      "share": {
-        "title": "Kesaa ya",
-        "body": "Zipu chat ma ọ bụ nsonaazụ ya; ọ ga-emeghe ma nwee foto, ọ gaghị egosikwa foto nke gị."
-      }
-    },
-    "cta": "Malite na Gbanwee ọkụ n'ime ụlọ m",
-    "docs": "Gụọ akwụkwọ ntuziaka"
   },
   "Run": {
     "readTaste": "Gụrụ mmasị {name}",

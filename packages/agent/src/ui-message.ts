@@ -8,8 +8,6 @@ export type ChatMeta = {
   finishedAt?: number
   /** The model that answered (`openai:gpt-6-astra`). */
   model?: string
-  /** "Compare without taste": the same ask answered with no taste and no tools. */
-  compare?: { generic: string; at: number }
 }
 
 export type NajimiTools = InferUITools<ToolDefs>

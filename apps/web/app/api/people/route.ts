@@ -41,8 +41,6 @@ export async function POST(request: Request) {
         cityLon: input.city ? (input.cityLon ?? null) : null,
         look: input.look ?? null,
         locale: input.locale ?? null,
-        ageBand: input.ageBand ?? null,
-        constraints: input.constraints ?? {},
       })
       .returning()
     if (!row) throw new Error("Couldn't save the profile")

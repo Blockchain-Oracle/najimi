@@ -2,14 +2,6 @@
 
 import type { TasteWords } from "@najimi/db/schema"
 import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@najimi/ui/components/sheet"
-import {
   BookOpen,
   ChevronRight,
   Clapperboard,
@@ -18,22 +10,19 @@ import {
   Music2,
   Plane,
   ScanFace,
-  Shapes,
-  UsersRound,
   UtensilsCrossed,
 } from "lucide-react"
 import { useTranslations } from "next-intl"
-import { type CSSProperties, useState } from "react"
+import type { CSSProperties } from "react"
 import { Face } from "@/components/taste/face"
 import { useTasteLine } from "@/components/taste/taste-hero"
-import { WORKFLOW_ICON, WORKFLOW_SLUGS } from "@/components/workflows/workflow-meta"
 import { sound } from "@/lib/sounds"
 import type { ChatPerson } from "./composer"
 
 /*
  * An empty chat, before the first word: who it's for (their face and the taste it will use, in
- * Qloo's own words, beside the loves it came from), a few first asks picked from what they love,
- * and the workflows one tap away in a sheet. Quiet rows on a panel: the colour on this screen is
+ * Qloo's own words, beside the loves it came from) and a few first asks picked from what they
+ * love. Quiet rows on a panel: the colour on this screen is
  * the person's face and their artwork, nothing else.
  */
 
@@ -51,7 +40,6 @@ const STARTER_ICON: Record<string, typeof Gem> = {
   playlist: Music2,
   watch: Clapperboard,
   eat: UtensilsCrossed,
-  both: UsersRound,
   hidden: Gem,
   trip: Plane,
 }
@@ -71,19 +59,15 @@ export function ChatWelcome({
   taste,
   starters,
   onAsk,
-  onWorkflow,
 }: {
   person: ChatPerson | undefined
   greeting: string
   taste: WelcomeTaste
   starters: Starter[]
   onAsk: (text: string) => void
-  onWorkflow: (slug: string) => void
 }) {
   const t = useTranslations("Chat")
-  const tw = useTranslations("Workflows")
   const line = useTasteLine(taste.words)
-  const [sheet, setSheet] = useState(false)
   return (
     <section className="flex flex-1 flex-col justify-end gap-6 py-8 md:justify-center">
       <header className="flex animate-settle-in flex-col gap-3" style={enter(0)}>
@@ -137,59 +121,6 @@ export function ChatWelcome({
           )
         })}
       </div>
-
-      <Sheet open={sheet} onOpenChange={setSheet}>
-        <SheetTrigger
-          className={`${row} animate-settle-in rounded-card bg-card shadow-paper`}
-          style={enter(2)}
-        >
-          <Shapes className="size-4 shrink-0 text-text-3" strokeWidth={1.5} />
-          <span className="flex min-w-0 flex-col">
-            <span className="text-[15px] font-medium">{tw("title")}</span>
-            <span className="truncate text-[13px] text-text-3">{tw("hint")}</span>
-          </span>
-          <ChevronRight className="ms-auto size-4 shrink-0 text-text-4 rtl:rotate-180" />
-        </SheetTrigger>
-        <SheetContent
-          side="bottom"
-          className="max-h-[85svh] gap-0 overflow-y-auto rounded-t-sheet border-border bg-card p-0 pb-[env(safe-area-inset-bottom)] md:inset-x-auto md:start-1/2 md:w-[560px] md:-translate-x-1/2 rtl:md:translate-x-1/2"
-        >
-          <SheetHeader className="gap-1 px-4 pt-5 pb-3">
-            <SheetTitle className="font-title text-[1.75rem] font-normal">{tw("title")}</SheetTitle>
-            <SheetDescription className="text-sm text-text-3">{tw("hint")}</SheetDescription>
-          </SheetHeader>
-          <ul className="flex flex-col pb-2">
-            {WORKFLOW_SLUGS.map((slug) => {
-              const Icon = WORKFLOW_ICON[slug] ?? Shapes
-              return (
-                <li key={slug} className="border-t border-border">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      sound("tap")
-                      setSheet(false)
-                      onWorkflow(slug)
-                    }}
-                    className={`${row} items-start px-4`}
-                  >
-                    <span className="grid size-9 shrink-0 place-items-center rounded-tile bg-raised shadow-sticker">
-                      <Icon className="size-4 text-text-2" strokeWidth={1.5} />
-                    </span>
-                    <span className="flex min-w-0 flex-col gap-0.5">
-                      <span className="font-heading text-[15px]">
-                        {tw(`items.${slug}.name` as "items.night-in.name")}
-                      </span>
-                      <span className="line-clamp-2 text-[13px] text-text-3">
-                        {tw(`items.${slug}.desc` as "items.night-in.desc")}
-                      </span>
-                    </span>
-                  </button>
-                </li>
-              )
-            })}
-          </ul>
-        </SheetContent>
-      </Sheet>
     </section>
   )
 }

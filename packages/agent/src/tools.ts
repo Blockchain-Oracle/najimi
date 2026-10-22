@@ -48,16 +48,10 @@ export const askUserOutput = z.object({
   skipped: z.boolean().optional(),
 })
 
-const personRef = z
-  .string()
-  .optional()
-  .describe("Who this is for: a person id from the People list. Leave out for the chat's person.")
-
 /** What the agent can ask Qloo's insights for (see qlooInsights). */
 export const insightsInput = z.object({
   title: z.string().max(80).describe("The card's title, in the reply language."),
   ask: z.enum([...entityKeys, "tags", "heatmap", "demographics"]),
-  for: personRef,
   useTaste: z.boolean().optional().describe("Use the person's loves as the signal (default true)."),
   signal: z
     .object({
@@ -217,17 +211,15 @@ export const toolDefs = {
 
   qlooCompare: tool({
     description:
-      'Compare two tastes in Qloo: two people ("me and Mum"), or two sets of things ("Fleabag vs Insecure"). Shows what they share (scored) and what\'s only on each side. Use person ids from the People list, or entity ids from qlooSearch.',
+      "Compare two tastes in Qloo: two sets of things (\"Fleabag vs Insecure\"), or the person's own taste against a set. Shows what they share (scored) and what's only on each side. Use entity ids from qlooSearch; leave entityIds out on a side for the person's own loves.",
     inputSchema: z.object({
       title: z.string().max(80),
       a: z.object({
         label: z.string().max(60),
-        personId: z.string().optional(),
         entityIds: z.array(z.string().max(64)).max(10).optional(),
       }),
       b: z.object({
         label: z.string().max(60),
-        personId: z.string().optional(),
         entityIds: z.array(z.string().max(64)).max(10).optional(),
       }),
     }),
@@ -264,12 +256,11 @@ export const toolDefs = {
 
   makeImage: tool({
     description:
-      'Make an image (shows an approval card with the cost first in Ask mode). restyle: edit a photo the person shared (sourceUploadId) or an earlier creation (sourceCreationId), keeping the real room, object or person and changing its look, light and decor to their taste. new: make a scene from words (a dish for a recipe, the world of a book, a mood). Write the prompt in English, concrete and photographic, built from the person\'s taste words, and pass the words you used. For a restyle say "keep this exact room/object, layout and camera angle".',
+      'Make an image (shows an approval card with the cost first in Ask mode). restyle: edit a photo the person shared (sourceUploadId) or an earlier creation (sourceCreationId), keeping the real room, object or person and changing its look, light and decor to their taste. new: make a scene from words (the world of a book, a mood, a look). Write the prompt in English, concrete and photographic, built from the person\'s taste words, and pass the words you used. For a restyle say "keep this exact room/object, layout and camera angle".',
     inputSchema: z.object({
       title: z.string().max(80).describe("The card's title, in the reply language."),
-      for: personRef,
       kind: z.enum(["restyle", "new"]),
-      purpose: z.enum(["restyle", "relight", "dish", "mood", "portrait", "scene", "outfit"]),
+      purpose: z.enum(["restyle", "relight", "mood", "portrait", "scene", "outfit"]),
       sourceUploadId: z.string().max(64).optional(),
       sourceCreationId: z.string().max(64).optional(),
       prompt: z.string().min(20).max(2000),
@@ -297,243 +288,10 @@ export const toolDefs = {
     }),
   }),
 
-  makeVideo: tool({
-    description:
-      'Turn an image Najimi made (fromCreationId) into a short video. Describe the camera move and motion in English ("slow push-in, warm lamp light flickers, rain on the window"). audio adds the model\'s own ambient sound. Shows an approval card with the cost first in Ask mode.',
-    inputSchema: z.object({
-      title: z.string().max(80),
-      fromCreationId: z.string().max(64),
-      motion: z.string().min(10).max(600),
-      seconds: z.union([z.literal(5), z.literal(6)]).optional(),
-      audio: z.boolean().optional(),
-    }),
-    outputSchema: z.object({
-      runId: z.string().nullable(),
-      creationId: z.string().nullable(),
-      posterCreationId: z.string().nullable(),
-      title: z.string(),
-      note: z.string().nullable(),
-    }),
-  }),
-
-  lightingPlan: tool({
-    description:
-      'Show a lighting plan an electrician can install (brief #1: mood, comfort and function, not just bright or dim). Layers (ambient, task, accent, decorative) with fixtures, colour temperature in kelvin, lumens, dimming and controls; moments ("evening", "reading", "dinner") with kelvin and brightness; and a short brief for the electrician. Build it from the room\'s uses and the person\'s taste words. Text in the reply language.',
-    inputSchema: z.object({
-      title: z.string().max(80),
-      for: personRef,
-      room: z.string().max(60),
-      uses: z.array(z.string().max(60)).max(6),
-      words: z.array(z.string().max(60)).max(10),
-      layers: z
-        .array(
-          z.object({
-            layer: z.enum(["ambient", "task", "accent", "decorative"]),
-            why: z.string().max(200),
-            fixtures: z
-              .array(
-                z.object({
-                  type: z.string().max(60),
-                  placement: z.string().max(120),
-                  kelvin: z.number().int().min(1800).max(6500),
-                  lumens: z.number().int().min(50).max(10000).optional(),
-                  dimmable: z.boolean(),
-                  control: z.enum(["switch", "dimmer", "smart", "plug-in"]),
-                }),
-              )
-              .min(1)
-              .max(4),
-          }),
-        )
-        .min(2)
-        .max(4),
-      moments: z
-        .array(
-          z.object({
-            name: z.string().max(40),
-            kelvin: z.number().int().min(1800).max(6500),
-            brightness: z.number().int().min(5).max(100),
-            note: z.string().max(140),
-          }),
-        )
-        .min(2)
-        .max(4),
-      electrician: z.object({
-        circuits: z.string().max(240),
-        switching: z.string().max(240),
-        dimmers: z.string().max(240),
-        notes: z.array(z.string().max(160)).max(5),
-      }),
-    }),
-    outputSchema: z.object({ planId: z.string(), personName: z.string() }),
-  }),
-
-  findProducts: tool({
-    description:
-      'Real products for "get the look": for brands from qlooInsights (pass their Qloo ids), look on each brand\'s own website for a category (English: "floor lamp", "linen throw", "ceramic mug") and return named products with price, image and link. Choose brands whose design words match the person\'s taste; skip appliance makers. Takes 10-30 seconds.',
-    inputSchema: z.object({
-      title: z.string().max(80),
-      brandIds: z.array(z.string().max(64)).min(1).max(4),
-      category: z.string().min(2).max(60),
-    }),
-    outputSchema: z.object({
-      title: z.string(),
-      category: z.string(),
-      brands: z.array(
-        z.object({
-          id: z.string(),
-          name: z.string(),
-          site: z.string().nullable(),
-          image: z.string().nullable(),
-          products: z.array(
-            z.object({
-              name: z.string(),
-              image: z.string().nullable(),
-              price: z.number().nullable(),
-              currency: z.string().nullable(),
-              url: z.string(),
-            }),
-          ),
-        }),
-      ),
-    }),
-  }),
-
-  recipe: tool({
-    description:
-      "Show a recipe card for someone (brief #2: meals for older adults or anyone with needs): built from their cuisine and dish words and their constraints (diet, allergies, IDDSI texture level, serve lukewarm). Texture notes must match their IDDSI level. Then offer a dish photo with makeImage (kind new, purpose dish). Text in the reply language.",
-    inputSchema: z.object({
-      title: z.string().max(80),
-      for: personRef,
-      blurb: z.string().max(240),
-      servings: z.number().int().min(1).max(12),
-      minutes: z.number().int().min(5).max(600),
-      cuisine: z.string().max(40),
-      ingredients: z
-        .array(
-          z.object({
-            item: z.string().max(80),
-            amount: z.number().nullable(),
-            unit: z.string().max(20),
-            note: z.string().max(80).optional(),
-          }),
-        )
-        .min(2)
-        .max(25),
-      steps: z.array(z.string().max(400)).min(2).max(15),
-      texture: z.object({
-        iddsi: z.number().int().min(3).max(7).nullable(),
-        note: z.string().max(240),
-      }),
-      serve: z.enum(["hot", "warm", "lukewarm", "cold"]),
-      swaps: z
-        .array(
-          z.object({ from: z.string().max(60), to: z.string().max(60), why: z.string().max(120) }),
-        )
-        .max(4),
-      words: z.array(z.string().max(60)).max(8),
-    }),
-    outputSchema: z.object({
-      recipeId: z.string(),
-      personName: z.string(),
-      constraints: z.array(z.string()),
-    }),
-  }),
-
-  mealPlan: tool({
-    description:
-      "Show a meal plan for several days with a shopping list, for someone (their cuisine words and constraints). Text in the reply language.",
-    inputSchema: z.object({
-      title: z.string().max(80),
-      for: personRef,
-      days: z
-        .array(
-          z.object({
-            day: z.string().max(30),
-            meals: z
-              .array(
-                z.object({
-                  slot: z.string().max(20),
-                  name: z.string().max(80),
-                  note: z.string().max(120).optional(),
-                }),
-              )
-              .min(1)
-              .max(4),
-          }),
-        )
-        .min(1)
-        .max(7),
-      shopping: z
-        .array(
-          z.object({
-            item: z.string().max(60),
-            amount: z.string().max(30),
-            aisle: z.string().max(30),
-          }),
-        )
-        .max(40),
-    }),
-    outputSchema: z.object({ planId: z.string(), personName: z.string() }),
-  }),
-
-  medicationNotes: tool({
-    description:
-      "Food and drink notes from the FDA drug label (openFDA) for someone's medications (generic names), cited with the label's date and link. Use before suggesting food for someone on medication. Never give dosing or medical advice.",
-    inputSchema: z.object({
-      for: personRef,
-      medications: z.array(z.string().min(2).max(60)).min(1).max(5),
-    }),
-    outputSchema: z.object({
-      personName: z.string(),
-      notes: z.array(
-        z.object({
-          medication: z.string(),
-          found: z.boolean(),
-          brand: z.string().nullable(),
-          excerpts: z.array(z.object({ section: z.string(), text: z.string() })),
-          effective: z.string().nullable(),
-          url: z.string().nullable(),
-        }),
-      ),
-    }),
-  }),
-
-  savePerson: tool({
-    description:
-      "Keep a taste profile for someone the person makes things for (a mum, a partner, a friend, a client) when they don't have one yet: their name, what they love (Qloo ids from qlooSearch), city, age band and what to keep in mind (diet, allergies, IDDSI texture, lukewarm food, medications). Their taste starts computing at once; use the returned id in for. Never put someone else's facts on the speaker's own profile.",
-    inputSchema: z.object({
-      name: z.string().min(1).max(60),
-      relation: z.string().max(40).optional(),
-      city: z.string().max(120).optional(),
-      ageBand: z
-        .enum(["24_and_younger", "25_to_29", "30_to_34", "35_to_44", "45_to_54", "55_and_older"])
-        .optional(),
-      loveIds: z.array(z.string().max(64)).max(8).optional(),
-      constraints: z
-        .object({
-          diet: z.array(z.string().max(60)).max(8).optional(),
-          allergies: z.array(z.string().max(60)).max(8).optional(),
-          iddsi: z.number().int().min(3).max(7).optional(),
-          serveWarm: z.boolean().optional(),
-          medications: z.array(z.string().max(60)).max(8).optional(),
-          notes: z.array(z.string().max(160)).max(6).optional(),
-        })
-        .optional(),
-    }),
-    outputSchema: z.object({
-      personId: z.string(),
-      name: z.string(),
-      loves: z.array(z.string()),
-      existed: z.boolean(),
-    }),
-  }),
-
   tasteBrief: tool({
     description:
-      "Show the taste brief card: the words of a person's taste that a plan or a creation will be built from (look, rooms, mood, food), and the loves behind them. Call it first when planning or making something for someone (a room, a meal, a look), so they see what their taste is made of.",
+      "Show the taste brief card: the words of a person's taste that a plan or a creation will be built from (look, rooms, mood, food), and the loves behind them. Call it first when planning or making something from their taste (a room, a night, a look), so they see what their taste is made of.",
     inputSchema: z.object({
-      for: personRef,
       focus: z.enum(["home", "food", "style", "culture", "travel"]),
       ask: z
         .string()
@@ -574,25 +332,6 @@ export const toolDefs = {
         .max(3),
     }),
     outputSchema: askUserOutput,
-  }),
-
-  remember: tool({
-    description:
-      "Remember a lasting fact about the person (or someone they make for): a diet, an allergy, a medication (generic name), a food texture need (IDDSI level 3–7), serving food lukewarm, a budget, or any other preference worth keeping. Everything made for them follows it from then on.",
-    inputSchema: z.object({
-      for: personRef,
-      kind: z.enum(["diet", "allergy", "medication", "texture", "serveWarm", "budget", "note"]),
-      value: z
-        .string()
-        .max(200)
-        .describe('The fact, short ("vegetarian", "warfarin", "5", "yes").'),
-    }),
-    outputSchema: z.object({
-      personId: z.string(),
-      personName: z.string(),
-      kind: z.string(),
-      value: z.string(),
-    }),
   }),
 } as const
 

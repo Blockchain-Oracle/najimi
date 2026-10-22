@@ -10,7 +10,7 @@ description: How Najimi is built and run.
     { name: "Web", parts: ["Next.js 16 App Router", "Partial prerendering", "AI SDK 7 agent", "Better Auth (guests, email codes, Google)", "next-intl, 12 languages"] },
     { name: "Worker", parts: ["pg-boss queues", "Taste reveal", "Image and video jobs", "Chat titles", "Nightly guest sweep"] },
     { name: "Data", parts: ["Postgres 17 (Drizzle)", "RustFS (S3) for photos and creations", "LISTEN/NOTIFY for live events"] },
-    { name: "Outside", parts: ["Qloo (taste graph)", "OpenAI (chat)", "fal (images, video)", "ElevenLabs (voice)", "openFDA (labels)", "Brand sites (products)"] },
+    { name: "Outside", parts: ["Qloo (taste graph)", "OpenAI (chat)", "fal (images, video)", "ElevenLabs (voice)"] },
   ]}
 />
 
@@ -23,11 +23,11 @@ A pnpm and Turborepo monorepo:
 | `apps/web` | The product: pages, API routes, the chat route, cards. |
 | `apps/worker` | Every slow job. Runs migrations at start. |
 | `apps/docs` | This site (Fumadocs, a static export). |
-| `packages/agent` | The model registry, the tools, the rules, the workflows. |
+| `packages/agent` | The model registry, the tools and the rules. |
 | `packages/qloo` | The Qloo client: caching, de-duplication, call logging, taste and explore helpers. |
 | `packages/db` | Drizzle schema, migrations, data ownership (move a guest's data on sign-in, delete all of a person's data). |
 | `packages/media` | Image and video providers behind one interface. |
-| `packages/sources` | openFDA labels; product pages read from brands' own sites (JSON-LD, safe fetching). |
+| `packages/sources` | Safe fetching of outside pages, JSON-LD parsing and a Postgres cache for outside sources. |
 | `packages/storage` | S3 objects, signed media links, renditions. |
 | `packages/jobs`, `live`, `email`, `env`, `config`, `tokens`, `ui` | Queues, live events, email codes, typed env, every tunable, design tokens, components. |
 
@@ -37,7 +37,7 @@ A pnpm and Turborepo monorepo:
   label="One turn, from the person's message to a saved answer"
   steps={[
     { title: "POST /api/chat", note: "Only the newest message; the server holds the conversation" },
-    { title: "Context", note: "Person, loves, taste words, people, photos, mode, workflow" },
+    { title: "Context", note: "Person, loves, taste words, photos, mode" },
     { title: "streamText + tools", note: "Up to 10 steps; Qloo, making, plans", accent: true },
     { title: "UI message stream", note: "Cards stream in; saved after every step" },
   ]}

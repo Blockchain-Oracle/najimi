@@ -11,7 +11,6 @@ import { AGENT, ALLOWANCE, DEFAULT_LOCALE, MEDIA } from "@najimi/config"
 import { db, schema } from "@najimi/db"
 import { env } from "@najimi/env/server"
 import { enqueue } from "@najimi/jobs"
-import { videoReady } from "@najimi/media"
 import {
   convertToModelMessages,
   createIdGenerator,
@@ -21,7 +20,7 @@ import {
   streamText,
   toUIMessageStream,
 } from "ai"
-import { eq, sql } from "drizzle-orm"
+import { eq } from "drizzle-orm"
 import { z } from "zod"
 import { fail, withSession } from "@/lib/api"
 import { forModel, ownsUploads } from "@/lib/chat/files"
@@ -30,8 +29,7 @@ import { chatExists, messagesOf, ownedChat, saveMessages } from "@/lib/chat/stor
 import { buildTools } from "@/lib/chat/tools.server"
 import { charge, usageToday } from "@/lib/chat/usage"
 import { isLocale } from "@/lib/i18n"
-import { ownedPerson, peopleOf, selfOf } from "@/lib/people"
-import { isBuiltIn, runnableWorkflow } from "@/lib/workflows"
+import { selfOf } from "@/lib/people"
 
 const nextId = createIdGenerator({ prefix: "msg", size: 16 })
 
@@ -45,10 +43,6 @@ const bodySchema = z.object({
   }),
   trigger: z.enum(["submit-message", "regenerate-message"]).optional(),
   messageId: z.string().max(100).optional(),
-  /** Who a new chat is for (later turns use the chat's own). */
-  personId: z.uuid().optional(),
-  /** A workflow a new chat runs: a built-in, a public one, or the person's own. */
-  workflow: z.string().max(60).optional(),
 })
 
 /** Approvals are signed so a client can't forge "approved"; one secret on every instance. */
@@ -75,26 +69,16 @@ export async function POST(request: Request) {
   const { id: chatId, trigger, messageId } = parsed.data
   const incoming = parsed.data.message as unknown as NajimiUIMessage
 
-  // The chat, or a new one for the chosen person.
+  // The chat, or a new one.
+  const person = await selfOf(user.id)
+  if (!person) return fail("Tell Najimi who you are first", 409)
   let chat = await ownedChat(user.id, chatId)
   if (!chat) {
     if (await chatExists(chatId)) return fail("Unknown chat", 404)
-    const person =
-      (parsed.data.personId && (await ownedPerson(user.id, parsed.data.personId))) ||
-      (await selfOf(user.id))
-    if (!person) return fail("Tell Najimi who you are first", 409)
     const [prefs] = await db
       .select()
       .from(schema.userPrefs)
       .where(eq(schema.userPrefs.userId, user.id))
-    const workflow = parsed.data.workflow
-      ? await runnableWorkflow(user.id, parsed.data.workflow)
-      : null
-    if (workflow)
-      await db
-        .update(schema.workflows)
-        .set({ runsCount: sql`${schema.workflows.runsCount} + 1` })
-        .where(eq(schema.workflows.id, workflow.id))
     const [created] = await db
       .insert(schema.chats)
       .values({
@@ -103,7 +87,6 @@ export async function POST(request: Request) {
         personId: person.id,
         locale: localeFrom(request),
         mode: prefs?.mode ?? "ask",
-        workflowId: workflow?.id ?? null,
       })
       .returning()
     if (!created) return fail("Couldn't start the chat", 500)
@@ -129,9 +112,6 @@ export async function POST(request: Request) {
   if (isNewTurn && !(await charge(user.id, guest, "turns")))
     return fail("That's all the chat for today. Come back tomorrow, or sign in for more.", 429)
 
-  const people = await peopleOf(user.id)
-  const person = people.find((p) => p.id === chat.personId) ?? people.find((p) => p.isSelf)
-  if (!person) return fail("Tell Najimi who you are first", 409)
   const [loves, [taste]] = await Promise.all([
     db.select().from(schema.loves).where(eq(schema.loves.personId, person.id)),
     db.select().from(schema.tastes).where(eq(schema.tastes.personId, person.id)),
@@ -139,15 +119,7 @@ export async function POST(request: Request) {
 
   const last = messages.at(-1)
   const assistantId = last?.role === "assistant" ? last.id : nextId()
-  const tools = buildTools(
-    { userId: user.id, guest, chatId: chat.id, person, people },
-    () => assistantId,
-  )
-  // A built-in workflow's recipe joins the instructions; one someone saved is their own words and
-  // goes in as their first message (the page sends it), never as instructions.
-  const [workflowRow] = chat.workflowId
-    ? await db.select().from(schema.workflows).where(eq(schema.workflows.id, chat.workflowId))
-    : []
+  const tools = buildTools({ userId: user.id, guest, chatId: chat.id, person }, () => assistantId)
   const made = await db
     .select({
       id: schema.creations.id,
@@ -159,10 +131,10 @@ export async function POST(request: Request) {
     .where(eq(schema.creations.chatId, chat.id))
   const photos = [...new Set(messages.filter((m) => m.role === "user").flatMap(uploadIdsOf))]
   const today = await usageToday(user.id)
-  const left = (counter: "images" | "videos") =>
+  const left = (counter: "images") =>
     (guest ? ALLOWANCE.guest : ALLOWANCE.member)[counter] - today[counter]
   /** Ask mode: an approval card with the cost; Plan only: never; Make automatically: straight away. */
-  const approval = (counter: "images" | "videos", n: number) =>
+  const approval = (counter: "images", n: number) =>
     chat.mode === "plan"
       ? ({ type: "denied", reason: "plan" } as const)
       : chat.mode === "auto"
@@ -183,7 +155,6 @@ export async function POST(request: Request) {
   const result = streamText({
     model: agentModel(modelId),
     instructions: `${RULES}\n\n${contextBlock({
-      speaker: people.find((p) => p.isSelf)?.name ?? person.name,
       locale: chat.locale,
       today: new Date().toISOString().slice(0, 10),
       mode: chat.mode,
@@ -191,16 +162,11 @@ export async function POST(request: Request) {
         id: person.id,
         name: person.name,
         city: person.city,
-        ageBand: person.ageBand,
-        constraints: person.constraints,
         loves: loves.map((l) => ({ name: l.name, type: l.type, weight: l.weight })),
         words: taste?.words ?? null,
       },
-      others: people.filter((p) => p.id !== person.id).map((p) => ({ id: p.id, name: p.name })),
       photos,
       creations: made,
-      workflow: workflowRow && isBuiltIn(workflowRow) ? workflowRow.instructions : null,
-      videoReady: videoReady(),
     })}`,
     messages: await convertToModelMessages(await forModel(user.id, messages), {
       tools,
@@ -210,7 +176,6 @@ export async function POST(request: Request) {
     experimental_toolApprovalSecret: approvalSecret(),
     toolApproval: {
       makeImage: (input) => approval("images", input.variants ?? MEDIA.image.variants),
-      makeVideo: () => approval("videos", 1),
     },
     stopWhen: isStepCount(AGENT.maxSteps),
     maxOutputTokens: AGENT.maxOutputTokens,

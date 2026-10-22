@@ -1,36 +1,11 @@
 {
-  "Meta": {
-    "tagline": "Alábàáràn ohun tó wù ọ́.",
-    "description": "Sọ ohun tí o fẹ́ràn fún Najimi. Ó ń ṣe ohun tó bá ọ mu fún ìgbésí ayé rẹ — ìmọ́lẹ̀ tuntun fún yàrá rẹ, oúnjẹ alẹ́ fún màmá rẹ, ìwé rẹ tó kàn — ó sì ń fi dátà Qloo nípa ohun tó wù ọ́ hàn fún gbogbo yíyàn."
-  },
+  "Meta": {},
   "Landing": {
     "kicker": "A kọ́ ọ lórí AI Qloo tó mọ ìfẹ́ rẹ",
-    "title": "Alábàáràn ohun tó wù ọ́.",
-    "lede": "Sọ ohun mẹ́ta tí o fẹ́ràn fún Najimi. Ó fi Qloo mọ ohun tó wù ọ, ó sì ṣe ohun tó bá ọ mu fún ìgbésí ayé rẹ: ìmọ́lẹ̀ tuntun fún yàrá rẹ, oúnjẹ alẹ́ fún màmá rẹ, ìwé tó kàn fún ọ, alẹ́ kan nílé. Àṣàyàn kọ̀ọ̀kan fi dátà Qloo tó jẹ́ ìpìlẹ̀ rẹ̀ hàn.",
     "start": "Bẹ̀rẹ̀ — ọ̀fẹ́ ni",
     "continue": "Ṣí ohun tó wù mí",
-    "seeWorkflows": "Wo ohun tó lè ṣe",
-    "showcase": "Àwọn ohun tí Najimi ṣe",
-    "howTitle": "Bó ṣe ń ṣiṣẹ́",
-    "howLede": "Ìfẹ́ rẹ kọjá ẹ̀ka kan. Qloo so ohun tí o nífẹ̀ẹ́ sí pọ̀ nínú orin, fíìmù, ìwé, ibi àti àmì ọjà; Najimi sọ wọ́n di ohun tí o lè lò.",
-    "steps": {
-      "love": {
-        "title": "Sọ ohun tí o nífẹ̀ẹ́ sí",
-        "body": "Ohun mẹ́ta tàbí jù bẹ́ẹ̀ lọ: ìwé, ayàwòrán, eré, ibi. Sọ bí ọ̀kọ̀ọ̀kan ṣe ṣe pàtàkì tó."
-      },
-      "read": {
-        "title": "Qloo lóye ìfẹ́ rẹ",
-        "body": "Àwọn ọ̀rọ̀ tó ṣàpèjúwe ìfẹ́ rẹ (ẹwà, ìmọ̀lára, oúnjẹ) àti àwọn àṣàyàn láti ẹ̀ka mẹ́wàá, lẹ́sẹ̀kẹsẹ̀, pẹ̀lú ìdí fún ọ̀kọ̀ọ̀kan."
-      },
-      "make": {
-        "title": "Najimi mú un ṣẹ",
-        "body": "Àtúnṣe sí àwòrán rẹ, ètò ìmọ́lẹ̀ tí oníṣẹ́ iná lè fi sílé, ọjà gidi, ìlànà oúnjẹ tó rọ̀ bó ṣe yẹ, àkójọ orin, àwọn ibi."
-      }
-    },
-    "proof": "Fi ìdáhùn èyíkéyìí wé ti ìbéèrè kan náà láìka ìfẹ́ rẹ sí: Qloo ló mú ìyàtọ̀ wá.",
     "footer": "Najimi, tí a ṣe fún hackathon Qloo.",
-    "builtOn": "A kọ́ ọ lórí Qloo",
-    "demo": "Àfihàn"
+    "builtOn": "A kọ́ ọ lórí Qloo"
   },
   "Language": {
     "label": "Èdè",
@@ -49,14 +24,9 @@
     "failed": "Kò ṣeé gbé sókè: {reason}"
   },
   "Nav": {
-    "people": "Àwọn ènìyàn",
-    "chat": "Chat",
-    "assets": "Àwọn ohun èlò",
-    "workflows": "Ìlànà iṣẹ́",
     "settings": "Ètò",
     "signIn": "Wọlé",
     "signOut": "Jáde",
-    "me": "Èmi",
     "start": "Bẹ̀rẹ̀",
     "guest": "Àlejò"
   },
@@ -156,7 +126,6 @@
     "nothingSaved": "A kò tíì pa nǹkan mọ́. Tẹ àmì ìpamọ́ lórí èyíkéyìí tí a yàn.",
     "builtOnQloo": "A kọ́ ọ sórí Qloo",
     "callsCount": "{count, plural, other {Ìpè Qloo #}}",
-    "askFor": "Béèrè fún {name}",
     "askSelf": "Béèrè lọ́wọ́ Najimi",
     "share": "Pín ìfẹ́ràn yìí",
     "linkCopied": "A ti ṣe ẹ̀dà link",
@@ -198,51 +167,13 @@
   "People": {
     "title": "Àwọn ènìyàn",
     "hint": "Pa ìfẹ́ràn ẹni tí o ń ṣe nǹkan fún mọ́: màmá rẹ, alábàáṣepọ̀, oníbàárà.",
-    "someoneNew": "Ẹnìkan tuntun",
-    "newTitle": "Ta ni ò ń ṣe é fún?",
     "you": "Ìwọ",
     "save": "Fipamọ́",
     "saving": "À ń fipamọ́…",
-    "delete": "Yọ {name}",
-    "confirmDelete": "Yọ {name} àti gbogbo ohun tí a ṣe fún un?",
     "about": "Nípa {name}",
     "city": "Ìlú",
     "language": "Èdè",
-    "age": "Ọjọ́ orí",
-    "ages": {
-      "24_and_younger": "24 tàbí kékeré sí i",
-      "25_to_29": "25–29",
-      "30_to_34": "30–34",
-      "35_to_44": "35–44",
-      "45_to_54": "45–54",
-      "55_and_older": "55 tàbí àgbà sí i"
-    },
-    "notSet": "A kò tíì ṣètò",
-    "constraints": "Ohun tí a gbọ́dọ̀ rántí",
-    "diet": "Ètò oúnjẹ",
-    "dietPlaceholder": "àìjẹ ẹran, halal…",
-    "allergies": "Àwọn ohun tó ń fa àléjí",
-    "allergiesPlaceholder": "ẹ̀pà, ẹja alákarahun…",
-    "texture": "Ìrísí oúnjẹ (IDDSI)",
-    "textures": {
-      "3": "3 · A sọ di omi",
-      "4": "4 · A lọ̀ dán",
-      "5": "5 · Gígé wẹ́wẹ́ àti ọ̀rinrin",
-      "6": "6 · Rírẹ̀, ìwọ̀n ẹnu",
-      "7": "7 · Déédéé",
-      "none": "Èyíkéyìí"
-    },
-    "serveWarm": "Gbóná díẹ̀ nígbà fífúnni, kì í ṣe gbígbóná",
-    "medications": "Oògùn (orúkọ àpapọ̀)",
-    "medicationsPlaceholder": "warfarin, atorvastatin…",
-    "medicationsNote": "Fún wíwá àlàyé oúnjẹ lórí àkọlé FDA nìkan. Kì í ṣe ìmọ̀ràn ìṣègùn.",
-    "budget": "Ètò ìnáwó",
-    "notes": "Ohun tí a rántí",
-    "commaHint": "Fi kọ́má yà wọ́n sọ́tọ̀",
-    "theirLoves": "Kí ni wọ́n fẹ́ràn?",
-    "theirLovesHint": "Ìwé, ètò, akọrin, oúnjẹ — mẹ́ta tàbí jù bẹ́ẹ̀ lọ ló dára jù.",
-    "revealTheirs": "Fi ìfẹ́ràn wọn hàn",
-    "openTaste": "Ṣí ìfẹ́ wọn"
+    "age": "Ọjọ́ orí"
   },
   "Auth": {
     "title": "Pa ìfẹ́ràn rẹ mọ́",
@@ -281,7 +212,6 @@
     "deleteHint": "Àkọọ́lẹ̀ rẹ àti gbogbo ohun inú rẹ̀ yóò parẹ́ láéláé.",
     "delete": "Pa gbogbo dátà mi rẹ́",
     "deleteTitle": "Pa gbogbo rẹ̀ rẹ́?",
-    "deleteWhat": "Àkọọ́lẹ̀ rẹ, àwọn tí o ń tọ́jú ohun tí wọ́n fẹ́ràn fún, ohun tí wọ́n fẹ́ràn, gbogbo chat, fọ́tò rẹ, gbogbo ohun tí Najimi ṣẹ̀dá, àwọn ìlànà iṣẹ́ rẹ àti àwọn link ìpín rẹ.",
     "deleteFinal": "Àwọn link tí o pín yóò dáwọ́ iṣẹ́ dúró lẹ́sẹ̀kẹsẹ̀. A kò lè yí èyí padà.",
     "keep": "Pa á mọ́",
     "deleteConfirm": "Pa gbogbo rẹ̀ rẹ́",
@@ -308,7 +238,6 @@
     "stop": "Dúró",
     "addPhoto": "Fi fọ́tò kún un",
     "removePhoto": "Yọ fọ́tò kúrò",
-    "for": "Fún {name}",
     "me": "èmi",
     "modes": {
       "ask": "Béèrè kí o tó ṣẹ̀dá",
@@ -323,12 +252,6 @@
     "copy": "Ṣẹ̀dà",
     "copied": "A ti ṣẹ̀dà",
     "regenerate": "Gbìyànjú lẹ́ẹ̀kan sí i",
-    "fork": "Chat tuntun láti ibí",
-    "compare": "Fi wé láìlo ohun tí a fẹ́ràn",
-    "compareTitle": "Ìbéèrè kan náà, pẹ̀lú ohun tí a fẹ́ràn àti láìsí i",
-    "withoutTaste": "AI gbogbogbò, láìsí dátà ohun tí a fẹ́ràn",
-    "withTaste": "Najimi, pẹ̀lú Qloo",
-    "asking": "Ń béèrè…",
     "stillWorking": "Ó ṣì ń ṣiṣẹ́ lórí èyí…",
     "interrupted": "Ìdáhùn yìí já ní àárín.",
     "error": "Ohun kan kò lọ dáadáa.",
@@ -362,7 +285,6 @@
     "voiceFailed": "A kò gbọ́ ìyẹn. Gbìyànjú lẹ́ẹ̀kan sí i.",
     "shareChat": "Pín chat yìí",
     "linkCopied": "A ti da link kọ",
-    "saveWorkflow": "Fipamọ́ bí ìlànà iṣẹ́",
     "share": "Pín"
   },
   "Cards": {
@@ -373,7 +295,6 @@
     "lookedUp": "A wá “{q}” nínú Qloo",
     "lookedUpTags": "A rí àwọn àmì Qloo fún “{q}”",
     "lookedUpAudiences": "A wá àwọn olùfẹ́ràn nínú Qloo",
-    "remembered": "A rántí fún {name}: {value}",
     "briefFor": "Ohun tó para pọ̀ di ìfẹ́ràn {name}, láti Qloo",
     "shared": "A ti pín",
     "only": "{name} nìkan",
@@ -402,12 +323,6 @@
     "planOnly": "Ètò nìkan: a kò ṣe “{title}”.",
     "declined": "A kò ṣe: “{title}”.",
     "preparing": "Ń múra sílẹ̀…",
-    "planning": "Ń ṣètò ìmọ́lẹ̀…",
-    "shopping": "Ń wá lórí ojúlé àwọn ilé-iṣẹ́ fúnra wọn…",
-    "cooking": "Ń kọ ìlànà ṣíṣe oúnjẹ…",
-    "readingLabel": "Ń ka àwọn àkọlé FDA…",
-    "savedPerson": "A fi ìfẹ́ràn {name} pamọ́ →",
-    "savingPerson": "Ń ṣẹ̀dá àkọọ́lẹ̀ fún {name}…",
     "nothingFor": "A béèrè “{title}” lọ́wọ́ Qloo: kò sí nǹkan síbẹ̀"
   },
   "Asked": {
@@ -449,7 +364,6 @@
     "playlist": "Ṣe àkójọ orin fún mi fún Ọjọ́ Àìkú òjò",
     "watch": "Kí ni kí n wò lálẹ́ yìí?",
     "eat": "Ibo ni kí n jẹun ní {city} ní òpin ọ̀sẹ̀ yìí?",
-    "both": "Kí ni èmi àti {name} máa jọ fẹ́ràn?",
     "hidden": "Wá àwọn ohun àrà tí kò gbajúmọ̀ tí màá fẹ́ràn",
     "trip": "Ibo ni kí n rìnrìn àjò sí tókàn?"
   },
@@ -483,196 +397,13 @@
     "before": "Ṣáájú",
     "after": "Lẹ́yìn"
   },
-  "Assets": {
-    "title": "Àwọn iṣẹ́",
-    "hint": "Gbogbo ohun tí Najimi ṣe fún ọ àti àwọn tí ò ń ṣe fún.",
-    "kinds": {
-      "all": "Gbogbo",
-      "image": "Àwọn àwòrán",
-      "video": "Àwọn fídíò"
-    },
-    "empty": "A kò tíì ṣe ohunkóhun. Yí ara fọ́tò padà tàbí béèrè fún oúnjẹ, ìmọ̀lára, yàrá.",
-    "startMaking": "Ṣẹ̀dá ohun kan",
-    "more": "Ṣàfikún sí i",
-    "madeFrom": "A ṣe láti",
-    "openChat": "Ṣí chat rẹ̀",
-    "delete": "Pa rẹ́",
-    "confirmDelete": "Pa èyí rẹ́ láéláé?"
-  },
   "Share": {
     "cta": "Ṣẹ̀dá tìrẹ",
     "madeFrom": "A ṣe láti inú ohun tí a fẹ́ràn gan-an: {words}",
     "pitch": "Nípasẹ̀ Qloo, Najimi mọ ohun tí àwọn ènìyàn fẹ́ràn, ó sì ń ṣe ohun tó bá ìgbésí ayé wọn mu.",
     "chatTitle": "Chat Najimi kan",
-    "moreWorkflows": "Àwọn ìlànà iṣẹ́ sí i",
     "creationTitle": "A fi Najimi ṣe é",
     "tasteTitle": "Ohun tí {name} fẹ́ràn"
-  },
-  "Home": {
-    "planFor": "Fún {room} ti {name}",
-    "layers": {
-      "ambient": "Ìmọ́lẹ̀ gbogbogbò",
-      "task": "Ìmọ́lẹ̀ iṣẹ́",
-      "accent": "Ìmọ́lẹ̀ ìtẹnumọ́",
-      "decorative": "Ìmọ́lẹ̀ ọ̀ṣọ́"
-    },
-    "controls": {
-      "switch": "ìyípadà",
-      "dimmer": "ẹ̀rọ ìdínmọ́lẹ̀",
-      "smart": "olọ́gbọ́n",
-      "plug-in": "aláṣòpọ̀"
-    },
-    "dimmable": "a lè dín ìmọ́lẹ̀ rẹ̀",
-    "notDimmable": "a kò lè dín ìmọ́lẹ̀ rẹ̀",
-    "forElectrician": "Fún oníṣẹ́ iná rẹ",
-    "copyBrief": "Da àkótán kọ",
-    "copied": "A ti da àkótán kọ",
-    "circuits": "Àwọn àyíká iná",
-    "switching": "Títàn àti pípa",
-    "dimmers": "Àwọn ẹ̀rọ ìdínmọ́lẹ̀",
-    "lookHint": "{category} gidi láti ojúlé àmì ọjà kọ̀ọ̀kan.",
-    "brandOnly": "Ṣèbẹ̀wò sí ṣọ́ọ̀bù àmì ọjà náà",
-    "sendElectrician": "Fi ránṣẹ́ sí oníṣẹ́ iná rẹ",
-    "linkCopied": "A ti da link kọ — fi ránṣẹ́ sí oníṣẹ́ iná rẹ"
-  },
-  "Food": {
-    "minutes": "ìṣẹ́jú {n}",
-    "serve": {
-      "hot": "Pèsè ní gbígbóná",
-      "warm": "Pèsè ní gbígbóná díẹ̀",
-      "lukewarm": "Pèsè ní wíwọ́",
-      "cold": "Pèsè ní tútù"
-    },
-    "forName": "fún {name}",
-    "ingredients": "Àwọn èròjà",
-    "method": "Ìlànà",
-    "texture": "Ìrísí ní ẹnu",
-    "fewer": "Ìpín díẹ̀ sí i",
-    "more": "Ìpín púpọ̀ sí i",
-    "cookMode": "Ipò sísè",
-    "dishPhoto": "Fi oúnjẹ náà hàn mí",
-    "photoAsk": "Ṣẹ̀dá fọ́tò “{title}”",
-    "planWeek": "Ṣètò ọ̀sẹ̀",
-    "weekAsk": "Ṣètò oúnjẹ ọ̀sẹ̀ kan bí “{title}”, pẹ̀lú àtòjọ ohun ìrà",
-    "step": "Ìgbésẹ̀ {n} nínú {total}",
-    "back": "Padà",
-    "next": "Ìgbésẹ̀ tó kàn",
-    "done": "Ó tán",
-    "shopping": "Àtòjọ ohun ìrà",
-    "medsTitle": "Àkọsílẹ̀ oúnjẹ àti oògùn fún {name}",
-    "label": "Àkọlé FDA, {date}",
-    "noLabel": "A kò rí àkọlé FDA fún orúkọ yìí. Ṣàyẹ̀wò orúkọ gbogbogbò oògùn náà.",
-    "noFoodNotes": "Àkọlé náà kò ní àkọsílẹ̀ oúnjẹ tàbí ohun mímu.",
-    "pharmacist": "A yọ ọ́ láti àkọlé oògùn FDA. Èyí kì í ṣe ìmọ̀ràn ìṣègùn: bá onímọ̀ oògùn tàbí dókítà sọ̀rọ̀ kí o tó yí oúnjẹ ẹnì kan padà."
-  },
-  "Workflows": {
-    "title": "Àwọn ìlànà iṣẹ́",
-    "hint": "Àwọn ìlànà tó ti ṣetán fún iṣẹ́ ńlá. Ọ̀kọ̀ọ̀kan ń ṣiṣẹ́ nínú chat, fún ọ tàbí ẹnikẹ́ni tí ò ń ṣe fún.",
-    "pill": "Àwọn ìlànà iṣẹ́",
-    "run": "Bẹ̀rẹ̀",
-    "needsPhoto": "fọ́tò kan",
-    "needsPerson": "ẹni tí a ó sè fún",
-    "categories": {
-      "home": "Ilé",
-      "food": "Oúnjẹ",
-      "culture": "Àṣà",
-      "style": "Ara",
-      "film": "Fíìmù",
-      "mine": "Olùlò Najimi ló ṣe é"
-    },
-    "items": {
-      "relight-my-room": {
-        "name": "Tún yàrá mi tàn",
-        "desc": "Yàrá rẹ, ìmọ́lẹ̀ rẹ: ìrísí méjì, ètò tí oníṣẹ́ iná lè fi sílẹ̀, àwọn fìtílà gidi àti orin.",
-        "start": "Tún yàrá mi tàn"
-      },
-      "make-it-mine": {
-        "name": "Ṣe é bí mo ṣe fẹ́",
-        "desc": "Ya ohunkóhun (tábìlì, àpótí ìwé, ife) sí fọ́tò, kí o sì rí i ní ara tí o fẹ́, pẹ̀lú àwọn ọjà gidi.",
-        "start": "Ṣe èyí bí mo ṣe fẹ́"
-      },
-      "cook-for": {
-        "name": "Ṣe oúnjẹ fún…",
-        "desc": "Ìlànà oúnjẹ tí ẹnìkan yóò fẹ́ràn, pẹ̀lú ìrọ̀ àti ìwọ̀n ooru tó yẹ, àti àkọsílẹ̀ oògùn láti àmì FDA.",
-        "start": "Ràn mí lọ́wọ́ láti sè fún ẹnìkan"
-      },
-      "next-read": {
-        "name": "Ìwé tó kàn",
-        "desc": "Ìwé tó bá ìfẹ́ rẹ mu, ayé inú èyí tó dára jù, àkójọ orin fún kíkà àti ibi láti kàwé.",
-        "start": "Kí ni kí n kà tó kàn?"
-      },
-      "dress-me": {
-        "name": "Wọ̀ mí láṣọ",
-        "desc": "Àpapọ̀ aṣọ tó bá ìfẹ́ rẹ mu, láti ọ̀dọ̀ àwọn àmì ọjà gidi, àti àkójọ orin fún ìmúrasílẹ̀.",
-        "start": "Wọ̀ mí láṣọ"
-      },
-      "my-taste-film": {
-        "name": "Fíìmù ohun tí mo fẹ́",
-        "desc": "Fíìmù kúkúrú nípa ẹni tí o jẹ́, tí a ṣe láti ọ̀rọ̀ ohun tí o fẹ́ràn, pẹ̀lú orin rẹ̀.",
-        "start": "Ṣe fíìmù ohun tí mo fẹ́"
-      },
-      "night-in": {
-        "name": "Alẹ́ nílé",
-        "desc": "Gbogbo alẹ́: ohun láti wò, láti gbọ́, láti jẹ, àti yàrá tí a ṣètò fún un.",
-        "start": "Ṣètò alẹ́ kan nílé"
-      }
-    },
-    "runMine": "Ṣiṣẹ́ pẹ̀lú ìlànà mi “{name}”:",
-    "yours": "Tìrẹ",
-    "runs": "{count, plural, other {ṣiṣẹ́ ní ìgbà #}}",
-    "runThis": "Lo ìlànà iṣẹ́ yìí",
-    "newHere": "Ṣé o ṣẹ̀ṣẹ̀ dé? Kọ́kọ́ sọ ohun mẹ́ta tí o fẹ́ràn fún Najimi. Ìṣẹ́jú kan péré, ìlànà iṣẹ́ náà á sì bẹ̀rẹ̀.",
-    "copyLink": "Ṣẹ̀dà link",
-    "linkCopied": "A ti ṣẹ̀dà link",
-    "stepCount": "{count, plural, other {ìgbésẹ̀ #}}",
-    "public": "Ẹnikẹ́ni tó ní link lè lò ó",
-    "delete": "Pa rẹ́",
-    "deleteConfirm": "Pa “{name}” rẹ́? Àwọn chat tó lò ó yóò dúró.",
-    "saveTitle": "Fipamọ́ bí ìlànà iṣẹ́",
-    "saveHint": "Tún lò ó nígbàkigbà, fún ara rẹ tàbí ẹnikẹ́ni tí o ń ṣe fún. Najimi kọ ìgbésẹ̀ láti inú chat yìí; ṣe wọ́n bí o ṣe fẹ́.",
-    "drafting": "Najimi ń kọ ìgbésẹ̀…",
-    "name": "Orúkọ",
-    "description": "Ohun tí ó fún ọ",
-    "steps": "Ìgbésẹ̀",
-    "stepsHint": "Ọ̀kọ̀ọ̀kan lórí ìlà kan. Nígbà lílò, a fi wọ́n ránṣẹ́ bí ọ̀rọ̀ rẹ àkọ́kọ́; kọ wọ́n bí o ṣe máa béèrè.",
-    "cancel": "Fagilé",
-    "save": "Fi ìlànà iṣẹ́ pamọ́",
-    "saving": "Ń fipamọ́…",
-    "saved": "A ti fi ìlànà iṣẹ́ pamọ́",
-    "savedShared": "A ti ṣẹ̀dà link: {link}",
-    "savedPrivate": "Ó wà nínú Ìlànà iṣẹ́, lábẹ́ Tìrẹ.",
-    "seeYours": "Ṣí",
-    "saveFailed": "Kò ṣeé fipamọ́. Tún gbìyànjú.",
-    "readyMade": "Tí a ti pèsè",
-    "yoursEmpty": "Àwọn workflow tìrẹ yóò hàn níbí. Lábẹ́ ìdáhùn èyíkéyìí nínú chat, “Fi pamọ́ gẹ́gẹ́ bí workflow” yí chat náà padà sí workflow tí o lè tún ṣiṣẹ́ tàbí pín."
-  },
-  "Demo": {
-    "title": "Wo bí Najimi ṣe ń ṣiṣẹ́",
-    "lede": "Láti ohun mẹ́ta tó o fẹ́ràn sí yàrá tí a tún tan: ìfẹ́ rẹ láti Qloo, ọ̀nà méjì láti tún yàrá gidi ṣe, ètò ìmọ́lẹ̀, fìtílà gidi àti orin.",
-    "coverAlt": "Najimi lórí fóònù: yàrá ìsùn ṣáájú àti lẹ́yìn, tí a tún tan pẹ̀lú ìmọ́lẹ̀ onírẹ̀lẹ̀ méjì",
-    "pendingTitle": "Àfihàn tí a gbà sílẹ̀ ń bọ̀",
-    "pendingBody": "Títí yóò fi dé, gbìyànjú ọ̀nà kan náà fúnra rẹ lórí app tó wà nílẹ̀ ní ìsàlẹ̀. Ó gba ìṣẹ́jú mẹ́ta, kò sì nílò àkọọ́lẹ̀.",
-    "pathTitle": "Gbìyànjú rẹ̀ láàárín ìṣẹ́jú mẹ́ta",
-    "steps": {
-      "start": {
-        "title": "Sọ ohun mẹ́ta tó o fẹ́ràn fún un",
-        "body": "Ìwé kan, olórin kan, eré kan. Sọ bí ọ̀kọ̀ọ̀kan ṣe ṣe pàtàkì tó."
-      },
-      "taste": {
-        "title": "Wo bí ìfẹ́ rẹ ṣe ń yọ síta",
-        "body": "Ọ̀rọ̀ àti àṣàyàn rẹ yóò dé láti Qloo ní tààrà, ọ̀kọ̀ọ̀kan pẹ̀lú ohun tó mú kí o fẹ́ràn rẹ̀."
-      },
-      "relight": {
-        "title": "Tún yàrá kan tan",
-        "body": "Yan yàrá àpẹẹrẹ kan (tàbí fọ́tò tìrẹ), sọ ohun tí o fẹ́ lò ó fún, kí o sì gba àtúnṣe méjì, ètò ìmọ́lẹ̀ àti fìtílà gidi."
-      },
-      "share": {
-        "title": "Pín in",
-        "body": "Fi chat tàbí àbájáde náà ránṣẹ́; yóò ṣí pẹ̀lú àwòrán, kò sì ní fi fọ́tò tìrẹ hàn láé."
-      }
-    },
-    "cta": "Bẹ̀rẹ̀ pẹ̀lú Tún yàrá mi tan",
-    "docs": "Ka ìwé ìtọ́sọ́nà"
   },
   "Run": {
     "readTaste": "Ka ohun tó wu {name}",

@@ -64,6 +64,13 @@
       "when": 1792653905327,
       "tag": "0008_people_look",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1792667422136,
+      "tag": "0009_clean_slate",
+      "breakpoints": true
     }
   ]
 }

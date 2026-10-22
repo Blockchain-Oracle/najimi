@@ -7,8 +7,7 @@
     ".": "./src/index.ts",
     "./models": "./src/models.ts",
     "./tools": "./src/tools.ts",
-    "./ui-message": "./src/ui-message.ts",
-    "./workflows": "./src/workflows.ts"
+    "./ui-message": "./src/ui-message.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit",

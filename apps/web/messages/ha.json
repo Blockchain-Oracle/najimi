@@ -1,36 +1,11 @@
 {
-  "Meta": {
-    "tagline": "Abokin zaɓin abin so.",
-    "description": "Faɗa wa Najimi abin da kake so. Yana ƙirƙirar abin da ya dace da rayuwarka — sabon hasken ɗakinka, abincin dare ga mahaifiyarka, littafinka na gaba — tare da nuna bayanan Qloo da suka jagoranci kowane zaɓi."
-  },
+  "Meta": {},
   "Landing": {
     "kicker": "An gina bisa AI na Qloo mai fahimtar zaɓi",
-    "title": "Abokin zaɓin abin so.",
-    "lede": "Faɗa wa Najimi abubuwa uku da kake so. Yana gano zaɓinka ta Qloo, sannan ya tsara maka abubuwan rayuwa da suka dace da kai: sabon haske a ɗakinka, abincin dare ga mahaifiyarka, littafinka na gaba, daren shaƙatawa a gida. Kowane zaɓi yana nuna bayanan Qloo da aka dogara da su.",
     "start": "Fara — kyauta ne",
     "continue": "Buɗe abubuwan da nake so",
-    "seeWorkflows": "Ga abin da zai iya yi",
-    "showcase": "Abubuwan da Najimi ya ƙera",
-    "howTitle": "Yadda yake aiki",
-    "howLede": "Abin da kake so ba rukuni ɗaya ba ne. Qloo na haɗa abubuwan da kake so a kiɗa, fina-finai, littattafai, wurare da samfura; Najimi na mayar da su abubuwan amfani.",
-    "steps": {
-      "love": {
-        "title": "Faɗi abin da kake so",
-        "body": "Abubuwa uku ko fiye: littafi, mawaƙi, shiri, wuri. Faɗi muhimmancin kowanne."
-      },
-      "read": {
-        "title": "Qloo na fahimtar zaɓinka",
-        "body": "Kalmomin da ke bayyana zaɓinka (salon kyau, yanayi, abinci) da zaɓuɓɓuka daga fannoni goma, kai tsaye, tare da dalilin kowanne."
-      },
-      "make": {
-        "title": "Najimi na sa ya zama gaske",
-        "body": "Sabon salo ga hotunanka, tsare-tsaren fitilu da mai lantarki zai girka, samfuran gaske, girke-girke masu laushi ko taurin da ya dace, jerin waƙoƙi, wurare."
-      }
-    },
-    "proof": "Kwatanta kowace amsa da ta tambayar nan ba tare da la’akari da zaɓinka ba: Qloo ne bambancin.",
     "footer": "Najimi, an ƙera don hackathon na Qloo.",
-    "builtOn": "An gina bisa Qloo",
-    "demo": "Gwaji"
+    "builtOn": "An gina bisa Qloo"
   },
   "Language": {
     "label": "Harshe",
@@ -49,14 +24,9 @@
     "failed": "Ba a ɗora ba: {reason}"
   },
   "Nav": {
-    "people": "Mutane",
-    "chat": "Hira",
-    "assets": "Albarkatu",
-    "workflows": "Tsare-tsaren aiki",
     "settings": "Saituna",
     "signIn": "Shiga",
     "signOut": "Fita",
-    "me": "Ni",
     "start": "Fara",
     "guest": "Baƙo"
   },
@@ -156,7 +126,6 @@
     "nothingSaved": "Ba a adana komai ba tukuna. Taɓa alamar adanawa a kan kowane zaɓi.",
     "builtOnQloo": "An gina bisa Qloo",
     "callsCount": "{count, plural, one {Buƙatar Qloo #} other {Buƙatun Qloo #}}",
-    "askFor": "Nemi {name}",
     "askSelf": "Tambayi Najimi",
     "share": "Raba wannan zaɓin",
     "linkCopied": "An kwafi link",
@@ -198,51 +167,13 @@
   "People": {
     "title": "Mutane",
     "hint": "Adana abubuwan so na duk wanda kake yi wa abubuwa: mahaifiyarka, abokin zama, abokin ciniki.",
-    "someoneNew": "Wani sabo",
-    "newTitle": "Wa kake yi wa?",
     "you": "Kai",
     "save": "Adana",
     "saving": "Ana adanawa…",
-    "delete": "Cire {name}",
-    "confirmDelete": "A cire {name} da duk abin da aka yi masa?",
     "about": "Game da {name}",
     "city": "Birni",
     "language": "Harshe",
-    "age": "Shekaru",
-    "ages": {
-      "24_and_younger": "24 ko ƙasa",
-      "25_to_29": "25–29",
-      "30_to_34": "30–34",
-      "35_to_44": "35–44",
-      "45_to_54": "45–54",
-      "55_and_older": "55 ko sama"
-    },
-    "notSet": "Ba a saita ba",
-    "constraints": "Abin lura",
-    "diet": "Tsarin abinci",
-    "dietPlaceholder": "marar nama, halal…",
-    "allergies": "Abubuwan da ke tayar da rashin lafiyan jiki",
-    "allergiesPlaceholder": "gyaɗa, kifin ƙwanso…",
-    "texture": "Yanayin abinci (IDDSI)",
-    "textures": {
-      "3": "3 · An mai da ruwa",
-      "4": "4 · An niƙa laushi",
-      "5": "5 · Niƙaƙƙe mai danshi",
-      "6": "6 · Mai laushi, girman loma",
-      "7": "7 · Na yau da kullum",
-      "none": "Kowane"
-    },
-    "serveWarm": "A bayar da ɗan ɗumi, ba zafi ba",
-    "medications": "Magunguna (sunayen asali)",
-    "medicationsPlaceholder": "warfarin, atorvastatin…",
-    "medicationsNote": "Don duba bayanan abinci a tambarin FDA kawai. Ba shawarar likita ba.",
-    "budget": "Kasafin kuɗi",
-    "notes": "Abubuwan tunawa",
-    "commaHint": "Raba da waƙafi",
-    "theirLoves": "Me suke so?",
-    "theirLovesHint": "Littafi, shiri, mawaƙi, abinci — uku ko fiye sun fi.",
-    "revealTheirs": "Nuna abubuwan da suke so",
-    "openTaste": "Buɗe ɗanɗano"
+    "age": "Shekaru"
   },
   "Auth": {
     "title": "Adana abubuwan da kake so",
@@ -281,7 +212,6 @@
     "deleteHint": "Asusunka da duk abin da ke ciki za su tafi har abada.",
     "delete": "Goge duk bayanana",
     "deleteTitle": "A goge komai?",
-    "deleteWhat": "Asusunka, mutanen da kake adana abubuwan da suke so, zaɓinsu da ƙaunarsu, duk tattaunawa, hotunanka, duk abin da Najimi ya ƙirƙira, tsarin ayyukanka da link ɗin rabawarka.",
     "deleteFinal": "Link ɗin rabawa za su daina aiki nan take. Ba za a iya dawo da komai ba.",
     "keep": "A bar shi",
     "deleteConfirm": "Goge komai",
@@ -308,7 +238,6 @@
     "stop": "Tsaya",
     "addPhoto": "Ƙara hoto",
     "removePhoto": "Cire hoto",
-    "for": "Don {name}",
     "me": "ni",
     "modes": {
       "ask": "Tambaya kafin ƙirƙira",
@@ -323,12 +252,6 @@
     "copy": "Kwafa",
     "copied": "An kwafa",
     "regenerate": "Sake gwadawa",
-    "fork": "Sabuwar tattaunawa daga nan",
-    "compare": "Kwatanta ba tare da zaɓi ba",
-    "compareTitle": "Buƙata ɗaya, da bayanan zaɓi da kuma ba tare da su ba",
-    "withoutTaste": "AI na gama-gari, babu bayanan zaɓi",
-    "withTaste": "Najimi, tare da Qloo",
-    "asking": "Ana tambaya…",
     "stillWorking": "Har yanzu ana aiki a kai…",
     "interrupted": "An katse wannan amsa.",
     "error": "An samu matsala.",
@@ -362,7 +285,6 @@
     "voiceFailed": "Ba mu ji ba. Sake gwadawa.",
     "shareChat": "Raba tattaunawar",
     "linkCopied": "An kwafe link",
-    "saveWorkflow": "Adana a matsayin tsarin aiki",
     "share": "Raba"
   },
   "Cards": {
@@ -373,7 +295,6 @@
     "lookedUp": "An bincika “{q}” a Qloo",
     "lookedUpTags": "An samo alamomin Qloo na “{q}”",
     "lookedUpAudiences": "An bincika rukunin masu amfani da Qloo",
-    "remembered": "An tuna wa {name}: {value}",
     "briefFor": "Abin da ke gina zaɓin {name}, daga Qloo",
     "shared": "Na tare",
     "only": "{name} kaɗai",
@@ -402,12 +323,6 @@
     "planOnly": "Shiri kawai: ba a yi “{title}” ba.",
     "declined": "Ba a yi ba: “{title}”.",
     "preparing": "Ana shiryawa…",
-    "planning": "Ana tsara hasken…",
-    "shopping": "Ana nema a shafukan kamfanonin…",
-    "cooking": "Ana rubuta girke-girke…",
-    "readingLabel": "Ana karanta bayanan FDA…",
-    "savedPerson": "An adana zaɓin {name} →",
-    "savingPerson": "Ana ƙirƙirar profile na {name}…",
     "nothingFor": "An tambayi Qloo “{title}”: babu tukuna"
   },
   "Asked": {
@@ -449,7 +364,6 @@
     "playlist": "Yi mini playlist na Lahadi mai ruwan sama",
     "watch": "Me zan kalla yau da dare?",
     "eat": "Ina zan ci abinci a {city} ƙarshen makon nan?",
-    "both": "Me ni da {name} za mu so duka?",
     "hidden": "Nemo mini abubuwan kirki da ba a sani ba da zan so",
     "trip": "Ina zan je yawon buɗe ido na gaba?"
   },
@@ -483,196 +397,13 @@
     "before": "Kafin",
     "after": "Bayan"
   },
-  "Assets": {
-    "title": "Abubuwan da aka yi",
-    "hint": "Duk abin da Najimi ya yi maka da mutanen da kake yi wa.",
-    "kinds": {
-      "all": "Duka",
-      "image": "Hotuna",
-      "video": "Bidiyoyi"
-    },
-    "empty": "Ba a yi komai ba tukuna. Sauya salon hoto ko nemi abinci, yanayi, ɗaki.",
-    "startMaking": "Yi wani abu",
-    "more": "Loda ƙari",
-    "madeFrom": "An yi daga",
-    "openChat": "Buɗe hirarsa",
-    "delete": "Goge",
-    "confirmDelete": "A goge wannan har abada?"
-  },
   "Share": {
     "cta": "Yi naka",
     "madeFrom": "An yi bisa ainihin zaɓi: {words}",
     "pitch": "Najimi yana sanin abin da mutane ke so ta Qloo, yana yi musu abubuwan da suka dace da rayuwarsu.",
     "chatTitle": "Hirar Najimi",
-    "moreWorkflows": "Ƙarin tsare-tsaren aiki",
     "creationTitle": "An yi da Najimi",
     "tasteTitle": "Zaɓin {name}"
-  },
-  "Home": {
-    "planFor": "Don {room} na {name}",
-    "layers": {
-      "ambient": "Na ko'ina",
-      "task": "Na aiki",
-      "accent": "Na haskaka wani abu",
-      "decorative": "Na ado"
-    },
-    "controls": {
-      "switch": "maɓalli",
-      "dimmer": "mai rage haske",
-      "smart": "smart",
-      "plug-in": "mai filogi"
-    },
-    "dimmable": "ana iya rage haskensa",
-    "notDimmable": "ba a iya rage haskensa",
-    "forElectrician": "Don ma'aikacin lantarkinka",
-    "copyBrief": "Kwafi taƙaitaccen bayani",
-    "copied": "An kwafi taƙaitaccen bayani",
-    "circuits": "Da'irorin lantarki",
-    "switching": "Kunnawa da kashewa",
-    "dimmers": "Masu rage haske",
-    "lookHint": "Ainihin {category} daga shafin kowane kamfani.",
-    "brandOnly": "Ziyarci shagon kamfanin",
-    "sendElectrician": "Aika wa ma'aikacin lantarkinka",
-    "linkCopied": "An kwafi link — aika wa ma'aikacin lantarkinka"
-  },
-  "Food": {
-    "minutes": "Minti {n}",
-    "serve": {
-      "hot": "Miƙa da zafi",
-      "warm": "Miƙa da ɗan zafi",
-      "lukewarm": "Miƙa da zafi kaɗan",
-      "cold": "Miƙa da sanyi"
-    },
-    "forName": "don {name}",
-    "ingredients": "Kayan haɗi",
-    "method": "Yadda ake yi",
-    "texture": "Laushi ko tauri",
-    "fewer": "Rage rabon abinci",
-    "more": "Ƙara rabon abinci",
-    "cookMode": "Yanayin girki",
-    "dishPhoto": "Nuna mini abincin",
-    "photoAsk": "Yi hoton “{title}”",
-    "planWeek": "Tsara makon",
-    "weekAsk": "Tsara abincin mako kamar “{title}”, da jerin sayayya",
-    "step": "Mataki {n} cikin {total}",
-    "back": "Baya",
-    "next": "Mataki na gaba",
-    "done": "An gama",
-    "shopping": "Jerin sayayya",
-    "medsTitle": "Bayanan abinci da magunguna don {name}",
-    "label": "Takardar FDA, {date}",
-    "noLabel": "Ba a sami takardar FDA da wannan suna ba. Duba sunan sinadarin maganin.",
-    "noFoodNotes": "Takardar ba ta da bayanan abinci ko abin sha.",
-    "pharmacist": "An ciro daga takardar magani ta FDA. Wannan ba shawarar likita ba ce: tuntuɓi masanin magunguna ko likita kafin sauya abincin wani."
-  },
-  "Workflows": {
-    "title": "Tsare-tsaren aiki",
-    "hint": "Shirye-shiryen manyan ayyuka da aka tanada. Kowanne yana gudana a hira, don kai ko duk wanda kake yi wa.",
-    "pill": "Tsare-tsaren aiki",
-    "run": "Fara",
-    "needsPhoto": "hoto",
-    "needsPerson": "wanda za a dafa wa",
-    "categories": {
-      "home": "Gida",
-      "food": "Abinci",
-      "culture": "Al'adu",
-      "style": "Salo",
-      "film": "Fim",
-      "mine": "Mai amfani da Najimi ya ƙirƙira"
-    },
-    "items": {
-      "relight-my-room": {
-        "name": "Sauya hasken ɗakina",
-        "desc": "Ɗakinka da hasken da kake so: yanayi biyu, tsarin da mai lantarki zai girka, fitilu na gaske, da kiɗa.",
-        "start": "Sauya hasken ɗakina"
-      },
-      "make-it-mine": {
-        "name": "Mai da shi nawa",
-        "desc": "Ɗauki hoton komai (tebur, shiryayye, kofi), ka ga an sauya shi bisa ɗanɗanonka, da kayayyaki na gaske.",
-        "start": "Mai da wannan nawa"
-      },
-      "cook-for": {
-        "name": "Dafa wa…",
-        "desc": "Girke-girken da mutum zai so, da laushi da zafin da suka dace, tare da bayanan magani daga lakabin FDA.",
-        "start": "Taimaka mini in dafa wa wani"
-      },
-      "next-read": {
-        "name": "Karatu na gaba",
-        "desc": "Littattafai bisa ɗanɗanonka, duniyar wanda ya fi dacewa, jerin kiɗan karatu da wurin karatu.",
-        "start": "Me zan karanta a gaba?"
-      },
-      "dress-me": {
-        "name": "Zaɓa mini kaya",
-        "desc": "Kayan sawa bisa ɗanɗanonka, daga samfuran gaske, da jerin kiɗa yayin shiryawa.",
-        "start": "Zaɓa mini kaya"
-      },
-      "my-taste-film": {
-        "name": "Fim ɗin ɗanɗanona",
-        "desc": "Gajeren fim game da kai, daga kalmomin ɗanɗanonka, tare da kiɗansa.",
-        "start": "Yi fim ɗin ɗanɗanona"
-      },
-      "night-in": {
-        "name": "Dare a gida",
-        "desc": "Cikakkiyar yamma: abin kallo, sauraro, ci, da ɗakin da aka shirya dominsu.",
-        "start": "Shirya dare a gida"
-      }
-    },
-    "runMine": "Fara tsarin aikina “{name}”:",
-    "yours": "Naka",
-    "runs": "{count, plural, one {an yi sau ɗaya} other {an yi sau #}}",
-    "runThis": "Fara wannan tsarin aiki",
-    "newHere": "Sabon zuwa ne? Fara gaya wa Najimi abubuwa uku da kake so. Minti ɗaya kawai, sai tsarin aiki ya fara.",
-    "copyLink": "Kwafi link",
-    "linkCopied": "An kwafi link",
-    "stepCount": "{count, plural, one {mataki #} other {matakai #}}",
-    "public": "Duk mai link zai iya fara shi",
-    "delete": "Goge",
-    "deleteConfirm": "A goge “{name}”? Hirarrakin da suka yi amfani da shi za su zauna.",
-    "saveTitle": "Ajiye a matsayin tsarin aiki",
-    "saveHint": "Sake amfani da shi kowane lokaci, domin kanka ko wani. Najimi ya rubuta matakan daga hirar nan; ka daidaita su yadda kake so.",
-    "drafting": "Najimi na rubuta matakan…",
-    "name": "Suna",
-    "description": "Abin da zai ba ka",
-    "steps": "Matakai",
-    "stepsHint": "Ɗaya a kowane layi. Ana aika su a matsayin saƙonka na farko, don haka rubuta su yadda za ka nema.",
-    "cancel": "Soke",
-    "save": "Ajiye tsarin aiki",
-    "saving": "Ana ajiyewa…",
-    "saved": "An ajiye tsarin aiki",
-    "savedShared": "An kwafi link: {link}",
-    "savedPrivate": "Yana cikin Tsarin aiki, ƙarƙashin Naka.",
-    "seeYours": "Buɗe",
-    "saveFailed": "Ba a ajiye ba. Sake gwadawa.",
-    "readyMade": "Shiryayye",
-    "yoursEmpty": "Ayyukan tafiyarka za su bayyana a nan. A ƙarƙashin kowace amsa a hira, “Ajiye a matsayin workflow” yana mai da hirar aikin da za ka iya sake aiwatarwa ko rabawa."
-  },
-  "Demo": {
-    "title": "Kalli Najimi yana aiki",
-    "lede": "Daga abubuwa uku da kake so zuwa ɗaki da aka sake haskakawa: ɗanɗano daga Qloo, salo biyu na ainihin ɗakin, shirin haske, fitilu na gaske da kiɗa.",
-    "coverAlt": "Najimi a waya: ɗakin kwana kafin da bayan an sake haskaka shi da yanayi biyu masu ɗumi",
-    "pendingTitle": "Bidiyon gwajin da aka naɗa yana tafe",
-    "pendingBody": "Har sai ya iso, bi wannan hanya da kanka a manhajar kai tsaye da ke ƙasa. Yana ɗaukar kusan minti uku, kuma babu buƙatar asusu.",
-    "pathTitle": "Gwada shi cikin minti uku",
-    "steps": {
-      "start": {
-        "title": "Faɗa masa abubuwa uku da kake so",
-        "body": "Littafi, mawaƙi ko shiri. Faɗi muhimmancin kowanne."
-      },
-      "taste": {
-        "title": "Kalli ɗanɗanonka yana bayyana",
-        "body": "Kalmominka da zaɓuɓɓukanka suna bayyana kai tsaye daga Qloo, kowanne tare da abin da ya sa ka so shi."
-      },
-      "relight": {
-        "title": "Sake haskaka ɗaki",
-        "body": "Zaɓi ɗakin misali (ko hotonka), faɗi abin da za a yi da shi, sannan ka samu salo biyu, shirin haske da fitilu na gaske."
-      },
-      "share": {
-        "title": "Raba shi",
-        "body": "Aika hirar ko sakamakon; zai buɗe tare da hoto, kuma ba zai taɓa nuna hotonka ba."
-      }
-    },
-    "cta": "Fara da Sake haskaka ɗakina",
-    "docs": "Karanta takardun bayani"
   },
   "Run": {
     "readTaste": "Ya karanta abubuwan da {name} ke so",

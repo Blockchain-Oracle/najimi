@@ -6,14 +6,14 @@ import { identityOf, peopleOf } from "@/lib/people"
 import { startersFor } from "./starters"
 
 /**
- * What every chat page needs: who the user makes things for, and for an empty chat, starters and
- * the taste it will use (the words Qloo found and the loves they came from).
+ * What every chat page needs: the user's own profile, and for an empty chat, starters and the
+ * taste it will use (the words Qloo found and the loves they came from).
  */
-export async function chatPageData(userId: string, personId: string | null) {
+export async function chatPageData(userId: string, _personId: string | null) {
   const t = await getTranslations("Starters")
-  const people = await peopleOf(userId)
-  const self = people.find((p) => p.isSelf) ?? null
-  const person = people.find((p) => p.id === personId) ?? self
+  const people = (await peopleOf(userId)).filter((p) => p.isSelf)
+  const self = people[0] ?? null
+  const person = self
   const [loves, [taste], [prefs]] = await Promise.all([
     person
       ? db
@@ -37,7 +37,6 @@ export async function chatPageData(userId: string, personId: string | null) {
   const starters = startersFor({
     loveTypes: loves.map((l) => l.type),
     city: person?.city ?? null,
-    others: people.filter((p) => !p.isSelf).map((p) => p.name),
   }).map((s) => ({ key: s.key, text: t(s.key as "whoAmI", s.args ?? {}) }))
   return {
     self,

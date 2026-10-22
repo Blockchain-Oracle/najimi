@@ -23,12 +23,11 @@ async function ExistingChat({ params }: { params: PageProps<"/[locale]/c/[id]">[
       messages={messagesOf(chat)}
       status={chat.status}
       turnStartedAt={chat.turnStartedAt?.toISOString() ?? null}
-      personId={chat.personId}
       mode={chat.mode}
       people={data.people}
       starters={data.starters}
       taste={data.taste}
-      greetingName={data.person?.name ?? data.self.name}
+      greetingName={data.self.name}
     />
   )
 }

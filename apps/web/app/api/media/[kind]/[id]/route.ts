@@ -62,7 +62,7 @@ async function sharedCreation(id: string, token: string | null): Promise<boolean
 /**
  * Photos and creations, streamed from private storage. Readable by their owner, by anyone holding
  * a signed link (providers, for a few hours) or a live share token (creations only, never the
- * person's own photo), or by everyone when public (samples, workflow covers).
+ * person's own photo), or by everyone when public (samples, public creations).
  */
 export async function GET(request: Request, ctx: RouteContext<"/api/media/[kind]/[id]">) {
   const parsed = params.safeParse(await ctx.params)

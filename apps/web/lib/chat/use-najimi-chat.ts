@@ -8,7 +8,7 @@ import {
   lastAssistantMessageIsCompleteWithApprovalResponses,
   lastAssistantMessageIsCompleteWithToolCalls,
 } from "ai"
-import { useMemo, useRef } from "react"
+import { useMemo } from "react"
 
 type AutoSend = { messages: NajimiUIMessage[] }
 
@@ -26,19 +26,10 @@ const continueAutomatically = (input: AutoSend) =>
   (personAnswered(input) && lastAssistantMessageIsCompleteWithApprovalResponses(input))
 
 /**
- * The chat's connection: only the newest message goes up (the server keeps the conversation), with
- * who a new chat is for. Updates are batched while cards stream.
+ * The chat's connection: only the newest message goes up (the server keeps the conversation).
+ * Updates are batched while cards stream.
  */
-export function useNajimiChat(
-  chatId: string,
-  initial: NajimiUIMessage[],
-  personId: string | null,
-  workflow: string | null,
-) {
-  const forRef = useRef(personId)
-  forRef.current = personId
-  const workflowRef = useRef(workflow)
-  workflowRef.current = workflow
+export function useNajimiChat(chatId: string, initial: NajimiUIMessage[]) {
   const transport = useMemo(
     () =>
       new DefaultChatTransport<NajimiUIMessage>({
@@ -49,8 +40,6 @@ export function useNajimiChat(
             message: messages[messages.length - 1],
             trigger,
             messageId,
-            ...(forRef.current ? { personId: forRef.current } : {}),
-            ...(workflowRef.current ? { workflow: workflowRef.current } : {}),
           },
         }),
       }),

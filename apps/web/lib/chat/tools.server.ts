@@ -2,35 +2,30 @@ import "server-only"
 import { type insightsInput, type Pick, toolDefs } from "@najimi/agent"
 import { MEDIA, TASTE_DOMAINS } from "@najimi/config"
 import { db, schema } from "@najimi/db"
-import type { Constraints } from "@najimi/db/schema"
 import { enqueue } from "@najimi/jobs"
-import { videoReady } from "@najimi/media"
 import {
   audiences,
   compare,
   type ExploreInput,
-  entities,
   explore,
   findTags,
   type Love,
   nameAreas,
   search,
 } from "@najimi/qloo"
-import { labelNotes, productsFor } from "@najimi/sources"
 import { tool } from "ai"
 import { and, asc, eq } from "drizzle-orm"
 import type { z } from "zod"
-import { type PersonRow, startTasteRun } from "@/lib/people"
+import type { PersonRow } from "@/lib/people"
 import { charge, refund } from "./usage"
 
-/** Who a turn acts for and on: the signed-in user, their chat, and everyone they keep a taste for. */
+/** Who a turn acts for and on: the signed-in user, their chat and their own taste profile. */
 export type TurnContext = {
   userId: string
   guest: boolean
   chatId: string
-  /** The chat's own person (tools default to them). */
+  /** The user's own taste profile. */
   person: PersonRow
-  people: PersonRow[]
 }
 
 type InsightsInput = z.infer<typeof insightsInput>
@@ -39,10 +34,6 @@ const TYPE_OF = Object.fromEntries(TASTE_DOMAINS.map((d) => [d.key, d.type])) as
   string,
   string
 >
-
-/** The person a tool call is for: one of the user's own people, or the chat's person. */
-const target = (ctx: TurnContext, id: string | undefined): PersonRow =>
-  (id && ctx.people.find((p) => p.id === id)) || ctx.person
 
 async function lovesOf(personId: string): Promise<Love[]> {
   const rows = await db
@@ -101,7 +92,7 @@ const FILTER_TYPE: Record<string, string> = {
   demographics: "urn:demographics",
 }
 
-/** The tools of one turn, each bound to the user and their people. */
+/** The tools of one turn, each bound to the user and their taste. */
 export function buildTools(ctx: TurnContext, messageId: () => string | undefined) {
   const call = (purpose: string) => ({
     userId: ctx.userId,
@@ -167,7 +158,7 @@ export function buildTools(ctx: TurnContext, messageId: () => string | undefined
     qlooInsights: tool({
       ...toolDefs.qlooInsights,
       execute: async (input) => {
-        const person = target(ctx, input.for)
+        const person = ctx.person
         let loves = input.useTaste === false ? [] : await lovesOf(person.id)
         const boost = input.signal?.boostLove?.toLowerCase()
         if (boost)
@@ -324,11 +315,8 @@ export function buildTools(ctx: TurnContext, messageId: () => string | undefined
     qlooCompare: tool({
       ...toolDefs.qlooCompare,
       execute: async (input) => {
-        const side = async (s: { personId?: string; entityIds?: string[] }) => {
-          if (s.entityIds?.length) return s.entityIds
-          const p = s.personId ? ctx.people.find((x) => x.id === s.personId) : ctx.person
-          return p ? (await lovesOf(p.id)).map((l) => l.qlooId) : []
-        }
+        const side = async (s: { entityIds?: string[] }) =>
+          s.entityIds?.length ? s.entityIds : (await lovesOf(ctx.person.id)).map((l) => l.qlooId)
         const [a, b] = await Promise.all([side(input.a), side(input.b)])
         const empty = {
           title: input.title,
@@ -373,7 +361,7 @@ export function buildTools(ctx: TurnContext, messageId: () => string | undefined
     makeImage: tool({
       ...toolDefs.makeImage,
       execute: async (input, { toolCallId }) => {
-        const person = target(ctx, input.for)
+        const person = ctx.person
         const n = input.variants ?? MEDIA.image.variants
         const base = {
           title: input.title,
@@ -521,251 +509,10 @@ export function buildTools(ctx: TurnContext, messageId: () => string | undefined
       }),
     }),
 
-    makeVideo: tool({
-      ...toolDefs.makeVideo,
-      execute: async (input, { toolCallId }) => {
-        const base = { title: input.title, posterCreationId: null as string | null }
-        if (!videoReady()) return { ...base, runId: null, creationId: null, note: "unavailable" }
-        const [from] = await db
-          .select()
-          .from(schema.creations)
-          .where(
-            and(
-              eq(schema.creations.id, input.fromCreationId),
-              eq(schema.creations.ownerId, ctx.userId),
-            ),
-          )
-        if (from?.status !== "ready" || from.kind !== "image")
-          return {
-            ...base,
-            runId: null,
-            creationId: null,
-            note: "That image isn't ready to animate.",
-          }
-        if (!(await charge(ctx.userId, ctx.guest, "videos", 1)))
-          return { ...base, runId: null, creationId: null, note: "allowance" }
-        const [run] = await db
-          .insert(schema.runs)
-          .values({
-            ownerId: ctx.userId,
-            kind: "media",
-            chatId: ctx.chatId,
-            toolCallId,
-            subject: { kind: "video" },
-          })
-          .returning({ id: schema.runs.id })
-        const [job] = await db
-          .insert(schema.mediaJobs)
-          .values({
-            ownerId: ctx.userId,
-            chatId: ctx.chatId,
-            toolCallId,
-            kind: "video",
-            provider: "fal",
-            model: "",
-            runId: run?.id,
-            input: {
-              prompt: input.motion,
-              seconds: input.seconds ?? 6,
-              audio: input.audio ?? false,
-              sourceCreationId: from.id,
-            },
-          })
-          .returning({ id: schema.mediaJobs.id })
-        if (!run || !job) {
-          await refund(ctx.userId, "videos", 1)
-          return { ...base, runId: null, creationId: null, note: "failed" }
-        }
-        const [creation] = await db
-          .insert(schema.creations)
-          .values({
-            ownerId: ctx.userId,
-            mediaJobId: job.id,
-            chatId: ctx.chatId,
-            personId: from.personId,
-            kind: "video",
-            purpose: "film",
-            title: input.title,
-            prompt: input.motion,
-            words: from.words,
-            sourceCreationId: from.id,
-          })
-          .returning({ id: schema.creations.id })
-        await enqueue("mediaGenerate", { jobId: job.id })
-        return {
-          ...base,
-          posterCreationId: from.id,
-          runId: run.id,
-          creationId: creation?.id ?? null,
-          note: null,
-        }
-      },
-      toModelOutput: ({ output }) => ({
-        type: "text",
-        value: output.runId
-          ? `The video "${output.title}" is rendering (1–3 minutes); the card shows progress. Don't wait for it.`
-          : output.note === "unavailable"
-            ? "Video isn't available on this server yet. Say so and offer more images."
-            : output.note === "allowance"
-              ? "Today's video allowance is used up."
-              : `Not made: ${output.note}`,
-      }),
-    }),
-
-    lightingPlan: tool({
-      ...toolDefs.lightingPlan,
-      execute: async (input, { toolCallId }) => ({
-        planId: toolCallId,
-        personName: target(ctx, input.for).name,
-      }),
-      toModelOutput: () => ({ type: "text", value: "Lighting plan shown as a card." }),
-    }),
-
-    findProducts: tool({
-      ...toolDefs.findProducts,
-      execute: async (input) => {
-        const found = await entities(
-          { ids: input.brandIds },
-          call(`Brands for “${input.category}”`),
-        ).catch(() => null)
-        const brands = await Promise.all(
-          (found?.data ?? []).map(async (b) => {
-            const site =
-              (b.properties as { official_site?: string }).official_site ?? b.handles.website
-            const r = site
-              ? await productsFor({ name: b.name, site }, input.category).catch(() => null)
-              : null
-            return {
-              id: b.entityId,
-              name: b.name,
-              site: site ?? null,
-              image: b.image,
-              products: r?.products ?? [],
-            }
-          }),
-        )
-        return { title: input.title, category: input.category, brands }
-      },
-      toModelOutput: ({ output }) => ({
-        type: "text",
-        value: `Get the look (shown as a card): ${output.brands
-          .map(
-            (b) =>
-              `${b.name}: ${b.products.length ? b.products.map((p) => `${p.name}${p.price ? ` ${p.price} ${p.currency ?? ""}` : ""}`).join("; ") : "no product pages found, brand link shown"}`,
-          )
-          .join(" | ")}`,
-      }),
-    }),
-
-    recipe: tool({
-      ...toolDefs.recipe,
-      execute: async (input, { toolCallId }) => {
-        const person = target(ctx, input.for)
-        const c = person.constraints
-        const constraints = [
-          ...(c.diet ?? []),
-          ...(c.allergies ?? []).map((a) => `no ${a}`),
-          ...(c.iddsi ? [`IDDSI ${c.iddsi}`] : []),
-          ...(c.serveWarm ? ["lukewarm"] : []),
-        ]
-        return { recipeId: toolCallId, personName: person.name, constraints }
-      },
-      toModelOutput: () => ({ type: "text", value: "Recipe shown as a card." }),
-    }),
-
-    mealPlan: tool({
-      ...toolDefs.mealPlan,
-      execute: async (input, { toolCallId }) => ({
-        planId: toolCallId,
-        personName: target(ctx, input.for).name,
-      }),
-      toModelOutput: () => ({
-        type: "text",
-        value: "Meal plan and shopping list shown as a card.",
-      }),
-    }),
-
-    medicationNotes: tool({
-      ...toolDefs.medicationNotes,
-      execute: async (input) => {
-        const person = target(ctx, input.for)
-        const notes = await Promise.all(input.medications.map((m) => labelNotes(m)))
-        return { personName: person.name, notes }
-      },
-      toModelOutput: ({ output }) => ({
-        type: "text",
-        value: output.notes
-          .map((n) =>
-            n.found
-              ? `${n.medication} (FDA label ${n.effective ?? ""}): ${n.excerpts.map((e) => e.text).join(" ") || "no food notes on the label"}`
-              : `${n.medication}: no FDA label found`,
-          )
-          .join("\n"),
-      }),
-    }),
-
-    savePerson: tool({
-      ...toolDefs.savePerson,
-      execute: async (input) => {
-        const existing = ctx.people.find(
-          (p) => p.name.toLowerCase() === input.name.trim().toLowerCase() && !p.isSelf,
-        )
-        if (existing)
-          return { personId: existing.id, name: existing.name, loves: [], existed: true }
-        const found = input.loveIds?.length
-          ? ((
-              await entities({ ids: input.loveIds }, call(`What ${input.name} loves`)).catch(
-                () => null,
-              )
-            )?.data ?? [])
-          : []
-        const [row] = await db
-          .insert(schema.people)
-          .values({
-            ownerId: ctx.userId,
-            name: input.name.trim(),
-            city: input.city ?? ctx.person.city,
-            ageBand: input.ageBand ?? null,
-            constraints: {
-              ...input.constraints,
-              notes: [
-                ...(input.relation ? [input.relation] : []),
-                ...(input.constraints?.notes ?? []),
-              ],
-            },
-          })
-          .returning()
-        if (!row) throw new Error("Couldn't save the profile")
-        const loves = found.filter((e) => e.type)
-        if (loves.length) {
-          await db
-            .insert(schema.loves)
-            .values(
-              loves.map((e) => ({
-                personId: row.id,
-                qlooId: e.entityId,
-                type: e.type ?? "",
-                name: e.name,
-                imageUrl: e.image,
-                weight: 5,
-              })),
-            )
-            .onConflictDoNothing()
-          await startTasteRun(ctx.userId, row.id)
-        }
-        ctx.people.push(row)
-        return { personId: row.id, name: row.name, loves: loves.map((e) => e.name), existed: false }
-      },
-      toModelOutput: ({ output }) => ({
-        type: "text",
-        value: `${output.existed ? "Already kept" : "Saved"}: ${output.name}, id ${output.personId}${output.loves.length ? `, loves ${output.loves.join(", ")} (taste computing)` : ""}. Use this id in for.`,
-      }),
-    }),
-
     tasteBrief: tool({
       ...toolDefs.tasteBrief,
       execute: async (input) => {
-        const person = target(ctx, input.for)
+        const person = ctx.person
         // A profile made moments ago is still computing: give it a few seconds to land.
         for (let i = 0; i < 12; i++) {
           const [t] = await db
@@ -815,51 +562,6 @@ export function buildTools(ctx: TurnContext, messageId: () => string | undefined
     }),
 
     askUser: toolDefs.askUser,
-
-    remember: tool({
-      ...toolDefs.remember,
-      execute: async (input) => {
-        const person = target(ctx, input.for)
-        const c: Constraints = { ...person.constraints }
-        const value = input.value.trim()
-        // "None" is an answer, not a fact: nothing to keep for a diet, an allergy or a medication.
-        const nothing =
-          /^(none|no|nothing|n\/a|aucune?|rien|non|ninguno|nenhum|لا|لا يوجد)\b/i.test(value)
-        if (nothing && ["diet", "allergy", "medication"].includes(input.kind))
-          return { personId: person.id, personName: person.name, kind: input.kind, value }
-        const add = (list: string[] | undefined) => [...new Set([...(list ?? []), value])]
-        switch (input.kind) {
-          case "diet":
-            c.diet = add(c.diet)
-            break
-          case "allergy":
-            c.allergies = add(c.allergies)
-            break
-          case "medication":
-            c.medications = add(c.medications)
-            break
-          case "texture": {
-            const level = Number.parseInt(value, 10)
-            if (level >= 3 && level <= 7) c.iddsi = level
-            break
-          }
-          case "serveWarm":
-            c.serveWarm = !/^(no|false|non|لا)$/i.test(value)
-            break
-          case "budget":
-            c.budget = value
-            break
-          default:
-            c.notes = add(c.notes)
-        }
-        await db
-          .update(schema.people)
-          .set({ constraints: c })
-          .where(and(eq(schema.people.id, person.id), eq(schema.people.ownerId, ctx.userId)))
-        person.constraints = c
-        return { personId: person.id, personName: person.name, kind: input.kind, value }
-      },
-    }),
   }
 }
 

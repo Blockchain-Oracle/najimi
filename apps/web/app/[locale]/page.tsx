@@ -1,13 +1,9 @@
-import { BUILT_IN_WORKFLOWS } from "@najimi/agent/workflows"
 import { APP } from "@najimi/config"
-import { db, schema } from "@najimi/db"
-import { and, desc, eq } from "drizzle-orm"
-import { ArrowRight, ChevronRight, Shapes } from "lucide-react"
+import { ArrowRight } from "lucide-react"
 import Link from "next/link"
 import { getTranslations } from "next-intl/server"
 import { Suspense } from "react"
 import { LanguageMenu } from "@/components/language-menu"
-import { WORKFLOW_ICON } from "@/components/workflows/workflow-meta"
 import { pageLocale } from "@/lib/page-locale"
 import { selfOf } from "@/lib/people"
 import { getSession } from "@/lib/session"
@@ -26,88 +22,18 @@ async function MainAction({ start, open }: { start: string; open: string }) {
   )
 }
 
-/**
- * Real things Najimi made, drifting past. Only creations marked public (our own showcase, picked
- * by hand) ever appear here; nobody's own work does.
- */
-async function Showcase({ label }: { label: string }) {
-  const made = await db
-    .select({
-      id: schema.creations.id,
-      title: schema.creations.title,
-      words: schema.creations.words,
-    })
-    .from(schema.creations)
-    .where(
-      and(
-        eq(schema.creations.public, true),
-        eq(schema.creations.status, "ready"),
-        eq(schema.creations.kind, "image"),
-      ),
-    )
-    .orderBy(desc(schema.creations.createdAt))
-    .limit(10)
-  if (made.length < 3) return null
-  const row = [...made, ...made]
-  return (
-    <section aria-label={label} className="relative overflow-hidden py-4">
-      <div className="flex w-max animate-marquee gap-5 motion-reduce:animate-none hover:[animation-play-state:paused]">
-        {row.map((c, i) => (
-          <figure
-            // biome-ignore lint/suspicious/noArrayIndexKey: the row is the list twice, for a seamless loop
-            key={`${c.id}-${i}`}
-            aria-hidden={i >= made.length}
-            className="w-72 shrink-0 overflow-hidden rounded-card bg-card shadow-paper sm:w-80"
-          >
-            {/* biome-ignore lint/performance/noImgElement: public showcase renditions from our storage */}
-            <img
-              src={`/api/media/creation/${c.id}?v=thumb`}
-              alt={c.title ?? ""}
-              loading="lazy"
-              className="aspect-[4/3] w-full object-cover"
-            />
-            <figcaption className="flex flex-col gap-1 px-3.5 py-3">
-              <span className="truncate font-heading text-[15px]">{c.title}</span>
-              <span className="truncate font-mono text-[11px] text-text-3">
-                {c.words.slice(0, 3).join(" · ")}
-              </span>
-            </figcaption>
-          </figure>
-        ))}
-      </div>
-    </section>
-  )
-}
-
-const STEPS = ["love", "read", "make"] as const
-
-/** The front door (T22): what Najimi is, real things it made, how Qloo powers it, and the workflows. */
+/** The front door: what Najimi is, and one way in. The full landing comes with the launch stage. */
 export default async function Landing({ params }: PageProps<"/[locale]">) {
   await pageLocale(params)
   const t = await getTranslations("Landing")
-  const tw = await getTranslations("Workflows")
   return (
-    <main className="flex min-h-svh w-full flex-col pb-16">
+    <main className="flex min-h-svh w-full flex-col">
       <header className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between gap-4 px-6">
         <span className="font-title text-[22px]">{APP.name.toLowerCase()}</span>
-        <nav className="flex items-center gap-2">
-          <Link
-            href="/demo"
-            className="rounded-pill px-3 py-1.5 text-sm font-semibold text-text-2 hover:text-foreground"
-          >
-            {t("demo")}
-          </Link>
-          <Link
-            href="/workflows"
-            className="hidden rounded-pill px-3 py-1.5 text-sm font-semibold text-text-2 hover:text-foreground sm:block"
-          >
-            {tw("title")}
-          </Link>
-          <LanguageMenu />
-        </nav>
+        <LanguageMenu />
       </header>
 
-      <section className="mx-auto flex w-full max-w-6xl flex-col gap-7 px-6 pt-14 pb-10 sm:pt-20">
+      <section className="mx-auto flex w-full max-w-6xl flex-1 flex-col justify-center gap-7 px-6 py-14">
         <p className="font-mono text-xs text-text-3">{t("kicker")}</p>
         <h1 className="font-title text-hero max-w-4xl">{t("title")}</h1>
         <p className="max-w-2xl text-lg text-text-2">{t("lede")}</p>
@@ -124,81 +50,12 @@ export default async function Landing({ params }: PageProps<"/[locale]">) {
           >
             <MainAction start={t("start")} open={t("continue")} />
           </Suspense>
-          <a
-            href="#workflows"
-            className="text-sm font-semibold underline decoration-foreground/30 underline-offset-4"
-          >
-            {t("seeWorkflows")}
-          </a>
         </div>
       </section>
 
-      <Suspense fallback={<div className="h-72" />}>
-        <Showcase label={t("showcase")} />
-      </Suspense>
-
-      <section className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-6 pt-16">
-        <div className="flex flex-col gap-2">
-          <h2 className="font-title text-title-sm">{t("howTitle")}</h2>
-          <p className="max-w-2xl text-text-2">{t("howLede")}</p>
-        </div>
-        <ol className="overflow-hidden rounded-card bg-card shadow-paper md:grid md:grid-cols-3">
-          {STEPS.map((key, i) => (
-            <li
-              key={key}
-              className="flex gap-4 border-b border-border p-5 last:border-b-0 md:border-e md:border-b-0 md:last:border-e-0"
-            >
-              <span className="font-mono text-xs text-text-3">{`0${i + 1}`}</span>
-              <span className="flex flex-col gap-1.5">
-                <h3 className="font-heading text-[17px]">{t(`steps.${key}.title`)}</h3>
-                <p className="text-[15px] text-text-2">{t(`steps.${key}.body`)}</p>
-              </span>
-            </li>
-          ))}
-        </ol>
-        <p className="max-w-3xl text-sm text-text-3">{t("proof")}</p>
-      </section>
-
-      <section id="workflows" className="flex scroll-mt-8 flex-col gap-5 pt-16">
-        <div className="mx-auto flex w-full max-w-6xl flex-col gap-2 px-6">
-          <h2 className="font-title text-title-sm">{tw("title")}</h2>
-          <p className="max-w-2xl text-text-2">{tw("hint")}</p>
-        </div>
-        <div className="mx-auto w-full max-w-6xl px-6">
-          <ul className="overflow-hidden rounded-card bg-card shadow-paper md:grid md:grid-cols-2">
-            {BUILT_IN_WORKFLOWS.map((w) => {
-              const Icon = WORKFLOW_ICON[w.slug] ?? Shapes
-              return (
-                <li key={w.slug} className="border-b border-border md:odd:border-e">
-                  <Link
-                    href={`/w/${w.slug}`}
-                    className="group flex items-start gap-3 px-4 py-3.5 transition-colors hover:bg-white/4"
-                  >
-                    <span className="grid size-9 shrink-0 place-items-center rounded-tile bg-raised shadow-sticker">
-                      <Icon className="size-[18px] text-text-2" strokeWidth={1.5} />
-                    </span>
-                    <span className="flex min-w-0 flex-col gap-0.5">
-                      <span className="font-heading text-[15px]">
-                        {tw(`items.${w.slug}.name` as "items.night-in.name")}
-                      </span>
-                      <span className="line-clamp-2 text-[13px] text-text-3">
-                        {tw(`items.${w.slug}.desc` as "items.night-in.desc")}
-                      </span>
-                    </span>
-                    <ChevronRight className="ms-auto mt-2.5 size-4 shrink-0 text-text-4 rtl:rotate-180" />
-                  </Link>
-                </li>
-              )
-            })}
-          </ul>
-        </div>
-      </section>
-
-      <footer className="mx-auto mt-16 flex w-full max-w-6xl flex-wrap items-center justify-between gap-3 px-6 text-sm text-text-3">
+      <footer className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-3 px-6 py-8 text-sm text-text-3">
         <span>{t("footer")}</span>
-        <span className="inline-flex items-center gap-2">
-          <span className="size-2 rounded-full bg-lime" /> {t("builtOn")}
-        </span>
+        <span>{t("builtOn")}</span>
       </footer>
     </main>
   )

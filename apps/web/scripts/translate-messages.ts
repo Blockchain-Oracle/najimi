@@ -120,11 +120,11 @@ async function translateChunk(
   })
   const { output } = await generateText({
     model: agentModel(),
-    instructions: `You translate the interface of Najimi, a taste copilot: it knows what people love (through Qloo) and makes things for their real lives (rooms, meals, playlists, outfits). Translate each English string into ${language}. ${voice}
+    instructions: `You translate the interface of Najimi, a social app where taste is identity: it knows what people love (through Qloo), plays it back as music and culture, finds their people, and has an agent in their chats that plans and books with friends. Translate each English string into ${language}. ${voice}
 Rules:
 - Same meaning, same warmth, same length or shorter. Buttons and labels stay short.
 - These are ICU messages. Keep every {argument} exactly as written, untranslated. In {x, plural, ...} and {x, select, ...}, keep the keyword structure and translate only the text inside the branches; use the plural categories ${language} needs (CLDR), always including "other". Keep "#" where it is.
-- Never translate: Najimi, Qloo, IDDSI, FDA, Google, URLs, and the symbols … · →.
+- Never translate: Najimi, Qloo, Google, Spotify, Instagram, TikTok, YouTube, X, URLs, and the symbols … · →.
 - When an item has "fix", your previous attempt was rejected for that reason; correct it.
 Return one item per key, with the same key.`,
     prompt: lines.join("\n"),

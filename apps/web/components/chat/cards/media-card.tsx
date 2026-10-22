@@ -1,10 +1,9 @@
 "use client"
 
 import type { NajimiTools } from "@najimi/agent"
-import { MEDIA } from "@najimi/config"
 import { toast } from "@najimi/ui/components/sonner"
 import { cn } from "@najimi/ui/lib/utils"
-import { Clapperboard, Download, RefreshCw, Share2, Sparkles } from "lucide-react"
+import { Download, RefreshCw, Share2, Sparkles } from "lucide-react"
 import { useTranslations } from "next-intl"
 import { useCallback, useState } from "react"
 import { api } from "@/lib/fetcher"
@@ -15,7 +14,6 @@ import { useMediaUrl, usePublicShare } from "../public-share"
 import { CompareSlider } from "./compare-slider"
 
 type ImageOut = NajimiTools["makeImage"]["output"]
-type VideoOut = NajimiTools["makeVideo"]["output"]
 
 const uploadUrl = (id: string) => `/api/media/upload/${id}?v=original`
 
@@ -153,90 +151,8 @@ export function ImageCard({ output, onAsk }: { output: ImageOut; onAsk: (text: s
           >
             <Sparkles className="size-3.5" /> {t("variation")}
           </button>
-          {/* Offered only while video is switched on (MEDIA.video.enabled). */}
-          {MEDIA.video.enabled ? (
-            <button
-              type="button"
-              onClick={() => onAsk(t("videoAsk", { title: output.title, n: pick + 1 }))}
-              className="inline-flex items-center gap-1.5 rounded-pill bg-lime px-3 py-1.5 text-xs font-semibold text-lime-foreground"
-            >
-              <Clapperboard className="size-3.5" /> {t("makeVideo")}
-            </button>
-          ) : null}
         </div>
       ) : null}
-    </section>
-  )
-}
-
-/** A video rendering at the provider (T11): honest progress, then the player. */
-export function VideoCard({ output }: { output: VideoOut }) {
-  const t = useTranslations("Make")
-  const share = usePublicShare()
-  const creationUrl = useMediaUrl()
-  const [stage, setStage] = useState<{ stage: string; position?: number | null }>({
-    stage: "queued",
-  })
-  const [done, setDone] = useState(() =>
-    Boolean(share && output.creationId && share.ready.includes(output.creationId)),
-  )
-  const [failed, setFailed] = useState<string | null>(null)
-  const onEvent = useCallback((e: RunEvent) => {
-    if (e.type === "progress") setStage(e.data as { stage: string; position?: number | null })
-    if (e.type === "asset") setDone(true)
-    if (e.type === "status" && e.data.status === "failed")
-      setFailed((e.data.error as string) ?? "failed")
-  }, [])
-  useRunEvents(share ? null : output.runId, onEvent)
-  if (share && !done) return null
-  if (!output.runId || !output.creationId)
-    return (
-      <p className="rounded-card bg-card px-4 py-3 text-sm text-card-foreground shadow-paper">
-        {output.note === "unavailable"
-          ? t("videoSoon")
-          : output.note === "allowance"
-            ? t("noneLeftVideo")
-            : t("notMade")}
-      </p>
-    )
-  const poster = output.posterCreationId ? creationUrl(output.posterCreationId) : undefined
-  return (
-    <section className="flex animate-card-land flex-col gap-3 rounded-card bg-card p-3 text-card-foreground shadow-paper">
-      <h3 className="font-heading px-1 text-[17px] leading-snug">{output.title}</h3>
-      {failed ? (
-        <p className="rounded-tile bg-ash p-4 text-sm text-white">
-          {failed === "refused" ? t("refused") : t("failed")}
-        </p>
-      ) : done ? (
-        // biome-ignore lint/a11y/useMediaCaption: generated video with no speech
-        <video
-          src={creationUrl(output.creationId, "original")}
-          poster={poster}
-          controls
-          playsInline
-          preload="none"
-          className="w-full rounded-tile bg-black"
-        />
-      ) : (
-        <div className="relative overflow-hidden rounded-tile">
-          {poster ? (
-            // biome-ignore lint/performance/noImgElement: private, session-checked media
-            <img src={poster} alt="" className="w-full opacity-50 blur-[1px]" />
-          ) : (
-            <div className="aspect-video bg-ash" />
-          )}
-          <span className="absolute inset-0 grid place-items-center">
-            <span className="sticker flex items-center gap-2 px-3 py-1.5 text-sm font-semibold">
-              <span className="size-2 animate-signal-pulse rounded-full bg-signal" />
-              {stage.stage === "running"
-                ? t("rendering")
-                : stage.position != null
-                  ? t("queuedAt", { n: stage.position + 1 })
-                  : t("queued")}
-            </span>
-          </span>
-        </div>
-      )}
     </section>
   )
 }

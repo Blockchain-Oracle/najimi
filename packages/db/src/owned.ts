@@ -14,8 +14,6 @@ import {
   usageDays,
   user,
   userPrefs,
-  workflowFavourites,
-  workflows,
 } from "./schema"
 
 /**
@@ -54,16 +52,8 @@ export async function reownUserData(db: Db, fromUserId: string, toUserId: string
     for (const table of [people, chats, uploads, mediaJobs, creations, shares, runs]) {
       await tx.update(table).set({ ownerId: toUserId }).where(eq(table.ownerId, fromUserId))
     }
-    await tx.update(workflows).set({ ownerId: toUserId }).where(eq(workflows.ownerId, fromUserId))
     await tx.update(qlooCalls).set({ userId: toUserId }).where(eq(qlooCalls.userId, fromUserId))
     await tx.update(llmCalls).set({ userId: toUserId }).where(eq(llmCalls.userId, fromUserId))
-
-    // Favourites: union, no duplicates.
-    await tx.execute(sql`
-      insert into ${workflowFavourites} (user_id, workflow_id, created_at)
-      select ${toUserId}, workflow_id, created_at from ${workflowFavourites} where user_id = ${fromUserId}
-      on conflict do nothing`)
-    await tx.delete(workflowFavourites).where(eq(workflowFavourites.userId, fromUserId))
 
     // Usage: summed per day, so signing in never resets the day's allowance.
     await tx.execute(sql`

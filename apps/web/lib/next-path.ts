@@ -1,5 +1,5 @@
 /**
- * Where to go after a detour (sign-up from a shared workflow link): only a path on this site, never
+ * Where to go after a detour (sign-up from a shared link): only a path on this site, never
  * another origin ("//evil.example" or "/\\evil.example" would leave it).
  */
 export function safeNext(value: unknown): string | null {

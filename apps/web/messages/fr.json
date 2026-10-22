@@ -1,36 +1,11 @@
 {
-  "Meta": {
-    "tagline": "Le copilote du goût.",
-    "description": "Dites à Najimi ce que vous aimez. Il crée pour votre vraie vie des choses qui vous ressemblent — votre pièce rééclairée, le dîner de votre mère, votre prochain livre — et montre les données de goût Qloo derrière chaque choix."
-  },
+  "Meta": {},
   "Landing": {
     "kicker": "Construit sur l'IA de goût de Qloo",
-    "title": "Le copilote du goût.",
-    "lede": "Dis à Najimi trois choses que tu aimes. Il lit ton goût grâce à Qloo, puis crée pour ta vraie vie des choses qui te ressemblent : ta pièce rééclairée, un dîner pour ta mère, ton prochain livre, une soirée chez toi. Chaque choix montre les données Qloo derrière.",
     "start": "Commencer — c'est gratuit",
     "continue": "Ouvrir mon goût",
-    "seeWorkflows": "Voir ce qu'il sait faire",
-    "showcase": "Créations de Najimi",
-    "howTitle": "Comment ça marche",
-    "howLede": "Ton goût n'est pas un genre. Qloo relie ce que tu aimes à travers la musique, le cinéma, les livres, les lieux et les marques ; Najimi en fait des choses utiles.",
-    "steps": {
-      "love": {
-        "title": "Dis-lui ce que tu aimes",
-        "body": "Trois choses ou plus : un livre, un artiste, une série, un lieu. Dis combien chacune compte."
-      },
-      "read": {
-        "title": "Qloo lit ton goût",
-        "body": "Les mots de ton goût (esthétique, ambiance, cuisine) et des choix dans dix domaines, en direct, avec la raison de chacun."
-      },
-      "make": {
-        "title": "Najimi le rend réel",
-        "body": "Tes propres photos restylées, un plan d'éclairage qu'un électricien peut poser, de vrais produits, des recettes à la bonne texture, des playlists, des lieux."
-      }
-    },
-    "proof": "Compare n'importe quelle réponse avec la même demande sans goût : la différence, c'est Qloo.",
     "footer": "Najimi, créé pour le hackathon Qloo.",
-    "builtOn": "Construit sur Qloo",
-    "demo": "Démo"
+    "builtOn": "Construit sur Qloo"
   },
   "Language": {
     "label": "Langue",
@@ -49,14 +24,9 @@
     "failed": "L'envoi a échoué : {reason}"
   },
   "Nav": {
-    "people": "Personnes",
-    "chat": "Chat",
-    "assets": "Créations",
-    "workflows": "Workflows",
     "settings": "Réglages",
     "signIn": "Se connecter",
     "signOut": "Se déconnecter",
-    "me": "Moi",
     "start": "Commencer",
     "guest": "Invité"
   },
@@ -156,7 +126,6 @@
     "nothingSaved": "Rien de gardé pour l'instant. Touchez le marque-page d'un choix.",
     "builtOnQloo": "Construit sur Qloo",
     "callsCount": "{count, plural, one {# appel Qloo} other {# appels Qloo}}",
-    "askFor": "Demander pour {name}",
     "askSelf": "Demander à Najimi",
     "share": "Partager ce goût",
     "linkCopied": "Lien copié",
@@ -198,51 +167,13 @@
   "People": {
     "title": "Personnes",
     "hint": "Gardez le goût de ceux pour qui vous créez : votre mère, un partenaire, un client.",
-    "someoneNew": "Quelqu'un de nouveau",
-    "newTitle": "Pour qui créez-vous ?",
     "you": "Vous",
     "save": "Enregistrer",
     "saving": "Enregistrement…",
-    "delete": "Retirer {name}",
-    "confirmDelete": "Retirer {name} et tout ce qui a été créé pour cette personne ?",
     "about": "À propos de {name}",
     "city": "Ville",
     "language": "Langue",
-    "age": "Âge",
-    "ages": {
-      "24_and_younger": "24 ans ou moins",
-      "25_to_29": "25–29",
-      "30_to_34": "30–34",
-      "35_to_44": "35–44",
-      "45_to_54": "45–54",
-      "55_and_older": "55 ans ou plus"
-    },
-    "notSet": "Non renseigné",
-    "constraints": "À garder en tête",
-    "diet": "Régime",
-    "dietPlaceholder": "végétarien, halal…",
-    "allergies": "Allergies",
-    "allergiesPlaceholder": "arachides, crustacés…",
-    "texture": "Texture des aliments (IDDSI)",
-    "textures": {
-      "none": "Toutes",
-      "3": "3 · Liquide",
-      "4": "4 · Purée",
-      "5": "5 · Haché et humide",
-      "6": "6 · Tendre, en bouchées",
-      "7": "7 · Normal"
-    },
-    "serveWarm": "Servir tiède, pas chaud",
-    "medications": "Médicaments (noms génériques)",
-    "medicationsPlaceholder": "warfarine, atorvastatine…",
-    "medicationsNote": "Utilisé seulement pour lire les notes alimentaires de la notice FDA. Pas un avis médical.",
-    "budget": "Budget",
-    "notes": "Mémorisé",
-    "commaHint": "Séparez par des virgules",
-    "theirLoves": "Qu'est-ce que cette personne aime ?",
-    "theirLovesHint": "Un livre, une série, un chanteur, un plat — trois ou plus, c'est l'idéal.",
-    "revealTheirs": "Révéler son goût",
-    "openTaste": "Voir le goût"
+    "age": "Âge"
   },
   "Auth": {
     "title": "Gardez votre goût",
@@ -281,7 +212,6 @@
     "deleteHint": "Ton compte et tout ce qu'il contient, définitivement.",
     "delete": "Supprimer toutes mes données",
     "deleteTitle": "Tout supprimer ?",
-    "deleteWhat": "Ton compte, les personnes dont tu gardes le goût, leurs goûts et leurs coups de cœur, chaque chat, tes photos, tout ce que Najimi a créé, tes workflows et tes liens de partage.",
     "deleteFinal": "Les liens partagés cessent de fonctionner tout de suite. C'est irréversible.",
     "keep": "Garder",
     "deleteConfirm": "Tout supprimer",
@@ -308,7 +238,6 @@
     "stop": "Arrêter",
     "addPhoto": "Ajouter une photo",
     "removePhoto": "Retirer la photo",
-    "for": "Pour {name}",
     "me": "moi",
     "modes": {
       "ask": "Demander avant de créer",
@@ -323,12 +252,6 @@
     "copy": "Copier",
     "copied": "Copié",
     "regenerate": "Réessayer",
-    "fork": "Nouveau chat à partir d'ici",
-    "compare": "Comparer sans le goût",
-    "compareTitle": "La même demande, avec et sans le goût",
-    "withoutTaste": "Une IA générale, sans données de goût",
-    "withTaste": "Najimi, avec Qloo",
-    "asking": "Question en cours…",
     "stillWorking": "Toujours en cours…",
     "interrupted": "Cette réponse a été interrompue.",
     "error": "Un problème est survenu.",
@@ -362,7 +285,6 @@
     "voiceFailed": "Nous n'avons pas compris. Réessayez.",
     "shareChat": "Partager ce chat",
     "linkCopied": "Lien copié",
-    "saveWorkflow": "Enregistrer comme workflow",
     "share": "Partager"
   },
   "Cards": {
@@ -373,7 +295,6 @@
     "lookedUp": "« {q} » cherché dans Qloo",
     "lookedUpTags": "Tags Qloo trouvés pour « {q} »",
     "lookedUpAudiences": "Audiences Qloo consultées",
-    "remembered": "Mémorisé pour {name} : {value}",
     "briefFor": "De quoi est fait le goût de {name}, d'après Qloo",
     "shared": "En commun",
     "only": "Seulement {name}",
@@ -402,12 +323,6 @@
     "planOnly": "Planifier seulement : « {title} » n'a pas été créé.",
     "declined": "Non créé : « {title} ».",
     "preparing": "Préparation…",
-    "planning": "Conception de l'éclairage…",
-    "shopping": "Recherche sur les sites des marques…",
-    "cooking": "Rédaction de la recette…",
-    "readingLabel": "Lecture des notices FDA…",
-    "savedPerson": "Goût de {name} enregistré →",
-    "savingPerson": "Création du profil de {name}…",
     "nothingFor": "Demandé à Qloo « {title} » : rien pour l'instant"
   },
   "Asked": {
@@ -449,7 +364,6 @@
     "playlist": "Fais-moi une playlist pour un dimanche pluvieux",
     "watch": "Que regarder ce soir ?",
     "eat": "Où manger à {city} ce week-end ?",
-    "both": "Qu'est-ce que {name} et moi aimerions tous les deux ?",
     "hidden": "Trouve-moi des pépites méconnues",
     "trip": "Où devrais-je voyager ensuite ?"
   },
@@ -483,196 +397,13 @@
     "before": "Avant",
     "after": "Après"
   },
-  "Assets": {
-    "title": "Créations",
-    "hint": "Tout ce que Najimi a créé pour vous et pour ceux pour qui vous créez.",
-    "kinds": {
-      "all": "Tout",
-      "image": "Images",
-      "video": "Vidéos"
-    },
-    "empty": "Rien de créé pour l'instant. Restylez une photo ou demandez un plat, une ambiance, une pièce.",
-    "startMaking": "Créer quelque chose",
-    "more": "Voir plus",
-    "madeFrom": "Créé à partir de",
-    "openChat": "Ouvrir son chat",
-    "delete": "Supprimer",
-    "confirmDelete": "Supprimer définitivement ?"
-  },
   "Share": {
     "cta": "Créer le vôtre",
     "madeFrom": "Créé d'après un vrai goût : {words}",
     "pitch": "Najimi connaît ce que les gens aiment grâce à Qloo, et crée pour leur vraie vie des choses qui leur ressemblent.",
     "chatTitle": "Un chat Najimi",
-    "moreWorkflows": "Plus de workflows",
     "creationTitle": "Fait avec Najimi",
     "tasteTitle": "Le goût de {name}"
-  },
-  "Home": {
-    "planFor": "Pour le {room} de {name}",
-    "layers": {
-      "ambient": "Ambiance",
-      "task": "Fonctionnel",
-      "accent": "Accent",
-      "decorative": "Décoratif"
-    },
-    "controls": {
-      "switch": "interrupteur",
-      "dimmer": "variateur",
-      "smart": "connecté",
-      "plug-in": "sur prise"
-    },
-    "dimmable": "dimmable",
-    "notDimmable": "non dimmable",
-    "forElectrician": "Pour votre électricien",
-    "copyBrief": "Copier la fiche",
-    "copied": "Fiche copiée",
-    "circuits": "Circuits",
-    "switching": "Commandes",
-    "dimmers": "Variateurs",
-    "lookHint": "Des {category} réels, sur le site de chaque marque.",
-    "brandOnly": "Voir la boutique de la marque",
-    "sendElectrician": "Envoyer à l'électricien",
-    "linkCopied": "Lien copié — envoyez-le à votre électricien"
-  },
-  "Food": {
-    "minutes": "{n} min",
-    "serve": {
-      "hot": "Servir chaud",
-      "warm": "Servir tiède-chaud",
-      "lukewarm": "Servir tiède",
-      "cold": "Servir froid"
-    },
-    "forName": "pour {name}",
-    "ingredients": "Ingrédients",
-    "method": "Préparation",
-    "texture": "Texture",
-    "fewer": "Moins de portions",
-    "more": "Plus de portions",
-    "cookMode": "Mode cuisine",
-    "dishPhoto": "Voir le plat",
-    "photoAsk": "Fais une photo de « {title} »",
-    "planWeek": "Planifier la semaine",
-    "weekAsk": "Planifie une semaine de repas comme « {title} », avec la liste de courses",
-    "step": "Étape {n} sur {total}",
-    "back": "Retour",
-    "next": "Étape suivante",
-    "done": "Terminé",
-    "shopping": "Liste de courses",
-    "medsTitle": "Repas et médicaments : notes pour {name}",
-    "label": "Notice FDA, {date}",
-    "noLabel": "Aucune notice FDA pour ce nom. Vérifiez le nom générique.",
-    "noFoodNotes": "La notice ne mentionne ni aliment ni boisson.",
-    "pharmacist": "Cité depuis la notice FDA. Ce n'est pas un avis médical : demandez à un pharmacien ou un médecin avant de changer l'alimentation de quelqu'un."
-  },
-  "Workflows": {
-    "title": "Workflows",
-    "hint": "Des recettes prêtes pour les grands projets. Chacune se lance dans un chat, pour vous ou pour quelqu'un d'autre.",
-    "pill": "Workflows",
-    "run": "Lancer",
-    "needsPhoto": "une photo",
-    "needsPerson": "quelqu'un pour qui cuisiner",
-    "categories": {
-      "home": "Maison",
-      "food": "Cuisine",
-      "culture": "Culture",
-      "style": "Style",
-      "film": "Film",
-      "mine": "Créé par un utilisateur de Najimi"
-    },
-    "items": {
-      "relight-my-room": {
-        "name": "Rééclairer ma pièce",
-        "desc": "Votre pièce dans votre lumière : deux ambiances, un plan pour l'électricien, les vraies lampes, une bande-son.",
-        "start": "Rééclaire ma pièce"
-      },
-      "make-it-mine": {
-        "name": "À mon goût",
-        "desc": "Photographiez n'importe quoi (un bureau, une étagère, une tasse) et voyez-le restylé à votre goût, avec les vrais produits.",
-        "start": "Mets ça à mon goût"
-      },
-      "cook-for": {
-        "name": "Cuisiner pour…",
-        "desc": "Des recettes qui plairont, à la bonne texture et température, avec les notes de la notice FDA des médicaments.",
-        "start": "Aide-moi à cuisiner pour quelqu'un"
-      },
-      "next-read": {
-        "name": "Prochaine lecture",
-        "desc": "Des livres selon votre goût, l'univers du meilleur, une playlist de lecture et un endroit où lire.",
-        "start": "Que devrais-je lire ensuite ?"
-      },
-      "dress-me": {
-        "name": "Habille-moi",
-        "desc": "Une tenue selon votre goût, les pièces chez de vraies marques, et une playlist pour se préparer.",
-        "start": "Habille-moi"
-      },
-      "my-taste-film": {
-        "name": "Le film de mon goût",
-        "desc": "Un court film de qui vous êtes, fait des mots de votre goût, avec sa bande-son.",
-        "start": "Fais le film de mon goût"
-      },
-      "night-in": {
-        "name": "Soirée à la maison",
-        "desc": "Une soirée entière : quoi regarder, écouter, manger, et la pièce prête.",
-        "start": "Prépare une soirée à la maison"
-      }
-    },
-    "runMine": "Lance mon workflow « {name} » :",
-    "yours": "Les tiens",
-    "runs": "{count, plural, one {lancé une fois} other {lancé # fois}}",
-    "runThis": "Lancer ce workflow",
-    "newHere": "Nouveau ici ? Dis d'abord à Najimi trois choses que tu aimes. Une minute, et le workflow démarre.",
-    "copyLink": "Copier le lien",
-    "linkCopied": "Lien copié",
-    "stepCount": "{count, plural, one {# étape} other {# étapes}}",
-    "public": "Toute personne qui a le lien peut le lancer",
-    "delete": "Supprimer",
-    "deleteConfirm": "Supprimer « {name} » ? Les chats qui l'ont lancé restent.",
-    "saveTitle": "Enregistrer comme workflow",
-    "saveHint": "Relance-le quand tu veux, pour toi ou pour un proche. Najimi a écrit les étapes à partir de ce chat ; à toi de les ajuster.",
-    "drafting": "Najimi écrit les étapes…",
-    "name": "Nom",
-    "description": "Ce qu'il t'apporte",
-    "steps": "Étapes",
-    "stepsHint": "Une par ligne. Au lancement, elles partent comme ton premier message : écris-les comme tu les demanderais.",
-    "cancel": "Annuler",
-    "save": "Enregistrer",
-    "saving": "Enregistrement…",
-    "saved": "Workflow enregistré",
-    "savedShared": "Lien copié : {link}",
-    "savedPrivate": "Il est dans Workflows, rubrique Les tiens.",
-    "seeYours": "Ouvrir",
-    "saveFailed": "Ça n'a pas été enregistré. Réessaie.",
-    "readyMade": "Prêts à l'emploi",
-    "yoursEmpty": "Tes propres workflows apparaîtront ici. Sous une réponse dans un chat, « Enregistrer comme workflow » en fait un que tu peux relancer ou partager."
-  },
-  "Demo": {
-    "title": "Voir Najimi à l'œuvre",
-    "lede": "De trois coups de cœur à une pièce rééclairée : le goût lu par Qloo, deux restylages de la vraie pièce, un plan d'éclairage, de vraies lampes et une bande-son.",
-    "coverAlt": "Najimi sur un téléphone : une chambre avant et après, rééclairée dans deux ambiances chaudes",
-    "pendingTitle": "La démo enregistrée arrive",
-    "pendingBody": "En attendant, suis le même chemin toi-même sur l'app en ligne ci-dessous. Environ trois minutes, sans compte.",
-    "pathTitle": "Essaie en trois minutes",
-    "steps": {
-      "start": {
-        "title": "Dis-lui trois choses que tu aimes",
-        "body": "Un livre, un artiste, une série. Dis combien chacune compte."
-      },
-      "taste": {
-        "title": "Regarde ton goût arriver",
-        "body": "Tes mots et tes choix arrivent en direct de Qloo, chacun avec le coup de cœur qui l'a amené."
-      },
-      "relight": {
-        "title": "Rééclaire une pièce",
-        "body": "Choisis une pièce exemple (ou ta photo), dis à quoi elle sert, et reçois deux restylages, un plan d'éclairage et de vraies lampes."
-      },
-      "share": {
-        "title": "Partage-le",
-        "body": "Envoie le chat ou le résultat ; il s'affiche avec une image, sans jamais montrer ta photo."
-      }
-    },
-    "cta": "Commencer avec Rééclairer ma pièce",
-    "docs": "Lire la doc"
   },
   "Run": {
     "readTaste": "A lu le goût de {name}",

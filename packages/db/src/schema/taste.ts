@@ -14,20 +14,6 @@ import {
 import { user } from "./auth"
 import { owner, runs, timestamps } from "./core"
 
-/** What someone can't or won't have, remembered and applied to everything made for them. */
-export type Constraints = {
-  diet?: string[]
-  allergies?: string[]
-  /** IDDSI food texture level (3 liquidised … 7 regular). */
-  iddsi?: number | null
-  serveWarm?: boolean
-  /** Generic drug names, for medication notes from the FDA label. */
-  medications?: string[]
-  budget?: string
-  /** Anything else they asked Najimi to remember ("I'm vegetarian"). */
-  notes?: string[]
-}
-
 /** The words a taste is made of, from Qloo tags: what every creation's prompt is built from. */
 export type TasteWords = {
   aesthetic: string[]
@@ -68,7 +54,7 @@ export const userPrefs = pgTable("user_prefs", {
   ...timestamps,
 })
 
-/** Someone Najimi makes things for: me, or someone I keep a taste for (Mum, a partner, a client). */
+/** A person's own taste profile (one per user, `isSelf`); replaced by owner-agnostic profiles in S02. */
 export const people = pgTable(
   "people",
   {
@@ -82,9 +68,6 @@ export const people = pgTable(
     /** The face picked at sign-up (config LOOKS): it sets the identity colour. */
     look: text(),
     locale: text(),
-    /** Qloo demographics band, when it matters (`55_and_older` for "cook for Mum"). */
-    ageBand: text(),
-    constraints: jsonb().$type<Constraints>().default({}).notNull(),
     /** Qloo ids marked "not for me": excluded from every later pick. */
     excludedIds: text().array().default(sql`'{}'::text[]`).notNull(),
     ...timestamps,

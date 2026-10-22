@@ -5,17 +5,15 @@
 
 export const APP = {
   name: "Najimi",
-  /** 馴染み: familiar, the one who knows you. */
-  meaning: "familiar",
-  tagline: "The taste copilot.",
+  /** 馴染み: someone you know well. */
+  meaning: "someone you know well",
+  tagline: "Find your people by what you love.",
   description:
-    "Tell Najimi what you love. It makes things for your real life that fit you — your room relit, dinner for your mum, your next book — and shows the real Qloo taste data behind every choice.",
+    "A social app where taste is identity: a feed of music and culture, the map of where your people are, games with friends, and an agent in every chat that plans and books, on Qloo's taste graph.",
   /** The public repository and live URLs, once they exist; links stay hidden until then. */
   repository: null as string | null,
   url: "https://najimi.84.46.247.92.sslip.io" as string | null,
   docs: "https://najimi-docs.84.46.247.92.sslip.io" as string | null,
-  /** The recorded demo's YouTube id; until there is one, /demo says so and shows the way in. */
-  demoVideo: null as string | null,
 } as const
 
 /** Local development ports, chosen to sit beside Konkyo (3210/3211/54320) without clashing. */

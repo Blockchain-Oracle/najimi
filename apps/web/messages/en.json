@@ -1,36 +1,16 @@
 {
   "Meta": {
-    "tagline": "The taste copilot.",
-    "description": "Tell Najimi what you love. It makes things for your real life that fit you — your room relit, dinner for your mum, your next book — and shows the Qloo taste data behind every choice."
+    "tagline": "Find your people by what you love.",
+    "description": "Najimi turns what you love into a feed, a map of your people, games with friends and plans it books for you, with an AI agent in every chat and Qloo's taste graph underneath."
   },
   "Landing": {
     "kicker": "Built on Qloo's taste AI",
-    "title": "The taste copilot.",
-    "lede": "Tell Najimi three things you love. It reads your taste through Qloo, then makes things for your real life that fit you: your room relit, dinner for your mum, your next book, a night in. Every choice shows the Qloo data behind it.",
+    "title": "Find your people by what you love.",
+    "lede": "Tell Najimi a few things you love. It reads your taste through Qloo, plays it back as music and culture, shows where your people are, and puts an agent in your chats that plans, plays and books with your friends.",
     "start": "Start — it's free",
     "continue": "Open my taste",
-    "seeWorkflows": "See what it can do",
-    "showcase": "Things Najimi made",
-    "howTitle": "How it works",
-    "howLede": "Your taste isn't a genre. Qloo connects what you love across music, film, books, places and brands; Najimi turns that into things you can use.",
-    "steps": {
-      "love": {
-        "title": "Tell it what you love",
-        "body": "Three things or more: a book, an artist, a show, a place. Say how much each counts."
-      },
-      "read": {
-        "title": "Qloo reads your taste",
-        "body": "The words in your taste (aesthetic, mood, food) and picks across ten domains, live, with the reason for each."
-      },
-      "make": {
-        "title": "Najimi makes it real",
-        "body": "Restyles of your own photos, lighting plans an electrician can install, real products, recipes at the right texture, playlists, places."
-      }
-    },
-    "proof": "Compare any answer with the same ask without taste: the difference is Qloo.",
     "footer": "Najimi, made for the Qloo hackathon.",
-    "builtOn": "Built on Qloo",
-    "demo": "Demo"
+    "builtOn": "Built on Qloo"
   },
   "Language": {
     "label": "Language",
@@ -49,14 +29,11 @@
     "failed": "That didn't upload: {reason}"
   },
   "Nav": {
-    "people": "People",
-    "chat": "Chat",
-    "assets": "Assets",
-    "workflows": "Workflows",
+    "chat": "Najimi",
     "settings": "Settings",
     "signIn": "Sign in",
     "signOut": "Sign out",
-    "me": "Me",
+    "me": "You",
     "start": "Start",
     "guest": "Guest"
   },
@@ -156,7 +133,6 @@
     "nothingSaved": "Nothing kept yet. Tap the bookmark on any pick.",
     "builtOnQloo": "Built on Qloo",
     "callsCount": "{count, plural, one {# Qloo call} other {# Qloo calls}}",
-    "askFor": "Ask for {name}",
     "askSelf": "Ask Najimi",
     "share": "Share this taste",
     "linkCopied": "Link copied",
@@ -198,51 +174,13 @@
   "People": {
     "title": "People",
     "hint": "Keep a taste for anyone you make things for: your mum, a partner, a client.",
-    "someoneNew": "Someone new",
-    "newTitle": "Who are you making for?",
     "you": "You",
     "save": "Save",
     "saving": "Saving…",
-    "delete": "Remove {name}",
-    "confirmDelete": "Remove {name} and everything made for them?",
     "about": "About {name}",
     "city": "City",
     "language": "Language",
-    "age": "Age",
-    "ages": {
-      "24_and_younger": "24 or younger",
-      "25_to_29": "25–29",
-      "30_to_34": "30–34",
-      "35_to_44": "35–44",
-      "45_to_54": "45–54",
-      "55_and_older": "55 or older"
-    },
-    "notSet": "Not set",
-    "constraints": "What to keep in mind",
-    "diet": "Diet",
-    "dietPlaceholder": "vegetarian, halal…",
-    "allergies": "Allergies",
-    "allergiesPlaceholder": "peanuts, shellfish…",
-    "texture": "Food texture (IDDSI)",
-    "textures": {
-      "none": "Any",
-      "3": "3 · Liquidised",
-      "4": "4 · Puréed",
-      "5": "5 · Minced & moist",
-      "6": "6 · Soft & bite-sized",
-      "7": "7 · Regular"
-    },
-    "serveWarm": "Serve lukewarm, not hot",
-    "medications": "Medications (generic names)",
-    "medicationsPlaceholder": "warfarin, atorvastatin…",
-    "medicationsNote": "Used only to look up food notes on the FDA label. Not medical advice.",
-    "budget": "Budget",
-    "notes": "Remembered",
-    "commaHint": "Separate with commas",
-    "theirLoves": "What do they love?",
-    "theirLovesHint": "A book, a show, a singer, a dish — three or more is best.",
-    "revealTheirs": "Show their taste",
-    "openTaste": "Open taste"
+    "age": "Age"
   },
   "Auth": {
     "title": "Keep your taste",
@@ -281,7 +219,7 @@
     "deleteHint": "Your account and everything in it, gone for good.",
     "delete": "Delete all my data",
     "deleteTitle": "Delete everything?",
-    "deleteWhat": "Your account, the people you keep a taste for, their tastes and loves, every chat, your photos, everything Najimi made, your workflows and your share links.",
+    "deleteWhat": "Your account, your taste and loves, every chat, your photos, everything Najimi made and your share links.",
     "deleteFinal": "Shared links stop working at once. This can't be undone.",
     "keep": "Keep it",
     "deleteConfirm": "Delete everything",
@@ -308,7 +246,6 @@
     "stop": "Stop",
     "addPhoto": "Add a photo",
     "removePhoto": "Remove photo",
-    "for": "For {name}",
     "me": "me",
     "modes": {
       "ask": "Ask before making",
@@ -323,12 +260,6 @@
     "copy": "Copy",
     "copied": "Copied",
     "regenerate": "Try again",
-    "fork": "New chat from here",
-    "compare": "Compare without taste",
-    "compareTitle": "The same ask, with and without taste",
-    "withoutTaste": "A general AI, no taste data",
-    "withTaste": "Najimi, with Qloo",
-    "asking": "Asking…",
     "stillWorking": "Still working on this…",
     "interrupted": "This answer was cut off.",
     "error": "Something went wrong.",
@@ -362,7 +293,6 @@
     "voiceFailed": "We couldn't hear that. Try again.",
     "shareChat": "Share this chat",
     "linkCopied": "Link copied",
-    "saveWorkflow": "Save as a workflow",
     "share": "Share"
   },
   "Cards": {
@@ -373,7 +303,6 @@
     "lookedUp": "Looked up “{q}” in Qloo",
     "lookedUpTags": "Found Qloo tags for “{q}”",
     "lookedUpAudiences": "Looked up Qloo audiences",
-    "remembered": "Remembered for {name}: {value}",
     "briefFor": "What {name}'s taste is made of, from Qloo",
     "shared": "Shared",
     "only": "Only {name}",
@@ -402,12 +331,6 @@
     "planOnly": "Plan only: “{title}” wasn't made.",
     "declined": "Not made: “{title}”.",
     "preparing": "Preparing…",
-    "planning": "Planning the light…",
-    "shopping": "Looking on the brands' own sites…",
-    "cooking": "Writing the recipe…",
-    "readingLabel": "Reading the FDA labels…",
-    "savedPerson": "Kept a taste for {name} →",
-    "savingPerson": "Making a profile for {name}…",
     "nothingFor": "Asked Qloo for “{title}”: nothing yet"
   },
   "Asked": {
@@ -449,7 +372,6 @@
     "playlist": "Make me a playlist for a rainy Sunday",
     "watch": "What should I watch tonight?",
     "eat": "Where should I eat in {city} this weekend?",
-    "both": "What would {name} and I both love?",
     "hidden": "Find me hidden gems I'd love",
     "trip": "Where should I travel next?"
   },
@@ -483,196 +405,13 @@
     "before": "Before",
     "after": "After"
   },
-  "Assets": {
-    "title": "Assets",
-    "hint": "Everything Najimi made for you and the people you make for.",
-    "kinds": {
-      "all": "All",
-      "image": "Images",
-      "video": "Videos"
-    },
-    "empty": "Nothing made yet. Restyle a photo or ask for a dish, a mood, a room.",
-    "startMaking": "Make something",
-    "more": "Load more",
-    "madeFrom": "Made from",
-    "openChat": "Open its chat",
-    "delete": "Delete",
-    "confirmDelete": "Delete this for good?"
-  },
   "Share": {
     "cta": "Make yours",
     "madeFrom": "Made from a real taste: {words}",
     "pitch": "Najimi knows what people love through Qloo, and makes things for their real lives that fit them.",
     "chatTitle": "A Najimi chat",
-    "moreWorkflows": "More workflows",
     "creationTitle": "Made with Najimi",
     "tasteTitle": "{name}'s taste"
-  },
-  "Home": {
-    "planFor": "For {name}'s {room}",
-    "layers": {
-      "ambient": "Ambient",
-      "task": "Task",
-      "accent": "Accent",
-      "decorative": "Decorative"
-    },
-    "controls": {
-      "switch": "switch",
-      "dimmer": "dimmer",
-      "smart": "smart",
-      "plug-in": "plug-in"
-    },
-    "dimmable": "dimmable",
-    "notDimmable": "not dimmable",
-    "forElectrician": "For your electrician",
-    "copyBrief": "Copy brief",
-    "copied": "Brief copied",
-    "circuits": "Circuits",
-    "switching": "Switching",
-    "dimmers": "Dimmers",
-    "lookHint": "Real {category} from each brand's own site.",
-    "brandOnly": "Visit the brand's shop",
-    "sendElectrician": "Send to your electrician",
-    "linkCopied": "Link copied — send it to your electrician"
-  },
-  "Food": {
-    "minutes": "{n} min",
-    "serve": {
-      "hot": "Serve hot",
-      "warm": "Serve warm",
-      "lukewarm": "Serve lukewarm",
-      "cold": "Serve cold"
-    },
-    "forName": "for {name}",
-    "ingredients": "Ingredients",
-    "method": "Method",
-    "texture": "Texture",
-    "fewer": "Fewer servings",
-    "more": "More servings",
-    "cookMode": "Cook mode",
-    "dishPhoto": "Show me the dish",
-    "photoAsk": "Make a photo of “{title}”",
-    "planWeek": "Plan the week",
-    "weekAsk": "Plan a week of meals like “{title}”, with a shopping list",
-    "step": "Step {n} of {total}",
-    "back": "Back",
-    "next": "Next step",
-    "done": "Done",
-    "shopping": "Shopping list",
-    "medsTitle": "Food and medication notes for {name}",
-    "label": "FDA label, {date}",
-    "noLabel": "No FDA label found for this name. Check the generic name.",
-    "noFoodNotes": "The label has no food or drink notes.",
-    "pharmacist": "Quoted from the FDA drug label. This isn't medical advice: check with a pharmacist or doctor before changing what someone eats."
-  },
-  "Workflows": {
-    "title": "Workflows",
-    "hint": "Ready-made recipes for the bigger jobs. Each one runs in a chat, for you or anyone you make for.",
-    "pill": "Workflows",
-    "run": "Run",
-    "needsPhoto": "a photo",
-    "needsPerson": "someone to cook for",
-    "categories": {
-      "home": "Home",
-      "food": "Food",
-      "culture": "Culture",
-      "style": "Style",
-      "film": "Film",
-      "mine": "Made by a Najimi user"
-    },
-    "items": {
-      "relight-my-room": {
-        "name": "Relight my room",
-        "desc": "Your room in your light: two moods, a plan an electrician can install, the real lamps, a soundtrack.",
-        "start": "Relight my room"
-      },
-      "make-it-mine": {
-        "name": "Make it mine",
-        "desc": "Photograph anything (a desk, a shelf, a cup) and see it restyled in your taste, with the real products.",
-        "start": "Make this mine"
-      },
-      "cook-for": {
-        "name": "Cook for…",
-        "desc": "Recipes someone will love, at the right texture and temperature, with medication notes from the FDA label.",
-        "start": "Help me cook for someone"
-      },
-      "next-read": {
-        "name": "Next read",
-        "desc": "Books from your taste, the world of the best one, a reading playlist and somewhere to read.",
-        "start": "What should I read next?"
-      },
-      "dress-me": {
-        "name": "Dress me",
-        "desc": "An outfit from your taste, the pieces from real brands, and a playlist for getting ready.",
-        "start": "Dress me"
-      },
-      "my-taste-film": {
-        "name": "My taste film",
-        "desc": "A short film of who you are, made from the words of your taste, with its soundtrack.",
-        "start": "Make my taste film"
-      },
-      "night-in": {
-        "name": "Night in",
-        "desc": "A whole evening: something to watch, to hear, to eat, and the room set for it.",
-        "start": "Plan a night in"
-      }
-    },
-    "runMine": "Run my workflow “{name}”:",
-    "yours": "Yours",
-    "runs": "{count, plural, one {run once} other {run # times}}",
-    "runThis": "Run this workflow",
-    "newHere": "New here? Tell Najimi three things you love first. It takes a minute, then the workflow starts.",
-    "copyLink": "Copy the link",
-    "linkCopied": "Link copied",
-    "stepCount": "{count, plural, one {# step} other {# steps}}",
-    "public": "Anyone with the link can run it",
-    "delete": "Delete",
-    "deleteConfirm": "Delete “{name}”? Chats that ran it stay.",
-    "saveTitle": "Save as a workflow",
-    "saveHint": "Run this again any time, for you or anyone you make for. Najimi wrote the steps from this chat; make them yours.",
-    "drafting": "Najimi is writing the steps…",
-    "name": "Name",
-    "description": "What it gives you",
-    "steps": "Steps",
-    "stepsHint": "One per line. A run sends these as your first message, so write them the way you'd ask.",
-    "cancel": "Cancel",
-    "save": "Save workflow",
-    "saving": "Saving…",
-    "saved": "Workflow saved",
-    "savedShared": "Link copied: {link}",
-    "savedPrivate": "It's in Workflows, under Yours.",
-    "seeYours": "Open",
-    "saveFailed": "That didn't save. Try again.",
-    "readyMade": "Ready-made",
-    "yoursEmpty": "Your own workflows will show here. Under any answer in a chat, “Save as a workflow” turns that chat into one you can run again or share."
-  },
-  "Demo": {
-    "title": "See Najimi work",
-    "lede": "From three loves to a relit room: the taste from Qloo, two restyles of the real room, a lighting plan, real lamps and a soundtrack.",
-    "coverAlt": "Najimi on a phone: a bedroom before and after, relit in two warm moods",
-    "pendingTitle": "The recorded demo is on its way",
-    "pendingBody": "Until it's here, walk the same path yourself on the live app below. It takes about three minutes and no account.",
-    "pathTitle": "Try it in three minutes",
-    "steps": {
-      "start": {
-        "title": "Tell it three things you love",
-        "body": "A book, an artist, a show. Say how much each counts."
-      },
-      "taste": {
-        "title": "Watch your taste arrive",
-        "body": "Your words and picks land live from Qloo, each with the love that led to it."
-      },
-      "relight": {
-        "title": "Relight a room",
-        "body": "Pick a sample room (or your own photo), say what it's for, and get two restyles, a lighting plan and real lamps."
-      },
-      "share": {
-        "title": "Share it",
-        "body": "Send the chat or the result; it unfurls with a picture, and never shows your own photo."
-      }
-    },
-    "cta": "Start with Relight my room",
-    "docs": "Read the docs"
   },
   "Run": {
     "readTaste": "Read {name}'s taste",

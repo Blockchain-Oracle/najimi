@@ -3,23 +3,15 @@
 import type { ChatMeta, NajimiUIMessage } from "@najimi/agent"
 import { cn } from "@najimi/ui/lib/utils"
 import {
-  Brain,
-  CalendarDays,
-  ChefHat,
   ChevronDown,
-  Clapperboard,
   GitCompareArrows,
   ImageIcon,
-  Lamp,
   type LucideIcon,
   MessageCircleQuestion,
-  Pill,
   Radar,
   ScanFace,
   Search,
-  ShoppingBag,
   Tags,
-  UserPlus,
   Users,
   X,
 } from "lucide-react"
@@ -167,67 +159,18 @@ export function useRunSteps(parts: Part[]): RunStep[] {
           qloo: false,
         })
         break
-      case "tool-makeImage":
-      case "tool-makeVideo": {
-        const words =
-          part.type === "tool-makeImage" ? (part.input?.words ?? []).filter(Boolean) : []
+      case "tool-makeImage": {
+        const words = (part.input?.words ?? []).filter(Boolean)
         steps.push({
           id,
-          icon: part.type === "tool-makeImage" ? ImageIcon : Clapperboard,
+          icon: ImageIcon,
           label: part.input?.title ?? "…",
-          meta:
-            state === "waiting"
-              ? tr("waiting")
-              : join(part.type === "tool-makeImage" ? "image" : "video", ...words.slice(0, 3)),
+          meta: state === "waiting" ? tr("waiting") : join("image", ...words.slice(0, 3)),
           state,
           qloo: false,
         })
         break
       }
-      case "tool-lightingPlan": {
-        const layers = part.input?.layers ?? []
-        const fixtures = layers.reduce((n, l) => n + (l?.fixtures?.length ?? 0), 0)
-        steps.push({
-          id,
-          icon: Lamp,
-          label: part.input?.title ?? "…",
-          meta: join(
-            layers.length && `${layers.length} layers`,
-            fixtures && `${fixtures} fixtures`,
-          ),
-          state,
-          qloo: false,
-        })
-        break
-      }
-      case "tool-findProducts":
-        steps.push({
-          id,
-          icon: ShoppingBag,
-          label: part.input?.title ?? "…",
-          meta: done
-            ? join(`${part.output.brands.length} brands`, part.output.category)
-            : undefined,
-          state,
-          qloo: false,
-        })
-        break
-      case "tool-recipe":
-        steps.push({ id, icon: ChefHat, label: part.input?.title ?? "…", state, qloo: false })
-        break
-      case "tool-mealPlan":
-        steps.push({ id, icon: CalendarDays, label: part.input?.title ?? "…", state, qloo: false })
-        break
-      case "tool-medicationNotes":
-        steps.push({
-          id,
-          icon: Pill,
-          label: t("readingLabel"),
-          meta: "openFDA",
-          state,
-          qloo: false,
-        })
-        break
       case "tool-askUser":
         steps.push({
           id,
@@ -237,27 +180,6 @@ export function useRunSteps(parts: Part[]): RunStep[] {
           state,
           qloo: false,
         })
-        break
-      case "tool-savePerson":
-        steps.push({
-          id,
-          icon: UserPlus,
-          label: done
-            ? t("savedPerson", { name: part.output.name }).replace(/\s*→\s*$/, "")
-            : t("savingPerson", { name: part.input?.name ?? "" }),
-          state,
-          qloo: false,
-        })
-        break
-      case "tool-remember":
-        if (done)
-          steps.push({
-            id,
-            icon: Brain,
-            label: t("remembered", { name: part.output.personName, value: part.output.value }),
-            state,
-            qloo: false,
-          })
         break
       default:
         break

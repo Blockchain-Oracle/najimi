@@ -8,24 +8,10 @@ import {
 } from "@najimi/ui/components/dropdown-menu"
 import { cn } from "@najimi/ui/lib/utils"
 import { useQuery } from "@tanstack/react-query"
-import {
-  ArrowUp,
-  Check,
-  ChevronDown,
-  Hand,
-  ImagePlus,
-  Images,
-  NotebookPen,
-  Shapes,
-  Square,
-  X,
-  Zap,
-} from "lucide-react"
+import { ArrowUp, Hand, ImagePlus, Images, NotebookPen, Square, X, Zap } from "lucide-react"
 import { AnimatePresence, motion } from "motion/react"
 import { useTranslations } from "next-intl"
 import { useEffect, useId, useRef, useState } from "react"
-import { Face } from "@/components/taste/face"
-import { WORKFLOW_ICON, WORKFLOW_SLUGS } from "@/components/workflows/workflow-meta"
 import { api } from "@/lib/fetcher"
 import { type Uploaded, uploadPhoto } from "@/lib/photo"
 import { sound } from "@/lib/sounds"
@@ -90,35 +76,29 @@ const MODES = [
 ] as const
 
 /**
- * The composer (T5): words and photos (resized in the browser, re-encoded on the server), who it's
- * for, and the mode. Enter sends; Shift+Enter is a new line; while a turn runs, Send becomes Stop.
+ * The composer: words and photos (resized in the browser, re-encoded on the server) and the mode.
+ * Enter sends; Shift+Enter is a new line; while a turn runs, Send becomes Stop.
  */
 export function Composer({
-  people,
-  personId,
-  onPerson,
+  person,
   mode,
   onMode,
   busy,
   onSend,
   onStop,
-  onWorkflow,
   ideas = [],
 }: {
-  people: ChatPerson[]
-  personId: string | null
-  onPerson: (id: string) => void
+  /** The signed-in person (their face sits on the composer). */
+  person?: ChatPerson
   mode: Mode
   onMode: (mode: Mode) => void
   busy: boolean
   onSend: (text: string, photos: Uploaded[]) => void
   onStop: () => void
-  onWorkflow: (slug: string) => void
   /** Things worth asking, shown in turn where the placeholder sits. */
   ideas?: string[]
 }) {
   const t = useTranslations("Chat")
-  const tw = useTranslations("Workflows")
   const ts = useTranslations("Settings")
   const [text, setText] = useState("")
   const [photos, setPhotos] = useState<Uploaded[]>([])
@@ -128,7 +108,6 @@ export function Composer({
   const [hint, setHint] = useState<Mode | null>(null)
   const input = useRef<HTMLTextAreaElement>(null)
   const uid = useId()
-  const person = people.find((p) => p.id === personId) ?? people.find((p) => p.isSelf)
 
   // The placeholder rolls on while the box is empty, and stops for anyone typing.
   useEffect(() => {
@@ -312,24 +291,6 @@ export function Composer({
           {photos.length === 0 ? (
             <SamplePicker onPick={(sample) => setPhotos((p) => [...p, sample])} />
           ) : null}
-          <DropdownMenu>
-            <DropdownMenuTrigger className="inline-flex max-w-44 min-w-0 items-center gap-1.5 rounded-pill py-1 ps-1 pe-2.5 text-sm font-semibold whitespace-nowrap hover:bg-paper-foreground/8">
-              {person ? <Face look={person.look} name={person.name} size="xs" /> : null}
-              <span className="truncate">
-                {t("for", { name: person?.isSelf ? t("me") : (person?.name ?? "") })}
-              </span>
-              <ChevronDown className="size-3.5 shrink-0" />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent side="top" align="start" className="min-w-48">
-              {people.map((p) => (
-                <DropdownMenuItem key={p.id} onClick={() => onPerson(p.id)} className="gap-2.5">
-                  <Face look={p.look} name={p.name} size="xs" />
-                  {p.isSelf ? t("me") : p.name}
-                  {p.id === person?.id ? <Check className="ms-auto size-4" /> : null}
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
           {/* The mode as a switch: the one in use names itself, the others are a tap away. */}
           <fieldset className="flex items-center rounded-pill bg-raised p-0.5 shadow-sticker">
             <legend className="sr-only">{ts("mode")}</legend>
@@ -379,41 +340,6 @@ export function Composer({
               )
             })}
           </fieldset>
-          <DropdownMenu>
-            <DropdownMenuTrigger
-              aria-label={tw("pill")}
-              title={tw("pill")}
-              className="inline-flex h-9 items-center gap-1.5 rounded-pill px-2.5 text-sm font-medium whitespace-nowrap text-text-2 hover:bg-white/4 hover:text-foreground"
-            >
-              <Shapes className="size-4" />
-              <span className="hidden sm:inline">{tw("pill")}</span>
-              <ChevronDown className="hidden size-3.5 sm:block" />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent side="top" align="start" className="w-72">
-              {WORKFLOW_SLUGS.map((slug) => {
-                const Icon = WORKFLOW_ICON[slug]
-                return (
-                  <DropdownMenuItem
-                    key={slug}
-                    onClick={() => onWorkflow(slug)}
-                    className="items-start gap-2.5 py-2"
-                  >
-                    <span className="grid size-8 shrink-0 place-items-center rounded-tile bg-card shadow-sticker">
-                      {Icon ? <Icon className="size-4 text-text-2" strokeWidth={1.5} /> : null}
-                    </span>
-                    <span className="flex flex-col">
-                      <span className="font-semibold">
-                        {tw(`items.${slug}.name` as "items.night-in.name")}
-                      </span>
-                      <span className="text-xs text-muted-foreground">
-                        {tw(`items.${slug}.desc` as "items.night-in.desc")}
-                      </span>
-                    </span>
-                  </DropdownMenuItem>
-                )
-              })}
-            </DropdownMenuContent>
-          </DropdownMenu>
         </div>
         <div className="flex shrink-0 items-center gap-1.5">
           <VoiceButton

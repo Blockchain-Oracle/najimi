@@ -88,7 +88,7 @@ export const creations = pgTable(
     width: integer(),
     height: integer(),
     durationS: real(),
-    /** Workflow covers and the landing reel: readable without a session. */
+    /** Public creations: readable without a session. */
     public: boolean().default(false).notNull(),
     error: text(),
     ...timestamps,

@@ -9,14 +9,8 @@ import { ApprovalCard } from "./cards/approval-card"
 import { BriefCard } from "./cards/brief-card"
 import { CompareCard } from "./cards/compare-card"
 import { CardSkeleton, InsightsCard } from "./cards/insights-card"
-import { LightingCard } from "./cards/lighting-card"
-import { MealPlanCard } from "./cards/meal-plan-card"
-import { ImageCard, VideoCard } from "./cards/media-card"
-import { MedicationCard } from "./cards/medication-card"
-import { ProductsCard } from "./cards/products-card"
-import { RecipeCard } from "./cards/recipe-card"
+import { ImageCard } from "./cards/media-card"
 import { WizardCard } from "./cards/wizard-card"
-import { usePublicShare } from "./public-share"
 import { Run } from "./run"
 
 type Part = NajimiUIMessage["parts"][number]
@@ -31,7 +25,6 @@ export type MessageActions = {
 
 function ToolPart({ part, actions }: { part: Part; actions: MessageActions }) {
   const t = useTranslations("Cards")
-  const shared = usePublicShare() !== null
   const failed = <p className="text-sm text-text-3">{t("failed")}</p>
   switch (part.type) {
     case "tool-qlooInsights":
@@ -66,13 +59,9 @@ function ToolPart({ part, actions }: { part: Part; actions: MessageActions }) {
           />
         )
       return <CardSkeleton title={part.input?.title} label={t("thinking")} />
-    case "tool-makeImage":
-    case "tool-makeVideo": {
+    case "tool-makeImage": {
       const title = part.input?.title ?? ""
-      const words =
-        part.type === "tool-makeImage"
-          ? (part.input?.words ?? []).filter((w): w is string => Boolean(w))
-          : []
+      const words = (part.input?.words ?? []).filter((w): w is string => Boolean(w))
       if (part.state === "approval-requested")
         return (
           <ApprovalCard
@@ -93,60 +82,15 @@ function ToolPart({ part, actions }: { part: Part; actions: MessageActions }) {
           </p>
         )
       if (part.state === "output-available")
-        return part.type === "tool-makeImage" ? (
-          <ImageCard output={part.output} onAsk={actions.onAsk} />
-        ) : (
-          <VideoCard output={part.output} />
-        )
+        return <ImageCard output={part.output} onAsk={actions.onAsk} />
       if (part.state === "output-error") return failed
       return <CardSkeleton title={title} label={t("preparing")} />
     }
-    case "tool-lightingPlan":
-      if (part.state === "output-available")
-        return <LightingCard plan={part.input} personName={part.output.personName} />
-      if (part.state === "output-error") return failed
-      return <CardSkeleton title={part.input?.title} label={t("planning")} />
-    case "tool-findProducts":
-      if (part.state === "output-available") return <ProductsCard output={part.output} />
-      if (part.state === "output-error") return failed
-      return <CardSkeleton title={part.input?.title} label={t("shopping")} />
-    case "tool-recipe":
-      if (part.state === "output-available")
-        return (
-          <RecipeCard
-            recipe={part.input}
-            personName={part.output.personName}
-            constraints={part.output.constraints}
-            onAsk={actions.onAsk}
-          />
-        )
-      if (part.state === "output-error") return failed
-      return <CardSkeleton title={part.input?.title} label={t("cooking")} />
-    case "tool-mealPlan":
-      if (part.state === "output-available")
-        return <MealPlanCard plan={part.input} personName={part.output.personName} />
-      if (part.state === "output-error") return failed
-      return <CardSkeleton title={part.input?.title} label={t("cooking")} />
-    case "tool-medicationNotes":
-      if (part.state === "output-available") return <MedicationCard output={part.output} />
-      if (part.state === "output-error") return failed
-      return <CardSkeleton label={t("readingLabel")} />
-    // Lookups, people saved and things remembered are steps of the run, shown above the reply.
+    // Lookups are steps of the run, shown above the reply.
     case "tool-qlooSearch":
     case "tool-qlooTags":
     case "tool-qlooAudiences":
-    case "tool-remember":
       return null
-    case "tool-savePerson":
-      // The run says who was saved; outside a shared chat, a way to their page follows.
-      return part.state === "output-available" && !shared ? (
-        <a
-          href={`/people/${part.output.personId}`}
-          className="w-fit text-sm text-text-2 underline decoration-line-strong underline-offset-4 hover:text-foreground"
-        >
-          {t("savedPerson", { name: part.output.name })}
-        </a>
-      ) : null
     default:
       return null
   }
