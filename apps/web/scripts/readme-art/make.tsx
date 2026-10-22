@@ -28,9 +28,21 @@ const capture = async (name: string) =>
 async function fonts() {
   const read = (dir: string, file: string) => readFile(join(dir, file))
   return [
-    { name: "Funnel Display", data: await read(FONTS, "FunnelDisplay-ExtraBold.woff"), weight: 800 as const },
-    { name: "Funnel Sans", data: await read(FONTS, "FunnelSans-Regular.woff"), weight: 400 as const },
-    { name: "Funnel Sans", data: await read(FONTS, "FunnelSans-SemiBold.woff"), weight: 600 as const },
+    {
+      name: "Funnel Display",
+      data: await read(FONTS, "FunnelDisplay-ExtraBold.woff"),
+      weight: 800 as const,
+    },
+    {
+      name: "Funnel Sans",
+      data: await read(FONTS, "FunnelSans-Regular.woff"),
+      weight: 400 as const,
+    },
+    {
+      name: "Funnel Sans",
+      data: await read(FONTS, "FunnelSans-SemiBold.woff"),
+      weight: 600 as const,
+    },
     // Only 馴染み: a three-character subset of Noto Sans JP (OFL).
     {
       name: "NotoJP",
@@ -42,7 +54,13 @@ async function fonts() {
 
 function Qloo({ height }: { height: number }) {
   return (
-    <svg width={height * QLOO_MARK.ratio} height={height} viewBox={QLOO_MARK.viewBox}>
+    <svg
+      width={height * QLOO_MARK.ratio}
+      height={height}
+      viewBox={QLOO_MARK.viewBox}
+      role="img"
+      aria-label="Qloo"
+    >
       {QLOO_MARK.ink.map((d) => (
         <path key={d} d={d} fill={C.ink} />
       ))}
@@ -52,7 +70,19 @@ function Qloo({ height }: { height: number }) {
 }
 
 /** A phone: the capture's top in a dark frame, turned a little. */
-function Phone({ src, width, tilt, x, y }: { src: string; width: number; tilt: number; x: number; y: number }) {
+function Phone({
+  src,
+  width,
+  tilt,
+  x,
+  y,
+}: {
+  src: string
+  width: number
+  tilt: number
+  x: number
+  y: number
+}) {
   const height = Math.round(width * 2.05)
   return (
     <div
@@ -110,9 +140,19 @@ async function banner() {
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: 18, fontSize: 40 }}>
-          <div style={{ width: 24, height: 24, borderRadius: 999, background: C.signal, display: "flex" }} />
+          <div
+            style={{
+              width: 24,
+              height: 24,
+              borderRadius: 999,
+              background: C.signal,
+              display: "flex",
+            }}
+          />
           <div style={{ display: "flex", fontFamily: "Funnel Display" }}>najimi</div>
-          <div style={{ display: "flex", fontFamily: "NotoJP", fontSize: 30, color: C.muted }}>馴染み</div>
+          <div style={{ display: "flex", fontFamily: "NotoJP", fontSize: 30, color: C.muted }}>
+            馴染み
+          </div>
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: 28 }}>
           <div
@@ -130,7 +170,9 @@ async function banner() {
             Your taste as a feed, a map, games and plans, with an AI agent in every chat.
           </div>
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 16, fontSize: 28, fontWeight: 600 }}>
+        <div
+          style={{ display: "flex", alignItems: "center", gap: 16, fontSize: 28, fontWeight: 600 }}
+        >
           <div style={{ display: "flex", color: C.muted }}>Built on</div>
           <Qloo height={30} />
         </div>
