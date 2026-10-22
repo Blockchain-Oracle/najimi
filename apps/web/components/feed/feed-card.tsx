@@ -36,7 +36,7 @@ import type { FeedCard as Card, FeedDomain } from "@/lib/feed-shared"
  * Tap to pause or play; double-tap to love.
  */
 
-const ICON: Record<FeedDomain, typeof Music2> = {
+export const DOMAIN_ICON: Record<FeedDomain, typeof Music2> = {
   artist: Music2,
   podcast: Mic,
   movie: Clapperboard,
@@ -161,7 +161,7 @@ export function FeedCard({
   const art =
     song?.artwork ?? (episode?.artwork && !card.image ? episode.artwork : null) ?? card.image
   const photo = PHOTO.includes(card.domain)
-  const Icon = ICON[card.domain]
+  const Icon = DOMAIN_ICON[card.domain]
   const audio = Boolean(song || episode)
 
   if (!near) return <section aria-hidden className="h-full w-full bg-black" />

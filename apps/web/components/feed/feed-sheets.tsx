@@ -1,16 +1,25 @@
 "use client"
 
 import { Dialog } from "@base-ui/react/dialog"
-import { Slider as SliderPrimitive } from "@base-ui/react/slider"
 import { FEED, TASTE } from "@najimi/config"
 import { cn } from "@najimi/ui/lib/utils"
 import { EyeOff, Heart, Loader2, X } from "lucide-react"
+import { motion } from "motion/react"
 import { useTranslations } from "next-intl"
 import type { ReactNode } from "react"
 import { siApplemusic, siImdb, siSpotify } from "simple-icons"
 import { BrandIcon } from "@/components/brands/brand-icon"
 import { CallDetails } from "@/components/qloo/call-details"
-import { FEED_DOMAINS, type FeedCard, type FeedLove, type FeedMix } from "@/lib/feed-shared"
+import {
+  FEED_DOMAINS,
+  type FeedCard,
+  type FeedDomain,
+  type FeedLove,
+  type FeedMix,
+} from "@/lib/feed-shared"
+import { Fader } from "./fader"
+import { DOMAIN_ICON } from "./feed-card"
+import { Knob } from "./knob"
 
 /*
  * The feed's sheets, dark like the feed itself: why a card is here (each love's share and the
@@ -225,38 +234,10 @@ export function TrailerSheet({ card, onClose }: { card: FeedCard | null; onClose
   )
 }
 
-function WhiteSlider({
-  value,
-  onChange,
-  label,
-}: {
-  value: number
-  onChange: (value: number) => void
-  label: string
-}) {
-  return (
-    <SliderPrimitive.Root
-      aria-label={label}
-      value={value}
-      min={TASTE.weightMin}
-      max={TASTE.weightMax}
-      step={1}
-      onValueChange={(v) => onChange(Array.isArray(v) ? (v[0] ?? value) : v)}
-      className="w-full"
-    >
-      <SliderPrimitive.Control className="relative flex h-6 w-full touch-none items-center select-none">
-        <SliderPrimitive.Track className="relative h-1.5 w-full grow overflow-hidden rounded-full bg-white/15">
-          <SliderPrimitive.Indicator className="h-full bg-[linear-gradient(90deg,var(--color-aura-1),var(--color-aura-2))]" />
-        </SliderPrimitive.Track>
-        <SliderPrimitive.Thumb className="block size-5 rounded-full bg-white shadow-lift focus-visible:ring-4 focus-visible:ring-white/30 focus-visible:outline-none" />
-      </SliderPrimitive.Control>
-    </SliderPrimitive.Root>
-  )
-}
-
 /**
- * Tune your feed: how much of each category it shows (saved, the feed starts over), and how much
- * each love counts (the cards ahead reorder at once; Qloo refines them in the background).
+ * Tune your feed, as a mixing desk: a fader per category (how much of it plays; saved, and the
+ * feed starts over) and a knob per love (how much it counts; the cards ahead reorder as you turn,
+ * and Qloo refines them in the background). The strip at the top is what plays next, live.
  */
 export function TuneSheet({
   open,
@@ -267,6 +248,8 @@ export function TuneSheet({
   weights,
   onWeight,
   refining,
+  previews,
+  upNext,
 }: {
   open: boolean
   onOpenChange: (open: boolean) => void
@@ -276,79 +259,97 @@ export function TuneSheet({
   weights: Record<string, number>
   onWeight: (love: FeedLove, weight: number) => void
   refining: boolean
+  /** Each category's next card artwork: the fader caps. */
+  previews: Partial<Record<FeedDomain, string | null>>
+  /** The next few cards, in the order they'll play. */
+  upNext: FeedCard[]
 }) {
   const t = useTranslations("Feed")
   const td = useTranslations("Domains")
-  const levels = Array.from({ length: FEED.mixMax + 1 }, (_, i) => i)
   return (
     <DarkSheet open={open} onOpenChange={onOpenChange} title={t("tune")}>
-      <div className="flex flex-col gap-7">
+      <div className="flex flex-col gap-6">
+        {upNext.length ? (
+          <section className="flex flex-col gap-2">
+            <h3 className="flex items-center gap-2 text-[12px] font-semibold tracking-[0.08em] text-white/55 uppercase">
+              {t("upNext")}
+              {refining ? (
+                <span className="inline-flex items-center gap-1 font-normal tracking-normal normal-case">
+                  <Loader2 className="size-3 animate-spin" /> {t("refining")}
+                </span>
+              ) : null}
+            </h3>
+            <ol className="flex gap-2 overflow-hidden">
+              {upNext.map((c, i) => (
+                <motion.li
+                  key={c.id}
+                  layout
+                  transition={{ type: "spring", stiffness: 420, damping: 34 }}
+                  className="relative w-16 shrink-0"
+                >
+                  {c.image ? (
+                    // biome-ignore lint/performance/noImgElement: remote artwork thumbnail
+                    <img
+                      src={c.image}
+                      alt=""
+                      className="aspect-square w-16 rounded-tile object-cover"
+                    />
+                  ) : (
+                    <span className="grid aspect-square w-16 place-items-center rounded-tile bg-white/10 text-[11px]">
+                      {c.name.slice(0, 2)}
+                    </span>
+                  )}
+                  <span className="absolute top-1 start-1 grid size-4 place-items-center rounded-full bg-black/60 text-[9px] font-bold">
+                    {i + 1}
+                  </span>
+                  <span className="mt-1 block truncate text-[10px] text-white/70">{c.name}</span>
+                </motion.li>
+              ))}
+            </ol>
+          </section>
+        ) : null}
+
         <section className="flex flex-col gap-3">
           <div>
             <h3 className="text-[15px] font-semibold">{t("mix")}</h3>
             <p className="text-[13px] text-white/60">{t("mixHint")}</p>
           </div>
-          <ul className="flex flex-col gap-2">
+          <div className="grid grid-cols-8 justify-items-center gap-1 rounded-card bg-white/[0.04] px-1 py-4 ring-1 ring-white/5">
             {FEED_DOMAINS.map((d) => (
-              <li key={d} className="flex items-center justify-between gap-3">
-                <span className="text-[14px] font-medium">{td(d)}</span>
-                <fieldset className="flex rounded-pill bg-white/8 p-0.5" aria-label={td(d)}>
-                  {levels.map((level) => (
-                    <button
-                      key={level}
-                      type="button"
-                      aria-pressed={mix[d] === level}
-                      onClick={() => onMix(d, level)}
-                      className={cn(
-                        "rounded-pill px-2.5 py-1 text-[12px] font-semibold transition-colors",
-                        mix[d] === level ? "bg-white text-black" : "text-white/65 hover:text-white",
-                      )}
-                    >
-                      {t(`levels.${level}` as "levels.0")}
-                    </button>
-                  ))}
-                </fieldset>
-              </li>
+              <Fader
+                key={d}
+                label={td(d)}
+                levelLabel={t(`levels.${mix[d]}` as "levels.0")}
+                icon={DOMAIN_ICON[d]}
+                image={previews[d] ?? null}
+                value={mix[d]}
+                levels={FEED.mixMax + 1}
+                onValueChange={(level) => onMix(d, level)}
+              />
             ))}
-          </ul>
+          </div>
         </section>
+
         {loves.length ? (
           <section className="flex flex-col gap-3">
             <div>
-              <h3 className="flex items-center gap-2 text-[15px] font-semibold">
-                {t("weights")}
-                {refining ? (
-                  <span className="inline-flex items-center gap-1 text-[12px] font-normal text-white/60">
-                    <Loader2 className="size-3 animate-spin" /> {t("refining")}
-                  </span>
-                ) : null}
-              </h3>
+              <h3 className="text-[15px] font-semibold">{t("weights")}</h3>
               <p className="text-[13px] text-white/60">{t("weightsHint")}</p>
             </div>
-            <ul className="flex flex-col gap-3">
+            <div className="grid grid-cols-2 gap-x-2 gap-y-4 sm:grid-cols-3">
               {loves.map((love) => (
-                <li key={love.id} className="flex items-center gap-3">
-                  {love.image ? (
-                    // biome-ignore lint/performance/noImgElement: remote artwork thumbnail
-                    <img
-                      src={love.image}
-                      alt=""
-                      className="size-10 shrink-0 rounded-[10px] object-cover"
-                    />
-                  ) : (
-                    <span className="size-10 shrink-0 rounded-[10px] bg-white/10" />
-                  )}
-                  <div className="flex min-w-0 flex-1 flex-col gap-1">
-                    <span className="truncate text-[14px] font-semibold">{love.name}</span>
-                    <WhiteSlider
-                      label={love.name}
-                      value={weights[love.qlooId.toLowerCase()] ?? love.weight}
-                      onChange={(w) => onWeight(love, w)}
-                    />
-                  </div>
-                </li>
+                <Knob
+                  key={love.id}
+                  label={love.name}
+                  image={love.image}
+                  value={weights[love.qlooId.toLowerCase()] ?? love.weight}
+                  min={TASTE.weightMin}
+                  max={TASTE.weightMax}
+                  defaultValue={TASTE.weightDefault}
+                  onValueChange={(w) => onWeight(love, w)}
+                />
               ))}
-            </ul>
+            </div>
           </section>
         ) : null}
       </div>

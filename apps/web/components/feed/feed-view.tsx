@@ -13,6 +13,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { type Track, usePlayer } from "@/components/player/player"
 import {
   type FeedCard as Card,
+  type FeedDomain,
   type FeedLove,
   type FeedMix,
   type FeedPage,
@@ -506,6 +507,11 @@ export function FeedView() {
     )
 
   const ownsTrack = (c: Card) => player.track?.pickId === c.id
+  // Each category's next card, for the mixing desk's fader caps.
+  const previews: Partial<Record<FeedDomain, string | null>> = {}
+  for (const c of cards.slice(active + 1))
+    if (!(c.domain in previews))
+      previews[c.domain] = (c.media?.kind === "songs" ? c.media.songs[0]?.artwork : null) ?? c.image
 
   return (
     <>
@@ -619,6 +625,8 @@ export function FeedView() {
         weights={{ ...base, ...weights }}
         onWeight={onWeight}
         refining={refining}
+        previews={previews}
+        upNext={cards.slice(active + 1, active + 6)}
       />
       <span className={cn("sr-only")} aria-live="polite">
         {card ? card.name : ""}

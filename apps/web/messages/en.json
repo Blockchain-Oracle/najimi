@@ -90,8 +90,8 @@
     "error": "The feed didn't load.",
     "retry": "Try again",
     "loadingMore": "Finding more…",
-    "mix": "What you see",
-    "mixHint": "Turn a category up, down or off.",
+    "mix": "Your mix",
+    "mixHint": "Slide a category up for more of it, down to Off for none.",
     "levels": {
       "0": "Off",
       "1": "Less",
@@ -99,13 +99,14 @@
       "3": "More"
     },
     "weights": "What drives it",
-    "weightsHint": "Move a love and the cards ahead reorder at once. Qloo refines them in a few seconds.",
+    "weightsHint": "Turn a love up or down. The cards ahead reorder as you turn, then Qloo refines them.",
     "refining": "Refining with Qloo…",
     "keepOne": "Keep at least one thing on",
     "done": "Done",
     "cardLabel": "{domain}: {name}",
     "tapToPause": "Tap to pause or play",
-    "full": "Your taste is full. Let go of a love on your taste page to add this one."
+    "full": "Your taste is full. Let go of a love on your taste page to add this one.",
+    "upNext": "Up next"
   },
   "Player": {
     "play": "Play",
