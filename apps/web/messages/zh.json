@@ -672,5 +672,12 @@
     },
     "cta": "从“改造我的房间”开始",
     "docs": "阅读文档"
+  },
+  "Run": {
+    "readTaste": "读取了{name}的品味",
+    "waiting": "等待你的确认",
+    "askedYou": "向你提问",
+    "failed": "未成功",
+    "summary": "{steps, plural, other {# 个步骤}} · {calls, plural, =0 {未调用 Qloo} other {调用 Qloo # 次}}"
   }
 }

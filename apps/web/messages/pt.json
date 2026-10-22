@@ -672,5 +672,12 @@
     },
     "cta": "Começar por Renovar meu cômodo",
     "docs": "Leia a documentação"
+  },
+  "Run": {
+    "readTaste": "Leu o gosto de {name}",
+    "waiting": "Aguardando seu OK",
+    "askedYou": "Perguntou a você",
+    "failed": "Não funcionou",
+    "summary": "{steps, plural, one {# passo} other {# passos}} · {calls, plural, =0 {nenhuma chamada ao Qloo} one {# chamada ao Qloo} other {# chamadas ao Qloo}}"
   }
 }

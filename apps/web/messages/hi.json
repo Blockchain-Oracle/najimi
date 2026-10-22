@@ -672,5 +672,12 @@
     },
     "cta": "कमरे को रोशन करें से शुरू करें",
     "docs": "डॉक्स पढ़ें"
+  },
+  "Run": {
+    "readTaste": "{name} की पसंद पढ़ी",
+    "waiting": "आपकी मंज़ूरी का इंतज़ार",
+    "askedYou": "आपसे पूछा",
+    "failed": "नहीं हो पाया",
+    "summary": "{steps, plural, one {# चरण} other {# चरण}} · {calls, plural, =0 {Qloo से कोई अनुरोध नहीं} one {Qloo से # अनुरोध} other {Qloo से # अनुरोध}}"
   }
 }

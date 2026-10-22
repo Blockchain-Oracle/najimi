@@ -672,5 +672,12 @@
     },
     "cta": "ابدأ بـ «أعد إضاءة غرفتي»",
     "docs": "اقرأ الوثائق"
+  },
+  "Run": {
+    "readTaste": "قرأ ذوق {name}",
+    "waiting": "بانتظار موافقتك",
+    "askedYou": "سألك",
+    "failed": "لم ينجح",
+    "summary": "{steps, plural, one {خطوة واحدة} two {خطوتان} few {# خطوات} many {# خطوة} other {# خطوة}} · {calls, plural, =0 {لا طلبات إلى Qloo} one {طلب واحد إلى Qloo} two {طلبان إلى Qloo} few {# طلبات إلى Qloo} many {# طلبًا إلى Qloo} other {# طلب إلى Qloo}}"
   }
 }

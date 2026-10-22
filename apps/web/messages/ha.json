@@ -672,5 +672,12 @@
     },
     "cta": "Fara da Sake haskaka ɗakina",
     "docs": "Karanta takardun bayani"
+  },
+  "Run": {
+    "readTaste": "Ya karanta abubuwan da {name} ke so",
+    "waiting": "Ana jiran amincewarka",
+    "askedYou": "Ya tambaye ka",
+    "failed": "Bai yi aiki ba",
+    "summary": "{steps, plural, one {mataki #} other {matakai #}} · {calls, plural, =0 {ba a tambayi Qloo ba} one {tambaya # ga Qloo} other {tambayoyi # ga Qloo}}"
   }
 }

@@ -672,5 +672,12 @@
     },
     "cta": "Malite na Gbanwee ọkụ n'ime ụlọ m",
     "docs": "Gụọ akwụkwọ ntuziaka"
+  },
+  "Run": {
+    "readTaste": "Gụrụ mmasị {name}",
+    "waiting": "Na-eche nkwado gị",
+    "askedYou": "Jụrụ gị ajụjụ",
+    "failed": "Ọ rụghị ọrụ",
+    "summary": "{steps, plural, other {nzọụkwụ #}} · {calls, plural, =0 {enweghị ajụjụ nye Qloo} other {ajụjụ # nye Qloo}}"
   }
 }

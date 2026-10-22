@@ -672,5 +672,12 @@
     },
     "cta": "Bẹ̀rẹ̀ pẹ̀lú Tún yàrá mi tan",
     "docs": "Ka ìwé ìtọ́sọ́nà"
+  },
+  "Run": {
+    "readTaste": "Ka ohun tó wu {name}",
+    "waiting": "Ń dúró de ìfọwọ́sí rẹ",
+    "askedYou": "Bi ọ́ léèrè",
+    "failed": "Kò ṣiṣẹ́",
+    "summary": "{steps, plural, other {ìgbésẹ̀ #}} · {calls, plural, =0 {kò bi Qloo ní nǹkan} other {ìbéèrè # sí Qloo}}"
   }
 }

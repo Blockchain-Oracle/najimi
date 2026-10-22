@@ -16,9 +16,8 @@ import { MedicationCard } from "./cards/medication-card"
 import { ProductsCard } from "./cards/products-card"
 import { RecipeCard } from "./cards/recipe-card"
 import { WizardCard } from "./cards/wizard-card"
-import { StepChip } from "./lookup-step"
 import { usePublicShare } from "./public-share"
-import { TextShimmer } from "./text-shimmer"
+import { Run } from "./run"
 
 type Part = NajimiUIMessage["parts"][number]
 
@@ -132,53 +131,21 @@ function ToolPart({ part, actions }: { part: Part; actions: MessageActions }) {
       if (part.state === "output-available") return <MedicationCard output={part.output} />
       if (part.state === "output-error") return failed
       return <CardSkeleton label={t("readingLabel")} />
+    // Lookups, people saved and things remembered are steps of the run, shown above the reply.
     case "tool-qlooSearch":
-      return (
-        <StepChip
-          kind="search"
-          running={part.state !== "output-available"}
-          text={t("lookedUp", { q: part.input?.query ?? "…" })}
-        />
-      )
     case "tool-qlooTags":
-      return (
-        <StepChip
-          kind="tags"
-          running={part.state !== "output-available"}
-          text={t("lookedUpTags", { q: part.input?.query ?? "…" })}
-        />
-      )
     case "tool-qlooAudiences":
-      return (
-        <StepChip
-          kind="audiences"
-          running={part.state !== "output-available"}
-          text={t("lookedUpAudiences")}
-        />
-      )
-    case "tool-savePerson":
-      // A stranger reading a shared chat sees that someone was saved, not a link to their page.
-      return part.state === "output-available" ? (
-        shared ? (
-          <StepChip kind="person" text={t("savedPerson", { name: part.output.name })} />
-        ) : (
-          <a href={`/people/${part.output.personId}`} className="w-fit">
-            <StepChip kind="person" text={t("savedPerson", { name: part.output.name })} />
-          </a>
-        )
-      ) : (
-        <StepChip
-          kind="person"
-          running
-          text={t("savingPerson", { name: part.input?.name ?? "" })}
-        />
-      )
     case "tool-remember":
-      return part.state === "output-available" ? (
-        <StepChip
-          kind="remember"
-          text={t("remembered", { name: part.output.personName, value: part.output.value })}
-        />
+      return null
+    case "tool-savePerson":
+      // The run says who was saved; outside a shared chat, a way to their page follows.
+      return part.state === "output-available" && !shared ? (
+        <a
+          href={`/people/${part.output.personId}`}
+          className="w-fit text-sm text-text-2 underline decoration-line-strong underline-offset-4 hover:text-foreground"
+        >
+          {t("savedPerson", { name: part.output.name })}
+        </a>
       ) : null
     default:
       return null
@@ -209,18 +176,13 @@ export function Message({
             {photos.map((p) =>
               p.type === "file" ? (
                 // biome-ignore lint/performance/noImgElement: a private, session-checked photo
-                <img
-                  key={p.url}
-                  src={p.url}
-                  alt=""
-                  className="print h-28 w-auto rounded-sm object-cover"
-                />
+                <img key={p.url} src={p.url} alt="" className="print h-28 w-auto object-cover" />
               ) : null,
             )}
           </div>
         ) : null}
         {text ? (
-          <p className="sticker max-w-[85%] rounded-[1.25rem] rounded-ee-md px-4 py-2.5 text-[15px] whitespace-pre-wrap">
+          <p className="max-w-[85%] rounded-card rounded-ee-[4px] bg-raised px-4 py-2.5 text-[15px] whitespace-pre-wrap shadow-sticker">
             {text}
           </p>
         ) : null}
@@ -229,15 +191,9 @@ export function Message({
   }
 
   const visible = message.parts.filter((p) => p.type !== "step-start" && p.type !== "reasoning")
-  const thinking = streaming && visible.length === 0
   return (
     <div className="flex flex-col gap-3">
-      {thinking ? (
-        <span className="flex items-center gap-2 text-sm">
-          <span className="size-2 animate-signal-pulse rounded-full bg-signal" />
-          <TextShimmer>{t("thinking")}</TextShimmer>
-        </span>
-      ) : null}
+      <Run parts={message.parts} working={streaming} meta={message.metadata} />
       {visible.map((part, i) => {
         const key = "toolCallId" in part ? part.toolCallId : `${message.id}-${i}`
         if (part.type === "text")

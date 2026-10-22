@@ -672,5 +672,12 @@
     },
     "cta": "Commencer avec Rééclairer ma pièce",
     "docs": "Lire la doc"
+  },
+  "Run": {
+    "readTaste": "A lu le goût de {name}",
+    "waiting": "En attente de votre accord",
+    "askedYou": "Vous a demandé",
+    "failed": "N'a pas marché",
+    "summary": "{steps, plural, one {# étape} other {# étapes}} · {calls, plural, =0 {aucun appel à Qloo} one {# appel à Qloo} other {# appels à Qloo}}"
   }
 }

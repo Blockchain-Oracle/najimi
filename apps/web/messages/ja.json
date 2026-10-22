@@ -672,5 +672,12 @@
     },
     "cta": "「部屋の照明を変える」から始める",
     "docs": "ドキュメントを読む"
+  },
+  "Run": {
+    "readTaste": "{name}さんの好みを読みました",
+    "waiting": "あなたの承認待ち",
+    "askedYou": "あなたに質問しました",
+    "failed": "うまくいきませんでした",
+    "summary": "{steps, plural, other {#ステップ}} · {calls, plural, =0 {Qlooへの問い合わせなし} other {Qlooへの問い合わせ#件}}"
   }
 }

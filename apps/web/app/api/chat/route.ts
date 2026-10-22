@@ -256,7 +256,11 @@ export async function POST(request: Request) {
       originalMessages: messages,
       generateMessageId: () => assistantId,
       messageMetadata: ({ part }) =>
-        part.type === "start" ? { createdAt: Date.now(), model: modelId } : undefined,
+        part.type === "start"
+          ? { createdAt: Date.now(), model: modelId }
+          : part.type === "finish"
+            ? { finishedAt: Date.now() }
+            : undefined,
       onStepEnd: ({ messages: all }) => saveMessages(chat.id, all),
       onEnd: async ({ messages: all }) => {
         // A question card left open means the chat is waiting on the person.

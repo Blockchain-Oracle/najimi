@@ -672,5 +672,12 @@
     },
     "cta": "Start with Relight my room",
     "docs": "Read the docs"
+  },
+  "Run": {
+    "readTaste": "Read {name}'s taste",
+    "waiting": "Waiting for your OK",
+    "askedYou": "Asked you",
+    "failed": "Didn't work",
+    "summary": "{steps, plural, one {# step} other {# steps}} · {calls, plural, =0 {no Qloo calls} one {# Qloo call} other {# Qloo calls}}"
   }
 }

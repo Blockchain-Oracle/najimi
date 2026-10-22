@@ -553,7 +553,12 @@
     "Demo.docs": "Read the docs",
     "Taste.line": "{look} looks, {rooms} rooms, {mood} nights, {food} plates.",
     "Taste.you": "You",
-    "Chat.usesTaste": "{self, select, yes {Answers use your taste:} other {Answers use {name}'s taste:}}"
+    "Chat.usesTaste": "{self, select, yes {Answers use your taste:} other {Answers use {name}'s taste:}}",
+    "Run.readTaste": "Read {name}'s taste",
+    "Run.waiting": "Waiting for your OK",
+    "Run.askedYou": "Asked you",
+    "Run.failed": "Didn't work",
+    "Run.summary": "{steps, plural, one {# step} other {# steps}} · {calls, plural, =0 {no Qloo calls} one {# Qloo call} other {# Qloo calls}}"
   },
   "es": {
     "Meta.tagline": "The taste copilot.",
@@ -1109,7 +1114,12 @@
     "Demo.docs": "Read the docs",
     "Taste.line": "{look} looks, {rooms} rooms, {mood} nights, {food} plates.",
     "Taste.you": "You",
-    "Chat.usesTaste": "{self, select, yes {Answers use your taste:} other {Answers use {name}'s taste:}}"
+    "Chat.usesTaste": "{self, select, yes {Answers use your taste:} other {Answers use {name}'s taste:}}",
+    "Run.readTaste": "Read {name}'s taste",
+    "Run.waiting": "Waiting for your OK",
+    "Run.askedYou": "Asked you",
+    "Run.failed": "Didn't work",
+    "Run.summary": "{steps, plural, one {# step} other {# steps}} · {calls, plural, =0 {no Qloo calls} one {# Qloo call} other {# Qloo calls}}"
   },
   "ha": {
     "Meta.tagline": "The taste copilot.",
@@ -1665,7 +1675,12 @@
     "Demo.docs": "Read the docs",
     "Taste.line": "{look} looks, {rooms} rooms, {mood} nights, {food} plates.",
     "Taste.you": "You",
-    "Chat.usesTaste": "{self, select, yes {Answers use your taste:} other {Answers use {name}'s taste:}}"
+    "Chat.usesTaste": "{self, select, yes {Answers use your taste:} other {Answers use {name}'s taste:}}",
+    "Run.readTaste": "Read {name}'s taste",
+    "Run.waiting": "Waiting for your OK",
+    "Run.askedYou": "Asked you",
+    "Run.failed": "Didn't work",
+    "Run.summary": "{steps, plural, one {# step} other {# steps}} · {calls, plural, =0 {no Qloo calls} one {# Qloo call} other {# Qloo calls}}"
   },
   "yo": {
     "Meta.tagline": "The taste copilot.",
@@ -2221,7 +2236,12 @@
     "Demo.docs": "Read the docs",
     "Taste.line": "{look} looks, {rooms} rooms, {mood} nights, {food} plates.",
     "Taste.you": "You",
-    "Chat.usesTaste": "{self, select, yes {Answers use your taste:} other {Answers use {name}'s taste:}}"
+    "Chat.usesTaste": "{self, select, yes {Answers use your taste:} other {Answers use {name}'s taste:}}",
+    "Run.readTaste": "Read {name}'s taste",
+    "Run.waiting": "Waiting for your OK",
+    "Run.askedYou": "Asked you",
+    "Run.failed": "Didn't work",
+    "Run.summary": "{steps, plural, one {# step} other {# steps}} · {calls, plural, =0 {no Qloo calls} one {# Qloo call} other {# Qloo calls}}"
   },
   "hi": {
     "Meta.tagline": "The taste copilot.",
@@ -2777,7 +2797,12 @@
     "Demo.docs": "Read the docs",
     "Taste.line": "{look} looks, {rooms} rooms, {mood} nights, {food} plates.",
     "Taste.you": "You",
-    "Chat.usesTaste": "{self, select, yes {Answers use your taste:} other {Answers use {name}'s taste:}}"
+    "Chat.usesTaste": "{self, select, yes {Answers use your taste:} other {Answers use {name}'s taste:}}",
+    "Run.readTaste": "Read {name}'s taste",
+    "Run.waiting": "Waiting for your OK",
+    "Run.askedYou": "Asked you",
+    "Run.failed": "Didn't work",
+    "Run.summary": "{steps, plural, one {# step} other {# steps}} · {calls, plural, =0 {no Qloo calls} one {# Qloo call} other {# Qloo calls}}"
   },
   "sw": {
     "Meta.tagline": "The taste copilot.",
@@ -3333,7 +3358,12 @@
     "Demo.docs": "Read the docs",
     "Taste.line": "{look} looks, {rooms} rooms, {mood} nights, {food} plates.",
     "Taste.you": "You",
-    "Chat.usesTaste": "{self, select, yes {Answers use your taste:} other {Answers use {name}'s taste:}}"
+    "Chat.usesTaste": "{self, select, yes {Answers use your taste:} other {Answers use {name}'s taste:}}",
+    "Run.readTaste": "Read {name}'s taste",
+    "Run.waiting": "Waiting for your OK",
+    "Run.askedYou": "Asked you",
+    "Run.failed": "Didn't work",
+    "Run.summary": "{steps, plural, one {# step} other {# steps}} · {calls, plural, =0 {no Qloo calls} one {# Qloo call} other {# Qloo calls}}"
   },
   "ig": {
     "Meta.tagline": "The taste copilot.",
@@ -3889,7 +3919,12 @@
     "Demo.docs": "Read the docs",
     "Taste.line": "{look} looks, {rooms} rooms, {mood} nights, {food} plates.",
     "Taste.you": "You",
-    "Chat.usesTaste": "{self, select, yes {Answers use your taste:} other {Answers use {name}'s taste:}}"
+    "Chat.usesTaste": "{self, select, yes {Answers use your taste:} other {Answers use {name}'s taste:}}",
+    "Run.readTaste": "Read {name}'s taste",
+    "Run.waiting": "Waiting for your OK",
+    "Run.askedYou": "Asked you",
+    "Run.failed": "Didn't work",
+    "Run.summary": "{steps, plural, one {# step} other {# steps}} · {calls, plural, =0 {no Qloo calls} one {# Qloo call} other {# Qloo calls}}"
   },
   "ja": {
     "Meta.tagline": "The taste copilot.",
@@ -4445,7 +4480,12 @@
     "Demo.docs": "Read the docs",
     "Taste.line": "{look} looks, {rooms} rooms, {mood} nights, {food} plates.",
     "Taste.you": "You",
-    "Chat.usesTaste": "{self, select, yes {Answers use your taste:} other {Answers use {name}'s taste:}}"
+    "Chat.usesTaste": "{self, select, yes {Answers use your taste:} other {Answers use {name}'s taste:}}",
+    "Run.readTaste": "Read {name}'s taste",
+    "Run.waiting": "Waiting for your OK",
+    "Run.askedYou": "Asked you",
+    "Run.failed": "Didn't work",
+    "Run.summary": "{steps, plural, one {# step} other {# steps}} · {calls, plural, =0 {no Qloo calls} one {# Qloo call} other {# Qloo calls}}"
   },
   "zh": {
     "Meta.tagline": "The taste copilot.",
@@ -5001,6 +5041,11 @@
     "Demo.docs": "Read the docs",
     "Taste.line": "{look} looks, {rooms} rooms, {mood} nights, {food} plates.",
     "Taste.you": "You",
-    "Chat.usesTaste": "{self, select, yes {Answers use your taste:} other {Answers use {name}'s taste:}}"
+    "Chat.usesTaste": "{self, select, yes {Answers use your taste:} other {Answers use {name}'s taste:}}",
+    "Run.readTaste": "Read {name}'s taste",
+    "Run.waiting": "Waiting for your OK",
+    "Run.askedYou": "Asked you",
+    "Run.failed": "Didn't work",
+    "Run.summary": "{steps, plural, one {# step} other {# steps}} · {calls, plural, =0 {no Qloo calls} one {# Qloo call} other {# Qloo calls}}"
   }
 }

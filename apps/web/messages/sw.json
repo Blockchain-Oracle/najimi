@@ -672,5 +672,12 @@
     },
     "cta": "Anza na Weka mwanga mpya chumbani kwangu",
     "docs": "Soma nyaraka"
+  },
+  "Run": {
+    "readTaste": "Imesoma mapendeleo ya {name}",
+    "waiting": "Inasubiri ruhusa yako",
+    "askedYou": "Imekuuliza",
+    "failed": "Haikufanikiwa",
+    "summary": "{steps, plural, one {hatua #} other {hatua #}} · {calls, plural, =0 {hakuna maombi kwa Qloo} one {ombi # kwa Qloo} other {maombi # kwa Qloo}}"
   }
 }
