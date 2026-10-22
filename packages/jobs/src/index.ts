@@ -81,6 +81,20 @@ export const QUEUES = {
     options: { retryLimit: 1, retryDelay: 600, expireInSeconds: 30 * 60 },
     send: {},
   },
+  /** A booking's outcome, checked a few minutes on (a call's result when its webhook didn't come). */
+  bookingCheck: {
+    name: "booking-check",
+    payload: z.object({ bookingId: z.uuid() }),
+    options: { retryLimit: 3, retryDelay: 120, expireInSeconds: 5 * 60 },
+    send: {},
+  },
+  /** Every half hour: Najimi asks how the nights, stays and shows that just happened went. */
+  followUps: {
+    name: "follow-ups",
+    payload: z.object({}),
+    options: { retryLimit: 1, retryDelay: 300, expireInSeconds: 10 * 60 },
+    send: {},
+  },
   /** Every night: guests nobody has used for a month go, rows and objects (T21). */
   guestsCleanup: {
     name: "guests-cleanup",

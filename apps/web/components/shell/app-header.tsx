@@ -33,8 +33,8 @@ function Wordmark({ className }: { className?: string }) {
   )
 }
 
-/** Najimi's sheet, for whoever is signed in (guests too). */
-function SheetForMe() {
+/** Najimi's sheet, for whoever is signed in (guests too); pages outside the shell mount it too. */
+export function SheetForMe() {
   const session = authClient.useSession()
   return <AgentSheet me={session.data?.user.id ?? null} />
 }

@@ -42,7 +42,7 @@ export type PeopleHome = {
 
 type Notice = {
   id: string
-  kind: "follow" | "joined" | "mention" | "message" | "invite" | "played" | "drop"
+  kind: "follow" | "joined" | "mention" | "message" | "invite" | "played" | "drop" | "booking"
   chatId: string | null
   data: Record<string, unknown>
   read: boolean
@@ -109,6 +109,7 @@ function Inbox({ initialUnread, after }: { initialUnread: number; after: number 
         score: Number(n.data.score ?? 0),
       })
     if (n.kind === "drop") return t("noticeDrop", { name })
+    if (n.kind === "booking") return (n.data.text as string | undefined) ?? name
     return t("noticeMention", { who })
   }
   return (
@@ -153,6 +154,8 @@ function Inbox({ initialUnread, after }: { initialUnread: number; after: number 
                     onClick={() => {
                       setOpen(false)
                       if (typeof n.data.token === "string") router.push(`/play/${n.data.token}`)
+                      else if (typeof n.data.bookingId === "string" && !n.chatId)
+                        router.push(`/pay/${n.data.bookingId}/done`)
                       else if (n.chatId) router.push(`/c/${n.chatId}`)
                       else if (n.actor?.username) router.push(`/u/${n.actor.username}`)
                     }}

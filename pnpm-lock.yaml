@@ -153,6 +153,9 @@ importers:
       '@najimi/agent':
         specifier: workspace:*
         version: link:../../packages/agent
+      '@najimi/booking':
+        specifier: workspace:*
+        version: link:../../packages/booking
       '@najimi/config':
         specifier: workspace:*
         version: link:../../packages/config
@@ -289,6 +292,9 @@ importers:
       '@najimi/agent':
         specifier: workspace:*
         version: link:../../packages/agent
+      '@najimi/booking':
+        specifier: workspace:*
+        version: link:../../packages/booking
       '@najimi/config':
         specifier: workspace:*
         version: link:../../packages/config
@@ -365,6 +371,9 @@ importers:
       '@ai-sdk/provider-utils':
         specifier: 5.0.64
         version: 5.0.64(zod@4.6.7)
+      '@najimi/booking':
+        specifier: workspace:*
+        version: link:../booking
       '@najimi/config':
         specifier: workspace:*
         version: link:../config
@@ -386,12 +395,52 @@ importers:
       '@najimi/qloo':
         specifier: workspace:*
         version: link:../qloo
+      '@najimi/sources':
+        specifier: workspace:*
+        version: link:../sources
       '@najimi/storage':
         specifier: workspace:*
         version: link:../storage
       ai:
         specifier: 'catalog:'
         version: 7.0.146(zod@4.6.7)
+      drizzle-orm:
+        specifier: 'catalog:'
+        version: 0.45.4(@opentelemetry/api@1.9.1)(kysely@0.29.7)(pg@8.23.1)(postgres@3.4.9)
+      zod:
+        specifier: 'catalog:'
+        version: 4.6.7
+    devDependencies:
+      '@najimi/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.19.2
+      tsx:
+        specifier: 'catalog:'
+        version: 4.23.15
+      typescript:
+        specifier: 'catalog:'
+        version: 7.0.2
+
+  packages/booking:
+    dependencies:
+      '@najimi/config':
+        specifier: workspace:*
+        version: link:../config
+      '@najimi/db':
+        specifier: workspace:*
+        version: link:../db
+      '@najimi/env':
+        specifier: workspace:*
+        version: link:../env
+      '@najimi/geo':
+        specifier: workspace:*
+        version: link:../geo
+      '@najimi/qloo':
+        specifier: workspace:*
+        version: link:../qloo
       drizzle-orm:
         specifier: 'catalog:'
         version: 0.45.4(@opentelemetry/api@1.9.1)(kysely@0.29.7)(pg@8.23.1)(postgres@3.4.9)

@@ -1,6 +1,6 @@
 import assert from "node:assert/strict"
 import { test } from "node:test"
-import { cellRing, distanceKm, geohashBounds } from "./index"
+import { cellRing, distanceKm, geohashBounds, geohashOf } from "./index"
 
 test("a geohash decodes to its box (Victoria Island, Lagos)", () => {
   const [w, s, e, n] = geohashBounds("s14ktf")
@@ -15,6 +15,10 @@ test("a cell ring is closed and inside its box", () => {
   assert.deepEqual(ring[0], ring[4])
   const [w, s, e, n] = geohashBounds("s14ktf")
   for (const [x, y] of ring) assert.ok(x > w && x < e && y > s && y < n)
+})
+
+test("a point encodes to the cell that holds it", () => {
+  assert.equal(geohashOf(6.4281, 3.4219, 6), "s14ktf")
 })
 
 test("Lagos to Lisbon is about 4,000 km", () => {

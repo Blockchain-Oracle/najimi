@@ -1,7 +1,11 @@
+import { safeZone, todayIn, zonedTime } from "@najimi/booking"
+import { CALL_HOURS, callsOn, placeCall } from "@najimi/booking/calls"
+import { hotelsNear, hotelsOn } from "@najimi/booking/nuitee"
+import { locate, planNight, planTrip } from "@najimi/booking/plan"
 import { FEED, MEDIA, TASTE, TASTE_DOMAINS } from "@najimi/config"
 import { db, schema } from "@najimi/db"
 import { createRound, TITLES } from "@najimi/games/round"
-import { enqueue, enqueueDebounced } from "@najimi/jobs"
+import { enqueue, enqueueAt, enqueueDebounced } from "@najimi/jobs"
 import {
   audiences,
   blendLoves,
@@ -16,6 +20,7 @@ import {
   profilePicks,
   search,
 } from "@najimi/qloo"
+import { normalisePhone, venuePhone } from "@najimi/sources"
 import { tool } from "ai"
 import { and, asc, count, eq } from "drizzle-orm"
 import type { z } from "zod"
@@ -27,6 +32,8 @@ export type TurnContext = {
   userId: string
   guest: boolean
   chatId: string
+  /** The asker's time zone (IANA), for "9pm" in a plan. */
+  tz?: string | null
   /** The user's own taste profile. */
   person: typeof schema.people.$inferSelect
 }
@@ -45,6 +52,70 @@ async function lovesOf(personId: string): Promise<Love[]> {
     .where(eq(schema.loves.personId, personId))
     .orderBy(asc(schema.loves.createdAt))
   return rows.map((r) => ({ qlooId: r.qlooId, name: r.name, weight: r.weight }))
+}
+
+/** Who's going: the asker, or (in a circle, by default) everyone in the room. */
+async function goersOf(ctx: TurnContext, everyone: boolean | undefined) {
+  const [chat] = await db
+    .select({ kind: schema.chats.kind })
+    .from(schema.chats)
+    .where(eq(schema.chats.id, ctx.chatId))
+  const room = chat && chat.kind !== "agent" && everyone !== false
+  const people = room
+    ? (
+        await db
+          .select({ person: schema.people })
+          .from(schema.chatMembers)
+          .innerJoin(
+            schema.people,
+            and(
+              eq(schema.people.ownerId, schema.chatMembers.userId),
+              eq(schema.people.isSelf, true),
+            ),
+          )
+          .where(eq(schema.chatMembers.chatId, ctx.chatId))
+      ).map((r) => r.person)
+    : [ctx.person]
+  return Promise.all(
+    people.map(async (p) => ({ name: p.name, look: p.look, loves: await lovesOf(p.id) })),
+  )
+}
+
+/** A plan as its card shows it. */
+function planCard(
+  plan: typeof schema.plans.$inferSelect,
+  shows: {
+    name: string
+    url: string
+    venue: string | null
+    localTime: string | null
+    image: string | null
+  }[],
+) {
+  const minutes = plan.route?.legs.reduce((n, l) => n + l.minutes, 0) ?? 0
+  const km = plan.route?.legs.reduce((n, l) => n + l.km, 0) ?? 0
+  return {
+    token: plan.token,
+    kind: plan.kind,
+    title: plan.title,
+    city: plan.city,
+    startsAt: plan.startsAt?.toISOString() ?? null,
+    stops: plan.stops.map((st) => ({
+      day: st.day,
+      slot: st.slot,
+      name: st.name,
+      image: st.image,
+      area: st.area,
+      at: st.at,
+      why: st.why,
+      fits: st.fits,
+    })),
+    route: plan.route
+      ? { profile: plan.route.profile, minutes, km: Math.round(km * 10) / 10 }
+      : null,
+    shows,
+    note: null,
+  }
 }
 
 /** A tag id as words: `urn:tag:keyword:media:rainy_day` → "rainy day". */
@@ -653,6 +724,249 @@ export function buildTools(ctx: TurnContext, messageId: () => string | undefined
               .join("; ")}. Say which one you'd pick for the room and who it fits best, by name.`
           : (output.note ?? "Nothing found."),
       }),
+    }),
+
+    planNight: tool({
+      ...toolDefs.planNight,
+      execute: async (input) => {
+        const empty = (note: string) => ({
+          token: null,
+          kind: "night" as const,
+          title: `A night around ${input.area}`,
+          city: input.city ?? null,
+          startsAt: null,
+          stops: [],
+          route: null,
+          shows: [],
+          note,
+        })
+        const city = input.city ?? ctx.person.city ?? null
+        const where = await locate(
+          city ? `${input.area}, ${city}` : input.area,
+          call("Find the area"),
+        )
+        if (!where) return empty(`I couldn't find ${input.area} on the map; try a bigger area.`)
+        const tz = safeZone(ctx.tz)
+        try {
+          const { plan, shows } = await planNight({
+            ownerId: ctx.userId,
+            chatId: ctx.chatId,
+            goers: await goersOf(ctx, input.everyone),
+            point: { lat: where.lat, lon: where.lon },
+            area: input.area,
+            city,
+            startsAt: zonedTime(input.date ?? todayIn(tz), input.time.padStart(5, "0"), tz),
+            timeZone: tz,
+            ctx: call(`A night around ${input.area}`),
+          })
+          return planCard(
+            plan,
+            shows.map((sh) => ({
+              name: sh.name,
+              url: sh.url,
+              venue: sh.venue,
+              localTime: sh.localTime?.slice(0, 5) ?? null,
+              image: sh.image,
+            })),
+          )
+        } catch (error) {
+          return empty((error as Error).message)
+        }
+      },
+    }),
+
+    planTrip: tool({
+      ...toolDefs.planTrip,
+      execute: async (input) => {
+        const tz = safeZone(ctx.tz)
+        try {
+          const { plan } = await planTrip({
+            ownerId: ctx.userId,
+            chatId: ctx.chatId,
+            goers: await goersOf(ctx, input.everyone),
+            city: input.city,
+            days: input.days,
+            date: input.date ?? todayIn(tz),
+            timeZone: tz,
+            ctx: call(`${input.days} days in ${input.city}`),
+          })
+          return planCard(plan, [])
+        } catch (error) {
+          return {
+            token: null,
+            kind: "trip" as const,
+            title: `${input.days} days in ${input.city}`,
+            city: input.city,
+            startsAt: null,
+            stops: [],
+            route: null,
+            shows: [],
+            note: (error as Error).message,
+          }
+        }
+      },
+    }),
+
+    findHotels: tool({
+      ...toolDefs.findHotels,
+      execute: async (input) => {
+        const checkout = new Date(`${input.checkin}T12:00:00Z`)
+        checkout.setUTCDate(checkout.getUTCDate() + input.nights)
+        const base = {
+          near: input.near,
+          checkin: input.checkin,
+          checkout: checkout.toISOString().slice(0, 10),
+          guests: input.guests,
+        }
+        if (!hotelsOn())
+          return { ...base, offers: [], note: "Hotel booking isn't switched on yet." }
+        const city = input.city ?? ctx.person.city ?? null
+        const where = await locate(
+          city ? `${input.near}, ${city}` : input.near,
+          call("Find the area"),
+        )
+        if (!where)
+          return { ...base, offers: [], note: `I couldn't find ${input.near} on the map.` }
+        try {
+          const offers = await hotelsNear({
+            lat: where.lat,
+            lon: where.lon,
+            radiusMeters: 4000,
+            checkin: base.checkin,
+            checkout: base.checkout,
+            adults: input.guests,
+            limit: 12,
+          })
+          // Best rated first among what's there, then cheaper.
+          const sorted = offers
+            .sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0) || a.price.amount - b.price.amount)
+            .slice(0, 6)
+          return {
+            ...base,
+            offers: sorted.map((o) => ({
+              offerId: o.offerId,
+              hotelId: o.hotelId,
+              name: o.name,
+              photo: o.photo,
+              address: o.address,
+              stars: o.stars,
+              rating: o.rating,
+              price: o.price,
+              refundable: o.refundable,
+              room: o.room,
+              board: o.board,
+            })),
+            note: sorted.length ? null : "No rooms free there for those dates.",
+          }
+        } catch (error) {
+          return { ...base, offers: [], note: (error as Error).message }
+        }
+      },
+    }),
+
+    callToBook: tool({
+      ...toolDefs.callToBook,
+      execute: async (input) => {
+        if (!callsOn())
+          return {
+            bookingId: null,
+            status: "unavailable" as const,
+            phone: null,
+            note: "Calling venues isn't switched on yet.",
+          }
+        const tz = safeZone(ctx.tz)
+        // Calls only within calling hours where they are.
+        const hour = Number(
+          new Intl.DateTimeFormat("en-GB", {
+            timeZone: tz,
+            hour: "2-digit",
+            hourCycle: "h23",
+          }).format(new Date()),
+        )
+        if (hour < CALL_HOURS.from || hour >= CALL_HOURS.to)
+          return {
+            bookingId: null,
+            status: "closed-hours" as const,
+            phone: null,
+            note: `It's outside calling hours (${CALL_HOURS.from}am–9pm). Ask me again then.`,
+          }
+        const phone =
+          (input.phone ? normalisePhone(input.phone) : null) ??
+          (input.website ? await venuePhone(input.website).catch(() => null) : null)
+        if (!phone)
+          return {
+            bookingId: null,
+            status: "needs-number" as const,
+            phone: null,
+            note: `I couldn't find ${input.venue}'s number. What is it?`,
+          }
+        const startsAt = zonedTime(input.date, input.time.padStart(5, "0"), tz)
+        const when = startsAt.toLocaleString("en-GB", {
+          timeZone: tz,
+          weekday: "long",
+          day: "numeric",
+          month: "long",
+          hour: "numeric",
+          minute: "2-digit",
+        })
+        const [booking] = await db
+          .insert(schema.bookings)
+          .values({
+            ownerId: ctx.userId,
+            chatId: ctx.chatId,
+            kind: "table",
+            provider: "call",
+            status: "calling",
+            title: `Table at ${input.venue}`,
+            venue: input.venue,
+            startsAt,
+            party: input.party,
+            data: { phone, notes: input.notes ?? null, when },
+          })
+          .returning()
+        if (!booking)
+          return {
+            bookingId: null,
+            status: "unavailable" as const,
+            phone,
+            note: "Couldn't start the call.",
+          }
+        try {
+          const placed = await placeCall(phone, {
+            bookingId: booking.id,
+            venue: input.venue,
+            guestName: ctx.person.name,
+            party: input.party,
+            when,
+            notes: input.notes ?? null,
+            callback: null,
+          })
+          await db
+            .update(schema.bookings)
+            .set({
+              ref: { conversationId: placed.conversationId ?? "", callSid: placed.callSid ?? "" },
+            })
+            .where(eq(schema.bookings.id, booking.id))
+          // If the call's webhook never comes, Najimi looks for the result itself.
+          await enqueueAt(
+            "bookingCheck",
+            { bookingId: booking.id },
+            new Date(Date.now() + 5 * 60_000),
+          )
+          return { bookingId: booking.id, status: "calling" as const, phone, note: null }
+        } catch (error) {
+          await db
+            .update(schema.bookings)
+            .set({ status: "failed", note: (error as Error).message })
+            .where(eq(schema.bookings.id, booking.id))
+          return {
+            bookingId: booking.id,
+            status: "unavailable" as const,
+            phone,
+            note: (error as Error).message,
+          }
+        }
+      },
     }),
 
     startGame: tool({

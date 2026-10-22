@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@najimi/agent": "workspace:*",
+    "@najimi/booking": "workspace:*",
     "@najimi/config": "workspace:*",
     "@najimi/db": "workspace:*",
     "@najimi/env": "workspace:*",

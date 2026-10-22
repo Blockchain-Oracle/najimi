@@ -99,7 +99,8 @@ export function useRoom({
       })
       setStatus("generating")
       try {
-        await api(`/api/rooms/${chatId}/messages`, { json: { id, text, files, screen } })
+        const tz = Intl.DateTimeFormat().resolvedOptions().timeZone
+        await api(`/api/rooms/${chatId}/messages`, { json: { id, text, files, screen, tz } })
         setLive(true)
       } catch (e) {
         setMessages((list) => list.filter((m) => m.id !== id))

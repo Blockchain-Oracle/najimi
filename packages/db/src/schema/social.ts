@@ -31,6 +31,8 @@ export type NotificationKind =
   | "played"
   /** Your circle's daily drop is up. */
   | "drop"
+  /** A booking changed (confirmed, failed, cancelled). */
+  | "booking"
 
 /** Your news (the inbox): a follow, someone joining your circle, a mention, a new DM. */
 export const notifications = pgTable(

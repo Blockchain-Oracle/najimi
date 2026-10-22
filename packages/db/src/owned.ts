@@ -1,6 +1,7 @@
 import { and, eq, lt, sql } from "drizzle-orm"
 import type { Db } from "./index"
 import {
+  bookings,
   chatMembers,
   chats,
   creations,
@@ -12,6 +13,7 @@ import {
   messages,
   notifications,
   people,
+  plans,
   qlooCalls,
   runs,
   session,
@@ -74,7 +76,17 @@ export async function reownUserData(db: Db, fromUserId: string, toUserId: string
         .where(and(eq(people.ownerId, fromUserId), eq(people.isSelf, true)))
     }
 
-    for (const table of [people, chats, uploads, mediaJobs, creations, shares, runs]) {
+    for (const table of [
+      people,
+      chats,
+      uploads,
+      mediaJobs,
+      creations,
+      shares,
+      runs,
+      plans,
+      bookings,
+    ]) {
       await tx.update(table).set({ ownerId: toUserId }).where(eq(table.ownerId, fromUserId))
     }
     await tx.update(qlooCalls).set({ userId: toUserId }).where(eq(qlooCalls.userId, fromUserId))

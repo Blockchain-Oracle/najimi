@@ -25,6 +25,31 @@ export function geohashBounds(hash: string): [number, number, number, number] {
   return [lon[0], lat[0], lon[1], lat[1]]
 }
 
+/** A point as a geohash (Ticketmaster's geoPoint, Qloo's cells). */
+export function geohashOf(lat: number, lon: number, precision = 9): string {
+  let even = true
+  let latR: [number, number] = [-90, 90]
+  let lonR: [number, number] = [-180, 180]
+  let out = ""
+  let bits = 0
+  let value = 0
+  while (out.length < precision) {
+    const range = even ? lonR : latR
+    const v = even ? lon : lat
+    const mid = (range[0] + range[1]) / 2
+    value = value * 2 + (v >= mid ? 1 : 0)
+    if (even) lonR = v >= mid ? [mid, lonR[1]] : [lonR[0], mid]
+    else latR = v >= mid ? [mid, latR[1]] : [latR[0], mid]
+    even = !even
+    if (++bits === 5) {
+      out += BASE32[value]
+      bits = 0
+      value = 0
+    }
+  }
+  return out
+}
+
 /** A geohash cell as a closed GeoJSON ring, shrunk a touch so neighbouring columns read apart. */
 export function cellRing(hash: string, inset = 0.08): [number, number][] {
   const [w, s, e, n] = geohashBounds(hash)

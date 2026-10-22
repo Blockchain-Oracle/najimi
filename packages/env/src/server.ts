@@ -39,6 +39,27 @@ export const env = createEnv({
     TMDB_READ_TOKEN: z.string().min(1).optional(),
     /** ElevenLabs Scribe, for voice dictation. */
     ELEVENLABS_API_KEY: z.string().min(1).optional(),
+    // Plans and booking (W16–W18): each one switches its part on when its key is set.
+    /** Routes between a plan's stops (Mapbox Directions). */
+    MAPBOX_TOKEN: z.string().min(1).optional(),
+    /** Shows near a plan (Ticketmaster Discovery). */
+    TICKETMASTER_API_KEY: z.string().min(1).optional(),
+    JAMBASE_API_KEY: z.string().min(1).optional(),
+    /** Hotels, booked for real (Nuitee Connect's live key; Nuitee takes the payment). */
+    NUITEE_API_KEY: z.string().min(1).optional(),
+    /** Najimi's share on a hotel booking, in percent (Nuitee's `margin`). */
+    NUITEE_MARGIN: z.coerce.number().min(0).max(30).default(8),
+    /** Calling a venue to book a table: the number Najimi calls from (Twilio, via ElevenLabs). */
+    TWILIO_ACCOUNT_SID: z.string().min(1).optional(),
+    TWILIO_AUTH_TOKEN: z.string().min(1).optional(),
+    TWILIO_PHONE_NUMBER: z.string().min(1).optional(),
+    /** The ElevenLabs voice agent that calls venues, and the Twilio number it calls from (set once). */
+    ELEVENLABS_CALLER_AGENT_ID: z.string().min(1).optional(),
+    ELEVENLABS_PHONE_NUMBER_ID: z.string().min(1).optional(),
+    /** Verifies ElevenLabs' post-call webhook (HMAC). */
+    ELEVENLABS_WEBHOOK_SECRET: z.string().min(1).optional(),
+    /** Tours as links out (Viator Basic Access). */
+    VIATOR_API_KEY: z.string().min(1).optional(),
     /** Resend, for sign-in codes. */
     RESEND_API_KEY: z.string().min(1).optional(),
     EMAIL_FROM: z.string().min(3).optional(),

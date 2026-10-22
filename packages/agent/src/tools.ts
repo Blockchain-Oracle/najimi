@@ -124,6 +124,41 @@ export const insightsInput = z.object({
 })
 export type InsightsInput = z.infer<typeof insightsInput>
 
+/** A plan as the card shows it (the full plan lives at /plan/<token>). */
+const planOutput = z.object({
+  token: z.string().nullable(),
+  kind: z.enum(["night", "trip"]),
+  title: z.string(),
+  city: z.string().nullable(),
+  /** When it starts, ISO. */
+  startsAt: z.string().nullable(),
+  stops: z.array(
+    z.object({
+      day: z.number(),
+      slot: z.string(),
+      name: z.string(),
+      image: z.string().nullable(),
+      area: z.string().nullable(),
+      at: z.string().nullable(),
+      why: z.string().nullable(),
+      fits: z.array(
+        z.object({ name: z.string(), look: z.string().nullable(), fit: z.number().nullable() }),
+      ),
+    }),
+  ),
+  route: z.object({ profile: z.string(), minutes: z.number(), km: z.number() }).nullable(),
+  shows: z.array(
+    z.object({
+      name: z.string(),
+      url: z.string(),
+      venue: z.string().nullable(),
+      localTime: z.string().nullable(),
+      image: z.string().nullable(),
+    }),
+  ),
+  note: z.string().nullable(),
+})
+
 export const toolDefs = {
   qlooSearch: tool({
     description:
@@ -335,6 +370,106 @@ export const toolDefs = {
         }),
       ),
       callId: z.string().nullable(),
+      note: z.string().nullable(),
+    }),
+  }),
+
+  planNight: tool({
+    description:
+      "Plan a night out near an area at a time: drinks, then food, then somewhere late, from the asker's taste (in a circle with everyone: the whole room blended so each person counts the same), each stop with each person's own fit, the real route between stops, and shows on that night nearby. Use for 'plan our night', '9pm in Lekki', 'where should we go out tonight'. The card has the map, the plan page and the calendar; places can then be booked.",
+    inputSchema: z.object({
+      area: z
+        .string()
+        .max(80)
+        .describe("A neighbourhood or part of town (Lekki, Victoria Island, Shoreditch)."),
+      city: z.string().max(80).optional(),
+      time: z
+        .string()
+        .regex(/^\d{1,2}:\d{2}$/)
+        .describe("Their local start time, 24-hour (21:00)."),
+      date: z
+        .string()
+        .regex(/^\d{4}-\d{2}-\d{2}$/)
+        .optional()
+        .describe("Default: today where they are."),
+      everyone: z
+        .boolean()
+        .optional()
+        .describe("In a circle: plan for the whole room (default true). False: just the asker."),
+    }),
+    outputSchema: planOutput,
+  }),
+
+  planTrip: tool({
+    description:
+      "Plan a trip to a city: one area a day from where this taste lives there (Qloo's heatmap, areas named by its places), with a morning, afternoon and evening stop in it, routed, each with why (and each person's fit in a circle). Use for 'Lisbon for three days', 'a weekend in Accra'. The card links to the plan page; a hotel near day one can then be found and booked.",
+    inputSchema: z.object({
+      city: z.string().max(80),
+      days: z.number().int().min(1).max(5),
+      date: z
+        .string()
+        .regex(/^\d{4}-\d{2}-\d{2}$/)
+        .optional()
+        .describe("The first day. Default: today where they are."),
+      everyone: z.boolean().optional(),
+    }),
+    outputSchema: planOutput,
+  }),
+
+  findHotels: tool({
+    description:
+      "Find hotels with real prices near an area for dates and guests, bookable right here: the guest pays in Nuitee's own payment sheet (Nuitee is the merchant of record). Use when someone needs somewhere to stay (a trip, a night that ends late). The card has a Book button on each; then say which you'd pick and why.",
+    inputSchema: z.object({
+      near: z.string().max(80).describe("An area, a neighbourhood or a place (Ikoyi, Alfama)."),
+      city: z.string().max(80).optional(),
+      checkin: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+      nights: z.number().int().min(1).max(14),
+      guests: z.number().int().min(1).max(8),
+    }),
+    outputSchema: z.object({
+      near: z.string(),
+      checkin: z.string(),
+      checkout: z.string(),
+      guests: z.number(),
+      offers: z.array(
+        z.object({
+          offerId: z.string(),
+          hotelId: z.string(),
+          name: z.string(),
+          photo: z.string().nullable(),
+          address: z.string().nullable(),
+          stars: z.number().nullable(),
+          rating: z.number().nullable(),
+          price: z.object({ amount: z.number(), currency: z.string() }),
+          refundable: z.boolean(),
+          room: z.string().nullable(),
+          board: z.string().nullable(),
+        }),
+      ),
+      note: z.string().nullable(),
+    }),
+  }),
+
+  callToBook: tool({
+    description:
+      "Phone a restaurant, bar or club to book a table when it has no online booking: a short AI voice call that says up front it's an AI calling for them and that it's recorded, only between 8am and 9pm. Pass the venue's website (Najimi reads its number there) or the number itself; if neither works, ask them for the number. They approve the call first; the result comes back into this chat.",
+    inputSchema: z.object({
+      venue: z.string().max(120),
+      website: z.string().url().max(300).optional(),
+      phone: z
+        .string()
+        .max(30)
+        .optional()
+        .describe("The venue's number, international form if known."),
+      date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+      time: z.string().regex(/^\d{1,2}:\d{2}$/),
+      party: z.number().int().min(1).max(20),
+      notes: z.string().max(200).optional(),
+    }),
+    outputSchema: z.object({
+      bookingId: z.string().nullable(),
+      status: z.enum(["calling", "needs-number", "closed-hours", "unavailable"]),
+      phone: z.string().nullable(),
       note: z.string().nullable(),
     }),
   }),

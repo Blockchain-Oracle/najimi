@@ -6,6 +6,7 @@ import { boss, type Payload, QUEUES, RETIRED_QUEUES } from "@najimi/jobs"
 import { emit, setRunStatus, sweepLiveEvents } from "@najimi/live"
 import { deleteKeys } from "@najimi/storage"
 import { closeInterruptedRuns } from "./interrupted"
+import { bookingCheck, followUps } from "./jobs/bookings"
 import { chatTitle } from "./jobs/chat-title"
 import { dailyDrop } from "./jobs/daily-drop"
 import { guestsCleanup } from "./jobs/forget"
@@ -113,6 +114,17 @@ async function main() {
     await dailyDrop()
   })
   await queues.schedule(QUEUES.dailyDrop.name, GAMES.dailyCron, {}, { tz: "UTC" })
+
+  // Bookings: a call's result when its webhook doesn't come; "How was it?" once things happen.
+  await queues.work<Payload<"bookingCheck">>(QUEUES.bookingCheck.name, async ([job]) => {
+    if (!job) return
+    await bookingCheck(QUEUES.bookingCheck.payload.parse(job.data).bookingId)
+  })
+  await queues.work(QUEUES.followUps.name, async ([job]) => {
+    if (!job) return
+    await followUps()
+  })
+  await queues.schedule(QUEUES.followUps.name, "*/30 * * * *", {}, { tz: "UTC" })
 
   // Submitted videos are checked here; a restart picks them up again by their provider id.
   const poller = setInterval(

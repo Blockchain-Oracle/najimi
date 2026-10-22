@@ -8,11 +8,14 @@ import { Face } from "@/components/taste/face"
 import { CardBoundary } from "./card-boundary"
 import { ApprovalCard } from "./cards/approval-card"
 import { BriefCard } from "./cards/brief-card"
+import { CallApproval, CallCard } from "./cards/call-card"
 import { CompareCard } from "./cards/compare-card"
 import { GameCard } from "./cards/game-card"
 import { GroupFitCard } from "./cards/group-fit-card"
+import { HotelsCard } from "./cards/hotels-card"
 import { CardSkeleton, InsightsCard } from "./cards/insights-card"
 import { ImageCard } from "./cards/media-card"
+import { PlanCard } from "./cards/plan-card"
 import { SteerCard } from "./cards/steer-card"
 import { WizardCard } from "./cards/wizard-card"
 import { Run } from "./run"
@@ -103,6 +106,37 @@ function ToolPart({
       if (part.state === "output-available") return <GroupFitCard output={part.output} />
       if (part.state === "output-error") return failed
       return <CardSkeleton title={part.input?.title} label={t("asking")} />
+    case "tool-planNight":
+    case "tool-planTrip":
+      if (part.state === "output-available") return <PlanCard output={part.output} />
+      if (part.state === "output-error") return failed
+      return <CardSkeleton title={undefined} label={t("planning")} />
+    case "tool-findHotels":
+      if (part.state === "output-available") return <HotelsCard output={part.output} />
+      if (part.state === "output-error") return failed
+      return <CardSkeleton title={undefined} label={t("rooms")} />
+    case "tool-callToBook":
+      if (part.state === "approval-requested")
+        return (
+          <CallApproval
+            input={part.input ?? {}}
+            onDecide={
+              part.approval.isAutomatic || !actions.live
+                ? undefined
+                : (ok) => actions.onApprove(part.approval.id, ok)
+            }
+          />
+        )
+      if (part.state === "output-denied")
+        return (
+          <p className="text-sm text-text-3">
+            {t("callDeclined", { venue: part.input?.venue ?? "" })}
+          </p>
+        )
+      if (part.state === "output-available")
+        return <CallCard input={part.input ?? {}} output={part.output} />
+      if (part.state === "output-error") return failed
+      return <CardSkeleton title={part.input?.venue} label={t("dialling")} />
     case "tool-startGame":
       if (part.state === "output-available") return <GameCard output={part.output} />
       if (part.state === "output-error") return failed

@@ -31,6 +31,11 @@ const input = z.object({
       type: z.string().max(64).optional(),
     })
     .optional(),
+  /** The writer's time zone (IANA), so "9pm" in a plan means their 9pm. */
+  tz: z
+    .string()
+    .regex(/^[A-Za-z_+\-/0-9]{1,64}$/)
+    .optional(),
 })
 
 const localeFrom = (request: Request) => {
@@ -65,7 +70,7 @@ export async function POST(request: Request, ctx: RouteContext<"/api/rooms/[id]/
   if (!allow(`room:${user.id}`, ROOMS.perMinute, 60_000)) return fail("Slow down a little", 429)
   const parsed = await body(request, input)
   if ("error" in parsed) return parsed.error
-  const { id, text, files, screen } = parsed.data
+  const { id, text, files, screen, tz } = parsed.data
   if (!text && !files.length) return fail("Say something first", 400)
 
   const person = await selfOf(user.id)
@@ -114,7 +119,7 @@ export async function POST(request: Request, ctx: RouteContext<"/api/rooms/[id]/
       role: "user",
       authorId: user.id,
       parts,
-      metadata: screen ? { screen } : null,
+      metadata: screen || tz ? { ...(screen ? { screen } : {}), ...(tz ? { tz } : {}) } : null,
     })
     .onConflictDoNothing()
     .returning()

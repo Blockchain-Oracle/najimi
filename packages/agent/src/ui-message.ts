@@ -28,6 +28,8 @@ export type ChatMeta = {
   status?: "done" | "streaming" | "waiting" | "resume" | "failed"
   /** Where they were when they asked. */
   screen?: Screen
+  /** Their time zone (IANA) when they asked. */
+  tz?: string
   /** A failed answer's reason, in plain words. */
   error?: string
 }

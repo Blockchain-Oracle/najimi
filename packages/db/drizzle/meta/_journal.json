@@ -141,6 +141,13 @@
       "when": 1792676522480,
       "tag": "0019_game_guests",
       "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1792696873215,
+      "tag": "0020_plans",
+      "breakpoints": true
     }
   ]
 }

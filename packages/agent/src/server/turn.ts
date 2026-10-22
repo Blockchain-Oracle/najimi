@@ -1,4 +1,5 @@
 import { createHash } from "node:crypto"
+import { safeZone, todayIn } from "@najimi/booking"
 import { AGENT, ALLOWANCE, MEDIA, ROOMS } from "@najimi/config"
 import { db, schema } from "@najimi/db"
 import { env } from "@najimi/env/server"
@@ -171,7 +172,9 @@ export async function runTurn(chatId: string): Promise<void> {
       })),
     }
   }
-  const tools = buildTools({ userId: by, guest, chatId, person }, () => assistantId)
+  // Their own clock: "tonight" and "9pm" mean where they are.
+  const tz = safeZone(lastHuman?.metadata?.tz)
+  const tools = buildTools({ userId: by, guest, chatId, person, tz }, () => assistantId)
   const abort = new AbortController()
   // Stop: someone asked Najimi to stop; checked while it answers.
   const stopWatch = setInterval(async () => {
@@ -189,7 +192,7 @@ export async function runTurn(chatId: string): Promise<void> {
       model: agentModel(modelId),
       instructions: `${RULES}\n\n${contextBlock({
         locale: chat.locale,
-        today: new Date().toISOString().slice(0, 10),
+        today: todayIn(tz),
         mode: chat.mode,
         person: {
           id: person.id,
@@ -219,6 +222,11 @@ export async function runTurn(chatId: string): Promise<void> {
       experimental_toolApprovalSecret: approvalSecret(),
       toolApproval: {
         makeImage: (input) => approval("images", input.variants ?? MEDIA.image.variants),
+        // A real phone call always waits for their yes, whatever the room's mode.
+        callToBook: (input) => ({
+          type: "user-approval",
+          reason: `call:${input.venue}:${input.party}:${input.date} ${input.time}`,
+        }),
       },
       stopWhen: isStepCount(AGENT.maxSteps),
       maxOutputTokens: AGENT.maxOutputTokens,

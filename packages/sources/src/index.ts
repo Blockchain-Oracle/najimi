@@ -13,3 +13,4 @@ export {
   trailersFor,
   trailersReady,
 } from "./media"
+export { normalisePhone, phoneFrom, venuePhone } from "./phone"

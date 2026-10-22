@@ -20,6 +20,7 @@ const nextConfig: NextConfig = {
   // Workspace packages ship TypeScript source; Next compiles them with the app.
   transpilePackages: [
     "@najimi/agent",
+    "@najimi/booking",
     "@najimi/config",
     "@najimi/db",
     "@najimi/email",
