@@ -211,6 +211,20 @@ export const ROOMS = {
   perMinute: 20,
 } as const
 
+/** Games (W9): the wavelength's target bands, the daily drop, the public circle. */
+export const GAMES = {
+  /** Half-widths of the wavelength's target bands (points off Qloo's number): 90+, 76+, 50+ points. */
+  bands: [5, 12, 25],
+  /** The daily drop: a wavelength round about a member, in every circle active this week (UTC). */
+  dailyCron: "0 9 * * *",
+  /** A circle counts as active if someone spoke in it within this long. */
+  activeDays: 7,
+  /** The public circle anyone can join from People, run by Najimi. */
+  lounge: { name: "Najimi Lounge", token: "najimilounge" },
+  /** Rounds one person may start per minute. */
+  perMinute: 12,
+} as const
+
 const HOUR_S = 60 * 60
 
 /** Images and video (generation providers, sizes, polling). */

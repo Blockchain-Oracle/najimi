@@ -6,6 +6,9 @@ import { api } from "@/lib/fetcher"
 
 export type RoomStatus = "idle" | "generating" | "waiting" | "stopping"
 
+/** Fired on the window when someone in the room finishes a game (its cards refresh their board). */
+export const GAME_PLAYED = "najimi:game-played"
+
 /** A short random id for a message (the server keeps the first copy of a resend). */
 const newId = () =>
   `msg_${Array.from(crypto.getRandomValues(new Uint8Array(12)), (b) =>
@@ -66,6 +69,7 @@ export function useRoom({
       else if (type === "removed")
         setMessages((list) => list.filter((m) => m.id !== (data.id as string)))
       else if (type === "title") titleRef.current?.(data.title as string)
+      else if (type === "game") window.dispatchEvent(new CustomEvent(GAME_PLAYED, { detail: data }))
     }
     return () => source.close()
   }, [live, chatId, after, upsert])

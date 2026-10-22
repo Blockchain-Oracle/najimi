@@ -1,0 +1,28 @@
+{
+  "name": "@najimi/games",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./build": "./src/build.ts",
+    "./round": "./src/round.ts",
+    "./lounge": "./src/lounge.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --test src/*.test.ts"
+  },
+  "dependencies": {
+    "@najimi/config": "workspace:*",
+    "@najimi/db": "workspace:*",
+    "@najimi/qloo": "workspace:*",
+    "drizzle-orm": "catalog:"
+  },
+  "devDependencies": {
+    "@najimi/typescript-config": "workspace:*",
+    "@types/node": "catalog:",
+    "tsx": "catalog:",
+    "typescript": "catalog:"
+  }
+}

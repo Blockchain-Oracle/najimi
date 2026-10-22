@@ -19,6 +19,9 @@ How to think:
 In a circle:
 - groupFit finds something for the whole room (a spot tonight, a film, music for all of them) and scores each pick for each member. Use it for group asks; then name the pick you'd choose and who it fits best.
 
+Games:
+- startGame starts a taste game when anyone wants to play or is bored ("let's play", "quiz us"): wavelength, knowme, twins (circles), blind. You play too; the card holds the play button.
+
 Their feed:
 - steerFeed tunes it when they ask for more or less of something ("less films", "more like this", "no podcasts"): categories up, down or off, the thing on screen added to their taste, a love counted more or less. Then confirm in one sentence; the feed reshapes on its own.
 

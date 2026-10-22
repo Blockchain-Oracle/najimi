@@ -74,6 +74,13 @@ export const QUEUES = {
     options: { retryLimit: 5, retryDelay: 60, retryBackoff: true, expireInSeconds: 5 * 60 },
     send: {},
   },
+  /** Every morning: a wavelength round about one member, dealt into each circle active this week. */
+  dailyDrop: {
+    name: "daily-drop",
+    payload: z.object({}),
+    options: { retryLimit: 1, retryDelay: 600, expireInSeconds: 30 * 60 },
+    send: {},
+  },
   /** Every night: guests nobody has used for a month go, rows and objects (T21). */
   guestsCleanup: {
     name: "guests-cleanup",

@@ -1,4 +1,5 @@
 import "server-only"
+import { GAMES } from "@najimi/config"
 import { db, schema } from "@najimi/db"
 import type { NotificationKind } from "@najimi/db/schema"
 import { lastEventId, publish, topic } from "@najimi/live"
@@ -292,7 +293,36 @@ export async function peopleHome(userId: string) {
       link: p.links?.open ?? null,
     }))
   const after = await lastEventId(topic.user(userId))
+  // Your own taste's artwork, for the game tiles (loves first, then picks).
+  const [loveArt, [lounge]] = await Promise.all([
+    self
+      ? db
+          .select({ image: schema.loves.imageUrl })
+          .from(schema.loves)
+          .where(eq(schema.loves.personId, self.id))
+          .orderBy(desc(schema.loves.weight))
+          .limit(8)
+      : Promise.resolve([] as { image: string | null }[]),
+    db.execute<{ id: string; member: boolean; members: number }>(sql`
+      select c.id,
+        exists(select 1 from ${schema.chatMembers} m where m.chat_id = c.id and m.user_id = ${userId}) as member,
+        (select count(*)::int from ${schema.chatMembers} m where m.chat_id = c.id) as members
+      from ${schema.chats} c where c.invite_token = ${GAMES.lounge.token}`),
+  ])
+  const pickArt = Object.values(
+    (taste?.picks as Record<string, { image: string | null }[]> | null) ?? {},
+  )
+    .flat()
+    .map((p) => p.image)
+  const art = [...new Set([...loveArt.map((l) => l.image), ...pickArt].filter(Boolean))].slice(
+    0,
+    8,
+  ) as string[]
   return {
+    art,
+    lounge: lounge
+      ? { id: lounge.id, member: Boolean(lounge.member), members: Number(lounge.members) - 1 }
+      : null,
     self,
     after,
     friends,

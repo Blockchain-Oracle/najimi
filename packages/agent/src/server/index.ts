@@ -1,6 +1,7 @@
 export { forModel, ownsUploads } from "./files"
 export {
   allMessages,
+  postGameCard,
   publishMessage,
   roomMessages,
   saveAndPublish,

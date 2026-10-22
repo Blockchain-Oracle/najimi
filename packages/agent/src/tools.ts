@@ -339,6 +339,23 @@ export const toolDefs = {
     }),
   }),
 
+  startGame: tool({
+    description:
+      "Start a taste game when someone wants to play: 'wavelength' (guess how much someone would love five things; Qloo knows), 'knowme' (which of these did they pick as a love?), 'twins' (in a circle: who loves this?), 'blind' (Qloo predicts how YOU will feel about five things you may not know). For wavelength and knowme, name whose taste it's about by their @username (default: the person asking). The card has the play button and a challenge link; you play too.",
+    inputSchema: z.object({
+      kind: z.enum(["wavelength", "knowme", "twins", "blind"]),
+      about: z.string().max(40).optional().describe("Whose taste, by @username."),
+    }),
+    outputSchema: z.object({
+      token: z.string().nullable(),
+      kind: z.string(),
+      title: z.string(),
+      subject: z.object({ name: z.string(), look: z.string().nullable() }).nullable(),
+      count: z.number(),
+      note: z.string().nullable(),
+    }),
+  }),
+
   steerFeed: tool({
     description:
       "Tune the person's feed when they ask for more or less of something: turn categories up, down or off (level 0 off, 1 less, 2 normal, 3 more), add something to their taste (often the card they're looking at: 'more like this', 'I love this'), or make one of their loves count more or less. Their feed restarts on the new mix at once. Use it for 'less films', 'no podcasts', 'more music like this', 'more of Burna Boy'.",

@@ -21,7 +21,16 @@ export const follows = pgTable(
   ],
 )
 
-export type NotificationKind = "follow" | "joined" | "mention" | "message" | "invite"
+export type NotificationKind =
+  | "follow"
+  | "joined"
+  | "mention"
+  | "message"
+  | "invite"
+  /** Someone finished a game about your taste. */
+  | "played"
+  /** Your circle's daily drop is up. */
+  | "drop"
 
 /** Your news (the inbox): a follow, someone joining your circle, a mention, a new DM. */
 export const notifications = pgTable(

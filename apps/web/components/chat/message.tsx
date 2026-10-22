@@ -9,6 +9,7 @@ import { CardBoundary } from "./card-boundary"
 import { ApprovalCard } from "./cards/approval-card"
 import { BriefCard } from "./cards/brief-card"
 import { CompareCard } from "./cards/compare-card"
+import { GameCard } from "./cards/game-card"
 import { GroupFitCard } from "./cards/group-fit-card"
 import { CardSkeleton, InsightsCard } from "./cards/insights-card"
 import { ImageCard } from "./cards/media-card"
@@ -102,6 +103,10 @@ function ToolPart({
       if (part.state === "output-available") return <GroupFitCard output={part.output} />
       if (part.state === "output-error") return failed
       return <CardSkeleton title={part.input?.title} label={t("asking")} />
+    case "tool-startGame":
+      if (part.state === "output-available") return <GameCard output={part.output} />
+      if (part.state === "output-error") return failed
+      return <CardSkeleton title={undefined} label={t("dealing")} />
     case "tool-steerFeed":
       if (part.state === "output-available")
         return <SteerCard output={part.output} fresh={streaming} />

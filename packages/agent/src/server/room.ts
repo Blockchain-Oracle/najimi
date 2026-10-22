@@ -85,3 +85,58 @@ export async function setRoomStatus(
     .where(eq(schema.chats.id, chatId))
   await publish(topic.room(chatId), "status", { status })
 }
+
+/**
+ * A game's card dealt into a room (by someone, or by Najimi for the daily drop), sent to everyone
+ * in it. The card is a finished `startGame` tool part, so it reads the same as one Najimi dealt.
+ */
+export async function postGameCard(
+  chatId: string,
+  card: {
+    roundId: string
+    token: string
+    kind: "wavelength" | "knowme" | "twins" | "blind"
+    title: string
+    count: number
+    subject: { name: string; look: string | null } | null
+    about?: string
+    /** A line over the title ("Today's drop"). */
+    note?: string | null
+    startedBy: string
+    /** Counts as the room being active (Najimi's own drops don't, or they'd never stop). */
+    bump?: boolean
+  },
+): Promise<void> {
+  const [row] = await db
+    .insert(schema.messages)
+    .values({
+      id: `msg_game_${card.roundId}`,
+      chatId,
+      role: "assistant",
+      parts: [
+        {
+          type: "tool-startGame",
+          toolCallId: `game_${card.roundId.slice(0, 12)}`,
+          state: "output-available",
+          input: { kind: card.kind, ...(card.about ? { about: card.about } : {}) },
+          output: {
+            token: card.token,
+            kind: card.kind,
+            title: card.title,
+            subject: card.kind === "twins" ? null : card.subject,
+            count: card.count,
+            note: card.note ?? null,
+          },
+        },
+      ],
+      metadata: { startedBy: card.startedBy },
+    })
+    .onConflictDoNothing()
+    .returning()
+  if (row) await publishMessage(chatId, toUI(row))
+  if (card.bump ?? true)
+    await db
+      .update(schema.chats)
+      .set({ lastActiveAt: new Date() })
+      .where(eq(schema.chats.id, chatId))
+}

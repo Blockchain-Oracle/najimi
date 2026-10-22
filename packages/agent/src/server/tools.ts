@@ -1,5 +1,6 @@
 import { FEED, MEDIA, TASTE, TASTE_DOMAINS } from "@najimi/config"
 import { db, schema } from "@najimi/db"
+import { createRound, TITLES } from "@najimi/games/round"
 import { enqueue, enqueueDebounced } from "@najimi/jobs"
 import {
   audiences,
@@ -662,6 +663,64 @@ export function buildTools(ctx: TurnContext, messageId: () => string | undefined
               )
               .join("; ")}. Say which one you'd pick for the room and who it fits best, by name.`
           : (output.note ?? "Nothing found."),
+      }),
+    }),
+
+    startGame: tool({
+      ...toolDefs.startGame,
+      execute: async (input) => {
+        let subjectId: string | null = null
+        let subject: { name: string; look: string | null } | null = null
+        if (input.about && input.kind !== "blind" && input.kind !== "twins") {
+          const [row] = await db
+            .select({ id: schema.user.id, name: schema.people.name, look: schema.people.look })
+            .from(schema.user)
+            .innerJoin(
+              schema.people,
+              and(eq(schema.people.ownerId, schema.user.id), eq(schema.people.isSelf, true)),
+            )
+            .where(eq(schema.user.username, input.about.replace(/^@/, "").toLowerCase()))
+          if (row) {
+            subjectId = row.id
+            subject = { name: row.name, look: row.look }
+          }
+        }
+        if (!subject && input.kind !== "twins")
+          subject = { name: ctx.person.name, look: ctx.person.look }
+        try {
+          const round = await createRound(
+            {
+              kind: input.kind,
+              createdBy: ctx.userId,
+              subjectId: subjectId ?? ctx.userId,
+              chatId: ctx.chatId,
+            },
+            call(`A game: ${TITLES[input.kind]}`),
+          )
+          return {
+            token: round.token,
+            kind: input.kind,
+            title: TITLES[input.kind],
+            subject: input.kind === "twins" ? null : subject,
+            count: round.items.length,
+            note: null,
+          }
+        } catch (error) {
+          return {
+            token: null,
+            kind: input.kind,
+            title: TITLES[input.kind],
+            subject,
+            count: 0,
+            note: (error as Error).message,
+          }
+        }
+      },
+      toModelOutput: ({ output }) => ({
+        type: "text",
+        value: output.token
+          ? `${output.title} is ready (shown as a card with a Play button and a challenge link). Invite the room in one playful sentence; you're playing too.`
+          : `Couldn't start it: ${output.note}`,
       }),
     }),
 

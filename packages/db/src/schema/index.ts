@@ -1,6 +1,7 @@
 export * from "./auth"
 export * from "./chat"
 export * from "./core"
+export * from "./games"
 export * from "./llm"
 export * from "./media"
 export * from "./qloo"

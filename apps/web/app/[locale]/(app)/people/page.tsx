@@ -19,6 +19,8 @@ async function People() {
   return (
     <PeopleView
       home={{
+        art: home.art,
+        lounge: home.lounge,
         friends: home.friends,
         twins: home.twins,
         circles: home.circles,

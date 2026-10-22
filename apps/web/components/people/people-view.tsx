@@ -9,6 +9,7 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { useEffect, useState } from "react"
+import { PlaySection } from "@/components/games/play-section"
 import { Face } from "@/components/taste/face"
 import { api } from "@/lib/fetcher"
 import { useDebounced } from "@/lib/use-debounced"
@@ -21,6 +22,9 @@ import { AuraFace, FollowButton, type PersonCard, PersonRow } from "./person-row
  */
 
 export type PeopleHome = {
+  /** Your own taste's artwork (the game tiles wear it). */
+  art: string[]
+  lounge: { id: string; member: boolean; members: number } | null
   friends: PersonCard[]
   twins: (PersonCard & { shared: number })[]
   circles: { id: string; name: string; members: PersonCard[] }[]
@@ -38,7 +42,7 @@ export type PeopleHome = {
 
 type Notice = {
   id: string
-  kind: "follow" | "joined" | "mention" | "message" | "invite"
+  kind: "follow" | "joined" | "mention" | "message" | "invite" | "played" | "drop"
   chatId: string | null
   data: Record<string, unknown>
   read: boolean
@@ -98,6 +102,13 @@ function Inbox({ initialUnread, after }: { initialUnread: number; after: number 
     if (n.kind === "invite") return t("noticeInvite", { who, name })
     if (n.kind === "message")
       return t("noticeMessage", { who, text: (n.data.text as string | undefined) ?? "" })
+    if (n.kind === "played")
+      return t("noticePlayed", {
+        who: n.actor?.name ?? name,
+        title: (n.data.title as string | undefined) ?? "",
+        score: Number(n.data.score ?? 0),
+      })
+    if (n.kind === "drop") return t("noticeDrop", { name })
     return t("noticeMention", { who })
   }
   return (
@@ -130,18 +141,22 @@ function Inbox({ initialUnread, after }: { initialUnread: number; after: number 
           ) : items.data?.items.length ? (
             <ul className="mt-2 flex flex-col">
               {items.data.items.map((n) => (
-                <li key={n.id}>
+                <li
+                  key={n.id}
+                  className={cn(
+                    "flex items-center gap-2 rounded-tile pe-2 transition-colors hover:bg-card",
+                    !n.read && "bg-card/60",
+                  )}
+                >
                   <button
                     type="button"
                     onClick={() => {
                       setOpen(false)
-                      if (n.chatId) router.push(`/c/${n.chatId}`)
+                      if (typeof n.data.token === "string") router.push(`/play/${n.data.token}`)
+                      else if (n.chatId) router.push(`/c/${n.chatId}`)
                       else if (n.actor?.username) router.push(`/u/${n.actor.username}`)
                     }}
-                    className={cn(
-                      "flex w-full items-center gap-3 rounded-tile px-2 py-3 text-start transition-colors hover:bg-card",
-                      !n.read && "bg-card/60",
-                    )}
+                    className="flex min-w-0 flex-1 items-center gap-3 px-2 py-3 text-start"
                   >
                     {n.actor ? (
                       <AuraFace person={n.actor} size="sm" />
@@ -149,13 +164,13 @@ function Inbox({ initialUnread, after }: { initialUnread: number; after: number 
                       <Users className="size-8" />
                     )}
                     <span className="min-w-0 flex-1 text-[14px] leading-snug">{line(n)}</span>
-                    {n.kind === "follow" && n.actor ? (
-                      <FollowButton
-                        userId={n.actor.userId}
-                        initial={{ following: false, friends: false }}
-                      />
-                    ) : null}
                   </button>
+                  {n.kind === "follow" && n.actor ? (
+                    <FollowButton
+                      userId={n.actor.userId}
+                      initial={{ following: false, friends: false }}
+                    />
+                  ) : null}
                 </li>
               ))}
             </ul>
@@ -332,6 +347,8 @@ export function PeopleView({ home }: { home: PeopleHome }) {
           )}
         </Section>
       ) : null}
+
+      {term ? null : <PlaySection art={home.art} lounge={home.lounge} />}
 
       <Section
         title={t("circles")}

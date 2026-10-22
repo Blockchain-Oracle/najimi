@@ -166,6 +166,8 @@
     "noticeInvite": "{who} added you to {name}",
     "noticeMessage": "{who}: {text}",
     "noticeMention": "{who} mentioned you",
+    "noticePlayed": "{who} played your {title}: {score}",
+    "noticeDrop": "Today's drop is up in {name}",
     "youAnd": "You & {name}",
     "tasteMatch": "taste match",
     "noMatch": "Add a few loves to see how you match.",
@@ -497,7 +499,8 @@
     "inviteHint": "Anyone with the link can join this circle",
     "you": "you",
     "youAllLove": "Loved in this circle",
-    "youAllAre": "You're all"
+    "youAllAre": "You're all",
+    "play": "Play a game"
   },
   "Cards": {
     "asking": "Asking Qloo…",
@@ -536,7 +539,8 @@
     "declined": "Not made: “{title}”.",
     "preparing": "Preparing…",
     "nothingFor": "Asked Qloo for “{title}”: nothing yet",
-    "fitFor": "How well it fits {name}"
+    "fitFor": "How well it fits {name}",
+    "dealing": "Dealing the round"
   },
   "Asked": {
     "city": "in {v}",
@@ -624,5 +628,115 @@
     "askedYou": "Asked you",
     "failed": "Didn't work",
     "summary": "{steps, plural, one {# step} other {# steps}} · {calls, plural, =0 {no Qloo calls} one {# Qloo call} other {# Qloo calls}}"
+  },
+  "Games": {
+    "kinds": {
+      "wavelength": "Guess my wavelength",
+      "knowme": "How well do you know me",
+      "twins": "Taste twins",
+      "blind": "Blind Taste"
+    },
+    "pitch": {
+      "wavelength": "{count} things. How much would {name} love each one? Qloo knows. Najimi plays too.",
+      "knowme": "{count} rounds. Which one did {name} pick as a love? Najimi plays too.",
+      "twins": "{count} loves only one of you has. Who's it?",
+      "blind": "{count} things you may not know. Qloo predicts how you'll feel. Is it right?"
+    },
+    "challenge": "Can you read this taste better than Najimi? Play in your browser, no account needed.",
+    "you": "You",
+    "youLower": "you",
+    "them": "them",
+    "vs": "vs",
+    "about": "About {name}",
+    "aboutYou": "About you",
+    "yourName": "Your name",
+    "namePlaceholder": "What should we call you?",
+    "play": "Play",
+    "ofCount": "{n} of {count}",
+    "ask": {
+      "wavelength": "How much would {name} love it?",
+      "wavelengthMine": "How much would you love it?",
+      "knowme": "Which did {name} pick as a love?",
+      "twins": "Who loves it?",
+      "blind": "Would you love it?"
+    },
+    "dial": "How much they'd love it, 0 to 100",
+    "low": "Not their thing",
+    "lowMine": "Not my thing",
+    "high": "Obsessed",
+    "blind": {
+      "no": "Nope",
+      "maybe": "Maybe",
+      "love": "Love it"
+    },
+    "qlooPredicted": "Qloo predicted",
+    "youSaid": "You said",
+    "lockIn": "Lock it in",
+    "next": "Next",
+    "seeResult": "See how you did",
+    "bullseye": "Bullseye",
+    "close": "So close",
+    "notBad": "Not bad",
+    "wayOff": "Way off",
+    "result": {
+      "won": "You beat Najimi",
+      "lost": "Najimi takes it",
+      "tie": "Dead heat",
+      "blind": "Qloo read you"
+    },
+    "statRight": "right",
+    "statClosest": "closest",
+    "statAverage": "off on average",
+    "statScore": "points",
+    "share": "Challenge someone",
+    "shareText": "I scored {score} on {title}. Can you beat me?",
+    "copied": "Link copied",
+    "again": "New round",
+    "makeYours": "Make your own taste",
+    "backToCircle": "Back to the circle",
+    "board": "This round",
+    "error": "Couldn't send that. Try again.",
+    "closeLabel": "Close",
+    "game": "Game",
+    "things": "{count} things",
+    "seeScores": "See scores",
+    "copyLink": "Copy the challenge link",
+    "arcade": "Play",
+    "streakHint": "Days in a row you've played your circles' daily drop",
+    "qlooHint": "How often Blind Taste's prediction matched how you felt",
+    "qlooRight": "Qloo knows you {percent}%",
+    "tiles": {
+      "wavelength": "Your wavelength",
+      "wavelengthLine": "Send it. Who knows you best?",
+      "blind": "Blind Taste",
+      "blindLine": "Can Qloo read you?",
+      "knowme": "Know me?",
+      "knowmeLine": "Quiz friends on your loves",
+      "lounge": "Najimi Lounge",
+      "loungeLine": "{count, plural, =0 {Be the first in} one {# person playing} other {# people playing}}"
+    },
+    "thisWeek": "This week",
+    "weekHint": "Points from every game",
+    "games": "{count, plural, one {# game} other {# games}}",
+    "sheet": {
+      "title": "Play in {name}",
+      "deal": "New game",
+      "wavelength": "Guess how much they'd love five things",
+      "knowme": "Which of these did they pick?",
+      "twins": "Who in here loves it?",
+      "blind": "Qloo predicts you. Everyone sees how it went",
+      "aboutWho": "About who?",
+      "noScores": "No games here this week yet. Deal one."
+    },
+    "dealtFor": "This round was dealt for {name}: Qloo predicted their taste, not yours.",
+    "dealMine": "Deal my own",
+    "sendFriends": "Send to friends first",
+    "qlooRightOne": "Qloo called it",
+    "qlooMissed": "Qloo missed",
+    "shareBlind": "Qloo read me {percent}% right on Blind Taste. Can it read you?",
+    "shareMine": "Share how it went",
+    "toBeat": "Najimi scored {score}. Beat it.",
+    "rightOne": "Right",
+    "notQuite": "Not quite"
   }
 }

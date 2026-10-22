@@ -50,6 +50,22 @@ export async function ogFonts() {
   ]
 }
 
+const funnelOnce = Promise.all([
+  font("FunnelDisplay-ExtraBold.woff"),
+  font("FunnelSans-Regular.woff"),
+  font("FunnelSans-SemiBold.woff"),
+])
+
+/** The app's own faces (Funnel Display titles, Funnel Sans text) for previews in the new look. */
+export async function funnelFonts() {
+  const [display, regular, semibold] = await funnelOnce
+  return [
+    { name: "Funnel Display", data: display, weight: 800 as const, style: "normal" as const },
+    { name: "Funnel Sans", data: regular, weight: 400 as const, style: "normal" as const },
+    { name: "Funnel Sans", data: semibold, weight: 600 as const, style: "normal" as const },
+  ]
+}
+
 /** A stored creation as a JPEG data URL sized for the card (the renderer reads JPEG and PNG). */
 export async function creationPicture(key: string, width: number, height: number) {
   const bytes = await getBytes(key)

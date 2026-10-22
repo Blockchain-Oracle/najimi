@@ -5,6 +5,8 @@ import {
   chats,
   creations,
   follows,
+  gameAnswers,
+  gameRounds,
   llmCalls,
   mediaJobs,
   messages,
@@ -106,6 +108,23 @@ export async function reownUserData(db: Db, fromUserId: string, toUserId: string
       .set({ actorId: toUserId })
       .where(eq(notifications.actorId, fromUserId))
     await tx.update(llmCalls).set({ userId: toUserId }).where(eq(llmCalls.userId, fromUserId))
+    // Games: rounds they dealt or that are about them, and their goes (a round both accounts
+    // played keeps the account's own go).
+    await tx
+      .update(gameRounds)
+      .set({ createdBy: toUserId })
+      .where(eq(gameRounds.createdBy, fromUserId))
+    await tx
+      .update(gameRounds)
+      .set({ subjectId: toUserId })
+      .where(eq(gameRounds.subjectId, fromUserId))
+    await tx.execute(sql`
+      update ${gameAnswers} a set player_id = ${toUserId}
+      where a.player_id = ${fromUserId}
+        and not exists (
+          select 1 from ${gameAnswers} b where b.round_id = a.round_id and b.player_id = ${toUserId}
+        )`)
+    await tx.delete(gameAnswers).where(eq(gameAnswers.playerId, fromUserId))
 
     // Usage: summed per day, so signing in never resets the day's allowance.
     await tx.execute(sql`

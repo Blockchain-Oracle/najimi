@@ -1,11 +1,13 @@
 import { runTurn } from "@najimi/agent/server"
-import { AUTH, MEDIA, ROOMS } from "@najimi/config"
+import { AUTH, GAMES, MEDIA, ROOMS } from "@najimi/config"
 import { migrateDatabase } from "@najimi/db/migrate"
+import { ensureLounge } from "@najimi/games/lounge"
 import { boss, type Payload, QUEUES, RETIRED_QUEUES } from "@najimi/jobs"
 import { emit, setRunStatus, sweepLiveEvents } from "@najimi/live"
 import { deleteKeys } from "@najimi/storage"
 import { closeInterruptedRuns } from "./interrupted"
 import { chatTitle } from "./jobs/chat-title"
+import { dailyDrop } from "./jobs/daily-drop"
 import { guestsCleanup } from "./jobs/forget"
 import { mediaGenerate, pollVideos } from "./jobs/media"
 import { tasteRefresh, tasteRetune } from "./jobs/taste-refresh"
@@ -103,6 +105,14 @@ async function main() {
     await sweepLiveEvents(ROOMS.liveKeepMs).catch((error) => console.error("[live] sweep", error))
   })
   await queues.schedule(QUEUES.guestsCleanup.name, AUTH.guestSweepCron, {}, { tz: "UTC" })
+
+  // Najimi's own account and the public circle it runs; then the morning's drops.
+  await ensureLounge().catch((error) => console.error("[lounge]", error))
+  await queues.work(QUEUES.dailyDrop.name, async ([job]) => {
+    if (!job) return
+    await dailyDrop()
+  })
+  await queues.schedule(QUEUES.dailyDrop.name, GAMES.dailyCron, {}, { tz: "UTC" })
 
   // Submitted videos are checked here; a restart picks them up again by their provider id.
   const poller = setInterval(

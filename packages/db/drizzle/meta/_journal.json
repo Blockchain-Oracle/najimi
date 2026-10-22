@@ -127,6 +127,20 @@
       "when": 1792674504842,
       "tag": "0017_social",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1792676356087,
+      "tag": "0018_games",
+      "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1792676522480,
+      "tag": "0019_game_guests",
+      "breakpoints": true
     }
   ]
 }

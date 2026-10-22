@@ -4,10 +4,11 @@ import type { NajimiUIMessage } from "@najimi/agent"
 import { Sheet, SheetContent, SheetTitle } from "@najimi/ui/components/sheet"
 import { toast } from "@najimi/ui/components/sonner"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
-import { Copy, History, Plus, RotateCcw, Share2, UserPlus } from "lucide-react"
+import { Copy, Gamepad2, History, Plus, RotateCcw, Share2, UserPlus } from "lucide-react"
 import Link from "next/link"
 import { useTranslations } from "next-intl"
 import { Suspense, useEffect, useRef, useState } from "react"
+import { GameSheet } from "@/components/games/game-sheet"
 import { Face } from "@/components/taste/face"
 import { api } from "@/lib/fetcher"
 import type { Uploaded } from "@/lib/photo"
@@ -72,6 +73,7 @@ export function ChatView(props: ChatViewProps) {
   const [title, setTitle] = useState(props.title)
   const [history, setHistory] = useState(false)
   const [membersOpen, setMembersOpen] = useState(false)
+  const [gamesOpen, setGamesOpen] = useState(false)
   const kind = props.kind ?? "agent"
   const people = new Map((props.members ?? []).map((m) => [m.userId, m]))
   const others = (props.members ?? []).filter((m) => m.userId !== props.me)
@@ -169,6 +171,17 @@ export function ChatView(props: ChatViewProps) {
                 ))}
               </span>
               <h1 className="truncate text-[15px] font-semibold">{roomTitle}</h1>
+            </button>
+          )}
+          {kind === "agent" ? null : (
+            <button
+              type="button"
+              onClick={() => setGamesOpen(true)}
+              aria-label={t("play")}
+              title={t("play")}
+              className="grid size-10 place-items-center rounded-full text-text-2 transition-colors hover:bg-card hover:text-foreground"
+            >
+              <Gamepad2 className="size-5" />
             </button>
           )}
           <Link
@@ -299,6 +312,17 @@ export function ChatView(props: ChatViewProps) {
         </div>
       </div>
 
+      {kind === "agent" ? null : (
+        <GameSheet
+          open={gamesOpen}
+          onOpenChange={setGamesOpen}
+          chatId={props.chatId}
+          members={props.members ?? []}
+          me={props.me}
+          title={roomTitle ?? ""}
+        />
+      )}
+
       {kind === "circle" ? (
         <Sheet open={membersOpen} onOpenChange={setMembersOpen}>
           <SheetContent
@@ -332,6 +356,7 @@ export function ChatView(props: ChatViewProps) {
                 </span>
               </button>
             ) : null}
+            <CircleOverlap chatId={props.chatId} open={membersOpen} />
             <ul className="mt-3 flex flex-col">
               {(props.members ?? []).map((m) => (
                 <li key={m.userId}>
