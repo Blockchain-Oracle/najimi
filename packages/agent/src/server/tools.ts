@@ -4,6 +4,7 @@ import { createRound, TITLES } from "@najimi/games/round"
 import { enqueue, enqueueDebounced } from "@najimi/jobs"
 import {
   audiences,
+  blendLoves,
   compare,
   type Domain,
   type ExploreInput,
@@ -593,20 +594,8 @@ export function buildTools(ctx: TurnContext, messageId: () => string | undefined
           .where(eq(schema.chatMembers.chatId, ctx.chatId))
         if (members.length < 2) return empty("Only works in a circle with two or more people.")
         const lovesBy = await Promise.all(members.map((m) => lovesOf(m.personId)))
-        // Blended equally: each member's loves add up to the same weight, whoever loves more things.
-        const blend = new Map<string, Love>()
-        for (const loves of lovesBy) {
-          const total = loves.reduce((n, l) => n + l.weight, 0) || 1
-          for (const l of loves) {
-            const w = (l.weight / total) * TASTE.weightMax
-            const seen = blend.get(l.qlooId)
-            blend.set(l.qlooId, { ...l, weight: (seen?.weight ?? 0) + w })
-          }
-        }
-        const blended = [...blend.values()]
-          .sort((a, b) => b.weight - a.weight)
-          .slice(0, 24)
-          .map((l) => ({ ...l, weight: Math.max(1, Math.round(l.weight)) }))
+        // Blended equally: each member counts the same, whoever loves more things.
+        const blended = blendLoves(lovesBy, 24, TASTE.weightMax)
         const city = input.city ?? ctx.person.city ?? members.find((m) => m.city)?.city ?? null
         const domain = input.kind as Domain
         const found = await profilePicks(

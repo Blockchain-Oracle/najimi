@@ -38,7 +38,8 @@
     "guest": "Guest",
     "label": "Sections",
     "feed": "Feed",
-    "people": "People"
+    "people": "People",
+    "earth": "Earth"
   },
   "Feed": {
     "title": "For you",
@@ -738,5 +739,48 @@
     "toBeat": "Najimi scored {score}. Beat it.",
     "rightOne": "Right",
     "notQuite": "Not quite"
+  },
+  "Earth": {
+    "title": "Earth",
+    "you": "You",
+    "pickCity": "Pick a city",
+    "searchCity": "Search a city",
+    "close": "Close",
+    "radar": "Taste twin radar",
+    "people": "Your people on the globe",
+    "recentre": "Back to the city",
+    "less": "Less you",
+    "more": "More you",
+    "noCity": "Pick a city to see where your taste lives in it.",
+    "nothingHere": "Qloo has no map of {city} for this taste yet. Try another city.",
+    "kinds": {
+      "all": "Everything",
+      "artist": "Music",
+      "place": "Places",
+      "tv_show": "TV",
+      "movie": "Film",
+      "brand": "Brands",
+      "book": "Books",
+      "podcast": "Podcasts",
+      "videogame": "Games"
+    },
+    "scene": "Scene",
+    "aroundHere": "Around here",
+    "thisSpot": "this spot",
+    "fit": "{percent}% you",
+    "planNight": "Plan a night",
+    "askNajimi": "Ask Najimi",
+    "askNight": "Plan a night out around {where} for my taste: a few stops, in order, with why each one.",
+    "askAbout": "What's the scene like around {where}, and what would I love there?",
+    "feelsLike": "Feels like",
+    "soundsLike": "Sounds like",
+    "goTo": "Where people go",
+    "wears": "What they wear and use",
+    "locals": "Your people near here",
+    "quiet": "Qloo knows little about this spot yet. Try a busier part of town.",
+    "radarTitle": "Taste twin radar",
+    "radarLine": "People here with your taste, closest in the middle; on the edge, people in culture Qloo predicts for you.",
+    "inCommon": "{count, plural, one {# thing} other {# things}} in common",
+    "radarEmpty": "No one here shares your taste yet. Invite a friend, or play a game in the Lounge."
   }
 }

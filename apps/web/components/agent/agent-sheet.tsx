@@ -32,7 +32,7 @@ type Latest = {
 
 function SheetRoom({ latest, me, onFresh }: { latest: Latest; me: string; onFresh: () => void }) {
   const t = useTranslations("Agent")
-  const { screen, setOpen } = useAgent()
+  const { screen, setOpen, pending, clearPending } = useAgent()
   const queryClient = useQueryClient()
   const [text, setText] = useState("")
   const room = useRoom({
@@ -48,6 +48,17 @@ function SheetRoom({ latest, me, onFresh }: { latest: Latest; me: string; onFres
   useEffect(() => {
     scroller.current?.scrollTo({ top: scroller.current.scrollHeight, behavior: "smooth" })
   }, [room.messages.length, lastLength])
+
+  // A question another screen asked for (the map's "Plan a night here"), sent once.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: sends each pending ask once
+  useEffect(() => {
+    if (!pending || room.busy) return
+    const ask = pending
+    clearPending()
+    void room.send(ask, [], screen ?? undefined).then((ok) => {
+      if (ok) void queryClient.invalidateQueries({ queryKey: ["chats"] })
+    })
+  }, [pending])
 
   const send = async () => {
     const value = text.trim()

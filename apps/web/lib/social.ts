@@ -339,3 +339,46 @@ export async function peopleHome(userId: string) {
     figures,
   }
 }
+
+/**
+ * The taste-twin radar (W10): people here whose taste is closest to yours (the most shared loves
+ * and picks), and public figures Qloo predicts for your taste, with where they post.
+ */
+export async function radarOf(userId: string) {
+  const [self] = await db
+    .select({ id: schema.people.id })
+    .from(schema.people)
+    .where(and(eq(schema.people.ownerId, userId), eq(schema.people.isSelf, true)))
+  const [twins, [taste]] = await Promise.all([
+    tasteTwins(userId, 10),
+    self
+      ? db
+          .select({ picks: schema.tastes.picks })
+          .from(schema.tastes)
+          .where(eq(schema.tastes.personId, self.id))
+      : Promise.resolve([] as { picks: null }[]),
+  ])
+  const persons =
+    (
+      taste?.picks as Record<
+        string,
+        {
+          qlooId: string
+          name: string
+          image: string | null
+          caption: string | null
+          links?: Record<string, string>
+        }[]
+      > | null
+    )?.person ?? []
+  return {
+    twins,
+    figures: persons.slice(0, 10).map((p) => ({
+      id: p.qlooId,
+      name: p.name,
+      image: p.image,
+      caption: p.caption,
+      link: p.links?.open ?? null,
+    })),
+  }
+}

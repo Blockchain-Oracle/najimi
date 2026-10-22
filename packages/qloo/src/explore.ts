@@ -32,6 +32,8 @@ export type ExploreInput = {
     audiences?: string[]
     /** "The taste of people in Lagos." */
     location?: string
+    /** The taste of a spot on the map (a neighbourhood's own scene), with no person in it. */
+    point?: { lat: number; lon: number; radiusMeters?: number }
   }
   filter?: {
     city?: string
@@ -61,6 +63,8 @@ export type ExploreInput = {
     onlyIds?: string[]
     exclude?: string[]
     geohash?: string
+    /** Results near a spot on the map. */
+    point?: { lat: number; lon: number; radiusMeters?: number }
   }
   /** One result per city (or metro). */
   diversifyBy?: "city" | "metro"
@@ -96,8 +100,11 @@ export function exploreBody(input: ExploreInput): Record<string, unknown> {
       "signal.demographics.gender": s.gender,
       "signal.demographics.audiences": list(s.audiences),
       "signal.location.query": s.location,
+      "signal.location": s.point ? `POINT(${s.point.lon} ${s.point.lat})` : undefined,
+      "signal.location.radius": s.point?.radiusMeters,
       "filter.location.query": f.city,
-      "filter.location.radius": f.radiusMeters,
+      "filter.location": f.point ? `POINT(${f.point.lon} ${f.point.lat})` : undefined,
+      "filter.location.radius": f.point?.radiusMeters ?? f.radiusMeters,
       "filter.exclude.location.query": f.excludeCity,
       "filter.tags": list(f.tags),
       "operator.filter.tags": f.tags?.length && f.tagsMode === "all" ? "intersection" : undefined,
@@ -145,6 +152,8 @@ export type ExploreResult =
         geohash: string
         affinity: number
         popularity: number | null
+        /** Each kind of thing's own affinity here (`artist`, `place`, `tv_show`…). */
+        byType: Record<string, number>
       }[]
       callId: string
     }
@@ -193,6 +202,12 @@ export async function explore(
         geohash: p.location.geohash,
         affinity: p.query.affinity ?? 0,
         popularity: p.query.popularity ?? null,
+        byType: Object.fromEntries(
+          Object.entries(p.query as Record<string, unknown>).flatMap(([key, value]) => {
+            const m = /^entity_(.+)_affinity$/.exec(key)
+            return m && typeof value === "number" ? [[m[1] as string, value]] : []
+          }),
+        ),
       })),
     }
   }
@@ -286,4 +301,59 @@ export async function nameAreas(
   return named
     .filter((a): a is Area => a !== null && !seen.has(a.name) && Boolean(seen.add(a.name)))
     .slice(0, count)
+}
+
+/** Qloo's words without near-repeats ("afrobeat", "Afrobeats"; "nigeria", "nigerian"), capitalised. */
+function distinctWords(tags: { name: string; affinity: number | null }[]) {
+  const seen = new Set<string>()
+  return tags.flatMap((t) => {
+    const key = t.name.toLowerCase().replace(/(s|n)$/, "")
+    if (seen.has(key)) return []
+    seen.add(key)
+    return [{ name: t.name.charAt(0).toUpperCase() + t.name.slice(1), affinity: t.affinity }]
+  })
+}
+
+export type Scene = {
+  artists: StoredPick[]
+  brands: StoredPick[]
+  places: StoredPick[]
+  words: { name: string; affinity: number | null }[]
+  callIds: string[]
+}
+
+/**
+ * A neighbourhood's own taste (W12): what people around a spot on the map love — its artists,
+ * brands, places and words — from a location-only signal, with no person in it.
+ */
+export async function sceneOf(
+  point: { lat: number; lon: number; radiusMeters?: number },
+  ctx: CallContext = {},
+): Promise<Scene> {
+  const signal = { point: { radiusMeters: 2500, ...point } }
+  const ask = (filterType: string, extra: Partial<ExploreInput> = {}) =>
+    explore({ filterType, signal, take: 8, withImage: filterType !== "urn:tag", ...extra }, [], {
+      ...ctx,
+      purpose: "The scene around a spot on the map",
+    }).catch(() => null)
+  const [artists, brands, places, words] = await Promise.all([
+    ask("urn:entity:artist"),
+    ask("urn:entity:brand"),
+    ask("urn:entity:place", {
+      filter: {
+        point: { radiusMeters: 2500, ...point },
+        tags: OUTING_TAGS,
+        excludeTags: NOT_OUTINGS,
+      },
+    }),
+    ask("urn:tag", { take: 12 }),
+  ])
+  const picks = (r: ExploreResult | null) => (r?.kind === "entities" ? r.picks : [])
+  return {
+    artists: picks(artists),
+    brands: picks(brands),
+    places: picks(places),
+    words: words?.kind === "tags" ? distinctWords(words.tags).slice(0, 12) : [],
+    callIds: [artists, brands, places, words].flatMap((r) => (r ? [r.callId] : [])),
+  }
 }

@@ -171,6 +171,9 @@ importers:
       '@najimi/games':
         specifier: workspace:*
         version: link:../../packages/games
+      '@najimi/geo':
+        specifier: workspace:*
+        version: link:../../packages/geo
       '@najimi/jobs':
         specifier: workspace:*
         version: link:../../packages/jobs
@@ -532,6 +535,21 @@ importers:
       drizzle-orm:
         specifier: 'catalog:'
         version: 0.45.4(@opentelemetry/api@1.9.1)(kysely@0.29.7)(pg@8.23.1)(postgres@3.4.9)
+    devDependencies:
+      '@najimi/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.19.2
+      tsx:
+        specifier: 'catalog:'
+        version: 4.23.15
+      typescript:
+        specifier: 'catalog:'
+        version: 7.0.2
+
+  packages/geo:
     devDependencies:
       '@najimi/typescript-config':
         specifier: workspace:*

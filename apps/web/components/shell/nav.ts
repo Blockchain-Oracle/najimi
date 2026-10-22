@@ -1,15 +1,15 @@
-import { Disc3, type LucideIcon, UserRound, Users } from "lucide-react"
+import { Disc3, Earth, type LucideIcon, UserRound, Users } from "lucide-react"
 
 /**
  * Where you can go, shared by the phone tab bar and the desktop rail. `match` says which paths
  * light an item up (your own profile lives at /people/[id]; People itself is /people, and someone
  * else's profile /u/[username]). `orb` draws Najimi's orb instead of an icon. Sections join this
- * list as their stage lands (Map next).
+ * list as their stage lands.
  */
 export type NavItem = {
   href: string
   match: (path: string) => boolean
-  key: "feed" | "people" | "chat" | "me"
+  key: "feed" | "people" | "chat" | "earth" | "me"
   icon: LucideIcon | "orb"
 }
 
@@ -25,6 +25,7 @@ export const NAV: readonly NavItem[] = [
     icon: Users,
   },
   { href: "/c", match: (p) => p === "/c" || p.startsWith("/c/"), key: "chat", icon: "orb" },
+  { href: "/earth", match: (p) => p.startsWith("/earth"), key: "earth", icon: Earth },
   {
     href: "/me",
     match: (p) => p.startsWith("/me") || p.startsWith("/people/"),

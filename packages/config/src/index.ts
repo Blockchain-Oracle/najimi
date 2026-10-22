@@ -225,6 +225,18 @@ export const GAMES = {
   perMinute: 12,
 } as const
 
+/** The Earth (W11, W12): heatmaps over cities, scenes around a spot, people on the globe. */
+export const EARTH = {
+  /** Named areas drawn over a city (Qloo answers the whole city at once: Lagos is 1,253 cells). */
+  areas: 4,
+  /** A scene is everything within this of the spot tapped. */
+  sceneRadiusMeters: 2500,
+  /** Map requests one person may make per minute. */
+  perMinute: 30,
+  /** The map's look: OpenFreeMap's free dark style. */
+  style: "https://tiles.openfreemap.org/styles/dark",
+} as const
+
 const HOUR_S = 60 * 60
 
 /** Images and video (generation providers, sizes, polling). */

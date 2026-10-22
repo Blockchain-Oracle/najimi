@@ -20,6 +20,7 @@
     "@najimi/email": "workspace:*",
     "@najimi/env": "workspace:*",
     "@najimi/games": "workspace:*",
+    "@najimi/geo": "workspace:*",
     "@najimi/jobs": "workspace:*",
     "@najimi/live": "workspace:*",
     "@najimi/media": "workspace:*",

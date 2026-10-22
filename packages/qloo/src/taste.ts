@@ -13,6 +13,26 @@ import { entitiesOf, type TasteItem, tagsResponse, toTasteItem } from "./types"
 export type Love = { qlooId: string; name: string; weight: number; sparseDomains?: string[] }
 export type Domain = (typeof TASTE_DOMAINS)[number]["key"]
 
+/**
+ * Several people's loves as one taste, each person counting equally (their loves add up to the
+ * same weight, whoever loves more things): a circle's taste, a group's map.
+ */
+export function blendLoves(lovesBy: Love[][], max = 24, weightMax = 10): Love[] {
+  const blend = new Map<string, Love>()
+  for (const loves of lovesBy) {
+    const total = loves.reduce((n, l) => n + l.weight, 0) || 1
+    for (const l of loves) {
+      const w = (l.weight / total) * weightMax
+      const seen = blend.get(l.qlooId)
+      blend.set(l.qlooId, { ...l, weight: (seen?.weight ?? 0) + w })
+    }
+  }
+  return [...blend.values()]
+    .sort((a, b) => b.weight - a.weight)
+    .slice(0, max)
+    .map((l) => ({ ...l, weight: Math.max(1, Math.round(l.weight)) }))
+}
+
 const signalOf = (loves: Love[], domain?: string) => {
   const usable = domain ? loves.filter((l) => !l.sparseDomains?.includes(domain)) : loves
   return (usable.length ? usable : loves).map((l) => ({ id: l.qlooId, weight: l.weight }))
