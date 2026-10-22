@@ -252,8 +252,10 @@ export const TASTE = {
   weightDefault: 5,
   weightMin: 1,
   weightMax: 10,
-  /** Picks kept per domain on the taste page. */
+  /** Picks kept per domain on the taste page (and one Qloo page of the feed). */
   picksPerDomain: 6,
+  /** Loves one taste can hold: the onboarding grid stops at `lovesMax`, the feed adds up to this. */
+  seedsMax: 24,
   /** Brands read to aggregate design-language words. */
   brandsForWords: 30,
   /** Words kept per family (aesthetic, lifestyle, decor…). */
@@ -350,4 +352,77 @@ export const IMPORTS = {
   /** Imports one person may run per minute. */
   perMinute: 12,
   userAgent: "Mozilla/5.0 (compatible; Najimi/1.0; +https://najimi.84.46.247.92.sslip.io)",
+} as const
+
+/**
+ * The feed (W4): culture from your taste, a card at a time, music every two or three cards. Each
+ * category's share is a dial (0 off … 3 more); pages come from the stored picks, then Qloo's next
+ * pages for that category.
+ */
+export const FEED = {
+  pageSize: 12,
+  /**
+   * Categories the feed draws from, with their share of the cards (people and destinations live
+   * elsewhere). A dial scales a share: Off ×0, Less ×½, Normal ×1, More ×2.
+   */
+  mix: {
+    artist: 5,
+    podcast: 2,
+    movie: 2,
+    tv_show: 1,
+    place: 1,
+    book: 1,
+    brand: 1,
+    videogame: 1,
+  },
+  mixMax: 3,
+  /** Every dial starts on Normal. */
+  mixDefault: 2,
+  mixFactor: [0, 0.5, 1, 2],
+  /** Qloo pages one category is read to before it's done for this feed. */
+  maxPages: 6,
+  /** Cards seen this recently aren't shown again while there's something new. */
+  seenDays: 3,
+  /** A love from the feed joins the taste at this weight. */
+  loveWeight: 3,
+  /** Reactions go to the server in batches, at most this often. */
+  flushMs: 4_000,
+  /** Watching a card this long counts as interest. */
+  dwellMs: 8_000,
+  /** Reactions in one batch. */
+  batchMax: 40,
+  /** The taste is recomputed once the loves from the feed settle (pg-boss debounce, seconds). */
+  retuneSeconds: 30,
+  /** Feed pages one person may load per minute. */
+  perMinute: 40,
+  /** Cards kept mounted around the one on screen. */
+  window: 3,
+  /** The next page is fetched when this many cards are left. */
+  prefetchAt: 4,
+} as const
+
+/**
+ * Media for feed cards, looked up once and kept: Apple previews for artists (Wikidata P2850 →
+ * iTunes; a name search only when Wikidata has no Apple id), a podcast's latest episode from its
+ * own RSS, a film or show's trailer from TMDB. Apple's terms: stream previews, never store audio,
+ * credit "courtesy of Apple" beside a store link. Only metadata is kept here.
+ */
+export const MEDIA_LINKS = {
+  /** iTunes storefront (Nigeria's returns nothing for lookups; the US one has the catalogue). */
+  country: "US",
+  songsPerArtist: 3,
+  /** Ids per Wikidata or iTunes request. */
+  batch: 50,
+  /** Name searches one request may make (iTunes allows about 20 calls a minute). */
+  nameSearches: 4,
+  /** Feeds read per request, and how much of each. */
+  podcasts: 6,
+  podcastBytes: 768 * 1024,
+  trailers: 6,
+  timeoutMs: 8_000,
+  /** Days each answer is kept. */
+  days: { appleId: 30, songs: 7, episode: 1, trailer: 30 },
+  /** Apple artwork is resized in its URL. */
+  artwork: 600,
+  userAgent: "Najimi/1.0 (+https://najimi.84.46.247.92.sslip.io)",
 } as const

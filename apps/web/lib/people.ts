@@ -1,8 +1,9 @@
 import "server-only"
 import { lookById } from "@najimi/config"
 import { db, schema } from "@najimi/db"
+import type { StoredPick } from "@najimi/db/schema"
 import { enqueue } from "@najimi/jobs"
-import { and, asc, desc, eq } from "drizzle-orm"
+import { and, asc, desc, eq, sql } from "drizzle-orm"
 
 export type PersonRow = typeof schema.people.$inferSelect
 export type LoveRow = typeof schema.loves.$inferSelect
@@ -68,6 +69,34 @@ export async function personPage(userId: string, personId: string) {
     saved,
     runStatus: run?.status ?? null,
   }
+}
+
+/**
+ * "Not for me" (rule 3): the pick leaves the person's taste page at once and is excluded from
+ * every later Qloo call made for them (the feed included).
+ */
+export async function hidePick(personId: string, qlooId: string) {
+  await db.transaction(async (tx) => {
+    await tx
+      .update(schema.people)
+      .set({
+        excludedIds: sql`array_append(array_remove(${schema.people.excludedIds}, ${qlooId}), ${qlooId})`,
+      })
+      .where(eq(schema.people.id, personId))
+    const [taste] = await tx
+      .select()
+      .from(schema.tastes)
+      .where(eq(schema.tastes.personId, personId))
+    if (taste?.picks) {
+      const picks: Record<string, StoredPick[]> = Object.fromEntries(
+        Object.entries(taste.picks).map(([d, list]) => [
+          d,
+          list.filter((p) => p.qlooId !== qlooId),
+        ]),
+      )
+      await tx.update(schema.tastes).set({ picks }).where(eq(schema.tastes.personId, personId))
+    }
+  })
 }
 
 /** Starts recomputing a person's taste; the reveal watches the returned run. */

@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@ai-sdk/react": "catalog:",
+    "@base-ui/react": "1.9.0",
     "@najimi/agent": "workspace:*",
     "@najimi/config": "workspace:*",
     "@najimi/connectors": "workspace:*",

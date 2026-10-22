@@ -87,6 +87,7 @@ export function Composer({
   onSend,
   onStop,
   ideas = [],
+  initialText,
 }: {
   /** The signed-in person (their face sits on the composer). */
   person?: ChatPerson
@@ -97,10 +98,12 @@ export function Composer({
   onStop: () => void
   /** Things worth asking, shown in turn where the placeholder sits. */
   ideas?: string[]
+  /** Text already typed in when the composer opens. */
+  initialText?: string
 }) {
   const t = useTranslations("Chat")
   const ts = useTranslations("Settings")
-  const [text, setText] = useState("")
+  const [text, setText] = useState(initialText ?? "")
   const [photos, setPhotos] = useState<Uploaded[]>([])
   const [uploading, setUploading] = useState(0)
   const [error, setError] = useState<string | null>(null)

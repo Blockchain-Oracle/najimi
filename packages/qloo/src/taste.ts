@@ -29,6 +29,8 @@ type Insights = {
   exclude?: string[]
   /** Tags the results must carry (`urn:tag:genre:place:restaurant`). */
   tags?: string[]
+  /** Tags the results must not carry. */
+  excludeTags?: string[]
   /** Tags that join the signal (a mood: `urn:tag:keyword:media:rainy_day`). */
   signalTags?: string[]
   /** Places: around this city. */
@@ -53,6 +55,7 @@ export async function profileInsights(
     ...(input.withImage ? { "filter.exists": "properties.image" } : {}),
     ...(input.exclude?.length ? { "filter.exclude.entities": input.exclude.join(",") } : {}),
     ...(input.tags?.length ? { "filter.tags": input.tags.join(",") } : {}),
+    ...(input.excludeTags?.length ? { "filter.exclude.tags": input.excludeTags.join(",") } : {}),
     ...(input.signalTags?.length ? { "signal.interests.tags": input.signalTags.join(",") } : {}),
     ...(input.city ? { "filter.location.query": input.city } : {}),
     ...(input.only?.length ? { "filter.results.entities": input.only.join(",") } : {}),
@@ -81,6 +84,22 @@ const firstExternal = (item: TasteItem, key: string): string | null => {
   const value = item.external[key]
   const first = Array.isArray(value) ? value[0] : null
   return first && typeof first === "object" && "id" in first ? String(first.id) : null
+}
+
+/** The pick's ids elsewhere (only the ones it has), for its media: previews, trailers, episodes. */
+function idsOf(item: TasteItem): NonNullable<StoredPick["ids"]> {
+  const isbn13 = (item.properties as { isbn13?: string }).isbn13
+  const ids = {
+    wikidata: firstExternal(item, "wikidata")?.toUpperCase(),
+    imdb: firstExternal(item, "imdb") ?? undefined,
+    itunes: item.handles.itunes ?? firstExternal(item, "itunes") ?? undefined,
+    spotify: firstExternal(item, "spotify") ?? undefined,
+    musicbrainz: firstExternal(item, "musicbrainz") ?? undefined,
+    isbn13: isbn13 ?? undefined,
+  }
+  return Object.fromEntries(Object.entries(ids).filter(([, v]) => v)) as NonNullable<
+    StoredPick["ids"]
+  >
 }
 
 /** Where "open" goes for each kind of pick (rule 3): real pages, never a made-up link. */
@@ -116,11 +135,16 @@ export function linksOf(item: TasteItem): Record<string, string> {
       break
     case "urn:entity:movie":
     case "urn:entity:tv_show":
-    case "urn:entity:videogame":
-      links.open = wikidata
-        ? `https://www.wikidata.org/wiki/${wikidata.toUpperCase()}`
-        : `https://www.themoviedb.org/search?query=${q}`
+    case "urn:entity:videogame": {
+      const imdb = firstExternal(item, "imdb")
+      if (imdb && /^tt\d+$/.test(imdb)) links.imdb = `https://www.imdb.com/title/${imdb}/`
+      links.open =
+        links.imdb ??
+        (wikidata
+          ? `https://www.wikidata.org/wiki/${wikidata.toUpperCase()}`
+          : `https://www.themoviedb.org/search?query=${q}`)
       break
+    }
     case "urn:entity:person":
       links.open = item.handles.instagram
         ? `https://www.instagram.com/${item.handles.instagram}`
@@ -155,8 +179,10 @@ export function toPick(item: TasteItem, loves: Love[], callId: string): StoredPi
     caption: item.caption,
     affinity: item.affinity,
     because: becauseOf(item, loves),
+    shares: item.drivers.map((d) => ({ id: d.entityId, share: d.score })),
     callId,
     links: linksOf(item),
+    ids: idsOf(item),
     ...(item.type === "urn:entity:place"
       ? {
           details: [
@@ -196,6 +222,8 @@ export async function profilePicks(
     city?: string | null
     exclude?: string[]
     take?: number
+    /** Qloo's results page (1 first), for the feed reading further down a category. */
+    page?: number
     tags?: string[]
     signalTags?: string[]
   },
@@ -213,8 +241,11 @@ export async function profilePicks(
         withImage: Boolean(meta?.artwork),
         exclude: [...(opts.exclude ?? []), ...loves.map((l) => l.qlooId)],
         city: local ? opts.city : undefined,
-        tags: opts.tags,
+        // Places default to where people go out (not churches, schools, banks, hotels or halls).
+        tags: opts.tags ?? (local ? OUTING_TAGS : undefined),
+        excludeTags: local && !opts.tags ? NOT_OUTINGS : undefined,
         signalTags: opts.signalTags,
+        extra: opts.page && opts.page > 1 ? { page: opts.page } : undefined,
       },
       ctx,
       domain,
@@ -319,3 +350,16 @@ export const PLACE_KINDS = {
   park: "urn:tag:genre:place:park",
 } as const
 export type PlaceKind = keyof typeof PLACE_KINDS
+
+/** The place kinds a taste's own picks come from: eating, drinking, culture and parks. */
+export const OUTING_TAGS = Object.entries(PLACE_KINDS)
+  .filter(([kind]) => kind !== "hotel")
+  .map(([, tag]) => tag)
+
+/** Places that carry a restaurant or bar tag but aren't a night out (checked on Lagos, 2026-10-22). */
+export const NOT_OUTINGS = [
+  PLACE_KINDS.hotel,
+  "urn:tag:genre:place:event_venue",
+  "urn:tag:genre:place:banquet_hall",
+  "urn:tag:genre:place:wedding_venue",
+]

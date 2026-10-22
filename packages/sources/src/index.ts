@@ -1,3 +1,15 @@
-export { cached } from "./cache"
-export { fetchSitePage, sameSite } from "./fetch"
+export { cached, cachedMany } from "./cache"
+export { fetchPublic, fetchSitePage, sameSite } from "./fetch"
 export { type Product, parseProduct } from "./jsonld"
+export {
+  type CardMedia,
+  coverOf,
+  type Episode,
+  episodesFor,
+  mediaFor,
+  type Song,
+  songsFor,
+  type Trailer,
+  trailersFor,
+  trailersReady,
+} from "./media"

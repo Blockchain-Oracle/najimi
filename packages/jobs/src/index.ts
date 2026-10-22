@@ -25,6 +25,16 @@ export const QUEUES = {
     options: { retryLimit: 1, retryDelay: 5, expireInSeconds: 5 * 60 },
     send: { heartbeatSeconds: JOBS.heartbeatSeconds },
   },
+  /**
+   * The taste again once loves from the feed settle (sent debounced per person, so ten quick
+   * loves cost one recompute). The worker opens the run itself; nobody is watching a reveal.
+   */
+  tasteRetune: {
+    name: "taste-retune",
+    payload: z.object({ personId: z.uuid() }),
+    options: { retryLimit: 1, retryDelay: 10, expireInSeconds: 5 * 60 },
+    send: { heartbeatSeconds: JOBS.heartbeatSeconds },
+  },
   /** A new chat's title, in the chat's language, once its first answer is in. */
   chatTitle: {
     name: "chat-title",
@@ -101,6 +111,26 @@ export async function enqueue<Q extends QueueName>(
 ) {
   const parsed = QUEUES[queue].payload.parse(data)
   return (await boss()).send(QUEUES[queue].name, parsed, { ...QUEUES[queue].send, singletonKey })
+}
+
+/**
+ * Enqueues a job at most once per `seconds` per key; a send inside a busy window moves to the next
+ * one instead of being dropped (pg-boss `sendDebounced`), so the last change is always picked up.
+ */
+export async function enqueueDebounced<Q extends QueueName>(
+  queue: Q,
+  data: Payload<Q>,
+  seconds: number,
+  key: string,
+) {
+  const parsed = QUEUES[queue].payload.parse(data)
+  return (await boss()).sendDebounced(
+    QUEUES[queue].name,
+    parsed,
+    { ...QUEUES[queue].send },
+    seconds,
+    key,
+  )
 }
 
 /** Enqueues a job to start at a set time. */

@@ -7,7 +7,7 @@ import { closeInterruptedRuns } from "./interrupted"
 import { chatTitle } from "./jobs/chat-title"
 import { guestsCleanup } from "./jobs/forget"
 import { mediaGenerate, pollVideos } from "./jobs/media"
-import { tasteRefresh } from "./jobs/taste-refresh"
+import { tasteRefresh, tasteRetune } from "./jobs/taste-refresh"
 import { seedSamples } from "./samples"
 
 /*
@@ -50,6 +50,16 @@ async function main() {
       if (!job) return
       const { personId, runId } = QUEUES.tasteRefresh.payload.parse(job.data)
       await tasteRefresh(personId, runId)
+    },
+  )
+
+  await queues.work<Payload<"tasteRetune">>(
+    QUEUES.tasteRetune.name,
+    { localConcurrency: 2 },
+    async ([job]) => {
+      if (!job) return
+      const { personId } = QUEUES.tasteRetune.payload.parse(job.data)
+      await tasteRetune(personId)
     },
   )
 

@@ -77,3 +77,54 @@ export async function fetchSitePage(
   }
   return null
 }
+
+/**
+ * Fetches a document from anywhere public (a podcast's own RSS feed, named by Apple's directory):
+ * http or https, every address public, at most three redirects (each checked again), and only the
+ * first `maxBytes` read. Returns the text and where it ended up, or null.
+ */
+export async function fetchPublic(
+  url: string,
+  { maxBytes = MAX_BYTES, accept = "*/*" }: { maxBytes?: number; accept?: string } = {},
+): Promise<{ text: string; url: string } | null> {
+  let current: URL
+  try {
+    current = new URL(url)
+  } catch {
+    return null
+  }
+  for (let hop = 0; hop <= MAX_REDIRECTS; hop++) {
+    if (current.protocol !== "https:" && current.protocol !== "http:") return null
+    const addresses = await lookup(current.hostname, { all: true }).catch(() => [])
+    if (!addresses.length || addresses.some((a) => isPrivate(a.address))) return null
+    const response = await fetch(current, {
+      redirect: "manual",
+      signal: AbortSignal.timeout(TIMEOUT_MS),
+      headers: { "user-agent": "Mozilla/5.0 (compatible; Najimi/1.0)", accept },
+    }).catch(() => null)
+    if (!response) return null
+    if (response.status >= 300 && response.status < 400) {
+      const next = response.headers.get("location")
+      if (!next) return null
+      current = new URL(next, current)
+      continue
+    }
+    if (!response.ok) return null
+    const reader = response.body?.getReader()
+    if (!reader) return null
+    const chunks: Uint8Array[] = []
+    let size = 0
+    for (;;) {
+      const { done, value } = await reader.read()
+      if (done) break
+      size += value.byteLength
+      chunks.push(value)
+      if (size >= maxBytes) {
+        await reader.cancel()
+        break
+      }
+    }
+    return { text: Buffer.concat(chunks).toString("utf8"), url: current.toString() }
+  }
+  return null
+}

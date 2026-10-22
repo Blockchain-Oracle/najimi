@@ -147,6 +147,9 @@ importers:
       '@ai-sdk/react':
         specifier: 'catalog:'
         version: 4.0.150(react@19.3.1)(zod@4.6.7)
+      '@base-ui/react':
+        specifier: 1.9.0
+        version: 1.9.0(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
       '@najimi/agent':
         specifier: workspace:*
         version: link:../../packages/agent
@@ -292,6 +295,9 @@ importers:
       '@najimi/qloo':
         specifier: workspace:*
         version: link:../../packages/qloo
+      '@najimi/sources':
+        specifier: workspace:*
+        version: link:../../packages/sources
       '@najimi/storage':
         specifier: workspace:*
         version: link:../../packages/storage
@@ -605,6 +611,9 @@ importers:
       drizzle-orm:
         specifier: 'catalog:'
         version: 0.45.4(@opentelemetry/api@1.9.1)(kysely@0.29.7)(pg@8.23.1)(postgres@3.4.9)
+      fast-xml-parser:
+        specifier: 5.11.2
+        version: 5.11.2
     devDependencies:
       '@najimi/typescript-config':
         specifier: workspace:*

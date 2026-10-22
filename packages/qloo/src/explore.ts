@@ -2,7 +2,7 @@ import { QLOO } from "@najimi/config"
 import type { StoredPick } from "@najimi/db/schema"
 import { type CallContext, qlooCall } from "./call"
 import { QlooError } from "./client"
-import { type Love, toPick } from "./taste"
+import { type Love, NOT_OUTINGS, OUTING_TAGS, toPick } from "./taste"
 import {
   demographicsResponse,
   entitiesOf,
@@ -258,7 +258,8 @@ export async function nameAreas(
         {
           filterType: "urn:entity:place",
           signal,
-          filter: { geohash: g.geohash.slice(0, 5) },
+          // Named by where people go out there, not by its banks and churches.
+          filter: { geohash: g.geohash.slice(0, 5), tags: OUTING_TAGS, excludeTags: NOT_OUTINGS },
           take: 4,
         },
         loves,

@@ -10,6 +10,7 @@ import {
   profilePicks,
   profileWords,
 } from "@najimi/qloo"
+import { mediaFor } from "@najimi/sources"
 import { asc, eq, sql } from "drizzle-orm"
 import { auraFrom } from "../palette"
 
@@ -150,4 +151,22 @@ export async function tasteRefresh(personId: string, runId: string): Promise<voi
   }
   await emit(runId, "bridges", { bridges, empty })
   await setRunStatus(runId, "done")
+  // The feed's first page plays at once: its songs, episodes and trailers are looked up now.
+  await mediaFor(Object.values(picks).flat()).catch((error) =>
+    console.error("[taste] media warm-up", error),
+  )
+}
+
+/** The taste again after loves from the feed: the worker opens the run (no reveal is waiting). */
+export async function tasteRetune(personId: string): Promise<void> {
+  const [person] = await db
+    .select({ ownerId: schema.people.ownerId })
+    .from(schema.people)
+    .where(eq(schema.people.id, personId))
+  if (!person) return
+  const [run] = await db
+    .insert(schema.runs)
+    .values({ ownerId: person.ownerId, kind: "taste", subject: { personId, from: "feed" } })
+    .returning({ id: schema.runs.id })
+  if (run) await tasteRefresh(personId, run.id)
 }

@@ -15,6 +15,7 @@ import { useTranslations } from "next-intl"
 import { Suspense, useState } from "react"
 import { SignInSheet } from "@/components/auth/sign-in-sheet"
 import { LanguageMenu } from "@/components/language-menu"
+import { MiniPlayer } from "@/components/player/mini-player"
 import { authClient } from "@/lib/auth-client"
 import { isHere, NAV } from "./nav"
 import { TabBar } from "./tab-bar"
@@ -136,11 +137,25 @@ function Rail({ pathname, onSignIn }: { pathname: string | null; onSignIn: () =>
  * The shell every app page shares. Phones: a light top bar (the wordmark, settings and you) and the
  * floating tab bar. Desktop: the rail. Content pads by RAIL_WIDTH on desktop.
  */
-export function AppHeader({ google, email }: { google: boolean; email: boolean }) {
+export function AppHeader({
+  google,
+  email,
+  bare = false,
+}: {
+  google: boolean
+  email: boolean
+  /** Full-bleed screens (the feed) draw their own top bar on phones. */
+  bare?: boolean
+}) {
   const [signIn, setSignIn] = useState(false)
   return (
     <>
-      <header className="sticky top-0 z-30 bg-background/80 backdrop-blur-md md:hidden">
+      <header
+        className={cn(
+          "sticky top-0 z-30 bg-background/80 backdrop-blur-md md:hidden",
+          bare && "hidden",
+        )}
+      >
         <div className="flex h-14 items-center gap-2 px-4">
           <Wordmark />
           <span className="flex-1" />
@@ -153,6 +168,9 @@ export function AppHeader({ google, email }: { google: boolean; email: boolean }
         <CurrentRail onSignIn={() => setSignIn(true)} />
       </Suspense>
       <TabBar />
+      <Suspense fallback={null}>
+        <MiniPlayer />
+      </Suspense>
       <SignInSheet open={signIn} onOpenChange={setSignIn} google={google} email={email} />
     </>
   )

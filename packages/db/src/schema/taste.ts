@@ -44,12 +44,23 @@ export type StoredPick = {
   affinity: number | null
   /** The love with the top explainability share (the "because" chip). */
   because: { qlooId: string; name: string; share: number | null } | null
+  /** Every love's share of this pick (explainability), for re-ranking when a weight moves. */
+  shares?: { id: string; share: number }[]
   callId: string
   links?: Record<string, string>
   /** Places: the neighbourhood (or town) it's in. */
   area?: string | null
   /** Places: what Qloo says they're known for (cuisines, specialty dishes). */
   details?: string[]
+  /** Ids elsewhere, for media (Apple previews via Wikidata, trailers via IMDb, podcast feeds). */
+  ids?: {
+    wikidata?: string
+    imdb?: string
+    itunes?: string
+    spotify?: string
+    musicbrainz?: string
+    isbn13?: string
+  }
 }
 
 export const userPrefs = pgTable("user_prefs", {
@@ -85,6 +96,10 @@ export const people = pgTable(
     aura: jsonb().$type<{ c1: string; c2: string; c3: string }>(),
     /** Qloo ids marked "not for me": excluded from every later pick. */
     excludedIds: text().array().default(sql`'{}'::text[]`).notNull(),
+    /** How much of each category the feed shows (0 off … 3 more); null = the defaults. */
+    feedMix: jsonb().$type<Record<string, number>>(),
+    /** Where their feed got to, so it carries on with something new (reset when the taste moves). */
+    feedCursor: jsonb().$type<{ key: string; cursor: string }>(),
     ...timestamps,
   },
   (t) => [
@@ -147,4 +162,42 @@ export const savedPicks = pgTable(
     createdAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
   },
   (t) => [uniqueIndex("saved_picks_person_entity_idx").on(t.personId, t.qlooId)],
+)
+
+export type SignalKind =
+  | "seen"
+  | "dwell"
+  | "play"
+  | "love"
+  | "unlove"
+  | "hide"
+  | "save"
+  | "unsave"
+  | "open"
+
+/**
+ * What someone did with a card (W4): seen, watched for a while, played, loved, hid, kept, opened.
+ * The feed skips what was just seen; loves and hides change the taste; the rest is history the
+ * graph's time slider and the agent read.
+ */
+export const signals = pgTable(
+  "signals",
+  {
+    id: uuid().defaultRandom().primaryKey(),
+    personId: uuid()
+      .notNull()
+      .references(() => people.id, { onDelete: "cascade" }),
+    qlooId: text().notNull(),
+    type: text().notNull(),
+    kind: text().$type<SignalKind>().notNull(),
+    /** Milliseconds watched or listened, for dwell and play. */
+    value: doublePrecision(),
+    /** Where it happened: feed, taste, graph, room… */
+    surface: text().default("feed").notNull(),
+    createdAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
+  },
+  (t) => [
+    index("signals_person_time_idx").on(t.personId, t.createdAt),
+    index("signals_person_entity_idx").on(t.personId, t.qlooId),
+  ],
 )

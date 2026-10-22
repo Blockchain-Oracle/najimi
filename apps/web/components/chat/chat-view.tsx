@@ -28,6 +28,8 @@ export type ChatViewProps = {
   /** The taste an empty chat says it will use. */
   taste: WelcomeTaste
   greetingName: string
+  /** A question to start with, typed in for them (from "Ask Najimi" on a feed card). */
+  ask?: string
 }
 
 const textOf = (m: NajimiUIMessage) =>
@@ -215,6 +217,7 @@ export function ChatView(props: ChatViewProps) {
             onSend={send}
             onStop={() => void stop()}
             ideas={props.starters.map((s) => s.text)}
+            initialText={props.ask}
           />
         </div>
       </div>

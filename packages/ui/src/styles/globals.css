@@ -282,3 +282,10 @@
     animation: none;
   }
 }
+
+/* The mini player floats above the tab bar on phones; pages leave room for it while it's up. */
+@media (max-width: 47.99rem) {
+  html[data-player] main {
+    padding-bottom: calc(10rem + env(safe-area-inset-bottom));
+  }
+}

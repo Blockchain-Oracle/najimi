@@ -9,13 +9,13 @@ import { pageLocale } from "@/lib/page-locale"
 import { selfOf } from "@/lib/people"
 import { getSession } from "@/lib/session"
 
-/** Someone who already has a taste goes back to it; everyone else starts. */
+/** Someone who already has a taste goes to their feed; everyone else starts. */
 async function MainAction({ start, open }: { start: string; open: string }) {
   const session = await getSession()
   const self = session ? await selfOf(session.user.id) : null
   return (
     <Link
-      href={self ? `/people/${self.id}` : "/start"}
+      href={self ? "/feed" : "/start"}
       className="inline-flex items-center gap-2 rounded-pill bg-primary px-6 py-3 text-[15px] font-semibold text-primary-foreground transition-opacity hover:opacity-90"
     >
       {self ? open : start} <ArrowRight className="size-4 rtl:rotate-180" />
