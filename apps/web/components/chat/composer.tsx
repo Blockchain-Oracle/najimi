@@ -8,12 +8,27 @@ import {
 } from "@najimi/ui/components/dropdown-menu"
 import { cn } from "@najimi/ui/lib/utils"
 import { useQuery } from "@tanstack/react-query"
-import { ArrowUp, Check, ChevronDown, ImagePlus, Images, Square, X } from "lucide-react"
+import {
+  ArrowUp,
+  Check,
+  ChevronDown,
+  Hand,
+  ImagePlus,
+  Images,
+  NotebookPen,
+  Shapes,
+  Square,
+  X,
+  Zap,
+} from "lucide-react"
+import { AnimatePresence, motion } from "motion/react"
 import { useTranslations } from "next-intl"
-import { useRef, useState } from "react"
+import { useEffect, useId, useRef, useState } from "react"
+import { Face } from "@/components/taste/face"
 import { WORKFLOW_LOOK, WORKFLOW_SLUGS } from "@/components/workflows/workflow-meta"
 import { api } from "@/lib/fetcher"
 import { type Uploaded, uploadPhoto } from "@/lib/photo"
+import { sound } from "@/lib/sounds"
 import { VoiceButton } from "./voice-button"
 
 type Sample = Uploaded & { name: string }
@@ -59,17 +74,20 @@ function SamplePicker({ onPick }: { onPick: (sample: Uploaded) => void }) {
   )
 }
 
-export type ChatPerson = { id: string; name: string; identity: string; isSelf: boolean }
+export type ChatPerson = {
+  id: string
+  name: string
+  identity: string
+  look: string | null
+  isSelf: boolean
+}
 export type Mode = "ask" | "auto" | "plan"
 
-const DOT: Record<string, string> = {
-  violet: "bg-violet",
-  pink: "bg-pink",
-  cobalt: "bg-cobalt",
-  orange: "bg-orange",
-  teal: "bg-teal",
-  butter: "bg-butter",
-}
+const MODES = [
+  { mode: "ask", icon: Hand },
+  { mode: "auto", icon: Zap },
+  { mode: "plan", icon: NotebookPen },
+] as const
 
 /**
  * The composer (T5): words and photos (resized in the browser, re-encoded on the server), who it's
@@ -85,6 +103,7 @@ export function Composer({
   onSend,
   onStop,
   onWorkflow,
+  ideas = [],
 }: {
   people: ChatPerson[]
   personId: string | null
@@ -95,15 +114,42 @@ export function Composer({
   onSend: (text: string, photos: Uploaded[]) => void
   onStop: () => void
   onWorkflow: (slug: string) => void
+  /** Things worth asking, shown in turn where the placeholder sits. */
+  ideas?: string[]
 }) {
   const t = useTranslations("Chat")
   const tw = useTranslations("Workflows")
+  const ts = useTranslations("Settings")
   const [text, setText] = useState("")
   const [photos, setPhotos] = useState<Uploaded[]>([])
   const [uploading, setUploading] = useState(0)
   const [error, setError] = useState<string | null>(null)
+  const [tick, setTick] = useState(0)
+  const [hint, setHint] = useState<Mode | null>(null)
   const input = useRef<HTMLTextAreaElement>(null)
+  const uid = useId()
   const person = people.find((p) => p.id === personId) ?? people.find((p) => p.isSelf)
+
+  // The placeholder rolls on while the box is empty, and stops for anyone typing.
+  useEffect(() => {
+    if (text || !ideas.length) return
+    const timer = setInterval(() => setTick((n) => n + 1), 4000)
+    return () => clearInterval(timer)
+  }, [text, ideas.length])
+
+  // A mode's one-line explanation shows for a moment after it's picked.
+  useEffect(() => {
+    if (!hint) return
+    const timer = setTimeout(() => setHint(null), 4500)
+    return () => clearTimeout(timer)
+  }, [hint])
+
+  const pickMode = (next: Mode) => {
+    if (next === mode) return
+    sound("tap")
+    onMode(next)
+    setHint(next)
+  }
 
   async function add(files: FileList | File[] | null) {
     setError(null)
@@ -123,16 +169,21 @@ export function Composer({
   const send = () => {
     const words = text.trim()
     if ((!words && !photos.length) || busy || uploading) return
+    sound("place")
     onSend(words, photos)
     setText("")
     setPhotos([])
     input.current?.style.setProperty("height", "auto")
   }
 
+  const placeholder = t("placeholder", { name: person?.name ?? "" })
+  const lines = [placeholder, ...ideas]
+  const shown = lines[tick % lines.length]
+
   return (
     // biome-ignore lint/a11y/noStaticElementInteractions: dropping photos is a shortcut; the photo button is the accessible way
     <div
-      className="flex flex-col gap-2 rounded-sheet bg-card p-2.5 text-card-foreground shadow-paper"
+      className="flex flex-col gap-2 rounded-sheet bg-card p-2.5 text-card-foreground shadow-paper outline-2 outline-transparent transition-[outline-color,translate] duration-200 ease-glide focus-within:-translate-y-0.5 focus-within:outline-lime"
       onDragOver={(e) => e.preventDefault()}
       onDrop={(e) => {
         e.preventDefault()
@@ -140,51 +191,99 @@ export function Composer({
       }}
     >
       {photos.length || uploading ? (
-        <div className="flex gap-2 px-1 pt-1">
-          {photos.map((p) => (
-            <span key={p.id} className="relative">
-              {/* biome-ignore lint/performance/noImgElement: a private, session-checked photo */}
-              <img src={p.url} alt="" className="size-16 rounded-tile object-cover" />
-              <button
-                type="button"
-                aria-label={t("removePhoto")}
-                onClick={() => setPhotos((all) => all.filter((x) => x.id !== p.id))}
-                className="absolute -end-1.5 -top-1.5 grid size-6 place-items-center rounded-full bg-sticker text-white"
+        // Photos sit like prints laid on the table, each at its own slight angle.
+        <div className="flex gap-3 px-1.5 pt-1.5">
+          <AnimatePresence initial={false}>
+            {photos.map((p, i) => (
+              <motion.span
+                key={p.id}
+                layout
+                initial={{ opacity: 0, scale: 0.6, rotate: 0 }}
+                animate={{ opacity: 1, scale: 1, rotate: i % 2 ? 3 : -3 }}
+                exit={{ opacity: 0, scale: 0.6 }}
+                transition={{ type: "spring", stiffness: 380, damping: 22 }}
+                className="relative"
               >
-                <X className="size-3.5" />
-              </button>
-            </span>
-          ))}
+                {/* biome-ignore lint/performance/noImgElement: a private, session-checked photo */}
+                <img
+                  src={p.url}
+                  alt=""
+                  className="size-16 rounded-tile object-cover shadow-sticker ring-3 ring-paper"
+                />
+                <button
+                  type="button"
+                  aria-label={t("removePhoto")}
+                  onClick={() => setPhotos((all) => all.filter((x) => x.id !== p.id))}
+                  className="absolute -end-2 -top-2 grid size-6 place-items-center rounded-full bg-sticker text-white"
+                >
+                  <X className="size-3.5" />
+                </button>
+              </motion.span>
+            ))}
+          </AnimatePresence>
           {Array.from({ length: uploading }, (_, i) => (
             // biome-ignore lint/suspicious/noArrayIndexKey: placeholders have no identity
             <span key={i} className="size-16 animate-pulse rounded-tile bg-paper-foreground/10" />
           ))}
         </div>
       ) : null}
-      <textarea
-        ref={input}
-        value={text}
-        rows={1}
-        onChange={(e) => {
-          setText(e.target.value)
-          e.target.style.height = "auto"
-          e.target.style.height = `${Math.min(e.target.scrollHeight, 200)}px`
-        }}
-        onKeyDown={(e) => {
-          if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) {
-            e.preventDefault()
-            send()
-          }
-        }}
-        onPaste={(e) => {
-          const files = Array.from(e.clipboardData.files).filter((f) => f.type.startsWith("image/"))
-          if (files.length) void add(files)
-        }}
-        placeholder={t("placeholder", { name: person?.name ?? "" })}
-        aria-label={t("placeholder", { name: person?.name ?? "" })}
-        className="max-h-[200px] min-h-11 resize-none bg-transparent px-2.5 py-2 text-[15px] outline-none placeholder:text-paper-muted"
-      />
+      <div className="relative">
+        <textarea
+          ref={input}
+          value={text}
+          rows={1}
+          onChange={(e) => {
+            setText(e.target.value)
+            e.target.style.height = "auto"
+            e.target.style.height = `${Math.min(e.target.scrollHeight, 200)}px`
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) {
+              e.preventDefault()
+              send()
+            }
+          }}
+          onPaste={(e) => {
+            const files = Array.from(e.clipboardData.files).filter((f) =>
+              f.type.startsWith("image/"),
+            )
+            if (files.length) void add(files)
+          }}
+          aria-label={placeholder}
+          className="block max-h-[200px] min-h-11 w-full resize-none bg-transparent px-2.5 py-2 text-[15px] outline-none"
+        />
+        {/* The placeholder, and between turns a few things worth asking, rolling past. */}
+        {text ? null : (
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.span
+              key={shown}
+              aria-hidden
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+              className="pointer-events-none absolute inset-x-2.5 top-2 truncate text-[15px] text-paper-muted"
+            >
+              {shown}
+            </motion.span>
+          </AnimatePresence>
+        )}
+      </div>
       {error ? <p className="px-2 text-xs text-destructive">{error}</p> : null}
+      <AnimatePresence>
+        {hint ? (
+          <motion.p
+            key={hint}
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            className="overflow-hidden px-2.5 text-xs text-paper-muted"
+            aria-live="polite"
+          >
+            {t(`modeHints.${hint}`)}
+          </motion.p>
+        ) : null}
+      </AnimatePresence>
       {/* Controls wrap onto a second line on a narrow phone or in a longer language; voice and
           send stay together on the right and never shrink. */}
       <div className="flex items-end gap-1.5">
@@ -207,10 +306,10 @@ export function Composer({
             <SamplePicker onPick={(sample) => setPhotos((p) => [...p, sample])} />
           ) : null}
           <DropdownMenu>
-            <DropdownMenuTrigger className="inline-flex max-w-44 min-w-0 items-center gap-1.5 rounded-pill px-2.5 py-1.5 text-sm font-semibold whitespace-nowrap hover:bg-paper-foreground/8">
-              <span
-                className={cn("size-2.5 shrink-0 rounded-full", DOT[person?.identity ?? "violet"])}
-              />
+            <DropdownMenuTrigger className="inline-flex max-w-44 min-w-0 items-center gap-1.5 rounded-pill py-1 ps-1 pe-2.5 text-sm font-semibold whitespace-nowrap hover:bg-paper-foreground/8">
+              {person ? (
+                <Face look={person.look} identity={person.identity} name={person.name} size="xs" />
+              ) : null}
               <span className="truncate">
                 {t("for", { name: person?.isSelf ? t("me") : (person?.name ?? "") })}
               </span>
@@ -218,39 +317,72 @@ export function Composer({
             </DropdownMenuTrigger>
             <DropdownMenuContent side="top" align="start" className="min-w-48">
               {people.map((p) => (
-                <DropdownMenuItem key={p.id} onClick={() => onPerson(p.id)}>
-                  <span className={cn("size-2.5 rounded-full", DOT[p.identity])} />
+                <DropdownMenuItem key={p.id} onClick={() => onPerson(p.id)} className="gap-2.5">
+                  <Face look={p.look} identity={p.identity} name={p.name} size="xs" />
                   {p.isSelf ? t("me") : p.name}
                   {p.id === person?.id ? <Check className="ms-auto size-4" /> : null}
                 </DropdownMenuItem>
               ))}
             </DropdownMenuContent>
           </DropdownMenu>
-          <DropdownMenu>
-            <DropdownMenuTrigger className="inline-flex items-center gap-1 rounded-pill px-2.5 py-1.5 text-sm whitespace-nowrap text-paper-muted hover:bg-paper-foreground/8">
-              {t(`modesShort.${mode}`)}
-              <ChevronDown className="size-3.5" />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent side="top" align="start" className="min-w-64">
-              {(["ask", "auto", "plan"] as const).map((m) => (
-                <DropdownMenuItem
+          {/* The mode as a switch: the one in use names itself, the others are a tap away. */}
+          <fieldset className="flex items-center rounded-pill bg-paper-foreground/6 p-0.5">
+            <legend className="sr-only">{ts("mode")}</legend>
+            {MODES.map(({ mode: m, icon: Icon }) => {
+              const on = m === mode
+              return (
+                <label
                   key={m}
-                  onClick={() => onMode(m)}
-                  className="flex-col items-start gap-0.5"
+                  title={t(`modeHints.${m}`)}
+                  className={cn(
+                    "relative flex h-8 cursor-pointer items-center rounded-pill px-2 text-[13px] font-semibold whitespace-nowrap transition-colors has-focus-visible:outline-2 has-focus-visible:outline-lime-ink",
+                    on ? "text-card" : "text-paper-muted hover:text-paper-foreground",
+                  )}
                 >
-                  <span className="flex w-full items-center font-semibold">
-                    {t(`modes.${m}`)}
-                    {m === mode ? <Check className="ms-auto size-4" /> : null}
-                  </span>
-                  <span className="text-xs text-muted-foreground">{t(`modeHints.${m}`)}</span>
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
+                  <input
+                    type="radio"
+                    name={`mode-${uid}`}
+                    value={m}
+                    checked={on}
+                    onChange={() => pickMode(m)}
+                    className="sr-only"
+                  />
+                  {on ? (
+                    <motion.span
+                      layoutId={`mode-${uid}`}
+                      className="absolute inset-0 rounded-pill bg-paper-foreground"
+                      transition={{ type: "spring", stiffness: 420, damping: 34 }}
+                    />
+                  ) : null}
+                  <Icon className="relative size-4 shrink-0" />
+                  <AnimatePresence initial={false}>
+                    {on ? (
+                      <motion.span
+                        initial={{ width: 0, opacity: 0 }}
+                        animate={{ width: "auto", opacity: 1 }}
+                        exit={{ width: 0, opacity: 0 }}
+                        transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+                        className="relative overflow-hidden ps-1.5"
+                      >
+                        {t(`modesShort.${m}`)}
+                      </motion.span>
+                    ) : (
+                      <span className="sr-only">{t(`modesShort.${m}`)}</span>
+                    )}
+                  </AnimatePresence>
+                </label>
+              )
+            })}
+          </fieldset>
           <DropdownMenu>
-            <DropdownMenuTrigger className="inline-flex items-center gap-1 rounded-pill bg-paper-foreground/6 px-2.5 py-1.5 text-sm font-semibold whitespace-nowrap hover:bg-paper-foreground/10">
-              {tw("pill")}
-              <ChevronDown className="size-3.5" />
+            <DropdownMenuTrigger
+              aria-label={tw("pill")}
+              title={tw("pill")}
+              className="inline-flex h-9 items-center gap-1.5 rounded-pill bg-paper-foreground/6 px-2.5 text-sm font-semibold whitespace-nowrap hover:bg-paper-foreground/10"
+            >
+              <Shapes className="size-4" />
+              <span className="hidden sm:inline">{tw("pill")}</span>
+              <ChevronDown className="hidden size-3.5 sm:block" />
             </DropdownMenuTrigger>
             <DropdownMenuContent side="top" align="start" className="w-72">
               {WORKFLOW_SLUGS.map((slug) => {
@@ -304,7 +436,7 @@ export function Composer({
               onClick={send}
               aria-label={t("send")}
               disabled={(!text.trim() && !photos.length) || uploading > 0}
-              className="grid size-10 place-items-center rounded-full bg-lime text-lime-foreground shadow-sticker transition-transform enabled:hover:-translate-y-px disabled:opacity-35"
+              className="grid size-10 place-items-center rounded-full bg-lime text-lime-foreground shadow-sticker transition-[translate,scale,opacity] duration-200 ease-snap enabled:hover:-translate-y-0.5 enabled:active:scale-90 disabled:scale-90 disabled:opacity-35"
             >
               <ArrowUp className="size-5" />
             </button>

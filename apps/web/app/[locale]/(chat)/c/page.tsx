@@ -36,6 +36,7 @@ async function NewChat({
       mode={data.mode}
       people={data.people}
       starters={data.starters}
+      taste={data.taste}
       greetingName={data.person.isSelf ? data.self.name : data.person.name}
       workflow={workflow?.slug ?? null}
       workflowStart={

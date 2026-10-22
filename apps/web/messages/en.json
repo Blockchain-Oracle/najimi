@@ -301,6 +301,7 @@
   },
   "Chat": {
     "greeting": "What should we find for {name}?",
+    "usesTaste": "{self, select, yes {Answers use your taste:} other {Answers use {name}'s taste:}}",
     "placeholder": "Ask anything for {name}…",
     "send": "Send",
     "stop": "Stop",

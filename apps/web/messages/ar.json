@@ -301,6 +301,7 @@
   },
   "Chat": {
     "greeting": "ماذا نبحث لـ {name}؟",
+    "usesTaste": "{self, select, yes {الإجابات مبنية على ذوقك:} other {الإجابات مبنية على ذوق {name}:}}",
     "placeholder": "اسأل عن أي شيء لـ {name}…",
     "send": "إرسال",
     "stop": "إيقاف",

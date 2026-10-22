@@ -301,6 +301,7 @@
   },
   "Chat": {
     "greeting": "Tumtafutie nini {name}?",
+    "usesTaste": "{self, select, yes {Majibu yanatumia mapendeleo yako:} other {Majibu yanatumia mapendeleo ya {name}:}}",
     "placeholder": "Uliza chochote kwa ajili ya {name}…",
     "send": "Tuma",
     "stop": "Simamisha",

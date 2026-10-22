@@ -301,6 +301,7 @@
   },
   "Chat": {
     "greeting": "O que vamos achar para {name}?",
+    "usesTaste": "{self, select, yes {As respostas usam seu gosto:} other {As respostas usam o gosto de {name}:}}",
     "placeholder": "Peça algo para {name}…",
     "send": "Enviar",
     "stop": "Parar",

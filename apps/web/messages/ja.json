@@ -301,6 +301,7 @@
   },
   "Chat": {
     "greeting": "{name}に何を見つけましょうか？",
+    "usesTaste": "{self, select, yes {あなたの好みで答えます：} other {{name}さんの好みで答えます：}}",
     "placeholder": "{name}のために何でも聞いてください…",
     "send": "送信",
     "stop": "停止",

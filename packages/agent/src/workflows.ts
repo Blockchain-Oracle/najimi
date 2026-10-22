@@ -4,14 +4,17 @@
  * and the first message live in the app's message catalogs (one per language).
  */
 
+import { MEDIA } from "@najimi/config"
+
 export type BuiltInWorkflow = {
   slug: string
   category: "home" | "food" | "culture" | "style" | "film"
-  needs: { photo?: boolean; person?: boolean }
+  /** `video`: offered only while video is switched on (MEDIA.video.enabled). */
+  needs: { photo?: boolean; person?: boolean; video?: boolean }
   instructions: string
 }
 
-export const BUILT_IN_WORKFLOWS: BuiltInWorkflow[] = [
+const ALL: BuiltInWorkflow[] = [
   {
     slug: "relight-my-room",
     category: "home",
@@ -72,7 +75,7 @@ export const BUILT_IN_WORKFLOWS: BuiltInWorkflow[] = [
   {
     slug: "my-taste-film",
     category: "film",
-    needs: {},
+    needs: { video: true },
     instructions: `My taste film: a short film of who they are.
 1. qlooInsights ask tags (their words), and in the same step heatmap of their city if they have one.
 2. makeImage new, purpose portrait, 1 variant: a cinematic scene made of their aesthetic, decor and ambience words (no faces of real people).
@@ -90,5 +93,8 @@ export const BUILT_IN_WORKFLOWS: BuiltInWorkflow[] = [
 4. Offer makeImage new, purpose scene: the room set for the night.`,
   },
 ]
+
+/** The workflows this server can run end to end: none that promises a video while video is off. */
+export const BUILT_IN_WORKFLOWS = ALL.filter((w) => !w.needs.video || MEDIA.video.enabled)
 
 export const workflowBySlug = (slug: string) => BUILT_IN_WORKFLOWS.find((w) => w.slug === slug)

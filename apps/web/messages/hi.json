@@ -301,6 +301,7 @@
   },
   "Chat": {
     "greeting": "{name} के लिए क्या ढूँढ़ें?",
+    "usesTaste": "{self, select, yes {जवाब आपकी पसंद से बनते हैं:} other {जवाब {name} की पसंद से बनते हैं:}}",
     "placeholder": "{name} के लिए कुछ भी पूछें…",
     "send": "भेजें",
     "stop": "रोकें",

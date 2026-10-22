@@ -552,7 +552,8 @@
     "Demo.cta": "Start with Relight my room",
     "Demo.docs": "Read the docs",
     "Taste.line": "{look} looks, {rooms} rooms, {mood} nights, {food} plates.",
-    "Taste.you": "You"
+    "Taste.you": "You",
+    "Chat.usesTaste": "{self, select, yes {Answers use your taste:} other {Answers use {name}'s taste:}}"
   },
   "es": {
     "Meta.tagline": "The taste copilot.",
@@ -1107,7 +1108,8 @@
     "Demo.cta": "Start with Relight my room",
     "Demo.docs": "Read the docs",
     "Taste.line": "{look} looks, {rooms} rooms, {mood} nights, {food} plates.",
-    "Taste.you": "You"
+    "Taste.you": "You",
+    "Chat.usesTaste": "{self, select, yes {Answers use your taste:} other {Answers use {name}'s taste:}}"
   },
   "ha": {
     "Meta.tagline": "The taste copilot.",
@@ -1662,7 +1664,8 @@
     "Demo.cta": "Start with Relight my room",
     "Demo.docs": "Read the docs",
     "Taste.line": "{look} looks, {rooms} rooms, {mood} nights, {food} plates.",
-    "Taste.you": "You"
+    "Taste.you": "You",
+    "Chat.usesTaste": "{self, select, yes {Answers use your taste:} other {Answers use {name}'s taste:}}"
   },
   "yo": {
     "Meta.tagline": "The taste copilot.",
@@ -2217,7 +2220,8 @@
     "Demo.cta": "Start with Relight my room",
     "Demo.docs": "Read the docs",
     "Taste.line": "{look} looks, {rooms} rooms, {mood} nights, {food} plates.",
-    "Taste.you": "You"
+    "Taste.you": "You",
+    "Chat.usesTaste": "{self, select, yes {Answers use your taste:} other {Answers use {name}'s taste:}}"
   },
   "hi": {
     "Meta.tagline": "The taste copilot.",
@@ -2772,7 +2776,8 @@
     "Demo.cta": "Start with Relight my room",
     "Demo.docs": "Read the docs",
     "Taste.line": "{look} looks, {rooms} rooms, {mood} nights, {food} plates.",
-    "Taste.you": "You"
+    "Taste.you": "You",
+    "Chat.usesTaste": "{self, select, yes {Answers use your taste:} other {Answers use {name}'s taste:}}"
   },
   "sw": {
     "Meta.tagline": "The taste copilot.",
@@ -3327,7 +3332,8 @@
     "Demo.cta": "Start with Relight my room",
     "Demo.docs": "Read the docs",
     "Taste.line": "{look} looks, {rooms} rooms, {mood} nights, {food} plates.",
-    "Taste.you": "You"
+    "Taste.you": "You",
+    "Chat.usesTaste": "{self, select, yes {Answers use your taste:} other {Answers use {name}'s taste:}}"
   },
   "ig": {
     "Meta.tagline": "The taste copilot.",
@@ -3882,7 +3888,8 @@
     "Demo.cta": "Start with Relight my room",
     "Demo.docs": "Read the docs",
     "Taste.line": "{look} looks, {rooms} rooms, {mood} nights, {food} plates.",
-    "Taste.you": "You"
+    "Taste.you": "You",
+    "Chat.usesTaste": "{self, select, yes {Answers use your taste:} other {Answers use {name}'s taste:}}"
   },
   "ja": {
     "Meta.tagline": "The taste copilot.",
@@ -4437,7 +4444,8 @@
     "Demo.cta": "Start with Relight my room",
     "Demo.docs": "Read the docs",
     "Taste.line": "{look} looks, {rooms} rooms, {mood} nights, {food} plates.",
-    "Taste.you": "You"
+    "Taste.you": "You",
+    "Chat.usesTaste": "{self, select, yes {Answers use your taste:} other {Answers use {name}'s taste:}}"
   },
   "zh": {
     "Meta.tagline": "The taste copilot.",
@@ -4992,6 +5000,7 @@
     "Demo.cta": "Start with Relight my room",
     "Demo.docs": "Read the docs",
     "Taste.line": "{look} looks, {rooms} rooms, {mood} nights, {food} plates.",
-    "Taste.you": "You"
+    "Taste.you": "You",
+    "Chat.usesTaste": "{self, select, yes {Answers use your taste:} other {Answers use {name}'s taste:}}"
   }
 }

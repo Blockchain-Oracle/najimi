@@ -301,6 +301,7 @@
   },
   "Chat": {
     "greeting": "Gịnị ka anyị chọtara {name}?",
+    "usesTaste": "{self, select, yes {Azịza na-eso mmasị gị:} other {Azịza na-eso mmasị {name}:}}",
     "placeholder": "Jụọ ihe ọ bụla maka {name}…",
     "send": "Ziga",
     "stop": "Kwụsị",

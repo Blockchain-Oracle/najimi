@@ -15,6 +15,7 @@ import { useNajimiChat } from "@/lib/chat/use-najimi-chat"
 import { api } from "@/lib/fetcher"
 import type { Uploaded } from "@/lib/photo"
 import { ChatProvider, shareChat } from "./chat-context"
+import { ChatWelcome, type Starter, type WelcomeTaste } from "./chat-welcome"
 import { type ChatPerson, Composer, type Mode } from "./composer"
 import { Message } from "./message"
 
@@ -27,7 +28,9 @@ export type ChatViewProps = {
   personId: string | null
   mode: Mode
   people: ChatPerson[]
-  starters: string[]
+  starters: Starter[]
+  /** The taste an empty chat says it will use. */
+  taste: WelcomeTaste
   greetingName: string
   /** A workflow a new chat starts with (from the library or a shared link). */
   workflow?: string | null
@@ -146,23 +149,14 @@ export function ChatView(props: ChatViewProps) {
     <ChatProvider value={{ chatId: props.chatId, people: props.people }}>
       <div className="mx-auto flex min-h-[calc(100svh-5rem)] w-full max-w-3xl flex-col px-4 md:px-6">
         {messages.length === 0 ? (
-          <section className="flex flex-1 flex-col justify-center gap-6 py-10">
-            <h1 className="font-title text-title-sm">
-              {t("greeting", { name: props.greetingName })}
-            </h1>
-            <div className="flex flex-wrap gap-2">
-              {props.starters.map((s) => (
-                <button
-                  key={s}
-                  type="button"
-                  onClick={() => send(s)}
-                  className="rounded-pill border border-foreground/15 px-4 py-2 text-start text-sm transition-colors hover:border-lime hover:text-lime"
-                >
-                  {s}
-                </button>
-              ))}
-            </div>
-          </section>
+          <ChatWelcome
+            person={props.people.find((p) => p.id === personId)}
+            greeting={t("greeting", { name: props.greetingName })}
+            taste={props.taste}
+            starters={props.starters}
+            onAsk={(text) => send(text)}
+            onWorkflow={runWorkflow}
+          />
         ) : (
           <div className="flex flex-1 flex-col gap-8 py-6">
             {messages.map((m, i) => {
@@ -271,7 +265,8 @@ export function ChatView(props: ChatViewProps) {
             <div ref={bottom} />
           </div>
         )}
-        <div className="sticky bottom-0 bg-gradient-to-t from-background via-background to-transparent pt-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
+        {/* Full-bleed, so rows that run to the screen edge pass under it rather than beside it. */}
+        <div className="sticky bottom-0 -mx-4 bg-gradient-to-t from-background via-background to-transparent px-4 pt-4 pb-[max(1rem,env(safe-area-inset-bottom))] md:-mx-6 md:px-6">
           <Composer
             people={props.people}
             personId={personId}
@@ -282,6 +277,7 @@ export function ChatView(props: ChatViewProps) {
             onSend={send}
             onStop={() => void stop()}
             onWorkflow={runWorkflow}
+            ideas={props.starters.map((s) => s.text)}
           />
         </div>
         <SaveWorkflowDialog

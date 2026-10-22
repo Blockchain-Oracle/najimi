@@ -301,6 +301,7 @@
   },
   "Chat": {
     "greeting": "我们为{name}找点什么？",
+    "usesTaste": "{self, select, yes {回答基于你的品味：} other {回答基于{name}的品味：}}",
     "placeholder": "为{name}问点什么…",
     "send": "发送",
     "stop": "停止",

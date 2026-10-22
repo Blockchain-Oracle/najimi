@@ -301,6 +301,7 @@
   },
   "Chat": {
     "greeting": "Kí ni ká wá fún {name}?",
+    "usesTaste": "{self, select, yes {Àwọn ìdáhùn dá lórí ohun tó wù ọ́:} other {Àwọn ìdáhùn dá lórí ohun tó wu {name}:}}",
     "placeholder": "Béèrè ohunkóhun fún {name}…",
     "send": "Firánṣẹ́",
     "stop": "Dúró",

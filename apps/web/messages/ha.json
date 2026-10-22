@@ -301,6 +301,7 @@
   },
   "Chat": {
     "greeting": "Me za mu nemo wa {name}?",
+    "usesTaste": "{self, select, yes {Amsoshi sun dogara da abubuwan da kake so:} other {Amsoshi sun dogara da abubuwan da {name} ke so:}}",
     "placeholder": "Tambayi komai don {name}…",
     "send": "Aika",
     "stop": "Tsaya",

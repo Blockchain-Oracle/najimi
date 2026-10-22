@@ -12,6 +12,7 @@ export const IDENTITY_BG: Record<string, string> = {
 }
 
 const SIZE = {
+  xs: "size-6 text-xs ring-2",
   sm: "size-8 text-sm",
   md: "size-12 text-xl",
   lg: "size-16 text-2xl",

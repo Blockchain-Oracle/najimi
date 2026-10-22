@@ -27,6 +27,7 @@ async function ExistingChat({ params }: { params: PageProps<"/[locale]/c/[id]">[
       mode={chat.mode}
       people={data.people}
       starters={data.starters}
+      taste={data.taste}
       greetingName={data.person?.name ?? data.self.name}
     />
   )
