@@ -3,6 +3,7 @@
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@najimi/ui/components/sheet"
 import { useQuery } from "@tanstack/react-query"
 import { useTranslations } from "next-intl"
+import { qlooTag } from "@/components/brands/qloo-logo"
 import { api } from "@/lib/fetcher"
 
 type CallRow = {
@@ -31,8 +32,7 @@ export function BuiltOnQloo({ runId }: { runId: string | null }) {
   return (
     <Sheet>
       <SheetTrigger className="sticker inline-flex items-center gap-2 px-3.5 py-2 text-xs font-semibold">
-        <span className="size-1.5 rounded-full bg-lime" />
-        {t("builtOnQloo")}
+        {t.rich("builtOnQloo", qlooTag("h-[0.95em]"))}
         {list.length ? (
           <span className="text-white/60 tnum">· {t("callsCount", { count: list.length })}</span>
         ) : null}
@@ -42,7 +42,7 @@ export function BuiltOnQloo({ runId }: { runId: string | null }) {
         className="w-full max-w-md overflow-y-auto border-0 bg-sticker text-sticker-foreground sm:max-w-md"
       >
         <SheetTitle className="font-title px-5 pt-5 text-[1.75rem] font-normal text-white">
-          {t("builtOnQloo")}
+          {t.rich("builtOnQloo", qlooTag("ms-1.5 h-[0.72em]"))}
         </SheetTitle>
         <ol className="flex flex-col gap-3 px-5 pb-6">
           {list.map((c) => (

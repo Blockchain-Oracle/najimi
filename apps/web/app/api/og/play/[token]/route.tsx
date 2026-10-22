@@ -3,7 +3,7 @@ import { roundView } from "@najimi/games/round"
 import { tokens } from "@najimi/tokens"
 import { ImageResponse } from "next/og"
 import { getTranslations } from "next-intl/server"
-import { funnelFonts, OG_HEADERS, OG_SIZE } from "@/lib/og"
+import { funnelFonts, OG_HEADERS, OG_SIZE, OgQloo } from "@/lib/og"
 
 /*
  * A challenge link's picture (/api/og/play/<token>): the round's things fanned like a hand of
@@ -73,6 +73,16 @@ export async function GET(_request: Request, ctx: RouteContext<"/api/og/play/[to
             }}
           />
           najimi
+          <div
+            style={{
+              display: "flex",
+              width: 2,
+              height: 28,
+              marginLeft: 6,
+              background: "#ffffff33",
+            }}
+          />
+          <OgQloo height={21} />
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
           <div

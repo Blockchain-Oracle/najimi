@@ -19,6 +19,7 @@ import { useTranslations } from "next-intl"
 import { type ReactNode, useState } from "react"
 import { siX } from "simple-icons"
 import { BrandIcon } from "@/components/brands/brand-icon"
+import { qlooTag } from "@/components/brands/qloo-logo"
 import { sized } from "@/components/connect/platforms"
 
 /*
@@ -397,7 +398,9 @@ export function PlanView({ business, actions }: { business: PlanBusiness; action
       ) : null}
 
       <footer className="flex items-center justify-between border-t border-border pt-4 text-[12px] text-text-3">
-        <span>{t("builtOn", { count: r.calls.length })}</span>
+        <span>
+          {t.rich("builtOn", { ...qlooTag("mx-0.5 text-text-2"), count: r.calls.length })}
+        </span>
         <time dateTime={r.builtAt} suppressHydrationWarning>
           {new Date(r.builtAt).toLocaleDateString(undefined, { day: "numeric", month: "short" })}
         </time>

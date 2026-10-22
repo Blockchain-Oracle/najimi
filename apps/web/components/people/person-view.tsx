@@ -31,6 +31,7 @@ import { Face } from "@/components/taste/face"
 import { useTasteLine, WordPalette } from "@/components/taste/taste-hero"
 import { TasteMap } from "@/components/taste/taste-map"
 import { YourPeople } from "@/components/taste/your-people"
+import { Tip } from "@/components/tip"
 import { api } from "@/lib/fetcher"
 import { shareLink } from "@/lib/share-link"
 import { sound } from "@/lib/sounds"
@@ -314,16 +315,15 @@ export function PersonView({ data, other }: { data: PersonViewData; other?: Othe
             </button>
           ))}
         </dl>
-        <div className="flex w-full max-w-sm items-center gap-2">
-          {other ? (
-            <>
-              <span className="flex flex-1 [&>button]:h-11 [&>button]:w-full [&>button]:justify-center [&>button]:text-[15px]">
-                <FollowButton userId={other.userId} initial={other.relation} />
-              </span>
+        {other ? (
+          <div className="flex w-full max-w-sm items-center gap-2">
+            <span className="flex flex-1 [&>button]:h-11 [&>button]:w-full [&>button]:justify-center [&>button]:text-[15px]">
+              <FollowButton userId={other.userId} initial={other.relation} />
+            </span>
+            <Tip label={ts("message")}>
               <button
                 type="button"
                 aria-label={ts("message")}
-                title={ts("message")}
                 onClick={async () => {
                   const { chatId } = await api<{ chatId: string }>("/api/rooms/dm", {
                     json: { username: other.username },
@@ -334,73 +334,91 @@ export function PersonView({ data, other }: { data: PersonViewData; other?: Othe
               >
                 <MessageCircle className="size-4.5" />
               </button>
-              <PersonMenu userId={other.userId} name={person.name} className={round} />
-            </>
-          ) : null}
-          {mine ? (
-            <Link
-              href="/feed"
-              className="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-pill bg-primary text-[15px] font-semibold text-primary-foreground transition-opacity hover:opacity-90"
-            >
-              <Play className="size-4 fill-current" /> {t("playTaste")}
-            </Link>
-          ) : null}
-          {mine ? (
-            <Link href="/connect" aria-label={t("feeds")} title={t("feeds")} className={round}>
-              <Radio className="size-4.5" />
-            </Link>
-          ) : null}
-          {mine ? (
-            <Link
-              href="/passport"
-              aria-label={t("passport")}
-              title={t("passport")}
-              className={round}
-            >
-              <Stamp className="size-4.5" />
-            </Link>
-          ) : null}
-          {mine ? (
-            <Link
-              href="/business"
-              aria-label={t("business")}
-              title={t("business")}
-              className={round}
-            >
-              <Store className="size-4.5" />
-            </Link>
-          ) : null}
-          {mine ? (
-            <Link href="/graph" aria-label={t("graph")} title={t("graph")} className={round}>
-              <Waypoints className="size-4.5" />
-            </Link>
-          ) : null}
-          {mine ? (
-            <Link href="/c" aria-label={t("askSelf")} title={t("askSelf")} className={round}>
-              <Orb size={26} />
-            </Link>
-          ) : null}
-          <button
-            type="button"
-            aria-label={t("share")}
-            title={t("share")}
-            onClick={() => void shareLink("person", person.id, t("linkCopied"))}
-            className={round}
-          >
-            <Share2 className="size-4.5" />
-          </button>
-          {mine ? (
+            </Tip>
+            <Tip label={t("share")}>
+              <button
+                type="button"
+                aria-label={t("share")}
+                onClick={() => void shareLink("person", person.id, t("linkCopied"))}
+                className={round}
+              >
+                <Share2 className="size-4.5" />
+              </button>
+            </Tip>
+            <PersonMenu userId={other.userId} name={person.name} className={round} />
+          </div>
+        ) : null}
+        {mine ? (
+          <div className="flex w-full max-w-sm flex-col gap-5">
+            <div className="flex items-center gap-2">
+              <Link
+                href="/feed"
+                className="inline-flex h-12 min-w-0 flex-1 items-center justify-center gap-2 rounded-pill bg-primary px-5 text-[15px] font-semibold whitespace-nowrap text-primary-foreground transition-opacity hover:opacity-90"
+              >
+                <Play className="size-4 shrink-0 fill-current" /> {t("playTaste")}
+              </Link>
+              <Tip label={t("share")}>
+                <button
+                  type="button"
+                  aria-label={t("share")}
+                  onClick={() => void shareLink("person", person.id, t("linkCopied"))}
+                  className={cn(round, "size-12")}
+                >
+                  <Share2 className="size-4.5" />
+                </button>
+              </Tip>
+              <Tip label={t("edit")}>
+                <button
+                  type="button"
+                  aria-label={t("edit")}
+                  onClick={() => setEditing(true)}
+                  className={cn(round, "size-12")}
+                >
+                  <Pencil className="size-4.5" />
+                </button>
+              </Tip>
+            </div>
+            {/* Where your taste goes next: each with its name, never a bare icon. */}
+            <nav className="grid grid-cols-5 gap-1">
+              {(
+                [
+                  ["/connect", "feeds", "feeds", <Radio key="i" className="size-5" />],
+                  ["/passport", "passport", "passport", <Stamp key="i" className="size-5" />],
+                  ["/business", "business", "business", <Store key="i" className="size-5" />],
+                  ["/graph", "graph", "graph", <Waypoints key="i" className="size-5" />],
+                  ["/c", "askSelf", "najimi", <Orb key="i" size={30} />],
+                ] as const
+              ).map(([href, full, short, icon]) => (
+                <Link
+                  key={href}
+                  href={href}
+                  aria-label={t(full)}
+                  title={t(full)}
+                  className="group flex flex-col items-center gap-1.5"
+                >
+                  <span className="grid size-14 place-items-center rounded-[20px] bg-card text-foreground ring-1 ring-white/[0.06] transition-[background-color,transform] duration-200 group-hover:bg-secondary group-active:scale-95">
+                    {icon}
+                  </span>
+                  <span className="text-[12px] font-medium text-text-2 group-hover:text-foreground">
+                    {t(`short.${short}`)}
+                  </span>
+                </Link>
+              ))}
+            </nav>
+          </div>
+        ) : null}
+        {!other && !mine ? (
+          <Tip label={t("share")}>
             <button
               type="button"
-              aria-label={t("edit")}
-              title={t("edit")}
-              onClick={() => setEditing(true)}
+              aria-label={t("share")}
+              onClick={() => void shareLink("person", person.id, t("linkCopied"))}
               className={round}
             >
-              <Pencil className="size-4.5" />
+              <Share2 className="size-4.5" />
             </button>
-          ) : null}
-        </div>
+          </Tip>
+        ) : null}
         {live && data.taste?.computedAt ? (
           <p className="text-[13px] text-text-3">{t("updating")}</p>
         ) : null}

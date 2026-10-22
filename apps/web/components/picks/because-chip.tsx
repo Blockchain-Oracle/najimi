@@ -4,6 +4,7 @@ import type { StoredPick } from "@najimi/db/schema"
 import { Popover, PopoverContent, PopoverTrigger } from "@najimi/ui/components/popover"
 import { Heart } from "lucide-react"
 import { useTranslations } from "next-intl"
+import { qlooTag } from "@/components/brands/qloo-logo"
 import { CallDetails } from "@/components/qloo/call-details"
 
 /**
@@ -43,11 +44,13 @@ export function BecauseChip({
               : t("because", { name: because.name })}
           </p>
           {publicView || !callId ? (
-            <p className="text-xs text-text-3">{te("publicNote")}</p>
+            <p className="text-xs text-text-3">
+              {te.rich("publicNote", qlooTag("mx-0.5 text-text-2"))}
+            </p>
           ) : (
             <>
               <p className="text-[11px] font-medium tracking-[0.08em] text-text-3 uppercase">
-                {te("title")}
+                {te.rich("title", qlooTag("mx-0.5 h-[0.9em]"))}
               </p>
               <CallDetails callId={callId} />
             </>

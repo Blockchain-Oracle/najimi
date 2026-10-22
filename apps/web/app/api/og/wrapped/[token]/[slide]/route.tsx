@@ -2,7 +2,7 @@ import { readFile } from "node:fs/promises"
 import { join } from "node:path"
 import { tokens } from "@najimi/tokens"
 import { ImageResponse } from "next/og"
-import { funnelFonts, OG_HEADERS, OG_SIZE } from "@/lib/og"
+import { funnelFonts, OG_HEADERS, OG_SIZE, OgQloo } from "@/lib/og"
 import { WRAPPED_SLIDES as SLIDES, type Wrapped, wrappedOf } from "@/lib/passport"
 import { liveShare } from "@/lib/shares"
 
@@ -93,7 +93,14 @@ function Frame({ w, n, children }: { w: Wrapped; n: number; children: React.Reac
             Find your people by what you love
           </div>
         </div>
-        <div style={{ display: "flex", fontFamily: "Funnel Display", fontSize: 64 }}>najimi</div>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 14 }}>
+          <div style={{ display: "flex", fontFamily: "Funnel Display", fontSize: 64 }}>najimi</div>
+          <div
+            style={{ display: "flex", alignItems: "center", gap: 12, fontSize: 26, color: C.muted }}
+          >
+            taste by <OgQloo height={22} color={C.ink} />
+          </div>
+        </div>
       </div>
     </div>
   )

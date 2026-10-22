@@ -4,6 +4,7 @@ import { join } from "node:path"
 import { getBytes } from "@najimi/storage"
 import { tokens } from "@najimi/tokens"
 import sharp from "sharp"
+import { QLOO_MARK } from "@/components/brands/qloo-logo"
 
 /*
  * Link previews: 1200×630 cards in Najimi's look (black, the aura's glow, Funnel type), drawn by
@@ -100,8 +101,27 @@ export function imagesIn(value: unknown, limit: number): string[] {
   return found.slice(0, limit)
 }
 
-/** The brand mark every preview carries. */
+/** Qloo's wordmark, drawn by next/og (the same paths as the app's QlooLogo). */
+export function OgQloo({ height, color = OG.ink }: { height: number; color?: string }) {
+  return (
+    <svg
+      width={height * QLOO_MARK.ratio}
+      height={height}
+      viewBox={QLOO_MARK.viewBox}
+      role="img"
+      aria-label="Qloo"
+    >
+      {QLOO_MARK.ink.map((d) => (
+        <path key={d} d={d} fill={color} />
+      ))}
+      <path d={QLOO_MARK.bar} fill={QLOO_MARK.accent} />
+    </svg>
+  )
+}
+
+/** The brand mark every preview carries: Najimi, and the Qloo it's built on. */
 export function OgMark({ dark = false }: { dark?: boolean }) {
+  const color = dark ? OG.ink : OG.cream
   return (
     <div
       style={{
@@ -110,13 +130,17 @@ export function OgMark({ dark = false }: { dark?: boolean }) {
         gap: 14,
         fontFamily: "Bricolage",
         fontSize: 34,
-        color: dark ? OG.ink : OG.cream,
+        color,
       }}
     >
       <div
         style={{ width: 22, height: 22, borderRadius: 999, background: OG.lime, display: "flex" }}
       />
       najimi
+      <div
+        style={{ width: 2, height: 30, marginLeft: 6, background: `${color}33`, display: "flex" }}
+      />
+      <OgQloo height={24} color={color} />
     </div>
   )
 }

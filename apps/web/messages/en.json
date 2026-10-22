@@ -4,7 +4,7 @@
     "description": "Najimi turns what you love into a feed, a map of your people, games with friends and plans it books for you, with an AI agent in every chat and Qloo's taste graph underneath."
   },
   "Landing": {
-    "kicker": "Built on Qloo's taste AI",
+    "kicker": "Taste AI by <qloo>Qloo</qloo>",
     "title": "Find your people by what you love.",
     "start": "Start — it's free",
     "startShort": "Start",
@@ -53,7 +53,7 @@
     },
     "closing": "Your people are already here.",
     "footer": "Najimi, made for the Qloo hackathon.",
-    "builtOn": "Built on Qloo",
+    "builtOn": "Built on <qloo>Qloo</qloo>",
     "openShort": "Open"
   },
   "Language": {
@@ -366,7 +366,7 @@
     "loves": "Loves",
     "saved": "Kept",
     "nothingSaved": "Nothing kept yet. Tap the bookmark on any pick.",
-    "builtOnQloo": "Built on Qloo",
+    "builtOnQloo": "Built on <qloo>Qloo</qloo>",
     "callsCount": "{count, plural, one {# Qloo call} other {# Qloo calls}}",
     "askSelf": "Ask Najimi",
     "share": "Share this taste",
@@ -377,6 +377,13 @@
     "knownFor": "Near {places}.",
     "playTaste": "Play my taste",
     "edit": "Edit profile",
+    "short": {
+      "feeds": "Feeds",
+      "passport": "Passport",
+      "business": "Business",
+      "graph": "Graph",
+      "najimi": "Najimi"
+    },
     "statLoves": "Loves",
     "statPicks": "Picks",
     "statKept": "Kept",
@@ -410,10 +417,17 @@
     "moreLike": "More like {name}",
     "loading": "Finding more…",
     "actions": "More actions",
-    "matchWord": "match"
+    "matchWord": "match",
+    "madeOf": "Made of your loves",
+    "trailer": "Trailer",
+    "playTrailer": "Play the trailer",
+    "play": "Play",
+    "pause": "Pause",
+    "latest": "Latest episode"
   },
   "Evidence": {
-    "title": "The Qloo call behind this",
+    "title": "The <qloo>Qloo</qloo> call behind this",
+    "open": "See the Qloo call behind this",
     "endpoint": "Endpoint",
     "signal": "Signal",
     "answer": "Answer",
@@ -422,7 +436,7 @@
     "ms": "{ms} ms",
     "unavailable": "This call isn't available.",
     "loading": "Loading the call…",
-    "publicNote": "From Qloo's taste data."
+    "publicNote": "From <qloo>Qloo</qloo> taste data."
   },
   "People": {
     "title": "People",
@@ -1152,7 +1166,7 @@
     "copy": "Copy",
     "copied": "Copied",
     "postOnX": "Post",
-    "builtOn": "Built on Qloo · {count} calls",
+    "builtOn": "Built on <qloo>Qloo</qloo> · {count} calls",
     "share": "Share",
     "linkCopied": "Link copied",
     "rebuild": "Build it again",

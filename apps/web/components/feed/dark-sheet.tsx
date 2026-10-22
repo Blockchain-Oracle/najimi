@@ -12,12 +12,15 @@ export function DarkSheet({
   title,
   children,
   className,
+  bare = false,
 }: {
   open: boolean
   onOpenChange: (open: boolean) => void
   title: string
   children: ReactNode
   className?: string
+  /** No header: the content starts flush at the top (a stage), the close button floats over it. */
+  bare?: boolean
 }) {
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
@@ -29,19 +32,37 @@ export function DarkSheet({
             className,
           )}
         >
-          <div className="mx-auto mt-2.5 h-1 w-10 shrink-0 rounded-full bg-white/20" />
-          <div className="flex items-center justify-between px-5 pt-3 pb-2">
-            <Dialog.Title className="font-title text-[22px]">{title}</Dialog.Title>
-            <Dialog.Close
-              aria-label="Close"
-              className="grid size-9 place-items-center rounded-full bg-white/10 hover:bg-white/15"
-            >
-              <X className="size-4" />
-            </Dialog.Close>
-          </div>
-          <div className="overflow-y-auto px-5 pb-[max(1.25rem,env(safe-area-inset-bottom))]">
-            {children}
-          </div>
+          {bare ? (
+            <>
+              <Dialog.Title className="sr-only">{title}</Dialog.Title>
+              <span className="pointer-events-none absolute inset-x-0 top-2.5 z-20 mx-auto h-1 w-10 rounded-full bg-white/40" />
+              <Dialog.Close
+                aria-label="Close"
+                className="absolute top-3 right-3 z-20 grid size-9 place-items-center rounded-full bg-black/45 text-white ring-1 ring-white/15 backdrop-blur-md hover:bg-black/60"
+              >
+                <X className="size-4" />
+              </Dialog.Close>
+              <div className="overflow-y-auto pb-[max(1.25rem,env(safe-area-inset-bottom))]">
+                {children}
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="mx-auto mt-2.5 h-1 w-10 shrink-0 rounded-full bg-white/20" />
+              <div className="flex items-center justify-between px-5 pt-3 pb-2">
+                <Dialog.Title className="font-title text-[22px]">{title}</Dialog.Title>
+                <Dialog.Close
+                  aria-label="Close"
+                  className="grid size-9 place-items-center rounded-full bg-white/10 hover:bg-white/15"
+                >
+                  <X className="size-4" />
+                </Dialog.Close>
+              </div>
+              <div className="overflow-y-auto px-5 pb-[max(1.25rem,env(safe-area-inset-bottom))]">
+                {children}
+              </div>
+            </>
+          )}
         </Dialog.Popup>
       </Dialog.Portal>
     </Dialog.Root>

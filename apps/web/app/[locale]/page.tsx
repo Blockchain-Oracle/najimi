@@ -3,7 +3,8 @@ import { ArrowRight } from "lucide-react"
 import Link from "next/link"
 import { connection } from "next/server"
 import { getTranslations } from "next-intl/server"
-import { Suspense } from "react"
+import { type ReactNode, Suspense } from "react"
+import { qlooTag } from "@/components/brands/qloo-logo"
 import { type Moment, Moments, WrappedFan } from "@/components/landing/moments"
 import { TasteRing } from "@/components/landing/taste-ring"
 import { LanguageMenu } from "@/components/language-menu"
@@ -57,7 +58,7 @@ async function Ring({
   open,
 }: {
   title: string
-  kicker: string
+  kicker: ReactNode
   start: string
   open: string
 }) {
@@ -75,7 +76,7 @@ async function Ring({
         <Suspense fallback={null}>
           <MainAction start={start} open={open} large />
         </Suspense>
-        <span className="text-[12px] font-semibold whitespace-nowrap text-text-3">{kicker}</span>
+        <span className="text-[13px] font-semibold whitespace-nowrap text-text-3">{kicker}</span>
       </div>
     </TasteRing>
   )
@@ -94,6 +95,10 @@ export default async function Landing({ params }: PageProps<"/[locale]">) {
   }))
   return (
     <main className="dark relative w-full bg-background text-foreground">
+      <div
+        aria-hidden
+        className="pointer-events-none fixed inset-x-0 top-0 z-20 h-24 bg-linear-to-b from-background via-background/70 to-transparent"
+      />
       <header className="pointer-events-none fixed inset-x-0 top-0 z-30 mx-auto flex h-16 w-full max-w-6xl items-center justify-between gap-4 px-6">
         <span className="pointer-events-auto font-title text-[22px]">{APP.name.toLowerCase()}</span>
         <div className="pointer-events-auto flex items-center gap-2">
@@ -105,7 +110,12 @@ export default async function Landing({ params }: PageProps<"/[locale]">) {
       </header>
 
       <Suspense fallback={<div className="h-svh" />}>
-        <Ring title={t("title")} kicker={t("kicker")} start={t("start")} open={t("continue")} />
+        <Ring
+          title={t("title")}
+          kicker={t.rich("kicker", qlooTag("ms-0.5 h-[0.95em] text-foreground"))}
+          start={t("start")}
+          open={t("continue")}
+        />
       </Suspense>
 
       <Moments items={moments} />
@@ -135,7 +145,9 @@ export default async function Landing({ params }: PageProps<"/[locale]">) {
 
       <footer className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-3 border-t border-white/10 px-6 py-8 text-sm text-text-3">
         <span>{t("footer")}</span>
-        <span className="font-semibold text-text-2">{t("builtOn")}</span>
+        <span className="font-semibold text-text-2">
+          {t.rich("builtOn", qlooTag("ms-0.5 h-[0.9em] text-foreground"))}
+        </span>
       </footer>
     </main>
   )
