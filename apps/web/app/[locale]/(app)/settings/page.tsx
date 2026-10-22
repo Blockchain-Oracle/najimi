@@ -65,18 +65,21 @@ async function sharesOf(userId: string, untitled: string): Promise<ShareItem[]> 
           .from(schema.chats)
           .where(inArray(schema.chats.id, ids("chat")))
       : [],
-    ids("person").length
+    [...ids("person"), ...ids("wrapped")].length
       ? db
           .select({ id: schema.people.id, label: schema.people.name })
           .from(schema.people)
-          .where(inArray(schema.people.id, ids("person")))
+          .where(inArray(schema.people.id, [...ids("person"), ...ids("wrapped")]))
       : [],
   ])
   const labels = new Map([...creations, ...chats, ...people].map((r) => [r.id, r.label]))
   return rows.map((r) => ({
     token: r.token,
     kind: r.kind,
-    label: labels.get(r.refId) ?? untitled,
+    label:
+      r.kind === "wrapped"
+        ? `${labels.get(r.refId) ?? untitled} · Wrapped`
+        : (labels.get(r.refId) ?? untitled),
     createdAt: r.createdAt.toISOString(),
   }))
 }

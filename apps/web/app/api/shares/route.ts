@@ -5,7 +5,10 @@ import { and, eq, isNull } from "drizzle-orm"
 import { z } from "zod"
 import { body, fail, json, withSession } from "@/lib/api"
 
-const input = z.object({ kind: z.enum(["creation", "chat", "person"]), refId: z.uuid() })
+const input = z.object({
+  kind: z.enum(["creation", "chat", "person", "wrapped"]),
+  refId: z.uuid(),
+})
 
 /**
  * A public link to something Najimi made, a whole chat, or a taste card (C15). One live link per
@@ -31,7 +34,8 @@ export async function POST(request: Request) {
       .where(and(eq(schema.chats.id, refId), eq(schema.chats.ownerId, userId)))
     if (!chat) return fail("Unknown chat", 404)
   } else {
-    // A taste card: the name, loves, words and picks. Never the city, age or anything in About.
+    // A taste card or a Wrapped: the name, loves, words, picks (and a Wrapped's year of stamps).
+    // Never the city, age or anything in About.
     const [person] = await db
       .select({ id: schema.people.id })
       .from(schema.people)
@@ -51,5 +55,6 @@ export async function POST(request: Request) {
     )
   const token = existing?.token ?? randomBytes(12).toString("base64url")
   if (!existing) await db.insert(schema.shares).values({ ownerId: userId, token, kind, refId })
-  return json({ token, url: new URL(`/s/${token}`, env.BETTER_AUTH_URL).toString() })
+  const path = kind === "wrapped" ? `/wrapped/${token}` : `/s/${token}`
+  return json({ token, url: new URL(path, env.BETTER_AUTH_URL).toString() })
 }

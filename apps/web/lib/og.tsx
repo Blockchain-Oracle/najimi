@@ -6,8 +6,8 @@ import { tokens } from "@najimi/tokens"
 import sharp from "sharp"
 
 /*
- * Link previews (T19): 1200×630 cards in Najimi's look (cream paper on the plum wall, one lime
- * pop), drawn by next/og. Fonts are read from disk once; the person's own photos are never used.
+ * Link previews: 1200×630 cards in Najimi's look (black, the aura's glow, Funnel type), drawn by
+ * next/og. Fonts are read from disk once; the person's own photos are never used.
  */
 
 export const OG_SIZE = { width: 1200, height: 630 }
@@ -15,20 +15,21 @@ export const OG_SIZE = { width: 1200, height: 630 }
 export const OG_HEADERS = { "cache-control": "public, max-age=600" }
 
 const dark = tokens.themes.dark as Record<string, string>
+/** The roles the older previews were drawn with, now the app's own dark theme. */
 export const OG = {
-  wall: dark.background ?? "#211922",
-  paper: dark.card ?? "#FFFAF7",
-  ink: dark["card-foreground"] ?? "#111114",
-  muted: "#5F5055",
-  lime: dark.primary ?? "#C9FF3D",
-  cream: dark.foreground ?? "#FFF6EE",
+  wall: dark.background ?? "#000000",
+  paper: dark.card ?? "#131315",
+  ink: dark.foreground ?? "#F5F5F7",
+  muted: dark["text-3"] ?? "#8E8E96",
+  lime: dark.signal ?? "#FF5CA8",
+  cream: dark.foreground ?? "#F5F5F7",
   identity: {
-    violet: "#7853FF",
-    pink: "#E9369D",
-    cobalt: "#3F70FF",
-    orange: "#FF7C42",
-    teal: "#13B8A6",
-    butter: "#FFB02E",
+    violet: dark["aura-2"] ?? "#8B5CFF",
+    pink: dark["aura-1"] ?? "#FF4FA3",
+    cobalt: dark["aura-2"] ?? "#8B5CFF",
+    orange: dark["aura-3"] ?? "#FFB23E",
+    teal: dark["aura-1"] ?? "#FF4FA3",
+    butter: dark["aura-3"] ?? "#FFB23E",
   } as Record<string, string>,
 }
 
@@ -40,8 +41,12 @@ const fontsOnce = Promise.all([
   font("IBMPlexSansArabic-SemiBold.ttf"),
 ])
 
+/**
+ * The older previews' font names, carrying the app's own faces now: "Bricolage" titles are Funnel
+ * Display, "Plex" text is Funnel Sans (Plex Arabic stays for Arabic, which Funnel doesn't cover).
+ */
 export async function ogFonts() {
-  const [display, regular, semibold, arabic] = await fontsOnce
+  const [[, , , arabic], [display, regular, semibold]] = await Promise.all([fontsOnce, funnelOnce])
   return [
     { name: "Bricolage", data: display, weight: 700 as const, style: "normal" as const },
     { name: "Plex", data: regular, weight: 400 as const, style: "normal" as const },
@@ -127,7 +132,7 @@ export function OgChips({ words }: { words: string[] }) {
             display: "flex",
             padding: "8px 18px",
             borderRadius: 999,
-            background: "rgba(17,17,20,0.07)",
+            background: "rgba(255,255,255,0.08)",
             fontSize: 24,
             fontWeight: 600,
             color: OG.ink,

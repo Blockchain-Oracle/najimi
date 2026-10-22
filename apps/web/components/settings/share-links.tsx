@@ -8,7 +8,7 @@ import { api } from "@/lib/fetcher"
 
 export type ShareItem = {
   token: string
-  kind: "creation" | "chat" | "person"
+  kind: "creation" | "chat" | "person" | "wrapped"
   label: string
   createdAt: string
 }
@@ -44,7 +44,7 @@ export function ShareLinks({ items }: { items: ShareItem[] }) {
             {t(`kinds.${i.kind}`)}
           </span>
           <a
-            href={`/s/${i.token}`}
+            href={i.kind === "wrapped" ? `/wrapped/${i.token}` : `/s/${i.token}`}
             target="_blank"
             rel="noopener"
             className="min-w-0 flex-1 truncate font-medium underline-offset-4 hover:underline"

@@ -15,6 +15,7 @@ import {
   Play,
   Radio,
   Share2,
+  Stamp,
   Store,
   Waypoints,
 } from "lucide-react"
@@ -345,6 +346,16 @@ export function PersonView({ data, other }: { data: PersonViewData; other?: Othe
           {mine ? (
             <Link href="/connect" aria-label={t("feeds")} title={t("feeds")} className={round}>
               <Radio className="size-4.5" />
+            </Link>
+          ) : null}
+          {mine ? (
+            <Link
+              href="/passport"
+              aria-label={t("passport")}
+              title={t("passport")}
+              className={round}
+            >
+              <Stamp className="size-4.5" />
             </Link>
           ) : null}
           {mine ? (

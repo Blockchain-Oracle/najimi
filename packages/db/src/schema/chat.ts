@@ -113,7 +113,7 @@ export const shares = pgTable(
     id: uuid().defaultRandom().primaryKey(),
     ownerId: owner(),
     token: text().notNull(),
-    kind: text().$type<"creation" | "chat" | "person">().notNull(),
+    kind: text().$type<"creation" | "chat" | "person" | "wrapped">().notNull(),
     refId: uuid().notNull(),
     revokedAt: timestamp({ withTimezone: true }),
     createdAt: timestamp({ withTimezone: true }).defaultNow().notNull(),

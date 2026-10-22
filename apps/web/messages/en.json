@@ -334,7 +334,8 @@
     "keptCta": "Open my feed",
     "graph": "Your taste graph",
     "feeds": "Your feeds",
-    "business": "Your business"
+    "business": "Your business",
+    "passport": "Passport"
   },
   "Pick": {
     "because": "because you love {name}",
@@ -431,7 +432,8 @@
     "kinds": {
       "creation": "Creation",
       "chat": "Chat",
-      "person": "Taste"
+      "person": "Taste",
+      "wrapped": "Wrapped"
     },
     "open": "Open",
     "untitled": "Untitled"
@@ -1086,5 +1088,37 @@
     "ask": "Ask Najimi",
     "askAbout": "Talk me through the plan for {name}. Where should I start this week?",
     "yourOwn": "Get a plan for your business"
+  },
+  "Passport": {
+    "title": "Passport",
+    "loves": "new loves",
+    "nights": "nights out",
+    "trips": "trips & stays",
+    "games": "games",
+    "wrappedTitle": "Your year in taste",
+    "wrappedLine": "Five slides for your Stories: what you loved, your words, where your people are, your passport.",
+    "make": "Make my Wrapped",
+    "share": "Share to Stories",
+    "copyLink": "Copy link",
+    "copied": "Link copied",
+    "saved": "Saved to your downloads",
+    "failed": "Something went wrong. Try again.",
+    "slide": "Slide {n}",
+    "moved": "How your taste moved",
+    "kind": {
+      "artist": "Music",
+      "movie": "Film",
+      "tv_show": "TV",
+      "book": "Books",
+      "podcast": "Podcasts",
+      "place": "Places",
+      "brand": "Brands",
+      "videogame": "Games"
+    },
+    "empty": "Nothing stamped yet. Love something, go out, play a game.",
+    "previous": "Previous",
+    "next": "Next",
+    "close": "Close",
+    "yourOwn": "Find your people"
   }
 }

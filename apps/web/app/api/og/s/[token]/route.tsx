@@ -104,7 +104,8 @@ export async function GET(_request: Request, ctx: RouteContext<"/api/og/s/[token
               gap: 18,
               height: 250,
               paddingBottom: 22,
-              background: OG.identity[identityOf(person.id, person.look)] ?? OG.lime,
+              // The person's own colour as a glow, the app's aura behind it.
+              background: `radial-gradient(60% 120% at 50% 0%, ${OG.identity[identityOf(person.id, person.look)] ?? OG.lime}99, transparent 75%), radial-gradient(50% 100% at 100% 100%, ${OG.identity.violet}55, transparent 70%), ${OG.paper}`,
             }}
           >
             {shown.map((l, i) =>
