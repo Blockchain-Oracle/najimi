@@ -1,6 +1,7 @@
 import { and, eq, lt, sql } from "drizzle-orm"
 import type { Db } from "./index"
 import {
+  blocks,
   bookings,
   businesses,
   chatMembers,
@@ -17,7 +18,9 @@ import {
   notifications,
   people,
   plans,
+  pushSubscriptions,
   qlooCalls,
+  reports,
   runs,
   session,
   shares,
@@ -133,6 +136,18 @@ export async function reownUserData(db: Db, fromUserId: string, toUserId: string
         and not exists (select 1 from ${tuneUps} u where u.user_id = ${toUserId} and u.day = t.day)`)
     await tx.delete(tuneUps).where(eq(tuneUps.userId, fromUserId))
     await tx.update(businesses).set({ ownerId: toUserId }).where(eq(businesses.ownerId, fromUserId))
+    // Their phones' push, who they blocked (a clash keeps the account's own), what they reported.
+    await tx
+      .update(pushSubscriptions)
+      .set({ userId: toUserId })
+      .where(eq(pushSubscriptions.userId, fromUserId))
+    await tx.execute(sql`
+      update ${blocks} b set blocker_id = ${toUserId}
+      where b.blocker_id = ${fromUserId}
+        and not exists (select 1 from ${blocks} c where c.blocker_id = ${toUserId}
+          and c.blocked_id = b.blocked_id)`)
+    await tx.delete(blocks).where(eq(blocks.blockerId, fromUserId))
+    await tx.update(reports).set({ reporterId: toUserId }).where(eq(reports.reporterId, fromUserId))
     // Connected accounts (the account's own connection wins a clash) and what was done with them.
     await tx.execute(sql`
       update ${connectorSessions} c set user_id = ${toUserId}

@@ -5,7 +5,7 @@ import { blendLoves, type Love } from "@najimi/qloo"
 import { and, asc, eq, isNotNull, ne } from "drizzle-orm"
 import { isMember } from "@/lib/chat/store"
 import { selfOf } from "@/lib/people"
-import { profileByUsername } from "@/lib/social"
+import { blockedWith, profileByUsername } from "@/lib/social"
 
 /*
  * The Earth's lenses (W11): whose taste the map shows (yours, a friend's, a circle's blended so
@@ -151,21 +151,24 @@ export async function peopleOnEarth(viewerId: string, limit = 300) {
       ),
     )
     .limit(limit)
-  return rows.map((r) => {
-    let h = 0
-    for (const ch of r.userId) h = (h * 31 + ch.charCodeAt(0)) >>> 0
-    const angle = ((h % 360) * Math.PI) / 180
-    const hop = 0.012 + ((h >>> 9) % 100) / 4000
-    return {
-      userId: r.userId,
-      name: r.name,
-      look: r.look,
-      city: r.city,
-      username: r.username,
-      lat: (r.lat as number) + Math.sin(angle) * hop,
-      lon: (r.lon as number) + Math.cos(angle) * hop,
-    }
-  })
+  const blocked = await blockedWith(viewerId)
+  return rows
+    .filter((r) => !blocked.has(r.userId))
+    .map((r) => {
+      let h = 0
+      for (const ch of r.userId) h = (h * 31 + ch.charCodeAt(0)) >>> 0
+      const angle = ((h % 360) * Math.PI) / 180
+      const hop = 0.012 + ((h >>> 9) % 100) / 4000
+      return {
+        userId: r.userId,
+        name: r.name,
+        look: r.look,
+        city: r.city,
+        username: r.username,
+        lat: (r.lat as number) + Math.sin(angle) * hop,
+        lon: (r.lon as number) + Math.cos(angle) * hop,
+      }
+    })
 }
 
 /** Public people whose city is near a spot (a scene's locals). */

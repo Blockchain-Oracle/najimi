@@ -37,6 +37,7 @@ import { sound } from "@/lib/sounds"
 import { type RunEvent, useRunEvents } from "@/lib/use-run"
 import { type EditableLove, LovesEditor } from "./loves-editor"
 import { MatchCard } from "./match-card"
+import { PersonMenu } from "./person-menu"
 import { FollowButton } from "./person-row"
 import { PickSheet } from "./pick-sheet"
 import { ProfileForm } from "./profile-form"
@@ -333,6 +334,7 @@ export function PersonView({ data, other }: { data: PersonViewData; other?: Othe
               >
                 <MessageCircle className="size-4.5" />
               </button>
+              <PersonMenu userId={other.userId} name={person.name} className={round} />
             </>
           ) : null}
           {mine ? (

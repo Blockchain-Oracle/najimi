@@ -1,7 +1,7 @@
 import { usageToday } from "@najimi/agent/server"
 import { ALLOWANCE } from "@najimi/config"
 import { db, schema } from "@najimi/db"
-import { and, desc, eq, inArray, isNull } from "drizzle-orm"
+import { and, desc, eq, gte, inArray, isNull, sql } from "drizzle-orm"
 import { redirect } from "next/navigation"
 import { getTranslations } from "next-intl/server"
 import { Suspense } from "react"
@@ -10,13 +10,26 @@ import { AuraFace } from "@/components/people/person-row"
 import { ProfileForm } from "@/components/people/profile-form"
 import { DeleteData } from "@/components/settings/delete-data"
 import { ModePicker } from "@/components/settings/mode-picker"
+import { PushSettings } from "@/components/settings/push-settings"
 import { type ShareItem, ShareLinks } from "@/components/settings/share-links"
 import { selfOf } from "@/lib/people"
 import { getSession } from "@/lib/session"
 
 const card = "flex flex-col gap-4 rounded-card bg-card p-5 text-card-foreground"
 /** Videos are switched off (MEDIA.video.enabled), so their counter isn't shown. */
-const COUNTERS = ["turns", "images"] as const
+const COUNTERS = ["turns", "images", "calls", "holds"] as const
+
+/** What the models cost while working for them this month (W26), from every logged call. */
+async function spentThisMonth(userId: string): Promise<number> {
+  const start = new Date()
+  start.setUTCDate(1)
+  start.setUTCHours(0, 0, 0, 0)
+  const [row] = await db
+    .select({ total: sql<number>`coalesce(sum(${schema.llmCalls.costUsd}), 0)::float` })
+    .from(schema.llmCalls)
+    .where(and(eq(schema.llmCalls.userId, userId), gte(schema.llmCalls.createdAt, start)))
+  return Number(row?.total ?? 0)
+}
 
 /** One day's allowance, used against the limit (rule 6). */
 function Meter({ label, used, limit }: { label: string; used: number; limit: number }) {
@@ -92,9 +105,10 @@ async function Mine() {
   const ta = await getTranslations("Auth")
   const user = session.user as typeof session.user & { isAnonymous?: boolean | null }
   const guest = Boolean(user.isAnonymous)
-  const [[prefs], used, links, self, [account]] = await Promise.all([
+  const [[prefs], used, spent, links, self, [account]] = await Promise.all([
     db.select().from(schema.userPrefs).where(eq(schema.userPrefs.userId, user.id)),
     usageToday(user.id),
+    spentThisMonth(user.id),
     sharesOf(user.id, t("untitled")),
     selfOf(user.id),
     db
@@ -130,6 +144,14 @@ async function Mine() {
 
       <section className={card}>
         <div className="flex flex-col gap-1">
+          <h2 className="font-heading text-[17px]">{t("notifications")}</h2>
+          <p className="text-sm text-text-3">{t("notificationsHint")}</p>
+        </div>
+        <PushSettings />
+      </section>
+
+      <section className={card}>
+        <div className="flex flex-col gap-1">
           <h2 className="font-heading text-[17px]">{t("mode")}</h2>
           <p className="text-sm text-text-3">{t("modeHint")}</p>
         </div>
@@ -144,6 +166,9 @@ async function Mine() {
         {COUNTERS.map((c) => (
           <Meter key={c} label={t(`counters.${c}`)} used={used[c]} limit={limits[c]} />
         ))}
+        <p className="text-sm text-text-3">
+          {t("spent", { amount: spent < 0.01 ? "<$0.01" : `$${spent.toFixed(2)}` })}
+        </p>
       </section>
 
       <section className={card}>

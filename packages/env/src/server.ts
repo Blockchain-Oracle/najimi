@@ -58,6 +58,10 @@ export const env = createEnv({
     ELEVENLABS_PHONE_NUMBER_ID: z.string().min(1).optional(),
     /** Verifies ElevenLabs' post-call webhook (HMAC). */
     ELEVENLABS_WEBHOOK_SECRET: z.string().min(1).optional(),
+    // Push (W24): the VAPID pair Najimi signs Web Push with, and who to write to about it.
+    VAPID_PUBLIC_KEY: z.string().min(80).optional(),
+    VAPID_PRIVATE_KEY: z.string().min(40).optional(),
+    VAPID_SUBJECT: z.string().min(8).default("mailto:hello@najimi.xyz"),
     // Social both ways (W14, W15).
     /** Encrypts the sessions people connect (AES-256-GCM); at least 32 characters. */
     CONNECTOR_SECRET: z.string().min(32).optional(),

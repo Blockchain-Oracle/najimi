@@ -209,6 +209,8 @@ export const ROOMS = {
   liveKeepMs: 2 * 24 * 60 * 60 * 1000,
   /** Messages one person may send per minute. */
   perMinute: 20,
+  /** A circle's members hear about new talk at most once in this long, while it's unread. */
+  notifyQuietMs: 10 * 60_000,
 } as const
 
 /** Games (W9): the wavelength's target bands, the daily drop, the public circle. */
@@ -310,13 +312,15 @@ export const MEDIA = {
 
 /** What one person may make per day (rule 6), plus a ceiling for the whole server. */
 export const ALLOWANCE = {
-  guest: { turns: 30, images: 10, videos: 2 },
-  member: { turns: 100, images: 30, videos: 6 },
+  // A phone call goes out in someone's name, so guests don't make them; hotel holds are rooms
+  // held for payment.
+  guest: { turns: 30, images: 10, videos: 2, calls: 0, holds: 2 },
+  member: { turns: 100, images: 30, videos: 6, calls: 3, holds: 6 },
   /**
    * The whole server's day, whoever is asking: a ceiling on what the paid model and image keys can
    * spend while sign-up is open to anyone. Raise it when there's budget for more.
    */
-  global: { turns: 400, images: 120, videos: 20 },
+  global: { turns: 400, images: 120, videos: 20, calls: 30, holds: 60 },
   /** Guests started per IP per hour. */
   guestsPerIpPerHour: 8,
 } as const

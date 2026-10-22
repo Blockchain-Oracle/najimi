@@ -71,8 +71,15 @@ export const userPrefs = pgTable("user_prefs", {
   /** Ask before making (default), make automatically, or plan only (rule 6). */
   mode: text().$type<"ask" | "auto" | "plan">().default("ask").notNull(),
   onboardedAt: timestamp({ withTimezone: true }),
+  /** Which news reaches the phone as a push (W24); everything is on until they say. */
+  push: jsonb()
+    .$type<PushPrefs>()
+    .default({ messages: true, games: true, plans: true, feeds: true })
+    .notNull(),
   ...timestamps,
 })
+
+export type PushPrefs = { messages: boolean; games: boolean; plans: boolean; feeds: boolean }
 
 /** A person's own taste profile (one per user, `isSelf`): who they are and where. */
 export const people = pgTable(

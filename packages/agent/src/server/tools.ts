@@ -977,6 +977,16 @@ export function buildTools(ctx: TurnContext, messageId: () => string | undefined
           hour: "numeric",
           minute: "2-digit",
         })
+        // A call costs real money and goes out in their name: it comes from a daily allowance.
+        if (!(await charge(ctx.userId, ctx.guest, "calls")))
+          return {
+            bookingId: null,
+            status: "unavailable" as const,
+            phone,
+            note: ctx.guest
+              ? "Sign in to have Najimi call venues for you."
+              : "That's all the calls for today. Ask me again tomorrow.",
+          }
         const [booking] = await db
           .insert(schema.bookings)
           .values({
@@ -1023,6 +1033,7 @@ export function buildTools(ctx: TurnContext, messageId: () => string | undefined
           )
           return { bookingId: booking.id, status: "calling" as const, phone, note: null }
         } catch (error) {
+          await refund(ctx.userId, "calls")
           await db
             .update(schema.bookings)
             .set({ status: "failed", note: (error as Error).message })

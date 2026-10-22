@@ -2,7 +2,7 @@ import { db, schema } from "@najimi/db"
 import { and, eq } from "drizzle-orm"
 import { z } from "zod"
 import { body, fail, json, withSession } from "@/lib/api"
-import { notify, relation } from "@/lib/social"
+import { blockedWith, notify, relation } from "@/lib/social"
 
 const input = z.object({ userId: z.string().min(1).max(64) })
 
@@ -19,7 +19,7 @@ export async function POST(request: Request) {
     .select({ id: schema.user.id })
     .from(schema.user)
     .where(eq(schema.user.id, userId))
-  if (!other) return fail("Unknown person", 404)
+  if (!other || (await blockedWith(me)).has(userId)) return fail("Unknown person", 404)
   const added = await db
     .insert(schema.follows)
     .values({ followerId: me, followeeId: userId })

@@ -3,7 +3,7 @@ import { db, schema } from "@najimi/db"
 import { sql } from "drizzle-orm"
 
 const today = () => new Date().toISOString().slice(0, 10)
-export type Counter = "turns" | "images" | "videos"
+export type Counter = "turns" | "images" | "videos" | "calls" | "holds"
 
 const limitOf = (counter: Counter, guest: boolean) =>
   (guest ? ALLOWANCE.guest : ALLOWANCE.member)[counter]
@@ -60,5 +60,11 @@ export async function usageToday(userId: string) {
     .select()
     .from(schema.usageDays)
     .where(sql`${schema.usageDays.userId} = ${userId} and ${schema.usageDays.day} = ${today()}`)
-  return { turns: row?.turns ?? 0, images: row?.images ?? 0, videos: row?.videos ?? 0 }
+  return {
+    turns: row?.turns ?? 0,
+    images: row?.images ?? 0,
+    videos: row?.videos ?? 0,
+    calls: row?.calls ?? 0,
+    holds: row?.holds ?? 0,
+  }
 }

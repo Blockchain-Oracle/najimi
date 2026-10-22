@@ -2,7 +2,7 @@ import { charge, ownsUploads, publishMessage, roomMessages, toUI } from "@najimi
 import { DEFAULT_LOCALE, ROOMS } from "@najimi/config"
 import { db, schema } from "@najimi/db"
 import { enqueue } from "@najimi/jobs"
-import { eq } from "drizzle-orm"
+import { and, eq, gte, isNull } from "drizzle-orm"
 import { z } from "zod"
 import { body, fail, json, withSession } from "@/lib/api"
 import { chatExists, createAgentRoom, ownedChat } from "@/lib/chat/store"
@@ -146,6 +146,38 @@ export async function POST(request: Request, ctx: RouteContext<"/api/rooms/[id]/
           chatId: chat.id,
           data: { text: text.slice(0, 120) },
         })
+  }
+  // In a circle, the others hear about it too — once per stretch of talk, not every line.
+  if (chat.kind === "circle") {
+    const members = await db
+      .select({ userId: schema.chatMembers.userId })
+      .from(schema.chatMembers)
+      .where(eq(schema.chatMembers.chatId, chat.id))
+    const since = new Date(Date.now() - ROOMS.notifyQuietMs)
+    for (const m of members) {
+      if (m.userId === user.id) continue
+      const [recent] = await db
+        .select({ id: schema.notifications.id })
+        .from(schema.notifications)
+        .where(
+          and(
+            eq(schema.notifications.userId, m.userId),
+            eq(schema.notifications.chatId, chat.id),
+            eq(schema.notifications.kind, "message"),
+            isNull(schema.notifications.readAt),
+            gte(schema.notifications.createdAt, since),
+          ),
+        )
+        .limit(1)
+      if (recent) continue
+      await notify({
+        userId: m.userId,
+        kind: "message",
+        actorId: user.id,
+        chatId: chat.id,
+        data: { text: text.slice(0, 120), name: chat.name },
+      })
+    }
   }
   return json({ ok: true, chatId: chat.id }, 202)
 }

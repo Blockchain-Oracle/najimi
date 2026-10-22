@@ -12,6 +12,15 @@ import { and, asc, desc, eq, ilike, inArray, ne, or, sql } from "drizzle-orm"
  * compare: the share of taste words two people have in common).
  */
 
+/** Everyone this person blocked, or who blocked them: neither side sees or reaches the other. */
+export async function blockedWith(userId: string): Promise<Set<string>> {
+  const rows = await db
+    .select({ a: schema.blocks.blockerId, b: schema.blocks.blockedId })
+    .from(schema.blocks)
+    .where(or(eq(schema.blocks.blockerId, userId), eq(schema.blocks.blockedId, userId)))
+  return new Set(rows.map((r) => (r.a === userId ? r.b : r.a)))
+}
+
 export type PersonCard = {
   userId: string
   personId: string
@@ -79,7 +88,8 @@ export async function findPeople(q: string, viewerId: string, limit = 20): Promi
     )
     .orderBy(desc(schema.people.updatedAt))
     .limit(limit)
-  return rows.map(({ visibility: _v, ...card }) => card)
+  const blocked = await blockedWith(viewerId)
+  return rows.filter((r) => !blocked.has(r.userId)).map(({ visibility: _v, ...card }) => card)
 }
 
 /** Someone's own profile by username, with what the viewer may see of it. */
@@ -91,6 +101,7 @@ export async function profileByUsername(username: string, viewerId: string) {
     .where(and(eq(schema.user.username, username.toLowerCase()), eq(schema.people.isSelf, true)))
   if (!row) return null
   const isSelf = row.person.ownerId === viewerId
+  if (!isSelf && (await blockedWith(viewerId)).has(row.person.ownerId)) return null
   const rel = isSelf
     ? { following: false, followedBy: false, friends: false }
     : await relation(viewerId, row.person.ownerId)
@@ -130,6 +141,7 @@ export async function notify(input: {
   data?: Record<string, unknown>
 }) {
   if (input.actorId && input.actorId === input.userId) return
+  if (input.actorId && (await blockedWith(input.userId)).has(input.actorId)) return
   const [row] = await db
     .insert(schema.notifications)
     .values({
@@ -195,7 +207,9 @@ export async function tasteTwins(
     group by theirs.owner_id order by shared desc limit ${limit}`)
   const cards = await cardsOf(rows.map((r) => r.owner_id))
   const shared = new Map(rows.map((r) => [r.owner_id, Number(r.shared)]))
+  const blocked = await blockedWith(userId)
   return cards
+    .filter((c) => !blocked.has(c.userId))
     .map((c) => ({ ...c, shared: shared.get(c.userId) ?? 0 }))
     .sort((a, b) => b.shared - a.shared)
 }

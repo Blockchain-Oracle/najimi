@@ -1,3 +1,4 @@
+import { charge, refund } from "@najimi/agent/server"
 import { prebook } from "@najimi/booking/nuitee"
 import { db, schema } from "@najimi/db"
 import { z } from "zod"
@@ -34,6 +35,9 @@ export async function POST(request: Request) {
   if ("error" in parsed) return parsed.error
   const { offerId, hotel, checkin, checkout, guests, chatId } = parsed.data
   if (chatId && !(await isMember(chatId, me))) return fail("Unknown room", 404)
+  const guest = Boolean((auth.session.user as { isAnonymous?: boolean | null }).isAnonymous)
+  if (!(await charge(me, guest, "holds")))
+    return fail("That's all the rooms you can hold today. Try again tomorrow.", 429)
   try {
     const held = await prebook(offerId)
     const id = crypto.randomUUID()
@@ -66,6 +70,7 @@ export async function POST(request: Request) {
     })
     return json({ bookingId: id }, 201)
   } catch (e) {
+    await refund(me, "holds")
     return fail(e instanceof Error ? e.message : "Couldn't hold the room", 422)
   }
 }

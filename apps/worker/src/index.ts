@@ -6,6 +6,7 @@ import { boss, type Payload, QUEUES, RETIRED_QUEUES } from "@najimi/jobs"
 import { emit, setRunStatus, sweepLiveEvents } from "@najimi/live"
 import { deleteKeys } from "@najimi/storage"
 import { closeInterruptedRuns } from "./interrupted"
+import { startPush } from "./push"
 import { bookingCheck, followUps } from "./jobs/bookings"
 import { businessWeekly } from "./jobs/business"
 import { chatTitle } from "./jobs/chat-title"
@@ -163,6 +164,9 @@ async function main() {
     await socialMornings()
   })
   await queues.schedule(QUEUES.socialMornings.name, "5 * * * *", {}, { tz: "UTC" })
+
+  // People's news, pushed to the phones they turned push on for (W24).
+  await startPush().catch((error) => console.error("[push] start", error))
 
   // Submitted videos are checked here; a restart picks them up again by their provider id.
   const poller = setInterval(

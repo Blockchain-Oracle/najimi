@@ -15,6 +15,19 @@ const nextConfig: NextConfig = {
   // Qloo's artwork through the image optimiser: small, cached and same-origin (images.qloo.com
   // refuses requests that carry an Origin, so a canvas couldn't load it straight and still be saved).
   images: { remotePatterns: [{ protocol: "https", hostname: "images.qloo.com" }] },
+  // The service worker is always fetched fresh (a stale one would hold old push handling).
+  async headers() {
+    return [
+      {
+        source: "/sw.js",
+        headers: [
+          { key: "Content-Type", value: "application/javascript; charset=utf-8" },
+          { key: "Cache-Control", value: "no-cache, no-store, must-revalidate" },
+          { key: "Content-Security-Policy", value: "default-src 'self'; script-src 'self'" },
+        ],
+      },
+    ]
+  },
   // Local only: 127.0.0.1 is a second origin (no cookies), to walk sign-up as a stranger.
   allowedDevOrigins: ["127.0.0.1"],
   // X's client stays a plain Node dependency (axios, linkedom) rather than being bundled.

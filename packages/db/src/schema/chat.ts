@@ -133,6 +133,9 @@ export const usageDays = pgTable(
     turns: integer().default(0).notNull(),
     images: integer().default(0).notNull(),
     videos: integer().default(0).notNull(),
+    /** Phone calls to venues, and hotel rooms held for payment (W26). */
+    calls: integer().default(0).notNull(),
+    holds: integer().default(0).notNull(),
   },
   (t) => [primaryKey({ columns: [t.userId, t.day] })],
 )

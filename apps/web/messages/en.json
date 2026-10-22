@@ -176,7 +176,17 @@
     "bothAre": "You're both",
     "statFollowers": "Followers",
     "hidden": "{name}'s taste is just for their friends.",
-    "inviteGone": "That invite isn't valid any more."
+    "inviteGone": "That invite isn't valid any more.",
+    "more": "More",
+    "block": "Block {name}",
+    "blocked": "{name} is blocked",
+    "reported": "Thanks. {name} is reported and blocked.",
+    "report": {
+      "spam": "Report spam",
+      "abuse": "Report abuse or harassment",
+      "fake": "Report a fake account",
+      "other": "Report something else"
+    }
   },
   "Profile": {
     "name": "Name",
@@ -412,7 +422,9 @@
     "counters": {
       "turns": "Messages to Najimi",
       "images": "Pictures",
-      "videos": "Videos"
+      "videos": "Videos",
+      "calls": "Calls to venues",
+      "holds": "Rooms held"
     },
     "deleteHeading": "Delete all my data",
     "deleteHint": "Your account and everything in it, gone for good.",
@@ -436,7 +448,22 @@
       "wrapped": "Wrapped"
     },
     "open": "Open",
-    "untitled": "Untitled"
+    "untitled": "Untitled",
+    "notifications": "Notifications",
+    "notificationsHint": "Messages in your circles, games about you, plans and your daily tune-up.",
+    "pushOn": "Push on this phone",
+    "pushDenied": "Notifications are blocked for Najimi in this browser's settings.",
+    "install": "Install Najimi",
+    "homeTitle": "Add Najimi to your Home Screen for notifications",
+    "homeStep1": "Tap Share in Safari",
+    "homeStep2": "Choose Add to Home Screen, then open Najimi from there",
+    "push": {
+      "messages": "Messages, follows and invites",
+      "games": "Games and daily drops",
+      "plans": "Plans, bookings and business",
+      "feeds": "Your daily tune-up"
+    },
+    "spent": "Najimi's thinking cost {amount} for you this month."
   },
   "Chat": {
     "greeting": "What should we find for {name}?",

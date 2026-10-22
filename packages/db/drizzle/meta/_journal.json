@@ -176,6 +176,20 @@
       "when": 1792701776520,
       "tag": "0024_businesses",
       "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1792703974818,
+      "tag": "0025_push_privacy",
+      "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "7",
+      "when": 1792704297117,
+      "tag": "0026_usage_calls",
+      "breakpoints": true
     }
   ]
 }
