@@ -18,7 +18,7 @@ import { api } from "@/lib/fetcher"
 type ChatItem = { id: string; title: string | null; status: string; lastActiveAt: string }
 
 /** Every chat, newest first, searchable; rename and delete from each row's menu. */
-export function ChatSidebar() {
+export function ChatSidebar({ onPick }: { onPick?: () => void } = {}) {
   const t = useTranslations("Chat")
   const router = useRouter()
   const params = useParams<{ id?: string }>()
@@ -36,7 +36,8 @@ export function ChatSidebar() {
     <nav className="flex h-full flex-col gap-3 p-3">
       <Link
         href="/c"
-        className="sticker inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-semibold"
+        onClick={onPick}
+        className="inline-flex items-center justify-center gap-2 rounded-pill bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground"
       >
         <Plus className="size-4" /> {t("newChat")}
       </Link>
@@ -54,6 +55,7 @@ export function ChatSidebar() {
           <li key={c.id} className="group flex items-center">
             <Link
               href={`/c/${c.id}`}
+              onClick={onPick}
               className={cn(
                 "min-w-0 flex-1 truncate rounded-tile px-3 py-2 text-sm transition-colors",
                 params.id === c.id ? "bg-raised font-semibold" : "text-text-2 hover:bg-raised/60",

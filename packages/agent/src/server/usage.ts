@@ -1,4 +1,3 @@
-import "server-only"
 import { ALLOWANCE } from "@najimi/config"
 import { db, schema } from "@najimi/db"
 import { sql } from "drizzle-orm"

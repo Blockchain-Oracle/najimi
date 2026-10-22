@@ -99,6 +99,27 @@
       "when": 1792672265470,
       "tag": "0013_love_source",
       "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1792673271666,
+      "tag": "0014_rooms",
+      "breakpoints": true
+    },
+    {
+      "idx": 15,
+      "version": "7",
+      "when": 1792673278865,
+      "tag": "0015_rooms_move",
+      "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "7",
+      "when": 1792673460188,
+      "tag": "0016_llm_cost",
+      "breakpoints": true
     }
   ]
 }

@@ -1,6 +1,6 @@
 import { createAnthropic } from "@ai-sdk/anthropic"
 import { createOpenAI } from "@ai-sdk/openai"
-import { AGENT } from "@najimi/config"
+import { AGENT, MODELS } from "@najimi/config"
 import { env } from "@najimi/env/server"
 import { createProviderRegistry, type LanguageModel } from "ai"
 
@@ -50,4 +50,22 @@ export function agentModel(id: ModelId = agentModelId()): LanguageModel {
   if (!agentReady(id)) throw new AgentNotConfigured(providerOf(id))
   registry ??= build()
   return registry.languageModel(id)
+}
+
+/** The model the agent thinks with in rooms (plans, comparisons, games, bookings). */
+export const brainModelId = (): ModelId => MODELS.brain as ModelId
+
+/** The model for light work (titles, short phrasing); `AGENT_MODEL` can point it elsewhere. */
+export const lightModelId = (): ModelId => agentModelId()
+
+/** What a call cost in US dollars, from its tokens and the model's price (null when unpriced). */
+export function costOf(
+  id: string,
+  usage: { input?: number | null; output?: number | null; cached?: number | null },
+): number | null {
+  const price = MODELS.prices[id]
+  if (!price) return null
+  const cached = usage.cached ?? 0
+  const fresh = Math.max(0, (usage.input ?? 0) - cached)
+  return (fresh * price.input + cached * price.cached + (usage.output ?? 0) * price.output) / 1e6
 }

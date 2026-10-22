@@ -7,7 +7,8 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { Suspense } from "react"
-import { isHere, NAV } from "./nav"
+import { useAgent } from "@/components/agent/agent-context"
+import { isHere, NAV, opensSheet } from "./nav"
 
 /*
  * The phone tab bar: a floating glass pill where the tab you're on opens to show its name, and
@@ -32,6 +33,7 @@ export function TabBar() {
 
 function Tabs({ pathname }: { pathname: string | null }) {
   const t = useTranslations("Nav")
+  const agent = useAgent()
   return (
     <nav
       aria-label={t("label")}
@@ -49,6 +51,13 @@ function Tabs({ pathname }: { pathname: string | null }) {
             <motion.li key={item.href} layout transition={SPRING}>
               <Link
                 href={item.href}
+                onClick={(e) => {
+                  // Najimi's orb opens the sheet over this screen (the chat itself is a link away).
+                  if (opensSheet(item, pathname)) {
+                    e.preventDefault()
+                    agent.setOpen(true)
+                  }
+                }}
                 aria-current={here ? "page" : undefined}
                 aria-label={t(item.key)}
                 className={cn(

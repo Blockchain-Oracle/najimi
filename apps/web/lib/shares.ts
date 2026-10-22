@@ -1,3 +1,4 @@
+import { allMessages } from "@najimi/agent/server"
 import "server-only"
 import type { NajimiUIMessage } from "@najimi/agent"
 import { db, schema } from "@najimi/db"
@@ -40,7 +41,7 @@ export const sharedSubject = cache(async (share: ShareRow) => {
       kind: "chat" as const,
       locale: chat.locale,
       chat,
-      messages: chat.messages as NajimiUIMessage[],
+      messages: (await allMessages(chat.id)) as NajimiUIMessage[],
       made,
     }
   }

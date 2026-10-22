@@ -16,9 +16,11 @@ async function NewChat({ ask }: { ask: Promise<string | undefined> }) {
     <ChatView
       chatId={randomUUID()}
       isNew
+      title={null}
       messages={[]}
       status="idle"
-      turnStartedAt={null}
+      after={0}
+      me={session.user.id}
       mode={data.mode}
       people={data.people}
       starters={data.starters}

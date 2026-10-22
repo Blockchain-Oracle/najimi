@@ -1,3 +1,4 @@
+import { sql } from "drizzle-orm"
 import {
   date,
   index,
@@ -10,28 +11,88 @@ import {
   uniqueIndex,
   uuid,
 } from "drizzle-orm/pg-core"
+import { user } from "./auth"
 import { owner, timestamps } from "./core"
 import { people } from "./taste"
 
-/** A conversation. `messages` is the whole AI SDK UIMessage[] (tool parts and reasoning kept). */
+/**
+ * A room: your conversation with Najimi (`agent`), a circle of friends with Najimi in it
+ * (`circle`), or two people (`dm`). Its messages are rows in `messages`; who's in it is
+ * `chat_members`.
+ */
 export const chats = pgTable(
   "chats",
   {
     id: uuid().defaultRandom().primaryKey(),
     ownerId: owner(),
+    kind: text().$type<"agent" | "circle" | "dm">().default("agent").notNull(),
+    /** A circle's name (agent chats use `title`, written by Najimi). */
+    name: text(),
     /** Who the chat makes things for. */
     personId: uuid().references(() => people.id, { onDelete: "set null" }),
     title: text(),
     /** Replies, cards and the title are written in this language (rule 8). */
     locale: text().notNull(),
     mode: text().$type<"ask" | "auto" | "plan">().default("ask").notNull(),
-    status: text().$type<"idle" | "generating" | "waiting">().default("idle").notNull(),
+    status: text()
+      .$type<"idle" | "generating" | "waiting" | "stopping">()
+      .default("idle")
+      .notNull(),
     turnStartedAt: timestamp({ withTimezone: true }),
-    messages: jsonb().$type<unknown[]>().default([]).notNull(),
     lastActiveAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
     ...timestamps,
   },
   (t) => [index("chats_owner_active_idx").on(t.ownerId, t.lastActiveAt)],
+)
+
+/** Who is in a room, and how far they've read. */
+export const chatMembers = pgTable(
+  "chat_members",
+  {
+    chatId: uuid()
+      .notNull()
+      .references(() => chats.id, { onDelete: "cascade" }),
+    userId: text()
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    role: text().$type<"owner" | "member">().default("member").notNull(),
+    lastReadAt: timestamp({ withTimezone: true }),
+    joinedAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
+  },
+  (t) => [
+    primaryKey({ columns: [t.chatId, t.userId] }),
+    index("chat_members_user_idx").on(t.userId),
+  ],
+)
+
+/**
+ * One message in a room, as an AI SDK UIMessage (its parts: text, tool cards, approvals). The
+ * agent's answer is one row updated as it streams; appends never rewrite the rest of the room.
+ */
+export const messages = pgTable(
+  "messages",
+  {
+    id: text().primaryKey(),
+    chatId: uuid()
+      .notNull()
+      .references(() => chats.id, { onDelete: "cascade" }),
+    role: text().$type<"user" | "assistant" | "system">().notNull(),
+    /** The person who wrote it (null for Najimi, or someone who has since left). */
+    authorId: text().references(() => user.id, { onDelete: "set null" }),
+    parts: jsonb().$type<unknown[]>().default([]).notNull(),
+    metadata: jsonb().$type<Record<string, unknown>>(),
+    /** done; streaming; waiting (a card needs an answer); resume (answered, Najimi carries on); failed. */
+    status: text()
+      .$type<"done" | "streaming" | "waiting" | "resume" | "failed">()
+      .default("done")
+      .notNull(),
+    createdAt: timestamp({ withTimezone: true }).default(sql`clock_timestamp()`).notNull(),
+    updatedAt: timestamp({ withTimezone: true })
+      .defaultNow()
+      .$onUpdate(() => new Date())
+      .notNull(),
+  },
+  (t) => [index("messages_chat_time_idx").on(t.chatId, t.createdAt)],
 )
 
 /**

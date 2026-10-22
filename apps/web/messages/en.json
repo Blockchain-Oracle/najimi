@@ -106,7 +106,9 @@
     "cardLabel": "{domain}: {name}",
     "tapToPause": "Tap to pause or play",
     "full": "Your taste is full. Let go of a love on your taste page to add this one.",
-    "upNext": "Up next"
+    "upNext": "Up next",
+    "tuned": "Your feed, retuned",
+    "openFeed": "Open my feed"
   },
   "Player": {
     "play": "Play",
@@ -120,6 +122,19 @@
     "seek": "Position in the track",
     "failed": "This one won't play. Try the next.",
     "backToCard": "Back to its card"
+  },
+  "Agent": {
+    "title": "Najimi",
+    "new": "New conversation",
+    "full": "Open the full chat",
+    "close": "Close",
+    "empty": "Ask anything. Najimi knows your taste.",
+    "emptyOn": "Ask about what you're looking at, or anything else.",
+    "seeing": "Seeing {label}",
+    "askAbout": "Ask about this…",
+    "placeholder": "Message Najimi…",
+    "send": "Send",
+    "stop": "Stop"
   },
   "Start": {
     "step": "{current} of {total}",
@@ -364,7 +379,7 @@
   "Chat": {
     "greeting": "What should we find for {name}?",
     "usesTaste": "{self, select, yes {Answers use your taste:} other {Answers use {name}'s taste:}}",
-    "placeholder": "Ask anything for {name}…",
+    "placeholder": "Message Najimi…",
     "send": "Send",
     "stop": "Stop",
     "addPhoto": "Add a photo",
@@ -416,7 +431,8 @@
     "voiceFailed": "We couldn't hear that. Try again.",
     "shareChat": "Share this chat",
     "linkCopied": "Link copied",
-    "share": "Share"
+    "share": "Share",
+    "thinking": "Najimi is thinking…"
   },
   "Cards": {
     "asking": "Asking Qloo…",

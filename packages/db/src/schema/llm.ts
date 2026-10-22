@@ -1,4 +1,12 @@
-import { index, integer, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core"
+import {
+  doublePrecision,
+  index,
+  integer,
+  pgTable,
+  text,
+  timestamp,
+  uuid,
+} from "drizzle-orm/pg-core"
 import { user } from "./auth"
 import { runs } from "./core"
 
@@ -24,6 +32,8 @@ export const llmCalls = pgTable(
     cacheReadTokens: integer(),
     cacheWriteTokens: integer(),
     ms: integer(),
+    /** What the call cost in US dollars (tokens × the model's price), for the spend in Settings. */
+    costUsd: doublePrecision(),
     stopReason: text(),
     refusalCategory: text(),
     error: text(),

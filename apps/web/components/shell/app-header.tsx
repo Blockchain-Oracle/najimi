@@ -13,11 +13,13 @@ import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { Suspense, useState } from "react"
+import { useAgent } from "@/components/agent/agent-context"
+import { AgentSheet } from "@/components/agent/agent-sheet"
 import { SignInSheet } from "@/components/auth/sign-in-sheet"
 import { LanguageMenu } from "@/components/language-menu"
 import { MiniPlayer } from "@/components/player/mini-player"
 import { authClient } from "@/lib/auth-client"
-import { isHere, NAV } from "./nav"
+import { isHere, NAV, opensSheet } from "./nav"
 import { TabBar } from "./tab-bar"
 
 /** The rail's width; layouts pad their content by the same amount on desktop. */
@@ -29,6 +31,12 @@ function Wordmark({ className }: { className?: string }) {
       najimi
     </Link>
   )
+}
+
+/** Najimi's sheet, for whoever is signed in (guests too). */
+function SheetForMe() {
+  const session = authClient.useSession()
+  return <AgentSheet me={session.data?.user.id ?? null} />
 }
 
 /** Sign in for guests; the account menu once signed in. */
@@ -96,6 +104,7 @@ function CurrentRail({ onSignIn }: { onSignIn: () => void }) {
 /** Desktop: a slim rail on the left with every section, and you at the bottom. */
 function Rail({ pathname, onSignIn }: { pathname: string | null; onSignIn: () => void }) {
   const t = useTranslations("Nav")
+  const agent = useAgent()
   return (
     <nav
       aria-label={t("label")}
@@ -109,6 +118,12 @@ function Rail({ pathname, onSignIn }: { pathname: string | null; onSignIn: () =>
           <Link
             key={item.href}
             href={item.href}
+            onClick={(e) => {
+              if (opensSheet(item, pathname)) {
+                e.preventDefault()
+                agent.setOpen(true)
+              }
+            }}
             aria-current={here ? "page" : undefined}
             className={cn(
               "flex w-[4.5rem] flex-col items-center gap-1 rounded-tile py-2.5 text-[11px] font-semibold transition-colors",
@@ -171,6 +186,7 @@ export function AppHeader({
       <Suspense fallback={null}>
         <MiniPlayer />
       </Suspense>
+      <SheetForMe />
       <SignInSheet open={signIn} onOpenChange={setSignIn} google={google} email={email} />
     </>
   )

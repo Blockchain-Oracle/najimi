@@ -61,8 +61,8 @@ export const QUERY = {
 } as const
 
 export const LIVE = {
-  /** One Postgres channel carries run-event ids; payloads stay tiny (NOTIFY caps at 8000 bytes). */
-  channel: "run_events",
+  /** One Postgres channel carries live-event ids; payloads stay tiny (NOTIFY caps at 8000 bytes). */
+  channel: "live_events",
   /** Proxies close quiet connections; a comment this often keeps a stream open. */
   pingMs: 15_000,
   /** A reconnecting stream replays at most this many missed events. */
@@ -180,6 +180,35 @@ export const AGENT = {
   keepAliveMs: 15_000,
   /** Characters of a chat title. */
   titleMax: 60,
+} as const
+
+/**
+ * Which model does what (Abu, 2026-10-22: efficient, not dumb, never the most expensive). The
+ * agent's turns in rooms (planning, comparing people, games, booking) think with the brain; titles
+ * and short phrasing use the light one. Prices per 1M tokens (developers.openai.com pricing,
+ * checked 2026-10-22), for the cost each call logs.
+ */
+export const MODELS = {
+  brain: "openai:gpt-6.1-sol",
+  light: "openai:gpt-6-luna",
+  prices: {
+    "openai:gpt-6.1-sol": { input: 2, output: 10, cached: 0.1 },
+    "openai:gpt-6-luna": { input: 0.1, output: 0.5, cached: 0.01 },
+  } as Record<string, { input: number; output: number; cached: number }>,
+} as const
+
+/** Rooms: how the agent's answer streams to everyone in the room. */
+export const ROOMS = {
+  /** An answer in progress is saved and sent to the room at most this often. */
+  flushMs: 150,
+  /** A stop request is checked this often while the agent answers. */
+  stopCheckMs: 1_000,
+  /** Messages a page loads at once (older ones page in as you scroll up). */
+  pageSize: 40,
+  /** Live events older than this are swept nightly (pages only replay recent ones). */
+  liveKeepMs: 2 * 24 * 60 * 60 * 1000,
+  /** Messages one person may send per minute. */
+  perMinute: 20,
 } as const
 
 const HOUR_S = 60 * 60

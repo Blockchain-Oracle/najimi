@@ -55,19 +55,19 @@ export const runs = pgTable(
 )
 
 /**
- * What a run did, step by step: append-only, so a reconnecting page replays exactly what it missed
- * (ids are ordered). Each row is announced on the live channel in the same transaction.
+ * Everything that happens live, by topic: a run's steps (`run:<id>`), a room's messages as they
+ * stream (`room:<id>`), a person's own news (`user:<id>`). Append-only, so a reconnecting page
+ * replays exactly what it missed (ids are ordered); each row is announced on the live channel in
+ * the same transaction, and old rows are swept nightly.
  */
-export const runEvents = pgTable(
-  "run_events",
+export const liveEvents = pgTable(
+  "live_events",
   {
     id: bigserial({ mode: "number" }).primaryKey(),
-    runId: uuid()
-      .notNull()
-      .references(() => runs.id, { onDelete: "cascade" }),
+    topic: text().notNull(),
     type: text().notNull(),
     data: jsonb().$type<Record<string, unknown>>().default({}).notNull(),
     createdAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
   },
-  (t) => [index("run_events_run_idx").on(t.runId, t.id)],
+  (t) => [index("live_events_topic_idx").on(t.topic, t.id)],
 )

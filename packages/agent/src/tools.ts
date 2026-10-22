@@ -1,14 +1,15 @@
-import { TASTE_DOMAINS } from "@najimi/config"
+import { FEED, TASTE, TASTE_DOMAINS } from "@najimi/config"
 import { tool } from "ai"
 import { z } from "zod"
 
 /*
  * The agent's tools as shared definitions: inputs, outputs and what the model is told. The client
- * imports these for typed card parts; the server adds `execute` (apps/web/lib/chat/tools.server.ts).
+ * imports these for typed card parts; the server adds `execute` (packages/agent/src/server/tools.ts).
  * A tool with no execute (askUser) is answered by the person in the chat.
  */
 
 const entityKeys = TASTE_DOMAINS.map((d) => d.key) as [string, ...string[]]
+const feedKeys = Object.keys(FEED.mix) as [string, ...string[]]
 const yearRange = z.object({
   min: z.number().int().min(1800).max(2100).optional(),
   max: z.number().int().min(1800).max(2100).optional(),
@@ -308,6 +309,41 @@ export const toolDefs = {
         z.object({ name: z.string(), image: z.string().nullable(), type: z.string() }),
       ),
       runId: z.string().nullable(),
+    }),
+  }),
+
+  steerFeed: tool({
+    description:
+      "Tune the person's feed when they ask for more or less of something: turn categories up, down or off (level 0 off, 1 less, 2 normal, 3 more), add something to their taste (often the card they're looking at: 'more like this', 'I love this'), or make one of their loves count more or less. Their feed restarts on the new mix at once. Use it for 'less films', 'no podcasts', 'more music like this', 'more of Burna Boy'.",
+    inputSchema: z.object({
+      mix: z
+        .array(
+          z.object({ category: z.enum(feedKeys), level: z.number().int().min(0).max(FEED.mixMax) }),
+        )
+        .max(8)
+        .optional(),
+      love: z
+        .object({ qlooId: z.string(), name: z.string(), type: z.string() })
+        .optional()
+        .describe(
+          "Something to add to their taste, by its Qloo id (the card on screen, or a search hit).",
+        ),
+      weights: z
+        .array(
+          z.object({
+            loveName: z.string(),
+            weight: z.number().int().min(TASTE.weightMin).max(TASTE.weightMax),
+          }),
+        )
+        .max(10)
+        .optional()
+        .describe("Loves to count more or less, by name (1 barely … 10 most)."),
+    }),
+    outputSchema: z.object({
+      mix: z.array(z.object({ category: z.string(), level: z.number() })),
+      loved: z.string().nullable(),
+      weights: z.array(z.object({ name: z.string(), weight: z.number() })),
+      note: z.string().nullable(),
     }),
   }),
 

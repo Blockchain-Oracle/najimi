@@ -1,8 +1,7 @@
-import "server-only"
-import type { NajimiUIMessage } from "@najimi/agent"
 import { db, schema } from "@najimi/db"
 import { getBytes, providerMediaUrl } from "@najimi/storage"
 import { and, eq, inArray, or } from "drizzle-orm"
+import type { NajimiUIMessage } from "../ui-message"
 
 const UPLOAD = /^\/api\/media\/upload\/([0-9a-f-]{36})\?v=(original|display)$/
 

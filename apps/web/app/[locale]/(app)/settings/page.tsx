@@ -1,3 +1,4 @@
+import { usageToday } from "@najimi/agent/server"
 import { ALLOWANCE } from "@najimi/config"
 import { db, schema } from "@najimi/db"
 import { and, desc, eq, inArray, isNull } from "drizzle-orm"
@@ -8,7 +9,6 @@ import { LanguageMenu } from "@/components/language-menu"
 import { DeleteData } from "@/components/settings/delete-data"
 import { ModePicker } from "@/components/settings/mode-picker"
 import { type ShareItem, ShareLinks } from "@/components/settings/share-links"
-import { usageToday } from "@/lib/chat/usage"
 import { getSession } from "@/lib/session"
 
 const card = "flex flex-col gap-4 rounded-card bg-card p-5 text-card-foreground shadow-paper"

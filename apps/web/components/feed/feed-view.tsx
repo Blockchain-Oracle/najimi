@@ -10,6 +10,8 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import { useReportScreen } from "@/components/agent/agent-context"
+import { FEED_RESTART } from "@/components/chat/cards/steer-card"
 import { type Track, usePlayer } from "@/components/player/player"
 import {
   type FeedCard as Card,
@@ -180,6 +182,33 @@ export function FeedView() {
   activeRef.current = active
 
   // A love the server couldn't add (their taste is full of loves they picked) is taken back.
+  // Najimi knows which card is on screen ("more like this").
+  const td = useTranslations("Domains")
+  useReportScreen(
+    card
+      ? {
+          where: "feed",
+          label: `the ${td(card.domain).toLowerCase()} card "${card.name}"`,
+          qlooId: card.id,
+          type: card.type,
+        }
+      : null,
+  )
+
+  // When Najimi retunes the feed, it starts over on the new mix.
+  useEffect(() => {
+    const restart = () => {
+      lastActive = 0
+      setActive(0)
+      setOrder(null)
+      setMix(null)
+      scroller.current?.scrollTo({ top: 0 })
+      void queryClient.resetQueries({ queryKey: qk.feed })
+    }
+    window.addEventListener(FEED_RESTART, restart)
+    return () => window.removeEventListener(FEED_RESTART, restart)
+  }, [queryClient])
+
   const signal = useSignals((sent, result) => {
     if (!result.full) return
     const refused = new Set(sent.filter((x) => x.kind === "love").map((x) => x.qlooId))

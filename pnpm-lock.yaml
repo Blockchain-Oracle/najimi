@@ -341,18 +341,39 @@ importers:
       '@ai-sdk/openai':
         specifier: 4.0.98
         version: 4.0.98(zod@4.6.7)
+      '@ai-sdk/provider':
+        specifier: 4.0.31
+        version: 4.0.31
       '@ai-sdk/provider-utils':
         specifier: 5.0.64
         version: 5.0.64(zod@4.6.7)
       '@najimi/config':
         specifier: workspace:*
         version: link:../config
+      '@najimi/db':
+        specifier: workspace:*
+        version: link:../db
       '@najimi/env':
         specifier: workspace:*
         version: link:../env
+      '@najimi/jobs':
+        specifier: workspace:*
+        version: link:../jobs
+      '@najimi/live':
+        specifier: workspace:*
+        version: link:../live
+      '@najimi/qloo':
+        specifier: workspace:*
+        version: link:../qloo
+      '@najimi/storage':
+        specifier: workspace:*
+        version: link:../storage
       ai:
         specifier: 'catalog:'
         version: 7.0.146(zod@4.6.7)
+      drizzle-orm:
+        specifier: 'catalog:'
+        version: 0.45.4(@opentelemetry/api@1.9.1)(kysely@0.29.7)(pg@8.23.1)(postgres@3.4.9)
       zod:
         specifier: 'catalog:'
         version: 4.6.7

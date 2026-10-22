@@ -1,6 +1,6 @@
 import { AGENT } from "@najimi/config"
 import { db, schema } from "@najimi/db"
-import { eq } from "drizzle-orm"
+import { and, eq } from "drizzle-orm"
 import { z } from "zod"
 import { body, fail, json, withSession } from "@/lib/api"
 import { ownedChat } from "@/lib/chat/store"
@@ -44,6 +44,17 @@ export async function DELETE(_: Request, ctx: RouteContext<"/api/chats/[id]">) {
   if ("error" in auth) return auth.error
   const chat = await ownedChat(auth.session.user.id, (await ctx.params).id)
   if (!chat) return fail("Unknown chat", 404)
-  await db.delete(schema.chats).where(eq(schema.chats.id, chat.id))
+  // Only who started a room can delete it; anyone else leaves it.
+  if (chat.ownerId === auth.session.user.id)
+    await db.delete(schema.chats).where(eq(schema.chats.id, chat.id))
+  else
+    await db
+      .delete(schema.chatMembers)
+      .where(
+        and(
+          eq(schema.chatMembers.chatId, chat.id),
+          eq(schema.chatMembers.userId, auth.session.user.id),
+        ),
+      )
   return json({ ok: true })
 }

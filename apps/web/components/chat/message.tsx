@@ -10,6 +10,7 @@ import { BriefCard } from "./cards/brief-card"
 import { CompareCard } from "./cards/compare-card"
 import { CardSkeleton, InsightsCard } from "./cards/insights-card"
 import { ImageCard } from "./cards/media-card"
+import { SteerCard } from "./cards/steer-card"
 import { WizardCard } from "./cards/wizard-card"
 import { Run } from "./run"
 
@@ -23,7 +24,16 @@ export type MessageActions = {
   live: boolean
 }
 
-function ToolPart({ part, actions }: { part: Part; actions: MessageActions }) {
+function ToolPart({
+  part,
+  actions,
+  streaming = false,
+}: {
+  part: Part
+  actions: MessageActions
+  /** The message is still being written: its cards are new this moment. */
+  streaming?: boolean
+}) {
   const t = useTranslations("Cards")
   const failed = <p className="text-sm text-text-3">{t("failed")}</p>
   switch (part.type) {
@@ -86,6 +96,11 @@ function ToolPart({ part, actions }: { part: Part; actions: MessageActions }) {
       if (part.state === "output-error") return failed
       return <CardSkeleton title={title} label={t("preparing")} />
     }
+    case "tool-steerFeed":
+      if (part.state === "output-available")
+        return <SteerCard output={part.output} fresh={streaming} />
+      if (part.state === "output-error") return failed
+      return <CardSkeleton title={undefined} label={t("asking")} />
     // Lookups are steps of the run, shown above the reply.
     case "tool-qlooSearch":
     case "tool-qlooTags":
@@ -148,7 +163,7 @@ export function Message({
           ) : null
         return (
           <CardBoundary key={key} fallback={<p className="text-sm text-text-3">{t("failed")}</p>}>
-            <ToolPart part={part} actions={actions} />
+            <ToolPart part={part} actions={actions} streaming={streaming} />
           </CardBoundary>
         )
       })}

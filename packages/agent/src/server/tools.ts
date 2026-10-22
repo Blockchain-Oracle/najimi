@@ -1,8 +1,6 @@
-import "server-only"
-import { type insightsInput, type Pick, toolDefs } from "@najimi/agent"
-import { MEDIA, TASTE_DOMAINS } from "@najimi/config"
+import { FEED, MEDIA, TASTE, TASTE_DOMAINS } from "@najimi/config"
 import { db, schema } from "@najimi/db"
-import { enqueue } from "@najimi/jobs"
+import { enqueue, enqueueDebounced } from "@najimi/jobs"
 import {
   audiences,
   compare,
@@ -14,9 +12,9 @@ import {
   search,
 } from "@najimi/qloo"
 import { tool } from "ai"
-import { and, asc, eq } from "drizzle-orm"
+import { and, asc, count, eq } from "drizzle-orm"
 import type { z } from "zod"
-import type { PersonRow } from "@/lib/people"
+import { type insightsInput, type Pick, toolDefs } from "../tools"
 import { charge, refund } from "./usage"
 
 /** Who a turn acts for and on: the signed-in user, their chat and their own taste profile. */
@@ -25,7 +23,7 @@ export type TurnContext = {
   guest: boolean
   chatId: string
   /** The user's own taste profile. */
-  person: PersonRow
+  person: typeof schema.people.$inferSelect
 }
 
 type InsightsInput = z.infer<typeof insightsInput>
@@ -558,6 +556,85 @@ export function buildTools(ctx: TurnContext, messageId: () => string | undefined
         )
           .map(([f, w]) => `${f}: ${w.join(", ")}`)
           .join("; ")}. Loves: ${output.loves.map((l) => l.name).join(", ")}.`,
+      }),
+    }),
+
+    steerFeed: tool({
+      ...toolDefs.steerFeed,
+      execute: async (input) => {
+        const person = ctx.person
+        let retune = false
+        let note: string | null = null
+        // Categories: their dials, saved; the feed starts over on the new mix.
+        const mix = (input.mix ?? []).map((m) => ({ category: m.category, level: m.level }))
+        if (mix.length) {
+          const [now] = await db
+            .select({ feedMix: schema.people.feedMix })
+            .from(schema.people)
+            .where(eq(schema.people.id, person.id))
+          const next = { ...(now?.feedMix ?? {}) }
+          for (const m of mix) next[m.category] = m.level
+          await db
+            .update(schema.people)
+            .set({ feedMix: next, feedCursor: null })
+            .where(eq(schema.people.id, person.id))
+        }
+        // Something new to love: it joins their taste at a light weight, like a love from the feed.
+        let loved: string | null = null
+        if (input.love) {
+          const [{ n } = { n: 0 }] = await db
+            .select({ n: count() })
+            .from(schema.loves)
+            .where(eq(schema.loves.personId, person.id))
+          if (n >= TASTE.seedsMax)
+            note = "Their taste is full; a love has to go before this one joins."
+          else {
+            const added = await db
+              .insert(schema.loves)
+              .values({
+                personId: person.id,
+                qlooId: input.love.qlooId,
+                type: input.love.type,
+                name: input.love.name,
+                weight: FEED.loveWeight,
+                source: "feed",
+              })
+              .onConflictDoNothing()
+              .returning({ id: schema.loves.id })
+            loved = input.love.name
+            retune ||= added.length > 0
+          }
+        }
+        // Loves counting more or less.
+        const weights: { name: string; weight: number }[] = []
+        if (input.weights?.length) {
+          const rows = await db
+            .select()
+            .from(schema.loves)
+            .where(eq(schema.loves.personId, person.id))
+          for (const w of input.weights) {
+            const row = rows.find((r) => r.name.toLowerCase() === w.loveName.toLowerCase())
+            if (!row) continue
+            await db
+              .update(schema.loves)
+              .set({ weight: w.weight })
+              .where(eq(schema.loves.id, row.id))
+            weights.push({ name: row.name, weight: w.weight })
+            retune = true
+          }
+        }
+        if (retune)
+          await enqueueDebounced(
+            "tasteRetune",
+            { personId: person.id },
+            FEED.retuneSeconds,
+            person.id,
+          )
+        return { mix, loved, weights, note }
+      },
+      toModelOutput: ({ output }) => ({
+        type: "text",
+        value: `Feed tuned (shown as a card). ${output.mix.length ? `Mix: ${output.mix.map((m) => `${m.category} ${m.level}`).join(", ")}. ` : ""}${output.loved ? `Added ${output.loved} to their taste. ` : ""}${output.weights.length ? `Weights: ${output.weights.map((w) => `${w.name} ${w.weight}`).join(", ")}. ` : ""}${output.note ?? ""} Confirm in one short sentence.`,
       }),
     }),
 

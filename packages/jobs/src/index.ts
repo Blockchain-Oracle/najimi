@@ -35,6 +35,17 @@ export const QUEUES = {
     options: { retryLimit: 1, retryDelay: 10, expireInSeconds: 5 * 60 },
     send: { heartbeatSeconds: JOBS.heartbeatSeconds },
   },
+  /**
+   * Najimi's turn in a room: one running and at most one waiting per room (sent with the room as
+   * the key), and the waiting one answers everything said in the meantime. Never retried: a turn
+   * may have acted (made an image, booked).
+   */
+  agentTurn: {
+    name: "agent-turn",
+    payload: z.object({ chatId: z.uuid() }),
+    options: { policy: "stately", retryLimit: 0, expireInSeconds: 10 * 60 },
+    send: { heartbeatSeconds: JOBS.heartbeatSeconds },
+  },
   /** A new chat's title, in the chat's language, once its first answer is in. */
   chatTitle: {
     name: "chat-title",

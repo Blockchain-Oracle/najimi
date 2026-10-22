@@ -1,7 +1,8 @@
-import { AUTH, MEDIA } from "@najimi/config"
+import { runTurn } from "@najimi/agent/server"
+import { AUTH, MEDIA, ROOMS } from "@najimi/config"
 import { migrateDatabase } from "@najimi/db/migrate"
 import { boss, type Payload, QUEUES, RETIRED_QUEUES } from "@najimi/jobs"
-import { emit, setRunStatus } from "@najimi/live"
+import { emit, setRunStatus, sweepLiveEvents } from "@najimi/live"
 import { deleteKeys } from "@najimi/storage"
 import { closeInterruptedRuns } from "./interrupted"
 import { chatTitle } from "./jobs/chat-title"
@@ -63,6 +64,16 @@ async function main() {
     },
   )
 
+  // Najimi's turns in rooms: many rooms at once, one turn per room (the queue's policy).
+  await queues.work<Payload<"agentTurn">>(
+    QUEUES.agentTurn.name,
+    { localConcurrency: 8 },
+    async ([job]) => {
+      if (!job) return
+      await runTurn(QUEUES.agentTurn.payload.parse(job.data).chatId)
+    },
+  )
+
   await queues.work<Payload<"chatTitle">>(
     QUEUES.chatTitle.name,
     { localConcurrency: 4 },
@@ -88,6 +99,8 @@ async function main() {
   await queues.work(QUEUES.guestsCleanup.name, async ([job]) => {
     if (!job) return
     await guestsCleanup()
+    // Live events are only ever replayed for a short while; old ones go.
+    await sweepLiveEvents(ROOMS.liveKeepMs).catch((error) => console.error("[live] sweep", error))
   })
   await queues.schedule(QUEUES.guestsCleanup.name, AUTH.guestSweepCron, {}, { tz: "UTC" })
 

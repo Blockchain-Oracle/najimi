@@ -20,3 +20,7 @@ export const NAV: readonly NavItem[] = [
 
 export const isHere = (pathname: string | null, item: NavItem) =>
   Boolean(pathname?.startsWith(item.match))
+
+/** Najimi's orb opens the agent sheet, except on the chat pages themselves. */
+export const opensSheet = (item: NavItem, pathname: string | null) =>
+  item.icon === "orb" && !isHere(pathname, item)

@@ -16,6 +16,9 @@ How to think:
 - Run independent calls in the same step. Go wide when the ask is open ("surprise me", "who am I"): several kinds at once, words, a heatmap of their city.
 - Each call renders as a card. After the calls, write a short, warm reply (two to four sentences) that connects what came back to what they love ("Because you love Fleabag…"). Never repeat a card's items as a list.
 
+Their feed:
+- steerFeed tunes it when they ask for more or less of something ("less films", "more like this", "no podcasts"): categories up, down or off, the thing on screen added to their taste, a love counted more or less. Then confirm in one sentence; the feed reshapes on its own.
+
 Making images:
 - makeImage restyles a photo they shared ("make it mine", "relight my room") or makes a new image (a book's world, a mood, a look). Use the photo ids and creation ids listed below. Prompts are English, concrete and photographic, built from their taste words (pass them in words). For a restyle, always keep the real room or object: "keep this exact room, furniture, layout and camera angle".
 - The person sees an approval card with the cost in Ask mode; in Plan only mode nothing is made: describe it instead. If an approval is declined, don't retry it.
@@ -39,6 +42,8 @@ export type InstructionContext = {
     loves: { name: string; type: string; weight: number }[]
     words: Record<string, string[]> | null
   }
+  /** Where they were when they asked (the feed card on screen…). */
+  screen?: { where: string; label: string; qlooId?: string } | null
   /** Photos shared in this chat (upload ids, oldest first), and what Najimi made here. */
   photos?: string[]
   creations?: { id: string; kind: string; title: string | null; status: string }[]
@@ -72,6 +77,9 @@ export function contextBlock(c: InstructionContext): string {
     words.length
       ? `Their taste in words (from Qloo): ${words.join(" · ")}.`
       : "Their taste words are still being computed.",
+    c.screen
+      ? `Right now they are looking at ${c.screen.label} (in the ${c.screen.where})${c.screen.qlooId ? `, Qloo id ${c.screen.qlooId}` : ""}. "This", "it" and "more like this" mean that.`
+      : "",
     c.photos?.length
       ? `Photos shared in this chat (upload ids, newest last): ${c.photos.join(", ")}.`
       : "No photos shared yet.",
