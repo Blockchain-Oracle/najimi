@@ -359,17 +359,35 @@ export function EarthView({ me }: { me: { name: string; look: string | null } })
       return () => cancelAnimationFrame(raf)
     }
     spin.current = false
+    // Aim at where the taste is strongest (the city's top cells), not the whole city's middle:
+    // Lagos's centroid is the mainland while its strongest squares are on the islands.
+    const strongest = [...cells]
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, Math.max(20, Math.round(cells.length * 0.08)))
+    if (!strongest.length) return
+    // The densest knot of strong squares (~5 km groups), so a phone opens on the scene itself.
+    const groups = new Map<string, typeof strongest>()
+    for (const c of strongest) {
+      const key = c[0].slice(0, 5)
+      groups.set(key, [...(groups.get(key) ?? []), c])
+    }
+    const knot =
+      [...groups.values()].sort(
+        (a, b) => b.reduce((t, c) => t + c[1], 0) - a.reduce((t, c) => t + c[1], 0),
+      )[0] ?? strongest
     const middle = centreOf(
-      cells.map((c) => {
-        const [w, s, e, n] = geohashBounds(c[0])
-        return { lat: (s + n) / 2, lon: (w + e) / 2 }
+      knot.map((c) => {
+        const [w, so, e, n] = geohashBounds(c[0])
+        return { lat: (so + n) / 2, lon: (w + e) / 2 }
       }),
     )
     if (!middle) return
     instance.setPaintProperty("cells", "fill-extrusion-height", 0)
+    // A phone sees less of the city at once, so it stands a little further back.
+    const narrow = instance.getContainer().clientWidth < 600
     instance.flyTo({
       center: [middle.lon, middle.lat],
-      zoom: 10.8,
+      zoom: narrow ? 11.4 : 11.9,
       pitch: 55,
       bearing: -20,
       duration: 4200,
