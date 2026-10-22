@@ -266,7 +266,7 @@ export function ChatView(props: ChatViewProps) {
           </div>
         )}
         {/* Full-bleed, so rows that run to the screen edge pass under it rather than beside it. */}
-        <div className="sticky bottom-0 -mx-4 bg-gradient-to-t from-background via-background to-transparent px-4 pt-4 pb-[max(1rem,env(safe-area-inset-bottom))] md:-mx-6 md:px-6">
+        <div className="sticky bottom-0 -mx-4 bg-gradient-to-t from-background via-background to-transparent px-4 pt-4 pb-[max(1rem,env(safe-area-inset-bottom))] max-sm:bottom-[calc(3.5rem+env(safe-area-inset-bottom))] max-sm:pb-3 md:-mx-6 md:px-6">
           <Composer
             people={props.people}
             personId={personId}

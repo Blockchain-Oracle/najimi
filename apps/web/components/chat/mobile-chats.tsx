@@ -11,8 +11,8 @@ export function MobileChats() {
   const t = useTranslations("Chat")
   return (
     <Sheet>
-      <SheetTrigger className="inline-flex items-center gap-2 rounded-pill border border-foreground/15 px-3 py-1.5 text-sm font-semibold">
-        <MessagesSquare className="size-4" /> {t("chats")}
+      <SheetTrigger className="inline-flex items-center gap-2 rounded-tile py-1.5 text-sm font-medium text-text-2 transition-colors hover:text-foreground">
+        <MessagesSquare className="size-4" strokeWidth={1.5} /> {t("chats")}
       </SheetTrigger>
       <SheetContent side="left" className="w-[85vw] border-0 bg-background p-0">
         <SheetTitle className="sr-only">{t("chats")}</SheetTitle>
