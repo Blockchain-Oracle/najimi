@@ -114,13 +114,34 @@ function revealsOf(round: typeof schema.gameRounds.$inferSelect, answers: number
   }))
 }
 
+/**
+ * Whether a round's link still opens for this player: always, until whoever dealt it stops sharing;
+ * then only for them, the person it's about, and the circle's members.
+ */
+async function openFor(round: typeof schema.gameRounds.$inferSelect, player: Player | null) {
+  if (!round.closedAt) return true
+  if (!player || !("userId" in player)) return false
+  if (player.userId === round.createdBy || player.userId === round.subjectId) return true
+  if (!round.chatId) return false
+  const [member] = await db
+    .select({ userId: schema.chatMembers.userId })
+    .from(schema.chatMembers)
+    .where(
+      and(
+        eq(schema.chatMembers.chatId, round.chatId),
+        eq(schema.chatMembers.userId, player.userId),
+      ),
+    )
+  return Boolean(member)
+}
+
 /** A round as a player sees it: the items (truths only for what they've answered), and who it's about. */
 export async function roundView(roundToken: string, player: Player | null) {
   const [round] = await db
     .select()
     .from(schema.gameRounds)
     .where(eq(schema.gameRounds.token, roundToken))
-  if (!round) return null
+  if (!round || !(await openFor(round, player))) return null
   const mine = player ? await answersOf(round.id, player) : null
   const answered = mine?.answers ?? []
   const me =
@@ -165,7 +186,7 @@ export async function answerItem(
     .select()
     .from(schema.gameRounds)
     .where(eq(schema.gameRounds.token, roundToken))
-  if (!round) return { error: "That game is gone" as const }
+  if (!round || !(await openFor(round, player))) return { error: "That game is gone" as const }
   // Blind Taste's truths are one person's: only they can play that round.
   if (round.kind === "blind" && !("userId" in player && player.userId === round.subjectId))
     return { error: "This Blind Taste was dealt for someone else" as const }
@@ -226,7 +247,7 @@ export async function roundBoard(roundToken: string, player?: Player | null): Pr
     .select()
     .from(schema.gameRounds)
     .where(eq(schema.gameRounds.token, roundToken))
-  if (!round) return []
+  if (!round || !(await openFor(round, player ?? null))) return []
   const rows = await db
     .select({
       score: schema.gameAnswers.score,

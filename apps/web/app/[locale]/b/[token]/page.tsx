@@ -11,14 +11,17 @@ import { sharedBusiness } from "@/lib/business"
 type Props = { params: Promise<{ locale: string; token: string }> }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const b = await sharedBusiness((await params).token)
+  const { token } = await params
+  const b = await sharedBusiness(token)
   if (!b?.report) return { robots: { index: false } }
   const description = b.report.plan?.summary ?? `${b.name}, ${b.kind}`
+  const images = [{ url: `/api/og/b/${token}`, width: 1200, height: 630 }]
   return {
     title: `${b.name} · plan`,
     description,
     robots: { index: false },
-    openGraph: { title: `${b.name} · plan`, description },
+    openGraph: { title: `${b.name} · plan`, description, images },
+    twitter: { card: "summary_large_image", images },
   }
 }
 

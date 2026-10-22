@@ -51,3 +51,23 @@ export async function sendEmail(mail: { to: string; subject: string; html: strin
   if (error) throw new Error(error.message)
   return { id: data?.id ?? "" }
 }
+
+/** A report for the owner to review: who, why, what they said (plain; it's an inbox for one). */
+export function reportEmail(r: {
+  reason: string
+  note: string | null
+  target: string | null
+  message: string | null
+}) {
+  const lines = [
+    `Reason: ${r.reason}`,
+    r.target ? `About: ${r.target}` : null,
+    r.message ? `Message: "${r.message}"` : null,
+    r.note ? `Note: ${r.note}` : null,
+  ].filter((l): l is string => Boolean(l))
+  return {
+    subject: `Report on ${APP.name}: ${r.reason}`,
+    text: lines.join("\n"),
+    html: `<!doctype html><html><body style="font-family:-apple-system,Segoe UI,Helvetica,Arial,sans-serif;font-size:15px;line-height:1.5">${lines.map((l) => `<p style="margin:0 0 8px">${escapeHtml(l)}</p>`).join("")}</body></html>`,
+  }
+}

@@ -1,5 +1,5 @@
 import { db, schema } from "@najimi/db"
-import { and, eq, or } from "drizzle-orm"
+import { and, desc, eq, or } from "drizzle-orm"
 import { z } from "zod"
 import { body, fail, json, withSession } from "@/lib/api"
 
@@ -32,6 +32,28 @@ export async function POST(request: Request) {
       )
   })
   return json({ ok: true })
+}
+
+/** The people you blocked (Settings), newest first. */
+export async function GET() {
+  const auth = await withSession()
+  if ("error" in auth) return auth.error
+  const blocked = await db
+    .select({
+      userId: schema.blocks.blockedId,
+      name: schema.people.name,
+      look: schema.people.look,
+      username: schema.user.displayUsername,
+    })
+    .from(schema.blocks)
+    .innerJoin(schema.user, eq(schema.user.id, schema.blocks.blockedId))
+    .leftJoin(
+      schema.people,
+      and(eq(schema.people.ownerId, schema.blocks.blockedId), eq(schema.people.isSelf, true)),
+    )
+    .where(eq(schema.blocks.blockerId, auth.session.user.id))
+    .orderBy(desc(schema.blocks.createdAt))
+  return json({ blocked })
 }
 
 /** Unblocks them (follows aren't restored). */

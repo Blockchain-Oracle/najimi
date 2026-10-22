@@ -1,6 +1,7 @@
 "use client"
 
 import { toast } from "@najimi/ui/components/sonner"
+import { Switch } from "@najimi/ui/components/switch"
 import { cn } from "@najimi/ui/lib/utils"
 import { Globe, Loader2, Lock, Users } from "lucide-react"
 import { useRouter } from "next/navigation"
@@ -27,6 +28,8 @@ export function ProfileForm({
     city: string | null
     bio: string | null
     visibility: Visibility
+    /** Settings shows the radar switch; the profile's own edit sheet doesn't. */
+    radar?: boolean
   }
   onRun?: (runId: string) => void
 }) {
@@ -36,19 +39,27 @@ export function ProfileForm({
   const [bio, setBio] = useState(person.bio ?? "")
   const [city, setCity] = useState(person.city ?? "")
   const [visibility, setVisibility] = useState<Visibility>(person.visibility)
+  const [radar, setRadar] = useState(person.radar ?? false)
   const [saving, setSaving] = useState(false)
   const changed =
     name.trim() !== person.name ||
     bio.trim() !== (person.bio ?? "") ||
     city.trim() !== (person.city ?? "") ||
-    visibility !== person.visibility
+    visibility !== person.visibility ||
+    (person.radar !== undefined && radar !== person.radar)
 
   async function save() {
     setSaving(true)
     try {
       const { runId } = await api<{ runId: string | null }>(`/api/people/${person.id}`, {
         method: "PATCH",
-        json: { name: name.trim(), bio: bio.trim() || null, city: city.trim() || null, visibility },
+        json: {
+          name: name.trim(),
+          bio: bio.trim() || null,
+          city: city.trim() || null,
+          visibility,
+          ...(person.radar !== undefined ? { radar } : {}),
+        },
       })
       if (runId) onRun?.(runId)
       toast(t("saved"))
@@ -129,6 +140,15 @@ export function ProfileForm({
           </button>
         ))}
       </fieldset>
+      {person.radar !== undefined ? (
+        <div className="flex items-center justify-between gap-4 rounded-tile bg-background px-3.5 py-3 ring-1 ring-border">
+          <span className="flex flex-col">
+            <span className="text-[15px] font-semibold">{t("radar")}</span>
+            <span className="text-[13px] text-text-3">{t("radarHint")}</span>
+          </span>
+          <Switch checked={radar} onCheckedChange={setRadar} aria-label={t("radar")} />
+        </div>
+      ) : null}
       <button
         type="submit"
         disabled={!changed || !name.trim() || saving}

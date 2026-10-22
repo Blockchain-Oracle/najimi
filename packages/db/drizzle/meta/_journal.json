@@ -197,6 +197,13 @@
       "when": 1792710420427,
       "tag": "0027_review_fixes",
       "breakpoints": true
+    },
+    {
+      "idx": 28,
+      "version": "7",
+      "when": 1792710565161,
+      "tag": "0028_stop_sharing",
+      "breakpoints": true
     }
   ]
 }

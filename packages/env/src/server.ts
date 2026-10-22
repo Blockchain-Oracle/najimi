@@ -73,6 +73,8 @@ export const env = createEnv({
     /** Resend, for sign-in codes. */
     RESEND_API_KEY: z.string().min(1).optional(),
     EMAIL_FROM: z.string().min(3).optional(),
+    /** Where reports of people and messages go for review (the owner's inbox). */
+    REPORTS_EMAIL: z.email().optional(),
 
     /** Object storage (RustFS). Server-side only: browsers never talk to it directly. */
     S3_ENDPOINT: z.url().optional(),

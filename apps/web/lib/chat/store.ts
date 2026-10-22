@@ -113,7 +113,8 @@ export async function chatsOf(
     .limit(opts.limit ?? 50)
 }
 
-const token = () =>
+/** An invite token: lowercase letters and digits (the join page accepts only these). */
+export const inviteToken = () =>
   Array.from(crypto.getRandomValues(new Uint8Array(12)), (b) => b.toString(36).padStart(2, "0"))
     .join("")
     .slice(0, 16)
@@ -133,7 +134,7 @@ export async function createCircle(input: {
         kind: "circle",
         name: input.name,
         locale: input.locale,
-        inviteToken: token(),
+        inviteToken: inviteToken(),
       })
       .returning()
     if (!chat) throw new Error("Couldn't start the circle")

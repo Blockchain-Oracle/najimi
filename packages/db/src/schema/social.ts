@@ -40,6 +40,8 @@ export type NotificationKind =
   | "played"
   /** Your circle's daily drop is up. */
   | "drop"
+  /** Someone dealt a game in your circle. */
+  | "game"
   /** A booking changed (confirmed, failed, cancelled). */
   | "booking"
   /** Today's feed tune-up is ready. */

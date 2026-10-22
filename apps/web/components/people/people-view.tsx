@@ -50,6 +50,7 @@ type Notice = {
     | "invite"
     | "played"
     | "drop"
+    | "game"
     | "booking"
     | "tuneup"
   chatId: string | null
@@ -118,6 +119,8 @@ function Inbox({ initialUnread, after }: { initialUnread: number; after: number 
         score: Number(n.data.score ?? 0),
       })
     if (n.kind === "drop") return t("noticeDrop", { name })
+    if (n.kind === "game")
+      return t("noticeGame", { who, title: (n.data.title as string | undefined) ?? "", name })
     if (n.kind === "booking" || n.kind === "tuneup")
       return (n.data.text as string | undefined) ?? name
     return t("noticeMention", { who })

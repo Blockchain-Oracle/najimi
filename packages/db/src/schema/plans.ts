@@ -73,6 +73,8 @@ export const plans = pgTable(
     status: text().$type<"draft" | "booked" | "done">().default("draft").notNull(),
     /** "How was it?", answered the day after: loved, fine, not, skipped. The Passport counts it then. */
     outcome: text(),
+    /** "Stop sharing": the link then opens only for its owner and the people in its chat. */
+    closedAt: timestamp({ withTimezone: true }),
     /** A public link (`/plan/<token>`), for sending to people outside the app. */
     token: text().notNull(),
     createdAt: timestamp({ withTimezone: true }).defaultNow().notNull(),

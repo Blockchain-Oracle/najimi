@@ -21,6 +21,7 @@ const GROUP: Record<NotificationKind, keyof PushPrefs> = {
   invite: "messages",
   played: "games",
   drop: "games",
+  game: "games",
   booking: "plans",
   tuneup: "feeds",
 }
@@ -74,6 +75,12 @@ async function compose(n: typeof schema.notifications.$inferSelect): Promise<Pus
       }
     case "drop":
       return { title: "Today's drop is up", body: room, url: inChat, tag: `drop:${n.chatId}` }
+    case "game":
+      return {
+        title: room || "Your circle",
+        body: `${who} dealt ${typeof data.title === "string" ? data.title : "a game"}`,
+        url: typeof data.token === "string" ? `/play/${data.token}` : inChat,
+      }
     case "booking":
       return {
         title: "Najimi",

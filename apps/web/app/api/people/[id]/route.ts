@@ -21,6 +21,7 @@ export async function PATCH(request: Request, ctx: RouteContext<"/api/people/[id
       ...(input.locale !== undefined ? { locale: input.locale } : {}),
       ...(input.bio !== undefined ? { bio: input.bio || null } : {}),
       ...(input.visibility !== undefined ? { visibility: input.visibility } : {}),
+      ...(input.radar !== undefined ? { radar: input.radar } : {}),
     })
     .where(eq(schema.people.id, person.id))
   const cityChanged = input.city !== undefined && (input.city || null) !== person.city

@@ -182,7 +182,10 @@ export async function cardsOf(userIds: string[]): Promise<PersonCard[]> {
 export async function tasteTwins(
   userId: string,
   limit = 8,
+  /** The radar only shows people who turned it on. */
+  opts: { radar?: boolean } = {},
 ): Promise<(PersonCard & { shared: number })[]> {
+  const onRadar = opts.radar ? sql`and p.radar` : sql``
   const rows = await db.execute<{ owner_id: string; shared: number }>(sql`
     with mine as (
       select l.qloo_id from ${schema.loves} l join ${schema.people} p on p.id = l.person_id
@@ -195,12 +198,12 @@ export async function tasteTwins(
     ),
     theirs as (
       select p.owner_id, l.qloo_id from ${schema.loves} l join ${schema.people} p on p.id = l.person_id
-      where p.is_self and p.visibility = 'public' and p.owner_id <> ${userId}
+      where p.is_self and p.visibility = 'public' and p.owner_id <> ${userId} ${onRadar}
       union
       select p.owner_id, (pick->>'qlooId') from ${schema.tastes} t
       join ${schema.people} p on p.id = t.person_id,
       jsonb_each(coalesce(t.picks, '{}'::jsonb)) as d(domain, list), jsonb_array_elements(d.list) as pick
-      where p.is_self and p.visibility = 'public' and p.owner_id <> ${userId}
+      where p.is_self and p.visibility = 'public' and p.owner_id <> ${userId} ${onRadar}
     )
     select theirs.owner_id, count(*)::int as shared from theirs
     join mine on mine.qloo_id = theirs.qloo_id
@@ -364,7 +367,7 @@ export async function radarOf(userId: string) {
     .from(schema.people)
     .where(and(eq(schema.people.ownerId, userId), eq(schema.people.isSelf, true)))
   const [twins, [taste]] = await Promise.all([
-    tasteTwins(userId, 10),
+    tasteTwins(userId, 10, { radar: true }),
     self
       ? db
           .select({ picks: schema.tastes.picks })

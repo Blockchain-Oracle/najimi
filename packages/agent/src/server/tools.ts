@@ -29,6 +29,7 @@ import { and, asc, count, eq, or } from "drizzle-orm"
 import type { z } from "zod"
 import { type insightsInput, type Pick, toolDefs } from "../tools"
 import { startBusiness } from "./business"
+import { notifyGame } from "./room"
 import { charge, refund } from "./usage"
 
 /** Who a turn acts for and on: the signed-in user, their chat and their own taste profile. */
@@ -1114,6 +1115,11 @@ export function buildTools(ctx: TurnContext, messageId: () => string | undefined
             },
             call(`A game: ${TITLES[input.kind]}`),
           )
+          if (ctx.chatId)
+            await notifyGame(ctx.chatId, ctx.userId, {
+              token: round.token,
+              title: TITLES[input.kind],
+            }).catch(() => null)
           return {
             token: round.token,
             kind: input.kind,

@@ -1,4 +1,5 @@
 import { Orb } from "@najimi/ui/components/orb"
+import type { Metadata } from "next"
 import { notFound, redirect } from "next/navigation"
 import { getTranslations } from "next-intl/server"
 import { Suspense } from "react"
@@ -7,6 +8,18 @@ import { selfOf } from "@/lib/people"
 import { getSession } from "@/lib/session"
 
 type Props = PageProps<"/[locale]/join/[token]">
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { token } = await params
+  const images = [{ url: `/api/og/join/${token}`, width: 1200, height: 630 }]
+  return {
+    title: "Join the circle",
+    description: "Find your people by what you love.",
+    robots: { index: false },
+    openGraph: { title: "Join the circle on Najimi", images },
+    twitter: { card: "summary_large_image", images },
+  }
+}
 
 async function Join({ params }: Pick<Props, "params">) {
   const { token } = await params

@@ -134,9 +134,48 @@ export async function postGameCard(
     .onConflictDoNothing()
     .returning()
   if (row) await publishMessage(chatId, toUI(row))
+  if (row && card.startedBy !== "najimi")
+    await notifyGame(chatId, card.startedBy, { token: card.token, title: card.title })
   if (card.bump ?? true)
     await db
       .update(schema.chats)
       .set({ lastActiveAt: new Date() })
       .where(eq(schema.chats.id, chatId))
+}
+
+/**
+ * Someone dealt a game in a circle: everyone else in it hears about it (inbox and push). The daily
+ * drop has its own notice.
+ */
+export async function notifyGame(
+  chatId: string,
+  startedBy: string,
+  game: { token: string; title: string },
+): Promise<void> {
+  const [chat] = await db
+    .select({ kind: schema.chats.kind, name: schema.chats.name })
+    .from(schema.chats)
+    .where(eq(schema.chats.id, chatId))
+  if (chat?.kind !== "circle") return
+  const members = await db
+    .select({ userId: schema.chatMembers.userId })
+    .from(schema.chatMembers)
+    .where(eq(schema.chatMembers.chatId, chatId))
+  const others = members.filter((m) => m.userId !== startedBy)
+  if (!others.length) return
+  const rows = await db
+    .insert(schema.notifications)
+    .values(
+      others.map((m) => ({
+        userId: m.userId,
+        kind: "game" as const,
+        actorId: startedBy,
+        chatId,
+        data: { token: game.token, title: game.title, name: chat.name },
+      })),
+    )
+    .returning({ id: schema.notifications.id, userId: schema.notifications.userId })
+  await Promise.all(
+    rows.map((r) => publish(topic.user(r.userId), "notification", { id: r.id, kind: "game" })),
+  )
 }

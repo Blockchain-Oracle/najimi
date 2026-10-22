@@ -1,7 +1,8 @@
 import "server-only"
 import { publishMessage, toUI } from "@najimi/agent/server"
 import { db, schema } from "@najimi/db"
-import { notify } from "@/lib/social"
+import { eq } from "drizzle-orm"
+import { blockedWith, notify } from "@/lib/social"
 import { joinByToken } from "./store"
 
 /**
@@ -9,6 +10,12 @@ import { joinByToken } from "./store"
  * news. Returns the circle id, or null for a link that's no longer valid.
  */
 export async function joinCircle(token: string, userId: string, name: string) {
+  // Someone the circle's starter blocked (or who blocked them) can't come in by link.
+  const [circle] = await db
+    .select({ ownerId: schema.chats.ownerId })
+    .from(schema.chats)
+    .where(eq(schema.chats.inviteToken, token))
+  if (circle && (await blockedWith(userId)).has(circle.ownerId)) return null
   const result = await joinByToken(token, userId)
   if (!result) return null
   if (result.joined) {

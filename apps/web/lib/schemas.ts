@@ -29,6 +29,8 @@ export const personInput = z.object({
   bio: z.string().trim().max(160).nullable().optional(),
   /** Who sees their taste and finds them. */
   visibility: z.enum(["public", "friends", "private"]).optional(),
+  /** On the taste-twin radar (off until turned on). */
+  radar: z.boolean().optional(),
 })
 
 export const pickInput = z.object({

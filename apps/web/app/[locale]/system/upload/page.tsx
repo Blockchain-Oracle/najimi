@@ -1,9 +1,11 @@
+import { notFound } from "next/navigation"
 import { getTranslations } from "next-intl/server"
 import { pageLocale } from "@/lib/page-locale"
 import { UploadCheck } from "./upload-check"
 
 /** Checks photo storage end to end: browser resize → server re-encode → private bucket → read back. */
 export default async function UploadPage({ params }: PageProps<"/[locale]/system/upload">) {
+  if (process.env.NODE_ENV === "production") notFound()
   await pageLocale(params)
   const t = await getTranslations("System")
   return (

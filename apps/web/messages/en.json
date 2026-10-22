@@ -213,6 +213,7 @@
     "noticeMention": "{who} mentioned you",
     "noticePlayed": "{who} played your {title}: {score}",
     "noticeDrop": "Today's drop is up in {name}",
+    "noticeGame": "{who} dealt {title} in {name}",
     "youAnd": "You & {name}",
     "tasteMatch": "taste match",
     "noMatch": "Add a few loves to see how you match.",
@@ -233,6 +234,8 @@
     }
   },
   "Profile": {
+    "radar": "Show me on the radar",
+    "radarHint": "People whose taste matches yours can find you.",
     "name": "Name",
     "bio": "About you",
     "bioHint": "One line people see on your profile",
@@ -496,6 +499,10 @@
     "deleteFailed": "That didn't work. Nothing was deleted; try again.",
     "links": "Your share links",
     "linksHint": "Anyone with one of these links can see what it shows. Stop one and it stops working at once.",
+    "blocked": "Blocked",
+    "unblock": "Unblock",
+    "unblocked": "Unblocked",
+    "noBlocked": "Nobody blocked.",
     "noLinks": "Nothing shared yet.",
     "stop": "Stop sharing",
     "stopped": "That link no longer works.",
@@ -503,7 +510,11 @@
       "creation": "Creation",
       "chat": "Chat",
       "person": "Taste",
-      "wrapped": "Wrapped"
+      "wrapped": "Wrapped",
+      "plan": "Plan",
+      "game": "Game",
+      "business": "Business",
+      "invite": "Invite"
     },
     "open": "Open",
     "untitled": "Untitled",

@@ -43,6 +43,8 @@ export const gameRounds = pgTable(
     items: jsonb().$type<GameItem[]>().notNull(),
     /** The challenge link (`/play/<token>`): anyone can play, no account needed. */
     token: text().notNull(),
+    /** "Stop sharing": the link then works only for the circle's members and whoever dealt it. */
+    closedAt: timestamp({ withTimezone: true }),
     /** The circle's daily drop. */
     daily: boolean().default(false).notNull(),
     /** Najimi's own answers, for playing against it. */

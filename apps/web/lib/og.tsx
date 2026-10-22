@@ -3,6 +3,7 @@ import { readFile } from "node:fs/promises"
 import { join } from "node:path"
 import { getBytes } from "@najimi/storage"
 import { tokens } from "@najimi/tokens"
+import { ImageResponse } from "next/og"
 import sharp from "sharp"
 import { QLOO_MARK } from "@/components/brands/qloo-logo"
 
@@ -166,5 +167,79 @@ export function OgChips({ words }: { words: string[] }) {
         </div>
       ))}
     </div>
+  )
+}
+
+/**
+ * A link card in the app's look: a title, one line, a few word chips on the left; up to three
+ * pieces of artwork fanned on the right; the Najimi | Qloo mark. For business plans and invites.
+ */
+export async function ogCard(input: {
+  title: string
+  line: string
+  chips: string[]
+  images: (string | null)[]
+}) {
+  const art = input.images.filter((i): i is string => Boolean(i)).slice(0, 3)
+  return new ImageResponse(
+    <div
+      style={{
+        display: "flex",
+        width: "100%",
+        height: "100%",
+        background: `radial-gradient(60% 90% at 85% 30%, ${OG.identity.violet}55, transparent 70%), radial-gradient(40% 60% at 70% 95%, ${OG.identity.pink}40, transparent 70%), ${OG.wall}`,
+        color: OG.ink,
+        fontFamily: "Funnel Sans",
+      }}
+    >
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between",
+          width: 640,
+          padding: "56px 0 52px 64px",
+        }}
+      >
+        <OgMark />
+        <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
+          <div
+            style={{
+              display: "flex",
+              fontFamily: "Funnel Display",
+              fontSize: 68,
+              lineHeight: 1,
+              letterSpacing: -1.5,
+            }}
+          >
+            {input.title}
+          </div>
+          <div style={{ display: "flex", fontSize: 28, color: OG.muted }}>{input.line}</div>
+          {input.chips.length ? <OgChips words={input.chips.slice(0, 5)} /> : null}
+        </div>
+      </div>
+      <div style={{ display: "flex", position: "relative", width: 560, height: "100%" }}>
+        {art.map((src, i) => (
+          // biome-ignore lint/performance/noImgElement: next/og draws plain img elements
+          <img
+            key={src}
+            src={src}
+            alt=""
+            width={230}
+            height={300}
+            style={{
+              position: "absolute",
+              left: 60 + i * 120,
+              top: 150 - (i === 1 ? 40 : 0),
+              borderRadius: 28,
+              objectFit: "cover",
+              transform: `rotate(${(i - 1) * 7}deg)`,
+              border: "2px solid rgba(255,255,255,0.12)",
+            }}
+          />
+        ))}
+      </div>
+    </div>,
+    { ...OG_SIZE, fonts: await funnelFonts(), headers: OG_HEADERS },
   )
 }
