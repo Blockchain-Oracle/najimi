@@ -54,11 +54,13 @@ const MOMENTS = [
 
 async function Ring({
   title,
+  subtitle,
   kicker,
   start,
   open,
 }: {
   title: string
+  subtitle: string
   kicker: ReactNode
   start: string
   open: string
@@ -71,9 +73,10 @@ async function Ring({
   return (
     <TasteRing art={art}>
       <div className="pointer-events-none flex w-full max-w-2xl flex-col items-center gap-6 text-center">
-        <h1 className="max-w-[8ch] font-title text-[2.35rem] leading-[0.98] md:max-w-[10ch] md:text-[4.8rem]">
+        <h1 className="max-w-[16ch] font-title text-[2.1rem] leading-[1.02] md:max-w-[18ch] md:text-[4rem]">
           {title}
         </h1>
+        <p className="max-w-xl text-[15px] leading-relaxed text-text-2 md:text-lg">{subtitle}</p>
         <Suspense fallback={null}>
           <MainAction start={start} open={open} large />
         </Suspense>
@@ -113,6 +116,7 @@ export default async function Landing({ params }: PageProps<"/[locale]">) {
       <Suspense fallback={<div className="h-svh" />}>
         <Ring
           title={t("title")}
+          subtitle={t("subtitle")}
           kicker={t.rich("kicker", qlooTag("ms-0.5 h-[0.95em] text-foreground"))}
           start={t("start")}
           open={t("continue")}

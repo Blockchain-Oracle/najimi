@@ -90,7 +90,7 @@ function Frame({ w, n, children }: { w: Wrapped; n: number; children: React.Reac
             {w.username ? `@${w.username}` : w.name}
           </div>
           <div style={{ display: "flex", fontSize: 28, color: C.muted }}>
-            Find your people by what you love
+            The group-chat agent that plans for everyone's taste
           </div>
         </div>
         <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 14 }}>

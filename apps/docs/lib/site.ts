@@ -5,9 +5,9 @@ export const SITE = {
   title: "Najimi docs",
   /** 馴染み: someone you know well. */
   meaning: "someone you know well",
-  tagline: "Find your people by what you love.",
+  tagline: "The group-chat agent that plans for everyone's taste.",
   description:
-    "Najimi is a social app where your taste is your identity, built on Qloo's taste graph, with an agent in every chat that plans, plays, calls and books for you.",
+    "Najimi is an agent for your group chats: it reads each friend's taste through Qloo, then picks the film, plans the night and routes the trip, showing why each pick fits.",
   url: "https://docs.najimi.xyz",
   app: "https://najimi.xyz",
   appStart: "https://najimi.xyz/start",

@@ -146,12 +146,11 @@ export default function Home() {
         <div className="mx-auto flex max-w-3xl flex-col items-center text-center">
           <Orb size={96} label="Najimi" />
           <h1 className="mt-7 font-display text-[clamp(2.6rem,7vw,5rem)] leading-[0.98] font-extrabold tracking-[-0.03em]">
-            Find your people by what you love.
+            The group-chat agent that plans for everyone's taste.
           </h1>
           <p className="mt-6 max-w-2xl text-[17px] leading-relaxed text-fd-muted-foreground sm:text-lg">
-            Najimi is a social app where your taste is who you are, built on Qloo's taste graph,
-            with an agent in every chat that plans the night, phones the venue, books the hotel and
-            plays the game. These are its docs.
+            Najimi reads each friend's taste through Qloo, then picks the film, plans the night and
+            routes the trip, showing why each fits. These are its docs.
           </p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
             <a

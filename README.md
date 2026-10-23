@@ -1,5 +1,5 @@
 <p align="center">
-  <img src=".github/assets/banner.png" alt="Najimi: find your people by what you love" width="100%">
+  <img src=".github/assets/banner.png" alt="Najimi: The group-chat agent that plans for everyone's taste. Everyone's taste, one plan." width="100%">
 </p>
 
 <p align="center">
@@ -20,7 +20,11 @@
   </a>
 </p>
 
-**Najimi is a social app where your taste is your identity.** Tell it a few things you love, or let it read what you already follow, and Qloo's taste graph turns that into a taste that reaches music, film, TV, books, podcasts, brands, places, destinations and people. Najimi plays it back as a feed, shows where your people are on a globe, lets you play it with friends, plans nights and trips around it, and puts an AI agent in every chat that can act on it.
+*Everyone's taste, one plan.*
+
+**The group-chat agent that plans for everyone's taste.**
+
+**Najimi** reads each friend's taste through Qloo, then picks the film, plans the night and routes the trip, showing why each fits. Add it to any group chat with `@najimi` and it reads everyone's loves through Qloo's taste graph, scores each pick for each friend, and shows the *because* behind it. Around the agent sits the rest of the app: a taste-played feed, a globe of where your people are, games with friends, and plans it can book for you.
 
 Built for the **[Qloo Agentic Hackathon](https://qloo.devpost.com/)**. *Najimi* (馴染み) means **someone you know well**.
 
@@ -121,9 +125,8 @@ pnpm dev                # web on :3310, docs on :3311, the worker (migrates on s
 - **Music previews** are Apple's (30 seconds, courtesy of Apple, each linking to Apple Music); **trailers** come from TMDB and play on YouTube; **podcasts** play from each show's own feed; **book covers** from Open Library.
 - **Places and routes**: OpenStreetMap (© OpenStreetMap contributors) through Nominatim, Mapbox Directions, MapLibre GL JS; **shows**: Ticketmaster; **social accounts**: Wikidata.
 - **Connectors**: [rettiwt-api](https://github.com/Rishikant181/Rettiwt-API) for X and [instagrapi](https://github.com/subzeroid/instagrapi) for Instagram, with each person's own session, sealed with AES-256-GCM.
-- **Components** adapted from [21st.dev](https://21st.dev); screen patterns studied on [Refero](https://refero.design). **Faces** from [OurSpaces](https://github.com/thomasnguyen/ourspaces-app) (MIT); **interface sounds** from [Mixkit](https://mixkit.co/free-sound-effects/) under its free licence.
 - **Sample rooms** in [`apps/worker/samples`](apps/worker/samples) were generated for this project with an image model; they show no real home.
-- Written by Abu with Claude Code.
+- Third-party code and asset licences are listed in [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).
 
 ## License
 

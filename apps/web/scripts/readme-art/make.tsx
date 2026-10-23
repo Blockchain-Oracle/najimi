@@ -163,15 +163,16 @@ async function banner() {
             style={{
               display: "flex",
               fontFamily: "Funnel Display",
-              fontSize: 92,
+              fontSize: 68,
               lineHeight: 0.98,
-              letterSpacing: -2,
+              letterSpacing: -1.5,
             }}
           >
-            Find your people by what you love.
+            The group-chat agent that plans for everyone's taste.
           </div>
-          <div style={{ display: "flex", fontSize: 30, color: C.muted, lineHeight: 1.3 }}>
-            Your taste as a feed, a map, games and plans, with an AI agent in every chat.
+          <div style={{ display: "flex", fontSize: 26, color: C.muted, lineHeight: 1.3 }}>
+            Reads each friend's taste through Qloo, then picks the film, plans the night and routes
+            the trip.
           </div>
         </div>
         <div

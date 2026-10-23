@@ -2,7 +2,7 @@
 
 Project name: Najimi
 
-Elevator pitch: Find your people by what you love. Qloo turns three loves into a living taste: a feed, a map, games, group plans, and an agent that knows why each pick fits.
+Elevator pitch: The group-chat agent that plans for everyone's taste. Najimi reads each friend's taste through Qloo, then picks the film, plans the night and routes the trip, showing why each pick fits.
 
 Project start date: 2026-10-20
 

@@ -1,6 +1,8 @@
-# Najimi · Find your people by what you love
+# Najimi · The group-chat agent that plans for everyone's taste
 
-![Najimi: find your people by what you love](https://raw.githubusercontent.com/Blockchain-Oracle/najimi/main/.github/assets/banner.png)
+![Najimi: the group-chat agent that plans for everyone's taste](https://raw.githubusercontent.com/Blockchain-Oracle/najimi/main/.github/assets/banner.png)
+
+*Everyone's taste, one plan.* Najimi reads each friend's taste through Qloo, then picks the film, plans the night and routes the trip, showing why each pick fits.
 
 **Try it:** [najimi.xyz](https://najimi.xyz) · **Code:** [GitHub](https://github.com/Blockchain-Oracle/najimi) · **Docs:** [docs.najimi.xyz](https://docs.najimi.xyz) · **Qloo integration:** [API map](https://docs.najimi.xyz/qloo)
 
