@@ -16,6 +16,7 @@ import {
 import Link from "next/link"
 import { useFormatter, useTranslations } from "next-intl"
 import { useState } from "react"
+import { useReportScreen } from "@/components/agent/agent-context"
 import { sized } from "@/components/connect/platforms"
 import { OpenThing } from "@/components/entity/entity-provider"
 import { api } from "@/lib/fetcher"
@@ -181,6 +182,10 @@ export function PassportView({
 }) {
   const t = useTranslations("Passport")
   const format = useFormatter()
+  useReportScreen({
+    where: "passport",
+    label: `their Passport for ${year}: ${stamps.length} stamps${upcoming.length ? `, ${upcoming.length} coming up (${upcoming.map((u) => u.title).join(", ")})` : ""}`,
+  })
   const count = (kinds: StampKind[]) => stamps.filter((s) => kinds.includes(s.kind)).length
   const months = new Map<number, Stamp[]>()
   for (const s of stamps) {

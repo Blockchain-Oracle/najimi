@@ -18,6 +18,8 @@ import {
   notifications,
   people,
   plans,
+  polls,
+  pollVotes,
   pushSubscriptions,
   qlooCalls,
   reports,
@@ -101,12 +103,20 @@ export async function reownUserData(db: Db, fromUserId: string, toUserId: string
     // Rooms they're in, what they said, who they follow and who follows them, their news. A row
     // the account already has (the same room, the same follow) stays once.
     await tx.execute(sql`
-      insert into ${chatMembers} (chat_id, user_id, role, last_read_at, joined_at)
-      select chat_id, ${toUserId}, role, last_read_at, joined_at from ${chatMembers}
+      insert into ${chatMembers} (chat_id, user_id, role, last_read_at, pinned_at, joined_at)
+      select chat_id, ${toUserId}, role, last_read_at, pinned_at, joined_at from ${chatMembers}
       where user_id = ${fromUserId}
       on conflict do nothing`)
     await tx.delete(chatMembers).where(eq(chatMembers.userId, fromUserId))
     await tx.update(messages).set({ authorId: toUserId }).where(eq(messages.authorId, fromUserId))
+    // Polls they started and how they voted (a poll both voted in keeps the account's vote).
+    await tx.update(polls).set({ createdBy: toUserId }).where(eq(polls.createdBy, fromUserId))
+    await tx.execute(sql`
+      insert into ${pollVotes} (poll_id, user_id, option_id, at)
+      select poll_id, ${toUserId}, option_id, at from ${pollVotes}
+      where user_id = ${fromUserId}
+      on conflict do nothing`)
+    await tx.delete(pollVotes).where(eq(pollVotes.userId, fromUserId))
     await tx.execute(sql`
       insert into ${follows} (follower_id, followee_id, created_at)
       select ${toUserId}, followee_id, created_at from ${follows}

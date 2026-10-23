@@ -16,10 +16,11 @@ import {
 } from "ai"
 import { and, asc, desc, eq, gte } from "drizzle-orm"
 import { contextBlock, RULES } from "../instructions"
-import { agentModel, brainModelId, costOf } from "../models"
+import { agentModel, brainModelId, costOf, providerOf, webSearchTool } from "../models"
 import { toolDefs } from "../tools"
 import type { ChatMeta, NajimiUIMessage } from "../ui-message"
 import { forModel } from "./files"
+import { openPolls } from "./polls"
 import { allMessages, saveAndPublish, setRoomStatus } from "./room"
 import { buildTools } from "./tools"
 import { usageToday } from "./usage"
@@ -83,7 +84,11 @@ export async function runTurn(chatId: string): Promise<void> {
 
   const validated = await safeValidateUIMessages<NajimiUIMessage>({
     messages: stored,
-    tools: toolDefs,
+    // Earlier answers may hold web searches: they validate against the same hosted tool.
+    tools: {
+      ...toolDefs,
+      ...(providerOf(brainModelId()) === "openai" ? { webSearch: webSearchTool() } : {}),
+    },
   })
   if (!validated.success) {
     console.error("[turn] unreadable room", chatId, validated.error)
@@ -177,6 +182,7 @@ export async function runTurn(chatId: string): Promise<void> {
         city: m.city,
         loves: (memberLoves[i] ?? []).map((l) => l.name),
       })),
+      polls: await openPolls(chatId).catch(() => []),
     }
   }
   // The accounts they connected, so Najimi knows what it can do for them there.
@@ -230,7 +236,10 @@ export async function runTurn(chatId: string): Promise<void> {
       outcome: b.outcome,
     })),
   }
-  const tools = buildTools({ userId: by, guest, chatId, person, tz }, () => assistantId)
+  const tools = {
+    ...buildTools({ userId: by, guest, chatId, person, tz }, () => assistantId),
+    ...(providerOf(modelId) === "openai" ? { webSearch: webSearchTool(person.city) } : {}),
+  }
   const abort = new AbortController()
   // Stop: someone asked Najimi to stop; checked while it answers.
   const stopWatch = setInterval(async () => {

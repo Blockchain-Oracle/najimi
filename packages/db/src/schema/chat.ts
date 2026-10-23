@@ -141,3 +141,47 @@ export const usageDays = pgTable(
   },
   (t) => [primaryKey({ columns: [t.userId, t.day] })],
 )
+
+/** One choice in a poll; a thing from Qloo carries its id and art, so the card can open it. */
+export type PollOption = {
+  id: string
+  label: string
+  qlooId?: string | null
+  image?: string | null
+}
+
+/**
+ * A poll in a room, started by someone or by Najimi ("where should we go?"), shown as a card in
+ * the thread (a finished `startPoll` tool part). Everyone in the room votes once and can change it.
+ */
+export const polls = pgTable(
+  "polls",
+  {
+    id: uuid().defaultRandom().primaryKey(),
+    chatId: uuid()
+      .notNull()
+      .references(() => chats.id, { onDelete: "cascade" }),
+    /** Who asked (null: Najimi). Deleting their account deletes the polls they started. */
+    createdBy: text().references(() => user.id, { onDelete: "cascade" }),
+    question: text().notNull(),
+    options: jsonb().$type<PollOption[]>().notNull(),
+    closedAt: timestamp({ withTimezone: true }),
+    createdAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
+  },
+  (t) => [index("polls_chat_idx").on(t.chatId)],
+)
+
+export const pollVotes = pgTable(
+  "poll_votes",
+  {
+    pollId: uuid()
+      .notNull()
+      .references(() => polls.id, { onDelete: "cascade" }),
+    userId: text()
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    optionId: text().notNull(),
+    at: timestamp({ withTimezone: true }).defaultNow().notNull(),
+  },
+  (t) => [primaryKey({ columns: [t.pollId, t.userId] })],
+)

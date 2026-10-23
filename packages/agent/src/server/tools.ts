@@ -15,6 +15,7 @@ import {
   compare,
   type Domain,
   type ExploreInput,
+  entities,
   explore,
   findTags,
   type Love,
@@ -29,6 +30,7 @@ import { and, asc, count, eq, or } from "drizzle-orm"
 import type { z } from "zod"
 import { type insightsInput, type Pick, toolDefs } from "../tools"
 import { startBusiness } from "./business"
+import { startPollForNajimi } from "./polls"
 import { notifyGame } from "./room"
 import { charge, refund } from "./usage"
 
@@ -1061,6 +1063,36 @@ export function buildTools(ctx: TurnContext, messageId: () => string | undefined
             note: (error as Error).message,
           }
         }
+      },
+    }),
+
+    startPoll: tool({
+      ...toolDefs.startPoll,
+      execute: async (input) => {
+        const [chat] = await db
+          .select({ kind: schema.chats.kind })
+          .from(schema.chats)
+          .where(eq(schema.chats.id, ctx.chatId))
+        if (!chat || chat.kind === "agent")
+          throw new Error("Polls are for circles and DMs; just ask them here.")
+        // A thing from Qloo shows its art on the card (and opens in the entity sheet).
+        const ids = input.options.flatMap((o) => (o.qlooId ? [o.qlooId] : []))
+        const found = ids.length
+          ? await entities({ ids }, call("The poll's choices")).catch(() => null)
+          : null
+        const art = new Map((found?.data ?? []).map((e) => [e.entityId, e]))
+        return startPollForNajimi({
+          chatId: ctx.chatId,
+          question: input.question,
+          options: input.options.map((o) => {
+            const thing = o.qlooId ? art.get(o.qlooId) : undefined
+            return {
+              label: o.label,
+              qlooId: thing ? o.qlooId : null,
+              image: thing?.image ?? null,
+            }
+          }),
+        })
       },
     }),
 

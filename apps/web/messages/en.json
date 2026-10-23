@@ -628,7 +628,14 @@
     "youAllAre": "You're all",
     "play": "Play a game",
     "add": "Add",
-    "takePhoto": "Take a photo"
+    "takePhoto": "Take a photo",
+    "poll": "Poll",
+    "soundtrack": "Play our soundtrack",
+    "soundtrackHint": "Songs from everyone's taste, blended",
+    "inviteQr": "Scan to join this circle",
+    "inviteScan": "Scan this, or send the link.",
+    "shareInvite": "Share the invite",
+    "older": "Earlier messages…"
   },
   "Cards": {
     "asking": "Asking Qloo…",
@@ -687,7 +694,8 @@
     "postWriting": "Writing your post",
     "businessBuilding": "Building the plan for {name}",
     "businessOpen": "Open the plan",
-    "businessStarting": "Opening the business"
+    "businessStarting": "Opening the business",
+    "polling": "Putting it to a vote…"
   },
   "Asked": {
     "city": "in {v}",
@@ -775,7 +783,8 @@
     "waiting": "Waiting for your OK",
     "askedYou": "Asked you",
     "failed": "Didn't work",
-    "summary": "{steps, plural, one {# step} other {# steps}} · {calls, plural, =0 {no Qloo calls} one {# Qloo call} other {# Qloo calls}}"
+    "summary": "{steps, plural, one {# step} other {# steps}} · {calls, plural, =0 {no Qloo calls} one {# Qloo call} other {# Qloo calls}}",
+    "searchedWeb": "Searched the web"
   },
   "Games": {
     "kinds": {
@@ -1344,7 +1353,24 @@
       "steerFeed": "Feed tuned",
       "askUser": "A question",
       "qlooSearch": "A search",
-      "qlooTags": "Taste words"
+      "qlooTags": "Taste words",
+      "startPoll": "A poll",
+      "webSearch": "From the web"
     }
+  },
+  "Polls": {
+    "poll": "Poll",
+    "askedBy": "{name} asked",
+    "votes": "{n, plural, one {# vote} other {# votes}}",
+    "first": "Be the first to vote",
+    "closed": "Closed",
+    "new": "Poll",
+    "question": "Ask the room",
+    "questionPlaceholder": "Where should we go tonight?",
+    "option": "Choice {n}",
+    "addOption": "Add a choice",
+    "start": "Start the poll",
+    "title": "New poll",
+    "remove": "Remove this choice"
   }
 }

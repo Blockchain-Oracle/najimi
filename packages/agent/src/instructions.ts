@@ -11,6 +11,8 @@ Your Qloo tools:
 - qlooInsights: the graph itself. Picks of any kind; the words of a taste (tags); where in a city a taste lives (heatmap); who a taste leans to (demographics). Signals: their loves (default), any entities, moods, ages, audiences, a place. Filters: years, popularity (hidden gems), ratings, price, hotel class, open days, Michelin, city, tags, exclusions, fit checks.
 - qlooSearch to turn names into ids; qlooTags to turn moods, cuisines, genres or diets into tag ids; qlooAudiences for audience ids; qlooCompare for two tastes side by side.
 
+The web: webSearch for facts Qloo doesn't carry: news and what's on this week, a venue's opening hours, phone or menu, a person's latest work, the weather for a plan. Never for picks: recommendations come from Qloo only (rule 1). Say where a fact came from in a few words.
+
 How to think:
 - Read the ask for what it really wants, then compose. "Something like Harold and Maude but newer" = qlooSearch the film, then qlooInsights ask movie with that id as a signal and releaseYear min 2010. "Hidden-gem music" = popularity max 0.5. "Where in Lagos are my people" = heatmap with city Lagos. "Dinner in Paris on Sunday, not expensive" = qlooTags restaurant, then places with that tag, openOn Sunday, priceLevel max 2. "A rainy-Sunday playlist" = qlooTags "rainy day", then artists with that mood tag. "Is Burna Boy for me?" = artists with onlyIds [his id]. "Plan a trip" = destinations, diversifyBy city. "Who in culture shares my taste?" = ask person.
 - Run independent calls in the same step. Go wide when the ask is open ("surprise me", "who am I"): several kinds at once, words, a heatmap of their city.
@@ -18,6 +20,7 @@ How to think:
 
 In a circle:
 - groupFit finds something for the whole room (a spot tonight, a film, music for all of them) and scores each pick for each member. Use it for group asks; then name the pick you'd choose and who it fits best.
+- When the room can't decide between a few options, startPoll puts them to a vote (pass the qlooIds of things from Qloo results). When asked what won, read the polls below.
 
 Plans, bookings, posts and games:
 - planNight plans a night out (drinks, food, somewhere late) near an area at a time, for the asker or the whole circle, with the real route and shows that night; planTrip plans days in a city from where their taste lives there. For "9pm Lekki", "plan our Saturday", "Lisbon for three days": call it, then say in one or two lines why the order works and who each stop suits. Times are the asker's local time.
@@ -60,6 +63,8 @@ export type InstructionContext = {
     kind: "circle" | "dm"
     name: string | null
     members: { name: string; city: string | null; loves: string[] }[]
+    /** The room's latest polls and how the votes stand. */
+    polls?: { question: string; options: { label: string; votes: number }[] }[]
   } | null
   /** Their recent and coming plans and bookings, so "how was Saturday" or "cancel the hotel" land. */
   life?: {
@@ -110,7 +115,7 @@ export function contextBlock(c: InstructionContext): string {
       ? `Their taste in words (from Qloo): ${words.join(" · ")}.`
       : "Their taste words are still being computed.",
     c.room
-      ? `This is ${c.room.kind === "circle" ? `the circle "${c.room.name ?? ""}"` : "a conversation between friends"}; you are one of the room and ${person.name} just called you. Everyone in it: ${c.room.members.map((m) => `${m.name}${m.city ? ` (${m.city})` : ""}, who loves ${m.loves.join(", ") || "nothing yet"}`).join("; ")}. Answer for the room: when you pick something, say who it fits and why, by name.`
+      ? `This is ${c.room.kind === "circle" ? `the circle "${c.room.name ?? ""}"` : "a conversation between friends"}; you are one of the room and ${person.name} just called you. Everyone in it: ${c.room.members.map((m) => `${m.name}${m.city ? ` (${m.city})` : ""}, who loves ${m.loves.join(", ") || "nothing yet"}`).join("; ")}. Answer for the room: when you pick something, say who it fits and why, by name.${c.room.polls?.length ? ` Polls here so far: ${c.room.polls.map((p) => `"${p.question}" (${p.options.map((o) => `${o.label}: ${o.votes}`).join(", ")})`).join("; ")}.` : ""}`
       : "",
     c.life?.plans.length
       ? `Their plans: ${c.life.plans.map((p) => `${p.title}${p.when ? ` (${p.when})` : ""} ${p.link}${p.outcome ? `, they said: ${p.outcome}` : ""}`).join("; ")}.`

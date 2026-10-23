@@ -6,7 +6,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@najimi/ui/components/dropdown-menu"
-import { ArrowUp, Camera, ImagePlus, Plus, Square, X } from "lucide-react"
+import { ArrowUp, BarChart3, Camera, ImagePlus, Plus, Square, X } from "lucide-react"
 import { AnimatePresence, motion } from "motion/react"
 import { useTranslations } from "next-intl"
 import { useEffect, useRef, useState } from "react"
@@ -37,6 +37,7 @@ export function Composer({
   ideas = [],
   initialText,
   placeholder: placeholderText,
+  onPoll,
 }: {
   /** The signed-in person (their name is in the placeholder). */
   person?: ChatPerson
@@ -49,6 +50,8 @@ export function Composer({
   initialText?: string
   /** What the empty box says (rooms with people say how to call Najimi). */
   placeholder?: string
+  /** In a circle or DM: the + menu can start a poll. */
+  onPoll?: () => void
 }) {
   const t = useTranslations("Chat")
   const [text, setText] = useState(initialText ?? "")
@@ -113,6 +116,11 @@ export function Composer({
           <DropdownMenuItem onClick={() => camera.current?.click()}>
             <Camera /> {t("takePhoto")}
           </DropdownMenuItem>
+          {onPoll ? (
+            <DropdownMenuItem onClick={onPoll}>
+              <BarChart3 /> {t("poll")}
+            </DropdownMenuItem>
+          ) : null}
         </DropdownMenuContent>
       </DropdownMenu>
       <input

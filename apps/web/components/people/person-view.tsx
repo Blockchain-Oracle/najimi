@@ -24,6 +24,7 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { useCallback, useMemo, useState } from "react"
+import { useReportScreen } from "@/components/agent/agent-context"
 import { useAskAbout } from "@/components/entity/entity-provider"
 import { EntitySheet } from "@/components/entity/entity-sheet"
 import { MoreSheet } from "@/components/picks/more-sheet"
@@ -99,6 +100,13 @@ export function PersonView({ data, other }: { data: PersonViewData; other?: Othe
   const ts = useTranslations("Social")
   const router = useRouter()
   const { person } = data
+  // Najimi knows whose profile is open ("what would she love?", "plan something for us").
+  useReportScreen({
+    where: "profile",
+    label: other
+      ? `${person.name}'s profile${person.username ? ` (@${person.username})` : ""}`
+      : "their own profile",
+  })
   const [runId, setRunId] = useState(data.taste?.runId ?? null)
   /** Your own profile (editable, live while your taste computes) or someone else's. */
   const mine = !other

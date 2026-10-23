@@ -9,6 +9,7 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { useEffect, useState } from "react"
+import { useReportScreen } from "@/components/agent/agent-context"
 import { PlaySection } from "@/components/games/play-section"
 import { Face } from "@/components/taste/face"
 import { api } from "@/lib/fetcher"
@@ -303,6 +304,7 @@ function NewCircle({
 
 export function PeopleView({ home }: { home: PeopleHome }) {
   const t = useTranslations("Social")
+  useReportScreen({ where: "people", label: "People: their friends, circles and taste twins" })
   const router = useRouter()
   const [q, setQ] = useState("")
   const [creating, setCreating] = useState(false)

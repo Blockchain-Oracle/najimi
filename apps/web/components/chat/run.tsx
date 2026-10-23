@@ -5,6 +5,7 @@ import { cn } from "@najimi/ui/lib/utils"
 import {
   ChevronDown,
   GitCompareArrows,
+  Globe,
   ImageIcon,
   type LucideIcon,
   MessageCircleQuestion,
@@ -181,8 +182,38 @@ export function useRunSteps(parts: Part[]): RunStep[] {
           qloo: false,
         })
         break
-      default:
+      default: {
+        // OpenAI's hosted web search: what it looked up and the sites it read.
+        if ((part.type as string) === "tool-webSearch") {
+          const p = part as unknown as {
+            input?: { query?: string }
+            output?: { action?: { query?: string }; sources?: { url?: string }[] }
+          }
+          const sites = [
+            ...new Set(
+              (p.output?.sources ?? []).flatMap((x) => {
+                try {
+                  return x.url ? [new URL(x.url).hostname.replace(/^www\./, "")] : []
+                } catch {
+                  return []
+                }
+              }),
+            ),
+          ]
+          steps.push({
+            id,
+            icon: Globe,
+            label:
+              (p.output?.action?.query ?? p.input?.query)
+                ? quote(p.output?.action?.query ?? p.input?.query)
+                : tr("searchedWeb"),
+            meta: join("web", sites.slice(0, 3).join(", ")),
+            state,
+            qloo: false,
+          })
+        }
         break
+      }
     }
   }
   return steps

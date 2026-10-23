@@ -1,6 +1,7 @@
 "use client"
 
 import type { NajimiUIMessage, Screen } from "@najimi/agent"
+import { ROOMS } from "@najimi/config"
 import { useCallback, useEffect, useRef, useState } from "react"
 import { api } from "@/lib/fetcher"
 import { callsNajimi, type RoomKind } from "@/lib/mention"
@@ -9,6 +10,9 @@ export type RoomStatus = "idle" | "generating" | "waiting" | "stopping"
 
 /** Fired on the window when someone in the room finishes a game (its cards refresh their board). */
 export const GAME_PLAYED = "najimi:game-played"
+
+/** Fired on the window when someone votes in a poll in the room (its card refreshes the tally). */
+export const POLL_VOTED = "najimi:poll-voted"
 
 /** A short random id for a message (the server keeps the first copy of a resend). */
 const newId = () =>
@@ -46,6 +50,9 @@ export function useRoom({
   const [status, setStatus] = useState<RoomStatus>(initialStatus)
   const [error, setError] = useState<string | null>(null)
   const [live, setLive] = useState(initial.length > 0)
+  // A full first page means there may be more before it.
+  const [hasOlder, setHasOlder] = useState(initial.length >= ROOMS.pageSize)
+  const [loadingOlder, setLoadingOlder] = useState(false)
   const titleRef = useRef(onTitle)
   titleRef.current = onTitle
 
@@ -74,6 +81,7 @@ export function useRoom({
         setMessages((list) => list.filter((m) => m.id !== (data.id as string)))
       else if (type === "title") titleRef.current?.(data.title as string)
       else if (type === "game") window.dispatchEvent(new CustomEvent(GAME_PLAYED, { detail: data }))
+      else if (type === "poll") window.dispatchEvent(new CustomEvent(POLL_VOTED, { detail: data }))
     }
     return () => source.close()
   }, [live, chatId, after, upsert])
@@ -177,5 +185,41 @@ export function useRoom({
     }
   }, [chatId, count])
 
-  return { messages, status, busy, error, send, answer, approve, stop, retry }
+  /** The page before the first message on screen (scrolling up reads the history). */
+  const older = useCallback(async () => {
+    if (!hasOlder || loadingOlder) return 0
+    const first = messages[0]?.metadata?.createdAt
+    if (!first) return 0
+    setLoadingOlder(true)
+    try {
+      const page = await api<{ messages: NajimiUIMessage[] }>(
+        `/api/rooms/${chatId}/messages?before=${first}`,
+      )
+      setHasOlder(page.messages.length >= ROOMS.pageSize)
+      setMessages((list) => {
+        const seen = new Set(list.map((m) => m.id))
+        return [...page.messages.filter((m) => !seen.has(m.id)), ...list]
+      })
+      return page.messages.length
+    } catch {
+      return 0
+    } finally {
+      setLoadingOlder(false)
+    }
+  }, [chatId, hasOlder, loadingOlder, messages])
+
+  return {
+    messages,
+    status,
+    busy,
+    error,
+    send,
+    answer,
+    approve,
+    stop,
+    retry,
+    older,
+    hasOlder,
+    loadingOlder,
+  }
 }

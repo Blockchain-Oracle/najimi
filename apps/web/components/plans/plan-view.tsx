@@ -20,7 +20,7 @@ import type { Map as MapLibreMap } from "maplibre-gl"
 import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { useEffect, useMemo, useRef, useState } from "react"
-import { useAgent } from "@/components/agent/agent-context"
+import { useAgent, useReportScreen } from "@/components/agent/agent-context"
 import { OpenThing } from "@/components/entity/entity-provider"
 import { SheetForMe } from "@/components/shell/app-header"
 import { Face } from "@/components/taste/face"
@@ -96,6 +96,10 @@ export function PlanView({
   const router = useRouter()
   const t = useTranslations("Plans")
   const agent = useAgent()
+  useReportScreen({
+    where: "plan",
+    label: `the plan "${plan.title}"${plan.city ? ` in ${plan.city}` : ""}: ${plan.stops.map((s) => s.name).join(", ")}`,
+  })
   const box = useRef<HTMLDivElement>(null)
   const map = useRef<MapLibreMap | null>(null)
   // Stable across renders: the map is made once per plan.

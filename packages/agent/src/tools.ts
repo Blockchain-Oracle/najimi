@@ -532,6 +532,35 @@ export const toolDefs = {
     }),
   }),
 
+  startPoll: tool({
+    description:
+      "Start a poll in a circle or DM when the room has to choose (where to go tonight, which film, which day): a question and two to four options. When the options are things from a Qloo result, pass each one's qlooId so the card shows it and opens it. Everyone votes on the card; you see the votes in later turns. Don't use it in a one-to-one chat with you.",
+    inputSchema: z.object({
+      question: z.string().min(3).max(140),
+      options: z
+        .array(
+          z.object({
+            label: z.string().min(1).max(60),
+            qlooId: z.string().max(64).optional(),
+          }),
+        )
+        .min(2)
+        .max(4),
+    }),
+    outputSchema: z.object({
+      pollId: z.string(),
+      question: z.string(),
+      options: z.array(
+        z.object({
+          id: z.string(),
+          label: z.string(),
+          qlooId: z.string().nullable().optional(),
+          image: z.string().nullable().optional(),
+        }),
+      ),
+    }),
+  }),
+
   steerFeed: tool({
     description:
       "Tune the person's feed when they ask for more or less of something: turn categories up, down or off (level 0 off, 1 less, 2 normal, 3 more), add something to their taste (often the card they're looking at: 'more like this', 'I love this'), or make one of their loves count more or less. Their feed restarts on the new mix at once. Use it for 'less films', 'no podcasts', 'more music like this', 'more of Burna Boy'.",

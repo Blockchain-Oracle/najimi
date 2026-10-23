@@ -14,6 +14,15 @@ export {
 } from "./business"
 export { forModel, ownsUploads } from "./files"
 export {
+  openPolls,
+  type PollCard,
+  type PollTally,
+  pollTally,
+  startPoll,
+  startPollForNajimi,
+  vote,
+} from "./polls"
+export {
   allMessages,
   postGameCard,
   publishMessage,

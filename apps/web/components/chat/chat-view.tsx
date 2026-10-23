@@ -5,11 +5,24 @@ import { Sheet, SheetContent, SheetTitle } from "@najimi/ui/components/sheet"
 import { toast } from "@najimi/ui/components/sonner"
 import { cn } from "@najimi/ui/lib/utils"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
-import { Copy, Gamepad2, History, Plus, RotateCcw, Share2, UserPlus } from "lucide-react"
+import {
+  Copy,
+  Gamepad2,
+  History,
+  Loader2,
+  Pause,
+  Play,
+  Plus,
+  RotateCcw,
+  Share2,
+  UserPlus,
+} from "lucide-react"
 import { useTranslations } from "next-intl"
 import { Suspense, useEffect, useRef, useState } from "react"
+import { QrCode } from "@/components/brands/qr-code"
 import { GameSheet } from "@/components/games/game-sheet"
 import { ProfileLink } from "@/components/people/profile-link"
+import { type Track, usePlayer } from "@/components/player/player"
 import { Face } from "@/components/taste/face"
 import { api } from "@/lib/fetcher"
 import { useNewChat } from "@/lib/new-chat"
@@ -20,6 +33,7 @@ import { ChatList } from "./chat-list"
 import { ChatWelcome, type Starter, type WelcomeTaste } from "./chat-welcome"
 import { type ChatPerson, Composer } from "./composer"
 import { Message } from "./message"
+import { PollSheet } from "./poll-sheet"
 import { RoomWelcome } from "./room-welcome"
 
 /** Someone in the room. */
@@ -75,6 +89,7 @@ export function ChatView(props: ChatViewProps) {
   const [history, setHistory] = useState(false)
   const [membersOpen, setMembersOpen] = useState(false)
   const [gamesOpen, setGamesOpen] = useState(false)
+  const [pollOpen, setPollOpen] = useState(false)
   const kind = props.kind ?? "agent"
   const people = new Map((props.members ?? []).map((m) => [m.userId, m]))
   const others = (props.members ?? []).filter((m) => m.userId !== props.me)
@@ -215,6 +230,16 @@ export function ChatView(props: ChatViewProps) {
           onScroll={(e) => {
             const el = e.currentTarget
             pinned.current = el.scrollHeight - el.scrollTop - el.clientHeight < 120
+            // Near the top: the page before, with the reading place kept where it was.
+            if (el.scrollTop < 240 && room.hasOlder && !room.loadingOlder) {
+              const from = el.scrollHeight
+              void room.older().then((n) => {
+                if (n)
+                  requestAnimationFrame(() =>
+                    el.scrollTo({ top: el.scrollHeight - from + el.scrollTop }),
+                  )
+              })
+            }
           }}
           className="min-h-0 flex-1 overflow-y-auto"
         >
@@ -230,6 +255,11 @@ export function ChatView(props: ChatViewProps) {
               />
             ) : (
               <div className="flex flex-col gap-8 py-6">
+                {room.loadingOlder ? (
+                  <span className="mx-auto flex items-center gap-2 text-[13px] text-text-3">
+                    <Loader2 className="size-4 animate-spin" /> {t("older")}
+                  </span>
+                ) : null}
                 {messages.map((m, i) => {
                   const isLast = i === messages.length - 1
                   const streaming = isLast && m.metadata?.status === "streaming"
@@ -327,6 +357,7 @@ export function ChatView(props: ChatViewProps) {
               onSend={(text, photos) => void send(text, photos)}
               onStop={() => void room.stop()}
               initialText={props.ask}
+              onPoll={kind === "agent" ? undefined : () => setPollOpen(true)}
               placeholder={
                 kind === "agent" ? undefined : t("roomPlaceholder", { name: roomTitle ?? "" })
               }
@@ -334,6 +365,10 @@ export function ChatView(props: ChatViewProps) {
           </div>
         </div>
       </div>
+
+      {kind === "agent" ? null : (
+        <PollSheet open={pollOpen} onOpenChange={setPollOpen} chatId={props.chatId} />
+      )}
 
       {kind === "agent" ? null : (
         <GameSheet
@@ -355,30 +390,8 @@ export function ChatView(props: ChatViewProps) {
             <SheetTitle className="font-title pt-5 text-[1.75rem] font-normal">
               {roomTitle}
             </SheetTitle>
-            {props.invite ? (
-              <button
-                type="button"
-                onClick={async () => {
-                  const url = `${window.location.origin}${props.invite}`
-                  try {
-                    if (navigator.share) await navigator.share({ title: roomTitle ?? "", url })
-                    else {
-                      await navigator.clipboard.writeText(url)
-                      toast(t("linkCopied"))
-                    }
-                  } catch {}
-                }}
-                className="mt-2 flex w-full items-center gap-3 rounded-card bg-card p-4 text-start"
-              >
-                <span className="grid size-10 place-items-center rounded-full bg-primary text-primary-foreground">
-                  <UserPlus className="size-5" />
-                </span>
-                <span className="flex min-w-0 flex-col">
-                  <span className="text-[15px] font-semibold">{t("invite")}</span>
-                  <span className="truncate text-[13px] text-text-3">{t("inviteHint")}</span>
-                </span>
-              </button>
-            ) : null}
+            <Soundtrack chatId={props.chatId} open={membersOpen} />
+            {props.invite ? <InviteCard path={props.invite} name={roomTitle ?? ""} /> : null}
             <CircleOverlap chatId={props.chatId} open={membersOpen} />
             <ul className="mt-3 flex flex-col">
               {(props.members ?? []).map((m) => (
@@ -414,6 +427,108 @@ export function ChatView(props: ChatViewProps) {
         </SheetContent>
       </Sheet>
     </ChatProvider>
+  )
+}
+
+/**
+ * The circle's soundtrack: one tap plays songs from everyone's taste blended, through the one
+ * player (so it keeps going as they move round the app); the artists show as faces.
+ */
+function Soundtrack({ chatId, open }: { chatId: string; open: boolean }) {
+  const t = useTranslations("Chat")
+  const player = usePlayer()
+  const tracks = useQuery({
+    queryKey: ["soundtrack", chatId],
+    queryFn: () =>
+      api<{ tracks: (Track & { store: string })[] }>(`/api/rooms/${chatId}/soundtrack`),
+    enabled: open,
+    staleTime: 5 * 60_000,
+  })
+  const list = (tracks.data?.tracks ?? []).map((tr) => ({ ...tr, source: "apple" as const }))
+  const playing = list.some((tr) => tr.id === player.track?.id) && player.playing
+  const art = [...new Map(list.map((tr) => [tr.by, tr.artwork])).values()].slice(0, 4)
+  if (tracks.isSuccess && !list.length) return null
+  return (
+    <button
+      type="button"
+      disabled={!list.length}
+      onClick={() => {
+        if (list.some((tr) => tr.id === player.track?.id)) player.toggle()
+        else if (list[0]) void player.play(list[0], list)
+      }}
+      className="mt-2 flex w-full items-center gap-3 rounded-card bg-card p-4 text-start disabled:opacity-70"
+    >
+      <span className="grid size-10 shrink-0 place-items-center rounded-full bg-[linear-gradient(135deg,var(--color-aura-1),var(--color-aura-2))] text-white">
+        {tracks.isPending ? (
+          <Loader2 className="size-5 animate-spin" />
+        ) : playing ? (
+          <Pause className="size-5 fill-current" />
+        ) : (
+          <Play className="ms-0.5 size-5 fill-current" />
+        )}
+      </span>
+      <span className="flex min-w-0 flex-1 flex-col">
+        <span className="text-[15px] font-semibold">{t("soundtrack")}</span>
+        <span className="truncate text-[13px] text-text-3">
+          {list.length
+            ? [...new Set(list.map((tr) => tr.by))].slice(0, 3).join(" · ")
+            : t("soundtrackHint")}
+        </span>
+      </span>
+      <span className="flex shrink-0 -space-x-2">
+        {art.map((src) =>
+          src ? (
+            // biome-ignore lint/performance/noImgElement: Apple artwork thumbnail
+            <img
+              key={src}
+              src={src}
+              alt=""
+              className="size-7 rounded-full object-cover ring-2 ring-card"
+            />
+          ) : null,
+        )}
+      </span>
+    </button>
+  )
+}
+
+/** The circle's invite: a QR code to scan across the table, and the link to share. */
+function InviteCard({ path, name }: { path: string; name: string }) {
+  const t = useTranslations("Chat")
+  const [url, setUrl] = useState("")
+  useEffect(() => setUrl(`${window.location.origin}${path}`), [path])
+  const share = async () => {
+    try {
+      if (navigator.share) await navigator.share({ title: name, url })
+      else {
+        await navigator.clipboard.writeText(url)
+        toast(t("linkCopied"))
+      }
+    } catch {}
+  }
+  return (
+    <div className="mt-2 flex items-center gap-4 rounded-card bg-card p-4">
+      {url ? (
+        <span className="shrink-0 overflow-hidden rounded-tile">
+          <QrCode value={url} label={t("inviteQr")} className="size-24" />
+        </span>
+      ) : (
+        <span className="size-24 shrink-0 animate-pulse rounded-tile bg-raised" />
+      )}
+      <span className="flex min-w-0 flex-1 flex-col gap-2">
+        <span className="flex flex-col">
+          <span className="text-[15px] font-semibold">{t("invite")}</span>
+          <span className="text-[13px] text-text-3">{t("inviteScan")}</span>
+        </span>
+        <button
+          type="button"
+          onClick={() => void share()}
+          className="flex h-9 w-fit items-center gap-2 rounded-pill bg-primary px-4 text-[14px] font-semibold text-primary-foreground"
+        >
+          <UserPlus className="size-4" /> {t("shareInvite")}
+        </button>
+      </span>
+    </div>
   )
 }
 

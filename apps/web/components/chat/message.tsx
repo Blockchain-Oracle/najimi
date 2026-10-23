@@ -18,6 +18,7 @@ import { HotelsCard } from "./cards/hotels-card"
 import { CardSkeleton, InsightsCard } from "./cards/insights-card"
 import { ImageCard } from "./cards/media-card"
 import { PlanCard } from "./cards/plan-card"
+import { PollCard } from "./cards/poll-card"
 import { PostApproval, PostCard } from "./cards/post-card"
 import { SteerCard } from "./cards/steer-card"
 import { WizardCard } from "./cards/wizard-card"
@@ -166,6 +167,10 @@ function ToolPart({
       if (part.state === "output-available") return <GameCard output={part.output} />
       if (part.state === "output-error") return failed
       return <CardSkeleton title={undefined} label={t("dealing")} />
+    case "tool-startPoll":
+      if (part.state === "output-available") return <PollCard output={part.output} />
+      if (part.state === "output-error") return failed
+      return <CardSkeleton title={undefined} label={t("polling")} />
     case "tool-steerFeed":
       if (part.state === "output-available")
         return <SteerCard output={part.output} fresh={streaming} />

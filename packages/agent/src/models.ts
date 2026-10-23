@@ -30,6 +30,19 @@ function build() {
 
 export type ModelId = `anthropic:${string}` | `openai:${string}`
 
+let openaiTools: ReturnType<typeof createOpenAI> | undefined
+/**
+ * OpenAI's hosted web search, for what Qloo doesn't carry (news, opening hours, a venue's phone,
+ * what's on this week), near the asker's city when it's known.
+ */
+export function webSearchTool(city?: string | null) {
+  openaiTools ??= createOpenAI({ apiKey: env.OPENAI_API_KEY ?? "", baseURL: AGENT.baseUrls.openai })
+  return openaiTools.tools.webSearch({
+    searchContextSize: "low",
+    ...(city ? { userLocation: { type: "approximate" as const, city } } : {}),
+  })
+}
+
 /** The configured model id (`provider:model`). */
 export function agentModelId(): ModelId {
   return (env.AGENT_MODEL ?? AGENT.defaultModel) as ModelId
