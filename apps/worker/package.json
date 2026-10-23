@@ -16,6 +16,7 @@
     "@najimi/config": "workspace:*",
     "@najimi/connectors": "workspace:*",
     "@najimi/db": "workspace:*",
+    "@najimi/email": "workspace:*",
     "@najimi/env": "workspace:*",
     "@najimi/games": "workspace:*",
     "@najimi/jobs": "workspace:*",

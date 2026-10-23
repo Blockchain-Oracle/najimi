@@ -5,6 +5,7 @@ import { env } from "@najimi/env/server"
 import type { LiveNotice } from "@najimi/live"
 import { and, eq } from "drizzle-orm"
 import webpush from "web-push"
+import { emailBooking } from "./booking-email"
 
 /*
  * Push (W24): every piece of someone's news already goes through the live pipe as a
@@ -124,6 +125,9 @@ async function deliver(notice: LiveNotice) {
     .from(schema.notifications)
     .where(eq(schema.notifications.id, event.data.id))
   if (!n) return
+  // Booking news reaches the inbox too, whether or not this person has push on.
+  if (n.kind === "booking")
+    void emailBooking(n).catch((e) => console.error("[email] booking", (e as Error).message))
   const subs = await db
     .select()
     .from(schema.pushSubscriptions)

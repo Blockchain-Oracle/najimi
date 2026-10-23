@@ -1,6 +1,7 @@
 "use client"
 
 import type { BookingNote } from "@najimi/agent"
+import { calendarLinks } from "@najimi/booking/ics"
 import { toast } from "@najimi/ui/components/sonner"
 import { cn } from "@najimi/ui/lib/utils"
 import { BedDouble, CalendarPlus, Pause, Phone, Play, Ticket, UtensilsCrossed } from "lucide-react"
@@ -81,12 +82,22 @@ export function BookingNotice({ note, text }: { note: BookingNote; text: string 
       {mine && (status === "confirmed" || status === "paid") ? (
         <div className="flex flex-wrap gap-2">
           {note.startsAt ? (
-            <a
-              href={`/api/bookings/${note.id}/ics`}
-              className="flex h-9 items-center gap-1.5 rounded-pill bg-white/8 px-3 text-[13px] font-semibold"
-            >
-              <CalendarPlus className="size-4" /> {t("calendar")}
-            </a>
+            <>
+              <a
+                href={googleCalendar(note)}
+                target="_blank"
+                rel="noreferrer"
+                className="flex h-9 items-center gap-1.5 rounded-pill bg-white/8 px-3 text-[13px] font-semibold"
+              >
+                <CalendarPlus className="size-4" /> {t("googleCalendar")}
+              </a>
+              <a
+                href={`/api/bookings/${note.id}/ics`}
+                className="flex h-9 items-center gap-1.5 rounded-pill bg-white/8 px-3 text-[13px] font-semibold"
+              >
+                {t("otherCalendars")}
+              </a>
+            </>
           ) : null}
           {note.kind === "hotel" && note.refundable ? (
             <button
@@ -102,6 +113,22 @@ export function BookingNotice({ note, text }: { note: BookingNote; text: string 
       ) : null}
     </article>
   )
+}
+
+/** The booking in Google Calendar, filled in (a table holds two hours unless it says otherwise). */
+function googleCalendar(note: BookingNote) {
+  const start = new Date(note.startsAt ?? Date.now())
+  const end = note.endsAt ? new Date(note.endsAt) : new Date(start.getTime() + 2 * 3600_000)
+  return calendarLinks({
+    uid: note.id,
+    title: note.venue ? `${note.title} · ${note.venue}` : note.title,
+    start,
+    end,
+    where: note.venue,
+    notes: note.confirmation
+      ? `Booked through Najimi, under ${note.confirmation}.`
+      : "Booked through Najimi.",
+  }).google
 }
 
 /** The table call itself, played in Najimi's one player (with its seek bar and lock screen). */

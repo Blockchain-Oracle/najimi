@@ -152,6 +152,13 @@ export const QUEUES = {
     send: {},
   },
   /** Every half hour: Najimi asks how the nights, stays and shows that just happened went. */
+  /** A confirmed booking's reminder: the day before, or two hours before. */
+  bookingReminder: {
+    name: "booking-reminder",
+    payload: z.object({ bookingId: z.uuid(), when: z.enum(["day", "soon"]) }),
+    options: { retryLimit: 2, retryDelay: 120, expireInSeconds: 5 * 60 },
+    send: {},
+  },
   followUps: {
     name: "follow-ups",
     payload: z.object({}),

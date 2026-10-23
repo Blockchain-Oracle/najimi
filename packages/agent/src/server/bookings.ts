@@ -1,5 +1,7 @@
+import { REMINDERS } from "@najimi/config"
 import { db, schema } from "@najimi/db"
 import type { BookingStatus } from "@najimi/db/schema"
+import { enqueueAt } from "@najimi/jobs"
 import { publish, topic } from "@najimi/live"
 import { eq } from "drizzle-orm"
 import type { BookingNote } from "../ui-message"
@@ -56,6 +58,47 @@ export async function tellBooking(booking: Booking, text: string) {
   await publish(topic.user(booking.ownerId), "notification", { id: note?.id, kind: "booking" })
 }
 
+/** A confirmed booking's reminders, the day before and a little before (whichever are still ahead). */
+async function scheduleReminders(booking: Booking) {
+  const start = booking.startsAt?.getTime()
+  if (!start) return
+  const now = Date.now()
+  if (start - REMINDERS.dayBeforeMs > now + 60 * 60_000)
+    await enqueueAt(
+      "bookingReminder",
+      { bookingId: booking.id, when: "day" },
+      new Date(start - REMINDERS.dayBeforeMs),
+    )
+  if (start - REMINDERS.soonMs > now + 5 * 60_000)
+    await enqueueAt(
+      "bookingReminder",
+      { bookingId: booking.id, when: "soon" },
+      new Date(start - REMINDERS.soonMs),
+    )
+}
+
+/** The reminder itself, in the booking's room and the owner's news (each kind once). */
+export async function remindBooking(bookingId: string, when: "day" | "soon") {
+  const [booking] = await db.select().from(schema.bookings).where(eq(schema.bookings.id, bookingId))
+  if (!booking?.startsAt || booking.startsAt.getTime() < Date.now()) return
+  if (booking.status !== "confirmed" && booking.status !== "paid") return
+  const data = booking.data as { when?: string; reminded?: string[] }
+  if (data.reminded?.includes(when)) return
+  await db
+    .update(schema.bookings)
+    .set({ data: { ...data, reminded: [...(data.reminded ?? []), when] } })
+    .where(eq(schema.bookings.id, bookingId))
+  const what = `${booking.title}${booking.party && booking.kind === "table" ? ` for ${booking.party}` : ""}`
+  const under = (booking.ref as Record<string, string>).confirmation
+  const at = data.when ? `, ${data.when}` : ""
+  await tellBooking(
+    booking,
+    when === "day"
+      ? `Tomorrow: ${what}${at}${under ? `, under ${under}` : ""}.`
+      : `In two hours: ${what}${at}${under ? `, under ${under}` : ""}. Have a good one.`,
+  )
+}
+
 /** Moves a booking on, and says so. */
 export async function setBooking(
   id: string,
@@ -68,6 +111,7 @@ export async function setBooking(
     .where(eq(schema.bookings.id, id))
     .returning()
   if (booking && say) await tellBooking(booking, say)
+  if (booking && patch.status === "confirmed") await scheduleReminders(booking)
   return booking ?? null
 }
 

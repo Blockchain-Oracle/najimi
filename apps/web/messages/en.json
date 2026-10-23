@@ -1052,7 +1052,9 @@
     "cancelFailed": "That didn't cancel. Try again.",
     "listen": "Listen to the call",
     "listening": "Playing the call",
-    "callWith": "Call with {venue}"
+    "callWith": "Call with {venue}",
+    "googleCalendar": "Google Calendar",
+    "otherCalendars": "Other calendars"
   },
   "Booking": {
     "error": "Something went wrong. Try again.",

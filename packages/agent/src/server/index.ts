@@ -3,6 +3,7 @@ export {
   askHowItWent,
   askHowPlanWent,
   callNotAnswered,
+  remindBooking,
   setBooking,
   tellBooking,
 } from "./bookings"

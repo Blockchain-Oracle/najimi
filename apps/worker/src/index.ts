@@ -1,4 +1,4 @@
-import { buildBusiness, runTurn } from "@najimi/agent/server"
+import { buildBusiness, remindBooking, runTurn } from "@najimi/agent/server"
 import { AUTH, BUSINESS, MEDIA, ROOMS } from "@najimi/config"
 import { migrateDatabase } from "@najimi/db/migrate"
 import { ensureLounge } from "@najimi/games/lounge"
@@ -142,6 +142,11 @@ async function main() {
   await queues.work<Payload<"bookingCheck">>(QUEUES.bookingCheck.name, async ([job]) => {
     if (!job) return
     await bookingCheck(QUEUES.bookingCheck.payload.parse(job.data).bookingId)
+  })
+  await queues.work<Payload<"bookingReminder">>(QUEUES.bookingReminder.name, async ([job]) => {
+    if (!job) return
+    const { bookingId, when } = QUEUES.bookingReminder.payload.parse(job.data)
+    await remindBooking(bookingId, when)
   })
   await queues.work(QUEUES.followUps.name, async ([job]) => {
     if (!job) return

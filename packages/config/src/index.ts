@@ -43,6 +43,12 @@ export const EXPORTS = {
 } as const
 
 /** Voice calls in circles and DMs (LiveKit), with Najimi able to join. */
+/** Before a confirmed booking, Najimi reminds its owner: the day before, and a little before. */
+export const REMINDERS = {
+  dayBeforeMs: 24 * 60 * 60 * 1000,
+  soonMs: 2 * 60 * 60 * 1000,
+} as const
+
 export const CALLS = {
   /** A member's call token lasts this long. */
   tokenTtlSeconds: 2 * 60 * 60,

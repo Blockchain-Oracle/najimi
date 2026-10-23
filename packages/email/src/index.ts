@@ -71,3 +71,46 @@ export function reportEmail(r: {
     html: `<!doctype html><html><body style="font-family:-apple-system,Segoe UI,Helvetica,Arial,sans-serif;font-size:15px;line-height:1.5">${lines.map((l) => `<p style="margin:0 0 8px">${escapeHtml(l)}</p>`).join("")}</body></html>`,
   }
 }
+
+/**
+ * A booking's news by email (the outcome of a call, a confirmed stay, a reminder): Najimi's dark
+ * look in tables and inline styles, the venue's picture, one button back into the chat, and the
+ * call's recording when there is one.
+ */
+export function bookingEmail(b: {
+  headline: string
+  text: string
+  venue: string
+  when: string | null
+  image: string | null
+  open: string
+  recording: string | null
+}) {
+  const e = escapeHtml
+  const button = (href: string, label: string, primary: boolean) =>
+    `<a href="${e(href)}" style="display:inline-block;margin:0 8px 8px 0;padding:12px 20px;border-radius:999px;font-size:15px;font-weight:700;text-decoration:none;${primary ? "background:#f5f3ff;color:#0b0b0d" : "background:#1d1c22;color:#f5f3ff"}">${e(label)}</a>`
+  return {
+    subject: b.headline,
+    text: [
+      b.text,
+      b.when ? `When: ${b.when}` : null,
+      `Open it in ${APP.name}: ${b.open}`,
+      b.recording ? `Listen to the call: ${b.recording}` : null,
+    ]
+      .filter(Boolean)
+      .join("\n\n"),
+    html: `<!doctype html><html><head><meta name="color-scheme" content="dark"><meta name="supported-color-schemes" content="dark"></head><body style="margin:0;background:#07060c;font-family:-apple-system,Segoe UI,Helvetica,Arial,sans-serif;color:#f5f3ff">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#07060c"><tr><td align="center" style="padding:32px 16px">
+<table role="presentation" width="100%" style="max-width:480px">
+<tr><td style="padding:0 4px 20px;font-size:22px;font-weight:800;letter-spacing:-0.5px">najimi</td></tr>
+<tr><td style="background:#121117;border-radius:24px;padding:24px;border:1px solid #23222a">
+${b.image ? `<img src="${e(b.image)}" width="64" height="64" alt="" style="display:block;width:64px;height:64px;border-radius:16px;object-fit:cover;margin:0 0 16px">` : ""}
+<p style="margin:0 0 4px;font-size:20px;font-weight:700;line-height:1.3">${e(b.venue)}</p>
+${b.when ? `<p style="margin:0 0 16px;font-size:14px;color:#9a97a8">${e(b.when)}</p>` : ""}
+<p style="margin:0 0 20px;font-size:15px;line-height:1.55;color:#d9d6e4">${e(b.text)}</p>
+${button(b.open, `Open in ${APP.name}`, true)}${b.recording ? button(b.recording, "Listen to the call", false) : ""}
+</td></tr>
+<tr><td style="padding:16px 4px 0;font-size:12px;line-height:1.5;color:#6f6c7c">You're getting this because you booked through ${APP.name}. Manage your bookings in the app.</td></tr>
+</table></td></tr></table></body></html>`,
+  }
+}

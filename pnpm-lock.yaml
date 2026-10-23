@@ -334,6 +334,9 @@ importers:
       '@najimi/db':
         specifier: workspace:*
         version: link:../../packages/db
+      '@najimi/email':
+        specifier: workspace:*
+        version: link:../../packages/email
       '@najimi/env':
         specifier: workspace:*
         version: link:../../packages/env
