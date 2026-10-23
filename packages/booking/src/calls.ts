@@ -1,3 +1,5 @@
+import { createHmac, timingSafeEqual } from "node:crypto"
+import { CALLS } from "@najimi/config"
 import { env } from "@najimi/env/server"
 
 /*
@@ -9,6 +11,55 @@ import { env } from "@najimi/env/server"
  */
 
 const BASE = "https://api.elevenlabs.io"
+
+/*
+ * What ElevenLabs sends back to us is signed with our own secret: a short token per call, put in
+ * the call's variables, that its tools send as a header (so a tool can only touch that call's
+ * booking or that person's chat), and a fixed key on the inbound caller lookup.
+ */
+const sign = (text: string) =>
+  createHmac("sha256", env.ELEVENLABS_TOOL_SECRET ?? "")
+    .update(text)
+    .digest("base64url")
+
+const same = (a: string, b: string) =>
+  a.length === b.length && timingSafeEqual(Buffer.from(a), Buffer.from(b))
+
+export type ToolToken =
+  | { kind: "booking"; bookingId: string }
+  | { kind: "phone"; userId: string; chatId: string }
+
+/** A token for one call's tools, good for `seconds`; null when the secret isn't set. */
+export function toolToken(token: ToolToken, seconds: number): string | null {
+  if (!env.ELEVENLABS_TOOL_SECRET) return null
+  const body = Buffer.from(JSON.stringify({ ...token, exp: Date.now() + seconds * 1000 })).toString(
+    "base64url",
+  )
+  return `${body}.${sign(`tool:${body}`)}`
+}
+
+export function readToolToken<K extends ToolToken["kind"]>(
+  kind: K,
+  token: string | null,
+): Extract<ToolToken, { kind: K }> | null {
+  if (!env.ELEVENLABS_TOOL_SECRET || !token) return null
+  const [body, mac] = token.split(".")
+  if (!body || !mac || !same(mac, sign(`tool:${body}`))) return null
+  const data = JSON.parse(Buffer.from(body, "base64url").toString()) as {
+    kind: string
+    exp: number
+  }
+  if (data.kind !== kind || data.exp < Date.now()) return null
+  return data as unknown as Extract<ToolToken, { kind: K }>
+}
+
+/** The key the inbound caller lookup carries. */
+export const inboundKey = () => (env.ELEVENLABS_TOOL_SECRET ? sign("inbound") : null)
+
+export function isInbound(key: string | null) {
+  const want = inboundKey()
+  return Boolean(want && key && same(key, want))
+}
 
 /** Calls go out between these local hours (TCPA's 8am–9pm, kept everywhere). */
 export const CALL_HOURS = { from: 8, to: 21 } as const
@@ -111,6 +162,9 @@ export async function placeCall(to: string, brief: CallBrief) {
           when: brief.when,
           notes: brief.notes ?? "none",
           callback: brief.callback ?? "none",
+          // Lets the caller tell the chat what's happening ("they're checking the book").
+          update_token:
+            toolToken({ kind: "booking", bookingId: brief.bookingId }, 15 * 60) ?? "none",
         },
         conversation_config_override: { agent: { first_message: openingOf(brief) } },
       },
@@ -192,13 +246,25 @@ const system = (name: string, params: Record<string, unknown> = {}) => ({
  * it may use (hang up, leave voicemail without a message, press keys through a phone menu), and
  * the facts its analysis pulls from every call.
  */
-const CALLER = {
+const callerOf = (tools: { update: string }) => ({
   name: "Najimi table booking",
   conversation_config: {
     agent: {
       first_message:
         "Hello, I'm Najimi, an AI assistant calling on behalf of {{guest_name}}. This call is recorded. I'd like to book a table for {{party_size}} on {{when}}.",
       language: "en",
+      dynamic_variables: {
+        dynamic_variable_placeholders: {
+          booking_id: "none",
+          venue: "the venue",
+          guest_name: "a guest",
+          party_size: 2,
+          when: "tonight",
+          notes: "none",
+          callback: "none",
+          update_token: "none",
+        },
+      },
       prompt: {
         prompt: [
           "You are Najimi, a polite AI assistant phoning {{venue}} to book a table for {{guest_name}}: {{party_size}} people, {{when}}. Extra requests: {{notes}}. Callback number if they ask: {{callback}}.",
@@ -207,11 +273,13 @@ const CALLER = {
           "If that time isn't possible, ask for the nearest time they can do and note it, without accepting it.",
           "Never pay, never share card details, never agree to a deposit; say the guest will confirm.",
           "If an automated menu answers, use the keypad tool to reach a person or reservations.",
+          "When they put you on hold or go to check something (the book, a manager), tell the guest with post_update in a few words, at most twice in the call.",
           "If you reach voicemail, leave no message and end the call.",
           "As soon as the booking is settled (booked, or not possible), thank them in one short sentence and end the call with the end_call tool. If they say goodbye, ask you to hang up, or the call is clearly over, say a short goodbye and end the call straight away.",
           "If they ask not to be called by an AI again, apologise, say it won't happen again, and end the call.",
         ].join(" "),
         temperature: 0.2,
+        tool_ids: [tools.update],
         built_in_tools: {
           end_call: system("end_call"),
           voicemail_detection: system("voicemail_detection", { voicemail_message: "" }),
@@ -248,20 +316,155 @@ const CALLER = {
     },
     overrides: { conversation_config_override: { agent: { first_message: true } } },
   },
+})
+
+/**
+ * Najimi on a phone call someone is already on: they dial Najimi's number and merge it in. It's
+ * told who they are by our lookup as the call connects (unknown and unconfirmed numbers are told so
+ * and it hangs up), says it's an AI and that it's listening, keeps quiet (skip_turn) unless named,
+ * and answers through Najimi's own turn in their chat. Nothing on this call spends anything.
+ */
+const listenerOf = (tools: { ask: string }, lookup: { url: string; key: string }) => ({
+  name: "Najimi on your call",
+  conversation_config: {
+    agent: {
+      first_message: "Hi, I'm Najimi, an AI. I'm listening; say my name when you want me.",
+      language: "en",
+      dynamic_variables: {
+        dynamic_variable_placeholders: { user_name: "there", known: "no", ask_token: "none" },
+      },
+      prompt: {
+        prompt: [
+          "You are Najimi, an AI that {{user_name}} added to a phone call they're on. Other people may be on the call, talking to each other, not to you.",
+          "If {{known}} is not yes, say nothing after your first message and end the call with end_call.",
+          "Otherwise stay silent: whenever you are not addressed, use skip_turn and say nothing. You're addressed only when someone says Najimi (or a word that sounds like it) and asks you something.",
+          "When you are, say 'One sec' and call ask_najimi with what they asked, in their words, including any who, where or when they said. Then say its answer in one or two short sentences and stop; the details are already in {{user_name}}'s Najimi chat.",
+          "Never book, pay, call anyone, post or promise anything on this call; if they want that, say you've put it in the chat for them to approve.",
+          "If someone asks you to leave or hang up, say a short goodbye and end the call.",
+        ].join(" "),
+        temperature: 0.2,
+        tool_ids: [tools.ask],
+        built_in_tools: { end_call: system("end_call"), skip_turn: system("skip_turn") },
+      },
+    },
+    conversation: { max_duration_seconds: CALLS.phoneMaxSeconds },
+    // Several people talking: it waits for a clear end of turn before it even considers speaking.
+    turn: { turn_eagerness: "patient" },
+  },
+  platform_settings: {
+    overrides: {
+      enable_conversation_initiation_client_data_from_webhook: true,
+      conversation_config_override: { agent: { first_message: true } },
+    },
+    workspace_overrides: {
+      conversation_initiation_client_data_webhook: {
+        url: lookup.url,
+        request_headers: { "x-najimi-key": lookup.key },
+      },
+    },
+  },
+})
+
+type Tool = { id: string; tool_config: { name: string } }
+
+/** The tools ElevenLabs calls back on: asking Najimi (phone calls) and a venue call's updates. */
+const toolsOf = (site: string) => [
+  {
+    type: "webhook",
+    name: "ask_najimi",
+    description:
+      "Ask Najimi (with the taste of everyone involved, from Qloo) what someone on the call asked you. Returns the answer to say.",
+    response_timeout_secs: 60,
+    api_schema: {
+      url: `${site}/api/webhooks/elevenlabs/ask`,
+      method: "POST",
+      request_body_schema: {
+        type: "object",
+        description: "The question asked",
+        required: ["question"],
+        properties: {
+          question: {
+            type: "string",
+            description: "What they asked, in their words, with any who, where or when they said",
+          },
+        },
+      },
+      request_headers: { "x-najimi-token": { variable_name: "ask_token" } },
+    },
+  },
+  {
+    type: "webhook",
+    name: "post_update",
+    description:
+      "Tell the guest what's happening on the call right now, in a few words (for example: they're checking the book).",
+    response_timeout_secs: 10,
+    api_schema: {
+      url: `${site}/api/webhooks/elevenlabs/update`,
+      method: "POST",
+      request_body_schema: {
+        type: "object",
+        description: "The update",
+        required: ["text"],
+        properties: {
+          text: { type: "string", description: "A few words, like: They're checking the book" },
+        },
+      },
+      request_headers: { "x-najimi-token": { variable_name: "update_token" } },
+    },
+  },
+]
+
+/** Makes or updates each tool by name, and returns their ids. */
+async function syncTools(site: string) {
+  const { tools } = await el<{ tools: Tool[] }>("/v1/convai/tools")
+  const ids: Record<string, string> = {}
+  for (const config of toolsOf(site)) {
+    const have = tools.find((t) => t.tool_config.name === config.name)
+    const saved = have
+      ? await el<Tool>(`/v1/convai/tools/${have.id}`, {
+          method: "PATCH",
+          body: { tool_config: config },
+        })
+      : await el<Tool>("/v1/convai/tools", { body: { tool_config: config } })
+    ids[config.name] = saved.id
+  }
+  return { ask: ids.ask_najimi as string, update: ids.post_update as string }
 }
 
-/** The caller itself, made once (ElevenLabs keeps it). */
-export async function createCaller() {
-  return el<{ agent_id: string }>("/v1/convai/agents/create", { body: CALLER })
-}
-
-/** Brings the caller ElevenLabs keeps up to date with the definition above. */
-export async function updateCaller() {
-  if (!env.ELEVENLABS_CALLER_AGENT_ID) throw new Error("There's no caller to update yet")
-  return el<{ agent_id: string }>(`/v1/convai/agents/${env.ELEVENLABS_CALLER_AGENT_ID}`, {
+/**
+ * Brings Najimi's phone agents up to date at ElevenLabs: the tools, the table-booking caller, and
+ * the listener that answers Najimi's number (made the first time, then kept up to date by name).
+ * `site` is where ElevenLabs reaches us (the live app).
+ */
+export async function syncPhoneAgents(site: string) {
+  if (!env.ELEVENLABS_CALLER_AGENT_ID || !env.ELEVENLABS_PHONE_NUMBER_ID)
+    throw new Error("The caller and Najimi's number come first")
+  const key = inboundKey()
+  if (!key) throw new Error("ELEVENLABS_TOOL_SECRET isn't set")
+  const tools = await syncTools(site)
+  await el(`/v1/convai/agents/${env.ELEVENLABS_CALLER_AGENT_ID}`, {
     method: "PATCH",
-    body: CALLER,
+    body: callerOf(tools),
   })
+  const listener = listenerOf(tools, { url: `${site}/api/webhooks/elevenlabs/inbound`, key })
+  const { agents } = await el<{ agents: { agent_id: string; name: string }[] }>(
+    "/v1/convai/agents?page_size=100",
+  )
+  const have = agents.find((a) => a.name === listener.name)
+  const agentId = have
+    ? (
+        await el<{ agent_id: string }>(`/v1/convai/agents/${have.agent_id}`, {
+          method: "PATCH",
+          body: listener,
+        })
+      ).agent_id
+    : (await el<{ agent_id: string }>("/v1/convai/agents/create", { body: listener })).agent_id
+  // Calls to Najimi's number reach the listener; calls out name their own agent.
+  await el(`/v1/convai/phone-numbers/${env.ELEVENLABS_PHONE_NUMBER_ID}`, {
+    method: "PATCH",
+    body: { agent_id: agentId },
+  })
+  return { tools, listener: agentId }
 }
 
 /** Connects Najimi's Twilio number to ElevenLabs once, for outbound calls. */

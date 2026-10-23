@@ -1,13 +1,13 @@
 import type { AudioSource, Participant, RemoteParticipant, RemoteTrack } from "@livekit/rtc-node"
 import { agentModel, lightModelId } from "@najimi/agent"
-import { addLine, charge, endCall, publishMessage, toUI } from "@najimi/agent/server"
+import { addLine, askAloud, endCall } from "@najimi/agent/server"
 import { CALLS } from "@najimi/config"
 import { db, schema } from "@najimi/db"
 import type { CallLine } from "@najimi/db/schema"
 import { env } from "@najimi/env/server"
-import { enqueue, type Payload } from "@najimi/jobs"
+import type { Payload } from "@najimi/jobs"
 import { generateText } from "ai"
-import { and, desc, eq, gt } from "drizzle-orm"
+import { eq } from "drizzle-orm"
 import { AccessToken } from "livekit-server-sdk"
 
 /*
@@ -121,72 +121,6 @@ async function speak(source: AudioSource, text: string) {
   }
 }
 
-/** An answer's words, as speech: no markdown or links, the first sentence or two. */
-function spoken(text: string): string {
-  const plain = text
-    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
-    .replace(/[*_`#>]/g, "")
-    .replace(/\s+/g, " ")
-    .trim()
-  const sentences = plain.match(/[^.!?]+[.!?]+/g) ?? [plain]
-  return sentences.slice(0, 2).join(" ").trim().slice(0, 320)
-}
-
-/** Says what someone asked in the call into the chat as theirs, and waits for Najimi's answer. */
-async function ask(chatId: string, speaker: Speaker, text: string): Promise<string | null> {
-  const [user] = await db
-    .select({ anonymous: schema.user.isAnonymous })
-    .from(schema.user)
-    .where(eq(schema.user.id, speaker.identity))
-  if (!user) return null
-  if (!(await charge(speaker.identity, Boolean(user.anonymous), "turns")))
-    return "That's all I can do for today, sorry."
-  const [row] = await db
-    .insert(schema.messages)
-    .values({
-      id: `call_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`,
-      chatId,
-      role: "user",
-      authorId: speaker.identity,
-      parts: [{ type: "text", text }],
-      metadata: {
-        screen: {
-          where: "call",
-          label:
-            "a voice call with this chat's members: answer in one or two short spoken sentences, and let cards carry the rest",
-        },
-      },
-    })
-    .returning()
-  if (!row) return null
-  await publishMessage(chatId, toUI(row))
-  await enqueue("agentTurn", { chatId }, chatId)
-  const until = Date.now() + CALLS.answerWaitMs
-  while (Date.now() < until) {
-    await sleep(1500)
-    const [answer] = await db
-      .select({ parts: schema.messages.parts, status: schema.messages.status })
-      .from(schema.messages)
-      .where(
-        and(
-          eq(schema.messages.chatId, chatId),
-          eq(schema.messages.role, "assistant"),
-          gt(schema.messages.createdAt, row.createdAt),
-        ),
-      )
-      .orderBy(desc(schema.messages.createdAt))
-      .limit(1)
-    if (answer && answer.status !== "streaming") {
-      const words = (answer.parts as { type: string; text?: string }[])
-        .filter((p) => p.type === "text")
-        .map((p) => p.text ?? "")
-        .join(" ")
-      return spoken(words) || "I've put it in the chat."
-    }
-  }
-  return "I'm still looking; it'll land in the chat."
-}
-
 /** A few lines on what the call was about and what was decided, for its card. */
 async function summarise(room: string): Promise<string | null> {
   const [call] = await db
@@ -242,7 +176,12 @@ export async function joinCall({ room: roomName, chatId }: Payload<"callJoin">) 
     busy = true
     try {
       await speak(source, "One sec.")
-      const reply = await ask(chatId, next.speaker, next.text)
+      const reply = await askAloud({
+        chatId,
+        userId: next.speaker.identity,
+        text: next.text,
+        where: "a voice call with this chat's members",
+      })
       if (reply) {
         await speak(source, reply)
         await addLine(roomName, {

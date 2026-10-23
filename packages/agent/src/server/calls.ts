@@ -1,9 +1,11 @@
 import { CALLS } from "@najimi/config"
 import { db, schema } from "@najimi/db"
 import type { CallLine } from "@najimi/db/schema"
+import { enqueue } from "@najimi/jobs"
 import { publish, topic } from "@najimi/live"
-import { and, desc, eq, isNull, sql } from "drizzle-orm"
+import { and, desc, eq, gt, isNull, sql } from "drizzle-orm"
 import { publishMessage, toUI } from "./room"
+import { charge } from "./usage"
 
 /*
  * Calls in a circle or DM (LiveKit): one live call per chat at a time, shown in the chat as a card
@@ -157,4 +159,88 @@ export async function endCall(
 export async function callByRoom(room: string): Promise<Call | null> {
   const [row] = await db.select().from(schema.calls).where(eq(schema.calls.room, room))
   return row ?? null
+}
+
+/** An answer's words, as speech: no markdown or links, the first sentence or two. */
+export function spoken(text: string): string {
+  const plain = text
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+    .replace(/[*_`#>]/g, "")
+    .replace(/\s+/g, " ")
+    .trim()
+  const sentences = plain.match(/[^.!?]+[.!?]+/g) ?? [plain]
+  return sentences.slice(0, 2).join(" ").trim().slice(0, 320)
+}
+
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
+
+/**
+ * Something asked out loud (in a call, or on a phone call Najimi was added to): it goes into the
+ * chat as the asker's message, Najimi's usual turn answers it there (cards and all), and the first
+ * line or two of that answer comes back to be spoken. Each question is one of the asker's turns.
+ */
+export async function askAloud({
+  chatId,
+  userId,
+  text,
+  where,
+  waitMs = CALLS.answerWaitMs,
+}: {
+  chatId: string
+  userId: string
+  text: string
+  /** What Najimi is told about where it's being asked, so it answers in a speakable way. */
+  where: string
+  waitMs?: number
+}): Promise<string | null> {
+  const [user] = await db
+    .select({ anonymous: schema.user.isAnonymous })
+    .from(schema.user)
+    .where(eq(schema.user.id, userId))
+  if (!user) return null
+  if (!(await charge(userId, Boolean(user.anonymous), "turns")))
+    return "That's all I can do for today, sorry."
+  const [row] = await db
+    .insert(schema.messages)
+    .values({
+      id: `call_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`,
+      chatId,
+      role: "user",
+      authorId: userId,
+      parts: [{ type: "text", text }],
+      metadata: {
+        screen: {
+          where: "call",
+          label: `${where}: answer in one or two short spoken sentences, and let cards carry the rest`,
+        },
+      },
+    })
+    .returning()
+  if (!row) return null
+  await publishMessage(chatId, toUI(row))
+  await enqueue("agentTurn", { chatId }, chatId)
+  const until = Date.now() + waitMs
+  while (Date.now() < until) {
+    await sleep(1500)
+    const [answer] = await db
+      .select({ parts: schema.messages.parts, status: schema.messages.status })
+      .from(schema.messages)
+      .where(
+        and(
+          eq(schema.messages.chatId, chatId),
+          eq(schema.messages.role, "assistant"),
+          gt(schema.messages.createdAt, row.createdAt),
+        ),
+      )
+      .orderBy(desc(schema.messages.createdAt))
+      .limit(1)
+    if (answer && answer.status !== "streaming") {
+      const words = (answer.parts as { type: string; text?: string }[])
+        .filter((p) => p.type === "text")
+        .map((p) => p.text ?? "")
+        .join(" ")
+      return spoken(words) || "I've put it in the chat."
+    }
+  }
+  return "I'm still looking; it'll land in the chat."
 }

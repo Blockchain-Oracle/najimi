@@ -274,6 +274,13 @@
       "when": 1792773889742,
       "tag": "0038_one_live_call",
       "breakpoints": true
+    },
+    {
+      "idx": 39,
+      "version": "7",
+      "when": 1792775041409,
+      "tag": "0039_phone",
+      "breakpoints": true
     }
   ]
 }

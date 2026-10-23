@@ -14,11 +14,14 @@ export async function GET(_: Request, ctx: { params: Promise<{ id: string }> }) 
       ownerId: schema.bookings.ownerId,
       chatId: schema.bookings.chatId,
       status: schema.bookings.status,
+      data: schema.bookings.data,
     })
     .from(schema.bookings)
     .where(eq(schema.bookings.id, id))
   const me = auth.session.user.id
   if (!b || (b.ownerId !== me && !(b.chatId && (await isMember(b.chatId, me)))))
     return fail("Unknown booking", 404)
-  return json({ status: b.status })
+  // While the phone is ringing, the caller's latest word on how it's going ("checking the book").
+  const live = b.status === "calling" ? ((b.data as { live?: string }).live ?? null) : null
+  return json({ status: b.status, live })
 }

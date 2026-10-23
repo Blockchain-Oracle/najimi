@@ -63,23 +63,34 @@ export type StoredPick = {
   }
 }
 
-export const userPrefs = pgTable("user_prefs", {
-  userId: text()
-    .primaryKey()
-    .references(() => user.id, { onDelete: "cascade" }),
-  locale: text(),
-  /** Ask before making (default), make automatically, or plan only (rule 6). */
-  mode: text().$type<"ask" | "auto" | "plan">().default("ask").notNull(),
-  onboardedAt: timestamp({ withTimezone: true }),
-  /** Their time zone (from their device, kept fresh as they use the app): mornings are theirs. */
-  tz: text(),
-  /** Which news reaches the phone as a push (W24); everything is on until they say. */
-  push: jsonb()
-    .$type<PushPrefs>()
-    .default({ messages: true, games: true, plans: true, feeds: true })
-    .notNull(),
-  ...timestamps,
-})
+export const userPrefs = pgTable(
+  "user_prefs",
+  {
+    userId: text()
+      .primaryKey()
+      .references(() => user.id, { onDelete: "cascade" }),
+    locale: text(),
+    /** Ask before making (default), make automatically, or plan only (rule 6). */
+    mode: text().$type<"ask" | "auto" | "plan">().default("ask").notNull(),
+    onboardedAt: timestamp({ withTimezone: true }),
+    /** Their time zone (from their device, kept fresh as they use the app): mornings are theirs. */
+    tz: text(),
+    /** Which news reaches the phone as a push (W24); everything is on until they say. */
+    push: jsonb()
+      .$type<PushPrefs>()
+      .default({ messages: true, games: true, plans: true, feeds: true })
+      .notNull(),
+    /** Their own phone number (E.164), so Najimi knows them when added to a call. */
+    phone: text(),
+    /** Set when they first called Najimi from that number: only then does a call reach their chat. */
+    phoneConfirmedAt: timestamp({ withTimezone: true }),
+    ...timestamps,
+  },
+  (t) => [
+    // One person per confirmed number.
+    uniqueIndex("user_prefs_phone_idx").on(t.phone).where(sql`phone_confirmed_at is not null`),
+  ],
+)
 
 export type PushPrefs = { messages: boolean; games: boolean; plans: boolean; feeds: boolean }
 

@@ -50,6 +50,9 @@ export const CALLS = {
   maxMs: 3 * 60 * 60 * 1000,
   /** A call nobody has joined this long after it started never happened: its card closes. */
   joinGraceMs: 2 * 60 * 1000,
+  /** Najimi on a phone call you added it to: the longest it stays, and how long an answer may take. */
+  phoneMaxSeconds: 20 * 60,
+  phoneAnswerWaitMs: 50_000,
   /** The voice agent's name, for LiveKit's explicit dispatch. */
   agentName: "najimi",
   /** Lines kept in a call's transcript (the newest). */

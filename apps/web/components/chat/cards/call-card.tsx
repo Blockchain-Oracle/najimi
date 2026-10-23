@@ -81,10 +81,11 @@ export function CallCard({ input, output }: { input: Input; output: Output }) {
   const ts = useTranslations("Bookings")
   const booking = useQuery({
     queryKey: ["booking", output.bookingId],
-    queryFn: () => api<{ status: string }>(`/api/bookings/${output.bookingId}`),
+    queryFn: () =>
+      api<{ status: string; live: string | null }>(`/api/bookings/${output.bookingId}`),
     enabled: output.status === "calling" && Boolean(output.bookingId),
     // Asked again only while the phone is ringing; it stops once there's an answer.
-    refetchInterval: (q) => (q.state.data && q.state.data.status !== "calling" ? false : 10_000),
+    refetchInterval: (q) => (q.state.data && q.state.data.status !== "calling" ? false : 5_000),
   })
   if (output.status !== "calling")
     return (
@@ -109,7 +110,9 @@ export function CallCard({ input, output }: { input: Input; output: Output }) {
             : t("calling", { venue: input.venue ?? "" })}
         </span>
         <span className="text-[13px] text-text-3">
-          {done ? ts(`status.${done}` as "status.confirmed") : t("callingHint")}
+          {done
+            ? ts(`status.${done}` as "status.confirmed")
+            : (booking.data?.live ?? t("callingHint"))}
         </span>
       </div>
     </section>

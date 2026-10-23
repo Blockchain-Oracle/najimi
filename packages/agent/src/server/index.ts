@@ -12,7 +12,16 @@ export {
   rebuildBusiness,
   startBusiness,
 } from "./business"
-export { addLine, callByRoom, endCall, liveCall, markNajimi, startCall } from "./calls"
+export {
+  addLine,
+  askAloud,
+  callByRoom,
+  endCall,
+  liveCall,
+  markNajimi,
+  spoken,
+  startCall,
+} from "./calls"
 export { forModel, ownsUploads } from "./files"
 export {
   openPolls,

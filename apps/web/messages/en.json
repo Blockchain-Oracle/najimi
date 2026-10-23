@@ -581,7 +581,10 @@
     "todayValue": "{used} of {limit} messages",
     "privacyPolicy": "Privacy",
     "terms": "Terms",
-    "signedIn": "Signed in"
+    "signedIn": "Signed in",
+    "phone": "Najimi on your calls",
+    "phoneWaiting": "Confirm",
+    "phoneHint": "Add Najimi to a phone call you're on. It listens, and answers when you say its name."
   },
   "Chat": {
     "greeting": "What should we find for {name}?",
@@ -1574,5 +1577,21 @@
     "live": "On now",
     "liveWithNajimi": "On now, with Najimi",
     "over": "Over"
+  },
+  "Phone": {
+    "off": "Phone calls aren't switched on yet.",
+    "yourNumber": "Your phone number",
+    "save": "Save",
+    "failed": "That didn't save. Try again.",
+    "confirmed": "Confirmed",
+    "notConfirmed": "Not confirmed yet",
+    "change": "Change",
+    "remove": "Remove my number",
+    "confirmHow": "Call Najimi once from this phone. It'll say your number is confirmed, then hang up.",
+    "confirmCall": "Call {number} to confirm",
+    "callNajimi": "Call Najimi · {number}",
+    "step1": "On any call, tap Add call.",
+    "step2": "Dial Najimi: {number}, then Merge.",
+    "step3": "Say “Najimi, …” when you want it. What it finds lands in your chats."
   }
 }

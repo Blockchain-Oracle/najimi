@@ -12,6 +12,7 @@ import { ProfileForm } from "@/components/people/profile-form"
 import { BlockedPeople } from "@/components/settings/blocked-people"
 import { DeleteData } from "@/components/settings/delete-data"
 import { ModePicker } from "@/components/settings/mode-picker"
+import { PhoneSettings } from "@/components/settings/phone-settings"
 import { PushSettings } from "@/components/settings/push-settings"
 import { ProfileRow, SettingsGroup } from "@/components/settings/settings-list"
 import { ShareLinks } from "@/components/settings/share-links"
@@ -198,6 +199,22 @@ async function Mine() {
               body: <PushSettings />,
             },
           },
+          // Najimi on your phone calls: members only (it needs a number that's yours).
+          ...(guest
+            ? []
+            : [
+                {
+                  id: "phone",
+                  icon: "phone" as const,
+                  label: t("phone"),
+                  value: prefs?.phone
+                    ? prefs.phoneConfirmedAt
+                      ? t("on")
+                      : t("phoneWaiting")
+                    : null,
+                  sheet: { title: t("phone"), hint: t("phoneHint"), body: <PhoneSettings /> },
+                },
+              ]),
         ]}
       />
 

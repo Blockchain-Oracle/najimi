@@ -35,7 +35,7 @@ and the rules: *a real phone call, between 8am and 9pm; Najimi never pays or agr
 
 ### It calls
 
-An ElevenLabs voice agent dials from a Twilio number and opens by saying it's an AI calling on your behalf and that the call is recorded, then asks for your table. It speaks in short sentences, confirms the date, time, party size and your name once, asks for the nearest time without accepting it if yours isn't possible, and never pays, shares card details or agrees to a deposit. It presses keys to get through a phone menu, hangs up without a message if it reaches voicemail, and ends the call itself once the booking is settled or as soon as they say goodbye (or after 20 seconds of silence). The card says *Calling…*, then *Called* with the outcome.
+An ElevenLabs voice agent dials from a Twilio number and opens by saying it's an AI calling on your behalf and that the call is recorded, then asks for your table. It speaks in short sentences, confirms the date, time, party size and your name once, asks for the nearest time without accepting it if yours isn't possible, and never pays, shares card details or agrees to a deposit. It presses keys to get through a phone menu, hangs up without a message if it reaches voicemail, and ends the call itself once the booking is settled or as soon as they say goodbye (or after 20 seconds of silence). The card says *Calling…*; if they go to check something, it says so while you wait (*They're checking the book*), then *Called* with the outcome.
 
 </Step>
 <Step>
@@ -55,6 +55,12 @@ Three hours after your table, Najimi asks how it was.
 </Steps>
 
 Calls only go out between 8am and 9pm **where the venue is** (read from its number's country; your own time zone when the country spans several). A venue that asks not to be called by an AI again is never called again: Najimi gives you its number instead. Guests can't make calls; sign in first.
+
+## Najimi on your own calls
+
+Najimi's number also answers, so you can add it to a phone call you're already on. Save your number in **Settings → Najimi on your calls** and call Najimi once from that phone to confirm it. Then, on any call: **Add call**, dial Najimi, **Merge**.
+
+It says it's an AI that you added and that it's listening, then stays quiet while you talk. Say its name ("Najimi, where should we eat after?") and it answers in a sentence or two; the full answer, with its cards, is in a new **Phone call** chat in your list. Nothing on these calls books, pays, calls or posts: anything like that waits in the chat for your yes. It leaves when asked, or after 20 minutes. A number Najimi doesn't know, or one not yet confirmed, hears how to set it up and the call ends.
 
 ## Hotels
 
