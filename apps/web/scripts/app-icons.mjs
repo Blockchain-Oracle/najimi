@@ -20,6 +20,8 @@ await mkdir("public/icons", { recursive: true })
 const out = [
   ["public/icons/icon-192.png", 192, 0],
   ["public/icons/icon-512.png", 512, 0],
+  // Store and developer-console listings (Google, TikTok) ask for a large square icon.
+  ["public/icons/icon-1024.png", 1024, 0],
   // Maskable: the mark inside the safe zone (Android crops to a circle or squircle).
   ["public/icons/maskable-512.png", 512, 48],
   ["app/apple-icon.png", 180, 0],
