@@ -19,10 +19,10 @@ Try it out links:
 - https://docs.najimi.xyz
 - https://docs.najimi.xyz/qloo
 
-Built with: Qloo API, Next.js, React, TypeScript, Vercel AI SDK, OpenAI, PostgreSQL, Drizzle ORM, pg-boss, Tailwind CSS, MapLibre GL JS, Mapbox, Better Auth, next-intl, TMDB, Apple Music API, Ticketmaster API, ElevenLabs, Twilio, Nuitee, Docker, Coolify.
+Built with tags entered in Devpost: Qloo, Next.js, React, TypeScript, OpenAI, PostgreSQL, Drizzle, pg-boss, Tailwind, MapLibre, Mapbox, TMDB, Ticketmaster, ElevenLabs, Twilio, Docker, Coolify, Nuitee, Vercel-AI-SDK. Devpost splits tags on spaces; the story names the full library and API names.
 
 Video demo: Leave blank unless a verified YouTube or Vimeo demo is available. This hackathon does not require one.
 
 Existing project question: Leave blank. The first repository commit was on 2026-10-20, within the hackathon submission period.
 
-Media to capture and review at full desktop width before upload: landing; taste profile top and category grid; film entity with trailer; artist entity with songs and concerts; place entity with directions; feed; People and a completed game round; Earth and a scene; graph; plan/map; business plan; connected feeds/Instagram controls; Passport. Capture the mobile layouts separately. Devpost permits 15 gallery images; use the story Markdown for additional images.
+Gallery uploaded: 15 images covering the desktop profile, graph, film, artist, book, place, feed, Qloo explanation, Earth map and scene, route, business result, Instagram discovery, plus mobile profile and Blind Taste. Captions are entered. The Markdown story includes the banner and additional desktop and mobile captures. The Instagram demo account is explicitly shown as not connected. The profile and business in the captures are illustrative test data.

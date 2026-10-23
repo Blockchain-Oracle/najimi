@@ -54,9 +54,15 @@ The captures below come from a guest walkthrough made for this submission. Its p
 
 ![A mapped night around Victoria Island with three stops and travel options](https://raw.githubusercontent.com/Blockchain-Oracle/najimi/main/.github/assets/submission/fullwide/20-plan-route.jpg)
 
-**It travels with you.** The same guest profile, film trailer, Blind Taste round, and Instagram discovery view work on a phone.
+**It travels with you.** The same guest profile, film trailer, playable feed, Earth scene, Blind Taste round, and Instagram discovery view work on a phone.
 
 ![Mobile profile with three loves and a local neighborhood](https://raw.githubusercontent.com/Blockchain-Oracle/najimi/main/.github/assets/submission/mobile/01-profile.jpg)
+
+![Mobile film detail showing the Beautiful Boy trailer and where-to-watch options](https://raw.githubusercontent.com/Blockchain-Oracle/najimi/main/.github/assets/submission/mobile/03-film-trailer.jpg)
+
+![Mobile feed with a playable music pick and its taste explanation](https://raw.githubusercontent.com/Blockchain-Oracle/najimi/main/.github/assets/submission/mobile/06-feed.jpg)
+
+![Mobile Victoria Island scene with local artists and places](https://raw.githubusercontent.com/Blockchain-Oracle/najimi/main/.github/assets/submission/mobile/08-earth-scene.jpg)
 
 ![Mobile Blind Taste round](https://raw.githubusercontent.com/Blockchain-Oracle/najimi/main/.github/assets/submission/mobile/05-blind-taste.jpg)
 
