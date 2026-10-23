@@ -817,7 +817,12 @@
     "askedYou": "Ya tambaye ka",
     "failed": "Bai yi aiki ba",
     "summary": "{steps, plural, one {mataki #} other {matakai #}} · {calls, plural, =0 {ba a tambayi Qloo ba} one {tambaya # ga Qloo} other {tambayoyi # ga Qloo}}",
-    "searchedWeb": "An bincika yanar gizo"
+    "searchedWeb": "An bincika yanar gizo",
+    "forEveryone": "Akwai abin da kowa zai so",
+    "scoredFor": "{picks, plural, one {# zaɓi} other {# zaɓuɓɓuka}} ya dace da {people, plural, one {# mutum} other {# mutane}}",
+    "planning": "Ana tsarawa",
+    "stops": "{count, plural, one {# tasha} other {# tasha}}",
+    "dealing": "Ana raba katunan wasa"
   },
   "Games": {
     "kinds": {

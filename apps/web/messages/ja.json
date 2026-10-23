@@ -817,7 +817,12 @@
     "askedYou": "あなたに質問しました",
     "failed": "うまくいきませんでした",
     "summary": "{steps, plural, other {#ステップ}} · {calls, plural, =0 {Qlooへの問い合わせなし} other {Qlooへの問い合わせ#件}}",
-    "searchedWeb": "ウェブを検索しました"
+    "searchedWeb": "ウェブを検索しました",
+    "forEveryone": "みんな向け",
+    "scoredFor": "{picks, plural, other {#件の候補}}が{people, plural, other {#人}}にマッチ",
+    "planning": "計画中",
+    "stops": "{count, plural, other {#か所}}",
+    "dealing": "ゲームを配っています"
   },
   "Games": {
     "kinds": {

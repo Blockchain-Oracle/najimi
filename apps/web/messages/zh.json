@@ -817,7 +817,12 @@
     "askedYou": "向你提问",
     "failed": "未成功",
     "summary": "{steps, plural, other {# 个步骤}} · {calls, plural, =0 {未调用 Qloo} other {调用 Qloo # 次}}",
-    "searchedWeb": "已搜索网页"
+    "searchedWeb": "已搜索网页",
+    "forEveryone": "总有适合每个人的",
+    "scoredFor": "为{people, plural, other {#个人}}评分的{picks, plural, other {#个推荐}}",
+    "planning": "计划中",
+    "stops": "{count, plural, other {#站}}",
+    "dealing": "发牌中"
   },
   "Games": {
     "kinds": {

@@ -732,6 +732,7 @@ export function buildTools(ctx: TurnContext, messageId: () => string | undefined
             fits: members.map((m, i) => ({ name: m.name, fit: fits[i]?.get(p.qlooId) ?? null })),
           })),
           callId: found?.callId ?? null,
+          qlooCalls: 1 + lovesBy.filter((loves) => loves.length).length,
           note: null,
         }
       },

@@ -372,6 +372,8 @@ export const toolDefs = {
         }),
       ),
       callId: z.string().nullable(),
+      /** How many Qloo requests it made (the blend, then each member's scores). */
+      qlooCalls: z.number().optional(),
       note: z.string().nullable(),
     }),
   }),

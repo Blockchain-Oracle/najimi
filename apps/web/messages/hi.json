@@ -817,7 +817,12 @@
     "askedYou": "आपसे पूछा",
     "failed": "नहीं हो पाया",
     "summary": "{steps, plural, one {# चरण} other {# चरण}} · {calls, plural, =0 {Qloo से कोई अनुरोध नहीं} one {Qloo से # अनुरोध} other {Qloo से # अनुरोध}}",
-    "searchedWeb": "वेब पर खोज की"
+    "searchedWeb": "वेब पर खोज की",
+    "forEveryone": "सबके लिए कुछ",
+    "scoredFor": "{picks, plural, one {# पसंद} other {# पसंद}} {people, plural, one {# व्यक्ति} other {# लोग}} के लिए तय की गई",
+    "planning": "योजना बना रहे हैं",
+    "stops": "{count, plural, one {# पड़ाव} other {# पड़ाव} }",
+    "dealing": "एक गेम बाँट रहे हैं"
   },
   "Games": {
     "kinds": {

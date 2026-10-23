@@ -1420,7 +1420,12 @@
     "Email.offNews": "No more booking and plan emails.",
     "Email.badLink": "That link didn't work.",
     "Email.changeBack": "You can turn it back on any time in Settings.",
-    "Email.openSettings": "Open Settings"
+    "Email.openSettings": "Open Settings",
+    "Run.forEveryone": "Something for everyone",
+    "Run.scoredFor": "{picks, plural, one {# pick} other {# picks}} scored for {people, plural, one {# person} other {# people}}",
+    "Run.planning": "Planning",
+    "Run.stops": "{count, plural, one {# stop} other {# stops}}",
+    "Run.dealing": "Dealing a game"
   },
   "es": {
     "Landing.kicker": "Taste AI by <qloo>Qloo</qloo>",
@@ -2843,7 +2848,12 @@
     "Email.offNews": "No more booking and plan emails.",
     "Email.badLink": "That link didn't work.",
     "Email.changeBack": "You can turn it back on any time in Settings.",
-    "Email.openSettings": "Open Settings"
+    "Email.openSettings": "Open Settings",
+    "Run.forEveryone": "Something for everyone",
+    "Run.scoredFor": "{picks, plural, one {# pick} other {# picks}} scored for {people, plural, one {# person} other {# people}}",
+    "Run.planning": "Planning",
+    "Run.stops": "{count, plural, one {# stop} other {# stops}}",
+    "Run.dealing": "Dealing a game"
   },
   "ha": {
     "Landing.kicker": "Taste AI by <qloo>Qloo</qloo>",
@@ -4266,7 +4276,12 @@
     "Email.offNews": "No more booking and plan emails.",
     "Email.badLink": "That link didn't work.",
     "Email.changeBack": "You can turn it back on any time in Settings.",
-    "Email.openSettings": "Open Settings"
+    "Email.openSettings": "Open Settings",
+    "Run.forEveryone": "Something for everyone",
+    "Run.scoredFor": "{picks, plural, one {# pick} other {# picks}} scored for {people, plural, one {# person} other {# people}}",
+    "Run.planning": "Planning",
+    "Run.stops": "{count, plural, one {# stop} other {# stops}}",
+    "Run.dealing": "Dealing a game"
   },
   "yo": {
     "Landing.kicker": "Taste AI by <qloo>Qloo</qloo>",
@@ -5689,7 +5704,12 @@
     "Email.offNews": "No more booking and plan emails.",
     "Email.badLink": "That link didn't work.",
     "Email.changeBack": "You can turn it back on any time in Settings.",
-    "Email.openSettings": "Open Settings"
+    "Email.openSettings": "Open Settings",
+    "Run.forEveryone": "Something for everyone",
+    "Run.scoredFor": "{picks, plural, one {# pick} other {# picks}} scored for {people, plural, one {# person} other {# people}}",
+    "Run.planning": "Planning",
+    "Run.stops": "{count, plural, one {# stop} other {# stops}}",
+    "Run.dealing": "Dealing a game"
   },
   "hi": {
     "Landing.kicker": "Taste AI by <qloo>Qloo</qloo>",
@@ -7112,7 +7132,12 @@
     "Email.offNews": "No more booking and plan emails.",
     "Email.badLink": "That link didn't work.",
     "Email.changeBack": "You can turn it back on any time in Settings.",
-    "Email.openSettings": "Open Settings"
+    "Email.openSettings": "Open Settings",
+    "Run.forEveryone": "Something for everyone",
+    "Run.scoredFor": "{picks, plural, one {# pick} other {# picks}} scored for {people, plural, one {# person} other {# people}}",
+    "Run.planning": "Planning",
+    "Run.stops": "{count, plural, one {# stop} other {# stops}}",
+    "Run.dealing": "Dealing a game"
   },
   "sw": {
     "Landing.kicker": "Taste AI by <qloo>Qloo</qloo>",
@@ -8535,7 +8560,12 @@
     "Email.offNews": "No more booking and plan emails.",
     "Email.badLink": "That link didn't work.",
     "Email.changeBack": "You can turn it back on any time in Settings.",
-    "Email.openSettings": "Open Settings"
+    "Email.openSettings": "Open Settings",
+    "Run.forEveryone": "Something for everyone",
+    "Run.scoredFor": "{picks, plural, one {# pick} other {# picks}} scored for {people, plural, one {# person} other {# people}}",
+    "Run.planning": "Planning",
+    "Run.stops": "{count, plural, one {# stop} other {# stops}}",
+    "Run.dealing": "Dealing a game"
   },
   "ig": {
     "Landing.kicker": "Taste AI by <qloo>Qloo</qloo>",
@@ -9958,7 +9988,12 @@
     "Email.offNews": "No more booking and plan emails.",
     "Email.badLink": "That link didn't work.",
     "Email.changeBack": "You can turn it back on any time in Settings.",
-    "Email.openSettings": "Open Settings"
+    "Email.openSettings": "Open Settings",
+    "Run.forEveryone": "Something for everyone",
+    "Run.scoredFor": "{picks, plural, one {# pick} other {# picks}} scored for {people, plural, one {# person} other {# people}}",
+    "Run.planning": "Planning",
+    "Run.stops": "{count, plural, one {# stop} other {# stops}}",
+    "Run.dealing": "Dealing a game"
   },
   "ja": {
     "Landing.kicker": "Taste AI by <qloo>Qloo</qloo>",
@@ -11381,7 +11416,12 @@
     "Email.offNews": "No more booking and plan emails.",
     "Email.badLink": "That link didn't work.",
     "Email.changeBack": "You can turn it back on any time in Settings.",
-    "Email.openSettings": "Open Settings"
+    "Email.openSettings": "Open Settings",
+    "Run.forEveryone": "Something for everyone",
+    "Run.scoredFor": "{picks, plural, one {# pick} other {# picks}} scored for {people, plural, one {# person} other {# people}}",
+    "Run.planning": "Planning",
+    "Run.stops": "{count, plural, one {# stop} other {# stops}}",
+    "Run.dealing": "Dealing a game"
   },
   "zh": {
     "Landing.kicker": "Taste AI by <qloo>Qloo</qloo>",
@@ -12804,7 +12844,12 @@
     "Email.offNews": "No more booking and plan emails.",
     "Email.badLink": "That link didn't work.",
     "Email.changeBack": "You can turn it back on any time in Settings.",
-    "Email.openSettings": "Open Settings"
+    "Email.openSettings": "Open Settings",
+    "Run.forEveryone": "Something for everyone",
+    "Run.scoredFor": "{picks, plural, one {# pick} other {# picks}} scored for {people, plural, one {# person} other {# people}}",
+    "Run.planning": "Planning",
+    "Run.stops": "{count, plural, one {# stop} other {# stops}}",
+    "Run.dealing": "Dealing a game"
   },
   "fr": {
     "Landing.kicker": "Taste AI by <qloo>Qloo</qloo>",
@@ -14227,7 +14272,12 @@
     "Email.offNews": "No more booking and plan emails.",
     "Email.badLink": "That link didn't work.",
     "Email.changeBack": "You can turn it back on any time in Settings.",
-    "Email.openSettings": "Open Settings"
+    "Email.openSettings": "Open Settings",
+    "Run.forEveryone": "Something for everyone",
+    "Run.scoredFor": "{picks, plural, one {# pick} other {# picks}} scored for {people, plural, one {# person} other {# people}}",
+    "Run.planning": "Planning",
+    "Run.stops": "{count, plural, one {# stop} other {# stops}}",
+    "Run.dealing": "Dealing a game"
   },
   "ar": {
     "Landing.kicker": "Taste AI by <qloo>Qloo</qloo>",
@@ -15650,6 +15700,11 @@
     "Email.badLink": "That link didn't work.",
     "Email.changeBack": "You can turn it back on any time in Settings.",
     "Email.openSettings": "Open Settings",
-    "Graph.whatIf": "What if: {count, plural, one {# love} other {# loves}} moved"
+    "Graph.whatIf": "What if: {count, plural, one {# love} other {# loves}} moved",
+    "Run.forEveryone": "Something for everyone",
+    "Run.scoredFor": "{picks, plural, one {# pick} other {# picks}} scored for {people, plural, one {# person} other {# people}}",
+    "Run.planning": "Planning",
+    "Run.stops": "{count, plural, one {# stop} other {# stops}}",
+    "Run.dealing": "Dealing a game"
   }
 }

@@ -817,7 +817,12 @@
     "askedYou": "سألك",
     "failed": "لم ينجح",
     "summary": "{steps, plural, one {خطوة واحدة} two {خطوتان} few {# خطوات} many {# خطوة} other {# خطوة}} · {calls, plural, =0 {لا طلبات إلى Qloo} one {طلب واحد إلى Qloo} two {طلبان إلى Qloo} few {# طلبات إلى Qloo} many {# طلبًا إلى Qloo} other {# طلب إلى Qloo}}",
-    "searchedWeb": "تم البحث في الويب"
+    "searchedWeb": "تم البحث في الويب",
+    "forEveryone": "شيء يناسب الجميع",
+    "scoredFor": "اختيارات مُقيّمة لـ {picks, plural, one {# اختيار} two {# اختياران} few {# اختيارات} many {# اختيارًا} other {# اختيار}} من {people, plural, one {# شخص} two {# شخصين} few {# أشخاص} many {# شخصًا} other {# شخص}}",
+    "planning": "جارٍ التخطيط",
+    "stops": "{count, plural, one {# محطة} two {# محطتان} few {# محطات} many {# محطة} other {# محطة}}",
+    "dealing": "توزيع أوراق لعبة"
   },
   "Games": {
     "kinds": {

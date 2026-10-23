@@ -817,7 +817,12 @@
     "askedYou": "Imekuuliza",
     "failed": "Haikufanikiwa",
     "summary": "{steps, plural, one {hatua #} other {hatua #}} · {calls, plural, =0 {hakuna maombi kwa Qloo} one {ombi # kwa Qloo} other {maombi # kwa Qloo}}",
-    "searchedWeb": "Imetafuta kwenye wavuti"
+    "searchedWeb": "Imetafuta kwenye wavuti",
+    "forEveryone": "Kitu kwa kila mtu",
+    "scoredFor": "{picks, plural, one {# chaguo} other {# chaguo}} zimekadiriwa kwa {people, plural, one {# mtu} other {# watu}}",
+    "planning": "Kupanga",
+    "stops": "{count, plural, one {# kituo} other {# vituo}}",
+    "dealing": "Kugawa mchezo"
   },
   "Games": {
     "kinds": {

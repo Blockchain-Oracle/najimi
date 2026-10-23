@@ -4,14 +4,17 @@ import type { ChatMeta, NajimiUIMessage } from "@najimi/agent"
 import { cn } from "@najimi/ui/lib/utils"
 import {
   ChevronDown,
+  Gamepad2,
   GitCompareArrows,
   Globe,
   ImageIcon,
   type LucideIcon,
   MessageCircleQuestion,
   Radar,
+  Route,
   ScanFace,
   Search,
+  Store,
   Tags,
   Users,
   X,
@@ -42,6 +45,8 @@ export type RunStep = {
   meta?: string
   state: StepState
   qloo: boolean
+  /** How many Qloo requests the step made, when it made more than one (a group fit, a plan). */
+  calls?: number
   callId?: string | null
   hits?: Hit[]
 }
@@ -81,6 +86,63 @@ export function useRunSteps(parts: Part[]): RunStep[] {
           state,
           qloo: true,
           hits: found.slice(0, 4),
+        })
+        break
+      }
+      // Tools that ask Qloo inside themselves: shown as the Qloo work they are.
+      case "tool-groupFit": {
+        const out = done ? part.output : null
+        steps.push({
+          id,
+          icon: Users,
+          label: part.input?.title ?? tr("forEveryone"),
+          meta: join(
+            "qloo.insights",
+            out && tr("scoredFor", { picks: out.picks.length, people: out.members.length }),
+          ),
+          state,
+          qloo: true,
+          calls: out ? (out.qlooCalls ?? 1 + out.members.length) : 1,
+          callId: out?.callId ?? null,
+          hits: (out?.picks ?? [])
+            .slice(0, 4)
+            .map((p) => ({ id: p.qlooId, name: p.name, image: p.image })),
+        })
+        break
+      }
+      case "tool-planNight":
+      case "tool-planTrip": {
+        const out = done ? part.output : null
+        steps.push({
+          id,
+          icon: Route,
+          label: out?.title ?? (part.input?.city ? quote(part.input.city) : tr("planning")),
+          meta: join("qloo.insights · heatmap", out && tr("stops", { count: out.stops.length })),
+          state,
+          qloo: true,
+        })
+        break
+      }
+      case "tool-startGame": {
+        const out = done ? part.output : null
+        steps.push({
+          id,
+          icon: Gamepad2,
+          label: out?.title ?? tr("dealing"),
+          meta: "qloo.insights",
+          state,
+          qloo: true,
+        })
+        break
+      }
+      case "tool-businessPlan": {
+        steps.push({
+          id,
+          icon: Store,
+          label: part.input?.name ? quote(part.input.name) : tr("planning"),
+          meta: "qloo.insights · audiences · heatmap",
+          state,
+          qloo: true,
         })
         break
       }
@@ -308,7 +370,7 @@ export function Run({
   if (!steps.length && !working) return null
   const expanded = working || open
   const live = [...steps].reverse().find((s) => s.state === "active" || s.state === "waiting")
-  const calls = steps.filter((s) => s.qloo).length
+  const calls = steps.reduce((n, s) => n + (s.qloo ? (s.calls ?? 1) : 0), 0)
   const seconds =
     meta?.createdAt && meta.finishedAt
       ? Math.max(1, Math.round((meta.finishedAt - meta.createdAt) / 1000))

@@ -817,7 +817,12 @@
     "askedYou": "Jụrụ gị ajụjụ",
     "failed": "Ọ rụghị ọrụ",
     "summary": "{steps, plural, other {nzọụkwụ #}} · {calls, plural, =0 {enweghị ajụjụ nye Qloo} other {ajụjụ # nye Qloo}}",
-    "searchedWeb": "Achọla na webụ"
+    "searchedWeb": "Achọla na webụ",
+    "forEveryone": "Ihe ga-atọ onye ọ bụla ụtọ",
+    "scoredFor": "{picks, plural, other {# nhọrọ}} họọrọ maka {people, plural, other {# mmadụ}}",
+    "planning": "Na-ahazi",
+    "stops": "{count, plural, other {# ebe a ga-akwụsị}}",
+    "dealing": "Na-ekesa kaadị egwuregwu"
   },
   "Games": {
     "kinds": {

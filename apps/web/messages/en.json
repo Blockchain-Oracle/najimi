@@ -817,7 +817,12 @@
     "askedYou": "Asked you",
     "failed": "Didn't work",
     "summary": "{steps, plural, one {# step} other {# steps}} · {calls, plural, =0 {no Qloo calls} one {# Qloo call} other {# Qloo calls}}",
-    "searchedWeb": "Searched the web"
+    "searchedWeb": "Searched the web",
+    "forEveryone": "Something for everyone",
+    "scoredFor": "{picks, plural, one {# pick} other {# picks}} scored for {people, plural, one {# person} other {# people}}",
+    "planning": "Planning",
+    "stops": "{count, plural, one {# stop} other {# stops}}",
+    "dealing": "Dealing a game"
   },
   "Games": {
     "kinds": {

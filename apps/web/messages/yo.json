@@ -817,7 +817,12 @@
     "askedYou": "Bi ọ́ léèrè",
     "failed": "Kò ṣiṣẹ́",
     "summary": "{steps, plural, other {ìgbésẹ̀ #}} · {calls, plural, =0 {kò bi Qloo ní nǹkan} other {ìbéèrè # sí Qloo}}",
-    "searchedWeb": "A wá lórí ayélujára"
+    "searchedWeb": "A wá lórí ayélujára",
+    "forEveryone": "Ohun kan fún gbogbo ènìyàn",
+    "scoredFor": "{picks, plural, other {# àṣàyàn}} fún {people, plural, other {# ènìyàn}} ni a ṣe ìṣírò",
+    "planning": "Ń ṣètò",
+    "stops": "{count, plural, other {# ibi ìdúró}}",
+    "dealing": "Ń pín káàdì eré"
   },
   "Games": {
     "kinds": {
