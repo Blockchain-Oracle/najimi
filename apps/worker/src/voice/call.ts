@@ -101,7 +101,11 @@ async function speak(source: AudioSource, text: string) {
     {
       method: "POST",
       headers: { "xi-api-key": env.ELEVENLABS_API_KEY, "content-type": "application/json" },
-      body: JSON.stringify({ text, model_id: CALLS.ttsModel }),
+      body: JSON.stringify({
+        text,
+        model_id: CALLS.ttsModel,
+        voice_settings: { speed: CALLS.voiceSpeed },
+      }),
       signal: AbortSignal.timeout(30_000),
     },
   )

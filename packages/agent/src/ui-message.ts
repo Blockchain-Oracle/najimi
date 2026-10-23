@@ -63,6 +63,8 @@ export type BookingNote = {
   endsAt: string | null
   confirmation: string | null
   refundable: boolean
+  /** A table call's audio can be played (older notes don't say). */
+  recording?: boolean
 }
 
 export type NajimiTools = InferUITools<ToolDefs>

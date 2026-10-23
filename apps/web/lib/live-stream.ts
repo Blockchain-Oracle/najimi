@@ -1,6 +1,6 @@
 import "server-only"
 import { LIVE } from "@najimi/config"
-import { eventsAfter } from "@najimi/live"
+import { eventsAfter, lastEventId } from "@najimi/live"
 import { watch } from "@/lib/live-hub"
 
 /**
@@ -10,7 +10,8 @@ import { watch } from "@/lib/live-hub"
  */
 export function streamTopic(request: Request, name: string): Response {
   const url = new URL(request.url)
-  let last = Number(request.headers.get("last-event-id") ?? url.searchParams.get("after") ?? 0) || 0
+  const from = request.headers.get("last-event-id") ?? url.searchParams.get("after")
+  let last = Number(from ?? 0) || 0
   const encoder = new TextEncoder()
   let closed = false
   let stop: (() => void) | undefined
@@ -19,6 +20,8 @@ export function streamTopic(request: Request, name: string): Response {
 
   const stream = new ReadableStream<Uint8Array>({
     async start(controller) {
+      // `?after=now`: only what happens from here on (an incoming-call alert, not old news).
+      if (from === "now") last = await lastEventId(name)
       const close = () => {
         if (closed) return
         closed = true

@@ -121,6 +121,30 @@ async function el<T>(path: string, init: { method?: string; body?: unknown } = {
   return body
 }
 
+/**
+ * A table's time the way people say it on the phone: "Saturday 24 October at 5pm", "at 7:30pm",
+ * "at noon"; never "17:00", which the caller would read out as "seventeen hundred".
+ */
+export function spokenWhen(at: Date, tz: string): string {
+  const day = at.toLocaleDateString("en-GB", {
+    timeZone: tz,
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+  })
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: tz,
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  }).formatToParts(at)
+  const part = (type: string) => parts.find((p) => p.type === type)?.value ?? ""
+  const half = part("dayPeriod").toLowerCase()
+  const time =
+    part("minute") === "00" ? `${part("hour")}${half}` : `${part("hour")}:${part("minute")}${half}`
+  return `${day} at ${time === "12pm" ? "noon" : time}`
+}
+
 /** What the caller says and asks, filled per call (the agent's prompt reads these variables). */
 export type CallBrief = {
   bookingId: string
@@ -189,10 +213,13 @@ export type CallResult = {
   /** The venue asked not to be called by an AI again. */
   doNotCall: boolean
   seconds: number | null
+  /** ElevenLabs kept the call's audio (it's played back from the booking's card). */
+  recording: boolean
 }
 
 type Conversation = {
   status: CallResult["status"]
+  has_audio?: boolean
   metadata?: { call_duration_secs?: number }
   analysis?: {
     call_successful?: "success" | "failure" | "unknown"
@@ -222,6 +249,8 @@ export const resultOf = (c: Conversation): CallResult => {
     voicemail: value("reached_voicemail") === true,
     doNotCall: value("do_not_call") === true,
     seconds: c.metadata?.call_duration_secs ?? null,
+    // Calls are recorded (the caller says so); the webhook's copy may not carry the flag itself.
+    recording: Boolean(c.has_audio ?? (c.metadata?.call_duration_secs ?? 0) > 1),
   }
 }
 
@@ -230,6 +259,46 @@ export async function callResult(conversationId: string): Promise<CallResult> {
   return resultOf(
     await el<Conversation>(`/v1/convai/conversations/${encodeURIComponent(conversationId)}`),
   )
+}
+
+/** A call's audio, streamed from ElevenLabs (the booking's card plays it to its people). */
+export async function callAudio(conversationId: string): Promise<Response | null> {
+  if (!env.ELEVENLABS_API_KEY) return null
+  const res = await fetch(
+    `${BASE}/v1/convai/conversations/${encodeURIComponent(conversationId)}/audio`,
+    { headers: { "xi-api-key": env.ELEVENLABS_API_KEY }, signal: AbortSignal.timeout(30_000) },
+  )
+  return res.ok && res.body ? res : null
+}
+
+export type LineStatus = {
+  /** Twilio's word: queued, ringing, in-progress, completed, busy, no-answer, failed, canceled. */
+  status: string
+  endedAt: Date | null
+}
+
+/**
+ * How the phone line itself went, from Twilio. ElevenLabs never hears about a call that wasn't
+ * picked up (busy, no answer), so its own record of one stays "initiated" forever: this is how
+ * Najimi knows to say so.
+ */
+export async function lineStatus(callSid: string): Promise<LineStatus | null> {
+  if (!env.TWILIO_ACCOUNT_SID || !env.TWILIO_AUTH_TOKEN) return null
+  const res = await fetch(
+    `https://api.twilio.com/2010-04-01/Accounts/${env.TWILIO_ACCOUNT_SID}/Calls/${encodeURIComponent(callSid)}.json`,
+    {
+      headers: {
+        authorization: `Basic ${Buffer.from(`${env.TWILIO_ACCOUNT_SID}:${env.TWILIO_AUTH_TOKEN}`).toString("base64")}`,
+      },
+      signal: AbortSignal.timeout(15_000),
+    },
+  )
+  if (!res.ok) return null
+  const call = (await res.json()) as { status?: string; end_time?: string | null }
+  return {
+    status: call.status ?? "unknown",
+    endedAt: call.end_time ? new Date(call.end_time) : null,
+  }
 }
 
 /** ElevenLabs' own system tools, switched on by name. */
@@ -246,7 +315,7 @@ const system = (name: string, params: Record<string, unknown> = {}) => ({
  * it may use (hang up, leave voicemail without a message, press keys through a phone menu), and
  * the facts its analysis pulls from every call.
  */
-const callerOf = (tools: { update: string }) => ({
+const callerOf = (tools: { update: string }, resultsWebhook: string | null) => ({
   name: "Najimi table booking",
   conversation_config: {
     agent: {
@@ -269,6 +338,7 @@ const callerOf = (tools: { update: string }) => ({
         prompt: [
           "You are Najimi, a polite AI assistant phoning {{venue}} to book a table for {{guest_name}}: {{party_size}} people, {{when}}. Extra requests: {{notes}}. Callback number if they ask: {{callback}}.",
           "Speak in short sentences, one thing at a time, and never repeat what's already been agreed.",
+          "Say times the way people do: five in the afternoon, half past seven, noon. Never as 24-hour numbers.",
           "Confirm the date, time, party size and the name the table is under once, in one sentence, when they agree. If they ask for any of it again, say it once more plainly.",
           "If that time isn't possible, ask for the nearest time they can do and note it, without accepting it.",
           "Never pay, never share card details, never agree to a deposit; say the guest will confirm.",
@@ -288,6 +358,8 @@ const callerOf = (tools: { update: string }) => ({
       },
     },
     conversation: { max_duration_seconds: 240 },
+    // A touch slower than ElevenLabs' default: clear on a phone line.
+    tts: { speed: CALLS.voiceSpeed },
     // Twenty seconds of silence and it hangs up, rather than holding a dead line.
     turn: { silence_end_call_timeout: 20 },
   },
@@ -315,8 +387,22 @@ const callerOf = (tools: { update: string }) => ({
       },
     },
     overrides: { conversation_config_override: { agent: { first_message: true } } },
+    // The outcome the moment the call is written up, and a line that never connected at once.
+    ...(resultsWebhook
+      ? {
+          workspace_overrides: {
+            webhooks: {
+              post_call_webhook_id: resultsWebhook,
+              events: ["transcript", "call_initiation_failure"],
+            },
+          },
+        }
+      : {}),
   },
 })
+
+/** The webhook ElevenLabs sends call results to (made once; its secret is ELEVENLABS_WEBHOOK_SECRET). */
+const RESULTS_WEBHOOK = "Najimi call results"
 
 /**
  * Najimi on a phone call someone is already on: they dial Najimi's number and merge it in. It's
@@ -350,6 +436,7 @@ const listenerOf = (tools: { ask: string }, lookup: { url: string; key: string }
       },
     },
     conversation: { max_duration_seconds: CALLS.phoneMaxSeconds },
+    tts: { speed: CALLS.voiceSpeed },
     // Several people talking: it waits for a clear end of turn before it even considers speaking.
     turn: { turn_eagerness: "patient" },
   },
@@ -444,9 +531,13 @@ export async function syncPhoneAgents(site: string) {
   const key = inboundKey()
   if (!key) throw new Error("ELEVENLABS_TOOL_SECRET isn't set")
   const tools = await syncTools(site)
+  const { webhooks } = await el<{ webhooks: { webhook_id: string; name: string }[] }>(
+    "/v1/workspace/webhooks",
+  )
+  const results = webhooks.find((w) => w.name === RESULTS_WEBHOOK)?.webhook_id ?? null
   await el(`/v1/convai/agents/${env.ELEVENLABS_CALLER_AGENT_ID}`, {
     method: "PATCH",
-    body: callerOf(tools),
+    body: callerOf(tools, results),
   })
   const listener = listenerOf(tools, { url: `${site}/api/webhooks/elevenlabs/inbound`, key })
   const { agents } = await el<{ agents: { agent_id: string; name: string }[] }>(

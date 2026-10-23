@@ -47,6 +47,26 @@ export async function openCall(chatId: string) {
   return call
 }
 
+/**
+ * Someone left: when nobody else is still in the room (Najimi doesn't count), the call ends now,
+ * rather than when the server's departure timer runs out, and Najimi is let go with it.
+ */
+export async function leaveCall(chatId: string, userId: string) {
+  const call = await liveCall(chatId)
+  if (!call) return null
+  const { url, key, secret } = keys()
+  const rooms = new RoomServiceClient(url, key, secret)
+  // Not knowing who's there is not "nobody": then the server's own timer ends it.
+  const people = await rooms.listParticipants(call.room).catch(() => null)
+  if (!people) return call
+  const others = people.filter(
+    (p) => p.identity !== userId && !p.identity.startsWith(CALLS.agentName),
+  )
+  if (others.length) return call
+  await rooms.deleteRoom(call.room).catch(() => undefined)
+  return endCall(call.room)
+}
+
 /** Sends Najimi into the room: the worker joins it as its own participant and stays the call. */
 export async function dispatchNajimi(call: { room: string; chatId: string; id: string }) {
   keys()

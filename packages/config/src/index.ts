@@ -48,6 +48,12 @@ export const CALLS = {
   tokenTtlSeconds: 2 * 60 * 60,
   /** A call still open this long after it started is closed (its room is long gone). */
   maxMs: 3 * 60 * 60 * 1000,
+  /** Najimi's speaking pace on every call (ElevenLabs' 1 is a little quick on a phone line). */
+  voiceSpeed: 0.88,
+  /** How long a call rings for the one waiting (and on the others' screens) before it stops. */
+  ringMs: 45_000,
+  /** How long "Najimi is joining" shows before the button comes back. */
+  najimiJoinMs: 30_000,
   /** A call nobody has joined this long after it started never happened: its card closes. */
   joinGraceMs: 2 * 60 * 1000,
   /** Najimi on a phone call you added it to: the longest it stays, and how long an answer may take. */

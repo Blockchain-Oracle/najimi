@@ -54,15 +54,17 @@ export function FollowButton({
 }) {
   const t = useTranslations("Social")
   const [state, setState] = useState(initial)
+  // What the tap means is decided at the tap: the optimistic flip re-renders before the request
+  // goes out, so reading `state` inside the request would undo the very follow it shows.
   const toggle = useMutation({
-    mutationFn: () =>
+    mutationFn: (follow: boolean) =>
       api<{ following: boolean; friends: boolean }>("/api/people/follow", {
-        method: state.following ? "DELETE" : "POST",
+        method: follow ? "POST" : "DELETE",
         json: { userId },
       }),
-    onMutate: () => {
-      sound(state.following ? "tap" : "place")
-      setState((s) => ({ following: !s.following, friends: !s.following && s.friends }))
+    onMutate: (follow) => {
+      sound(follow ? "place" : "tap")
+      setState((s) => ({ following: follow, friends: follow && s.friends }))
     },
     onSuccess: (next) => setState({ following: next.following, friends: next.friends }),
     onError: () => setState(initial),
@@ -73,7 +75,7 @@ export function FollowButton({
       onClick={(e) => {
         e.preventDefault()
         e.stopPropagation()
-        toggle.mutate()
+        toggle.mutate(!state.following)
       }}
       className={
         state.following

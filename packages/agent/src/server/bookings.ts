@@ -26,6 +26,7 @@ const noteOf = (b: Booking): BookingNote => ({
   endsAt: b.endsAt?.toISOString() ?? null,
   confirmation: (b.ref as Record<string, string>).confirmation || null,
   refundable: Boolean((b.data as { refundable?: boolean }).refundable),
+  recording: Boolean((b.data as { recording?: boolean }).recording),
 })
 
 /** A card in the booking's room (its line and the booking as it is now), and the owner's news. */
@@ -195,18 +196,25 @@ export async function applyCallResult(
     offered: string | null
     voicemail?: boolean
     doNotCall?: boolean
+    recording?: boolean
   },
 ) {
   if (booking.status !== "calling" || result.status !== "done") return booking
   const when = (booking.data as { when?: string }).when ?? ""
   const phone = (booking.data as { phone?: string }).phone ?? null
+  // The call's audio, when ElevenLabs kept it, plays from the outcome card.
+  const data = {
+    ...(booking.data as Record<string, unknown>),
+    recording: Boolean(result.recording),
+  }
+  const venue = booking.venue ?? "the venue"
   // They asked not to be called by an AI again: the number goes on the list for good.
   if (result.doNotCall && phone)
     await db.insert(schema.callBlocks).values({ phone, venue: booking.venue }).onConflictDoNothing()
   if (result.voicemail && !result.booked)
     return setBooking(
       booking.id,
-      { status: "failed", note: "Reached voicemail" },
+      { status: "failed", note: "Reached voicemail", data },
       `I reached ${booking.venue ?? "the venue"}'s voicemail and hung up without leaving a message. Want me to try again later?`,
     )
   if (result.booked) {
@@ -219,15 +227,23 @@ export async function applyCallResult(
           confirmation: result.confirmation ?? "",
         },
         note: result.summary,
+        data,
         // A few hours after the table, Najimi asks how it was.
         followUpAt: booking.startsAt ? new Date(booking.startsAt.getTime() + 3 * 3600_000) : null,
       },
       `Booked by phone: ${booking.title} for ${booking.party}, ${when}${result.confirmation ? `, under ${result.confirmation}` : ""}.`,
     )
   }
+  // They spoke, but nobody said yes: never reported as booked, never as refused.
+  if (result.booked === null && !result.offered)
+    return setBooking(
+      booking.id,
+      { status: "failed", note: result.summary ?? "no clear answer", data },
+      `I spoke to ${venue}, but they didn't confirm a table for ${when}, so nothing is booked.${result.summary ? ` ${result.summary}` : ""} Want me to try again?`,
+    )
   return setBooking(
     booking.id,
-    { status: "failed", note: result.summary },
+    { status: "failed", note: result.summary, data },
     `${booking.venue ?? "The venue"} couldn't do ${when}${result.offered ? `; they offered ${result.offered}` : ""}.${result.summary ? ` ${result.summary}` : ""}${result.doNotCall ? " They asked not to be called by an AI again, so I won't call them." : ""}`,
   )
 }
@@ -235,9 +251,15 @@ export async function applyCallResult(
 /** A call that never connected (busy, no answer). */
 export async function callNotAnswered(booking: Booking, reason: string) {
   if (booking.status !== "calling") return booking
+  const why =
+    reason === "busy"
+      ? "the line was busy"
+      : reason === "failed" || reason === "canceled"
+        ? "the call couldn't go through"
+        : "nobody picked up"
   return setBooking(
     booking.id,
     { status: "failed", note: reason },
-    `I called ${booking.venue ?? "the venue"} but ${reason === "busy" ? "the line was busy" : "nobody answered"}. Want me to try again later?`,
+    `I called ${booking.venue ?? "the venue"} but ${why}, so nothing is booked. Want me to try again later?`,
   )
 }

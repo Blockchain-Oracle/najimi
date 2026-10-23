@@ -82,3 +82,58 @@ export function sound(name: UiSound) {
   source.connect(gain).connect(audio.destination)
   source.start()
 }
+
+/**
+ * A phone ring, made in the browser (no file): "out" is the ringback you hear while the others'
+ * phones ring (two tones together, 2 s on and 4 s off), "in" an incoming call (two short bursts,
+ * then a pause). It plays until the returned stop is called.
+ */
+export function ring(kind: "out" | "in"): () => void {
+  if (!soundsOn()) return () => {}
+  primeSounds()
+  const audio = context
+  if (audio?.state !== "running") return () => {}
+  const volume = kind === "out" ? 0.05 : 0.07
+  const cycle = kind === "out" ? 6 : 3
+  const bursts =
+    kind === "out"
+      ? [[0, 2]]
+      : [
+          [0, 0.4],
+          [0.6, 1],
+        ]
+  const gain = audio.createGain()
+  gain.gain.value = 0
+  gain.connect(audio.destination)
+  const tones = (kind === "out" ? [440, 480] : [660, 880]).map((frequency) => {
+    const tone = audio.createOscillator()
+    tone.frequency.value = frequency
+    tone.connect(gain)
+    tone.start()
+    return tone
+  })
+  const schedule = (at: number) => {
+    for (const [from, to] of bursts as [number, number][]) {
+      gain.gain.setValueAtTime(0, at + from)
+      gain.gain.linearRampToValueAtTime(volume, at + from + 0.02)
+      gain.gain.setValueAtTime(volume, at + to - 0.02)
+      gain.gain.linearRampToValueAtTime(0, at + to)
+    }
+  }
+  let next = audio.currentTime + 0.05
+  schedule(next)
+  next += cycle
+  const timer = setInterval(() => {
+    schedule(next)
+    next += cycle
+  }, cycle * 1000)
+  let stopped = false
+  return () => {
+    if (stopped) return
+    stopped = true
+    clearInterval(timer)
+    gain.gain.cancelScheduledValues(audio.currentTime)
+    gain.gain.setValueAtTime(0, audio.currentTime)
+    for (const tone of tones) tone.stop(audio.currentTime + 0.05)
+  }
+}

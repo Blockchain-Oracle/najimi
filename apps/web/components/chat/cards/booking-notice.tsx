@@ -3,9 +3,10 @@
 import type { BookingNote } from "@najimi/agent"
 import { toast } from "@najimi/ui/components/sonner"
 import { cn } from "@najimi/ui/lib/utils"
-import { BedDouble, CalendarPlus, Phone, Ticket, UtensilsCrossed } from "lucide-react"
+import { BedDouble, CalendarPlus, Pause, Phone, Play, Ticket, UtensilsCrossed } from "lucide-react"
 import { useTranslations } from "next-intl"
 import { useState } from "react"
+import { usePlayer } from "@/components/player/player"
 import { api } from "@/lib/fetcher"
 import { useMe } from "../chat-context"
 
@@ -71,6 +72,7 @@ export function BookingNotice({ note, text }: { note: BookingNote; text: string 
         </span>
       </div>
       <p className="text-[14px] text-text-2">{text}</p>
+      {note.recording ? <CallRecording note={note} /> : null}
       {note.confirmation ? (
         <p className="font-mono text-[12px] text-text-3">
           {t("confirmation")} {note.confirmation}
@@ -99,5 +101,38 @@ export function BookingNotice({ note, text }: { note: BookingNote; text: string 
         </div>
       ) : null}
     </article>
+  )
+}
+
+/** The table call itself, played in Najimi's one player (with its seek bar and lock screen). */
+function CallRecording({ note }: { note: BookingNote }) {
+  const t = useTranslations("Bookings")
+  const player = usePlayer()
+  const id = `call_${note.id}`
+  const mine = player.track?.id === id
+  const playing = mine && player.playing
+  return (
+    <button
+      type="button"
+      onClick={() =>
+        mine
+          ? player.toggle()
+          : void player.play({
+              id,
+              src: `/api/bookings/${note.id}/recording`,
+              title: t("callWith", { venue: note.venue ?? note.title }),
+              by: "Najimi",
+              artwork: note.image,
+              source: "podcast",
+              store: null,
+            })
+      }
+      className="flex h-11 items-center gap-3 rounded-pill bg-white/6 pr-4 pl-1.5 text-start text-[14px] font-semibold transition-colors hover:bg-white/10"
+    >
+      <span className="grid size-8 place-items-center rounded-full bg-foreground text-background">
+        {playing ? <Pause className="size-4" /> : <Play className="size-4 translate-x-px" />}
+      </span>
+      {playing ? t("listening") : t("listen")}
+    </button>
   )
 }

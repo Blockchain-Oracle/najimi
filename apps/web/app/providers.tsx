@@ -5,6 +5,7 @@ import { QueryClientProvider } from "@tanstack/react-query"
 import { MotionConfig } from "motion/react"
 import { useEffect } from "react"
 import { AgentProvider } from "@/components/agent/agent-context"
+import { IncomingCall } from "@/components/call/incoming-call"
 import { EntityProvider } from "@/components/entity/entity-provider"
 import { PlayerProvider } from "@/components/player/player"
 import { StoriesProvider } from "@/components/stories/stories-provider"
@@ -29,6 +30,8 @@ export function Providers({ children }: { children: React.ReactNode }) {
           </AgentProvider>
         </PlayerProvider>
       </MotionConfig>
+      {/* A call started in one of your chats rings on whatever screen you're on. */}
+      <IncomingCall />
       <Toaster theme="system" position="bottom-center" />
     </QueryClientProvider>
   )

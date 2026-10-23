@@ -664,7 +664,8 @@
     "inviteScan": "Scan this, or send the link.",
     "shareInvite": "Share the invite",
     "older": "Earlier messages…",
-    "call": "Call"
+    "call": "Call",
+    "mentionLabel": "Who to mention"
   },
   "Cards": {
     "asking": "Asking Qloo…",
@@ -1048,7 +1049,10 @@
     "calendar": "Add to calendar",
     "cancel": "Cancel the stay",
     "cancelSure": "Cancel this stay? Nuitee refunds it under its cancellation terms.",
-    "cancelFailed": "That didn't cancel. Try again."
+    "cancelFailed": "That didn't cancel. Try again.",
+    "listen": "Listen to the call",
+    "listening": "Playing the call",
+    "callWith": "Call with {venue}"
   },
   "Booking": {
     "error": "Something went wrong. Try again.",
@@ -1570,13 +1574,28 @@
     "bring": "Bring Najimi",
     "najimiComing": "Najimi is joining…",
     "sayName": "Say \"Najimi\" and ask: it answers out loud, and what it finds lands in the chat.",
-    "alone": "{count, plural, one {Waiting for the others to join.} other {Bring Najimi in to plan together.}}",
     "tapToHear": "Tap to hear the call",
     "failed": "That didn't work. Try again.",
     "join": "Join",
     "live": "On now",
     "liveWithNajimi": "On now, with Najimi",
-    "over": "Over"
+    "over": "Over",
+    "bringShort": "Najimi",
+    "invite": "Invite",
+    "end": "End",
+    "inviteText": "Join {title} on Najimi",
+    "inviteCopied": "Invite link copied",
+    "najimiFailed": "Najimi couldn't join. Try again.",
+    "ringing": "Ringing the others…",
+    "nobody": "Nobody else is here yet.",
+    "together": "Bring Najimi in to plan together.",
+    "dropped": "The call dropped.",
+    "rejoin": "Rejoin",
+    "close": "Close",
+    "connecting": "Connecting…",
+    "incoming": "{who} is calling",
+    "incomingIn": "{who} is calling · {chat}",
+    "decline": "Not now"
   },
   "Phone": {
     "off": "Phone calls aren't switched on yet.",

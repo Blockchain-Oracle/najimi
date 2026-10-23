@@ -1,5 +1,11 @@
-import { applyCallResult, askHowItWent, askHowPlanWent, setBooking } from "@najimi/agent/server"
-import { callResult } from "@najimi/booking/calls"
+import {
+  applyCallResult,
+  askHowItWent,
+  askHowPlanWent,
+  callNotAnswered,
+  setBooking,
+} from "@najimi/agent/server"
+import { callResult, lineStatus } from "@najimi/booking/calls"
 import { bookingById } from "@najimi/booking/nuitee"
 import { db, schema } from "@najimi/db"
 import { enqueueAt } from "@najimi/jobs"
@@ -11,6 +17,13 @@ import { and, desc, eq, gte, inArray, isNotNull, isNull, lte } from "drizzle-orm
  */
 
 const CALL_GIVE_UP_MS = 30 * 60_000
+/** While the phone rings it's checked every minute; once it's over, every half minute. */
+const RINGING_CHECK_MS = 60_000
+const WRAP_UP_CHECK_MS = 30_000
+/** A finished call ElevenLabs hasn't written up after this long is reported as it stands. */
+const WRAP_UP_MAX_MS = 10 * 60_000
+/** Lines that never connected, and what Najimi says about each. */
+const UNANSWERED = new Set(["busy", "no-answer", "failed", "canceled"])
 /** "How was it?" for a plan: 12 hours after it starts (or a trip ends), for plans in the last 3 days. */
 const PLAN_AFTER_MS = 12 * 3600_000
 const PLAN_RECENT_MS = 3 * 24 * 3600_000
@@ -22,16 +35,41 @@ export async function bookingCheck(bookingId: string) {
   const [booking] = await db.select().from(schema.bookings).where(eq(schema.bookings.id, bookingId))
   if (booking?.status === "paid" && booking.kind === "hotel") return hotelCheck(booking)
   if (booking?.status !== "calling") return
-  const conversationId = (booking.ref as Record<string, string>).conversationId
-  if (!conversationId) return
-  const result = await callResult(conversationId).catch(() => null)
+  const ref = booking.ref as Record<string, string>
+  const line = ref.callSid ? await lineStatus(ref.callSid).catch(() => null) : null
+  // It never connected (busy, nobody picked up, it couldn't go through): say so now.
+  if (line && UNANSWERED.has(line.status)) {
+    await callNotAnswered(booking, line.status)
+    return
+  }
+  const result = ref.conversationId ? await callResult(ref.conversationId).catch(() => null) : null
   if (result?.status === "done" || result?.status === "failed") {
     await applyCallResult(booking, { ...result, status: "done" })
     return
   }
-  // Still ringing or being summarised: look again shortly, up to half an hour, then say so.
+  // It was answered and is over, but never written up: report what's known (and the recording).
+  if (
+    line?.status === "completed" &&
+    line.endedAt &&
+    Date.now() - line.endedAt.getTime() > WRAP_UP_MAX_MS
+  ) {
+    await applyCallResult(booking, {
+      status: "done",
+      booked: null,
+      summary: null,
+      confirmation: null,
+      offered: null,
+      recording: result?.recording ?? false,
+    })
+    return
+  }
+  // Still ringing, talking or being written up: look again shortly, up to half an hour.
   if (Date.now() - booking.createdAt.getTime() < CALL_GIVE_UP_MS)
-    await enqueueAt("bookingCheck", { bookingId }, new Date(Date.now() + 3 * 60_000))
+    await enqueueAt(
+      "bookingCheck",
+      { bookingId },
+      new Date(Date.now() + (line?.status === "completed" ? WRAP_UP_CHECK_MS : RINGING_CHECK_MS)),
+    )
   else
     await setBooking(
       booking.id,
@@ -77,6 +115,19 @@ async function hotelCheck(booking: typeof schema.bookings.$inferSelect) {
 }
 
 export async function followUps() {
+  // A safety net: any table call still "calling" a few minutes on is checked now.
+  const ringing = await db
+    .select({ id: schema.bookings.id })
+    .from(schema.bookings)
+    .where(
+      and(
+        eq(schema.bookings.status, "calling"),
+        lte(schema.bookings.createdAt, new Date(Date.now() - 3 * 60_000)),
+      ),
+    )
+    .limit(50)
+  for (const { id } of ringing)
+    await bookingCheck(id).catch((e) => console.error("[bookings] call check", e))
   const due = await db
     .select()
     .from(schema.bookings)

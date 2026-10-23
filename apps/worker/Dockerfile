@@ -19,8 +19,9 @@ RUN pnpm --filter @najimi/worker build \
 FROM node:22.23.3-bookworm-slim
 ENV NODE_ENV=production
 # ffmpeg makes video stories phone-ready (H.264 + AAC, fast start) and takes their posters.
+# ca-certificates: LiveKit's native client checks the call server's certificate against them.
 RUN apt-get update \
-  && apt-get install -y --no-install-recommends ffmpeg \
+  && apt-get install -y --no-install-recommends ffmpeg ca-certificates \
   && rm -rf /var/lib/apt/lists/*
 # The bundle finds the migrations the way the source did (packages/db/drizzle from the repo root).
 WORKDIR /app/apps/worker

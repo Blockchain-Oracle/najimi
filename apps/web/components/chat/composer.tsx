@@ -12,6 +12,7 @@ import { useTranslations } from "next-intl"
 import { useEffect, useRef, useState } from "react"
 import { type Uploaded, uploadPhoto } from "@/lib/photo"
 import { sound } from "@/lib/sounds"
+import { type Mentionable, MentionMenu, matching, mentionAt, tokenOf } from "./mention-menu"
 import { VoiceButton } from "./voice-button"
 
 export type ChatPerson = {
@@ -38,6 +39,7 @@ export function Composer({
   initialText,
   placeholder: placeholderText,
   onPoll,
+  mentions,
 }: {
   /** The signed-in person (their name is in the placeholder). */
   person?: ChatPerson
@@ -52,6 +54,8 @@ export function Composer({
   placeholder?: string
   /** In a circle or DM: the + menu can start a poll. */
   onPoll?: () => void
+  /** In a circle or DM: who "@" can name (Najimi first). */
+  mentions?: Mentionable[]
 }) {
   const t = useTranslations("Chat")
   const [text, setText] = useState(initialText ?? "")
@@ -60,6 +64,25 @@ export function Composer({
   const [error, setError] = useState<string | null>(null)
   const [tick, setTick] = useState(0)
   const input = useRef<HTMLTextAreaElement>(null)
+  // "@" names someone: the word being typed before the caret narrows the list.
+  const [caret, setCaret] = useState(0)
+  const [active, setActive] = useState(0)
+  const [closedAt, setClosedAt] = useState<number | null>(null)
+  const typing = mentions?.length ? mentionAt(text, caret) : null
+  const options = typing && typing.start !== closedAt ? matching(mentions ?? [], typing.q) : []
+  const pickMention = (m: Mentionable) => {
+    if (!typing) return
+    const token = `${tokenOf(m)} `
+    const next = text.slice(0, typing.start) + token + text.slice(caret)
+    const at = typing.start + token.length
+    setText(next)
+    setCaret(at)
+    setActive(0)
+    requestAnimationFrame(() => {
+      input.current?.focus()
+      input.current?.setSelectionRange(at, at)
+    })
+  }
   const library = useRef<HTMLInputElement>(null)
   const camera = useRef<HTMLInputElement>(null)
 
@@ -209,16 +232,46 @@ export function Composer({
       <div className="flex items-end gap-1">
         {pick}
         <div className="relative min-w-0 flex-1">
+          {options.length ? (
+            <MentionMenu
+              options={options}
+              active={Math.min(active, options.length - 1)}
+              onPick={pickMention}
+              label={t("mentionLabel")}
+            />
+          ) : null}
           <textarea
             ref={input}
             value={text}
             rows={1}
             onChange={(e) => {
               setText(e.target.value)
+              setCaret(e.target.selectionStart)
+              setActive(0)
               e.target.style.height = "auto"
               e.target.style.height = `${Math.min(e.target.scrollHeight, 200)}px`
             }}
+            onSelect={(e) => setCaret(e.currentTarget.selectionStart)}
             onKeyDown={(e) => {
+              if (options.length) {
+                if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+                  e.preventDefault()
+                  const step = e.key === "ArrowDown" ? 1 : -1
+                  setActive((i) => (i + step + options.length) % options.length)
+                  return
+                }
+                if (e.key === "Enter" || e.key === "Tab") {
+                  e.preventDefault()
+                  const chosen = options[active] ?? options[0]
+                  if (chosen) pickMention(chosen)
+                  return
+                }
+                if (e.key === "Escape") {
+                  e.preventDefault()
+                  setClosedAt(typing?.start ?? null)
+                  return
+                }
+              }
               if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) {
                 e.preventDefault()
                 send()

@@ -87,6 +87,10 @@ export async function startCall(chatId: string, userId: string, name: string): P
     throw new Error("Couldn't start the call")
   }
   await postCard(call, `${name} started a call`)
+  const [chat] = await db
+    .select({ name: schema.chats.name, kind: schema.chats.kind })
+    .from(schema.chats)
+    .where(eq(schema.chats.id, chatId))
   const members = await db
     .select({ userId: schema.chatMembers.userId })
     .from(schema.chatMembers)
@@ -106,7 +110,18 @@ export async function startCall(chatId: string, userId: string, name: string): P
       )
       .returning({ id: schema.notifications.id, userId: schema.notifications.userId })
     await Promise.all(
-      rows.map((r) => publish(topic.user(r.userId), "notification", { id: r.id, kind: "call" })),
+      rows.map((r) =>
+        publish(topic.user(r.userId), "notification", {
+          id: r.id,
+          kind: "call",
+          call: {
+            chatId,
+            callId: call.id,
+            who: name,
+            chat: chat?.kind === "circle" ? chat.name : null,
+          },
+        }),
+      ),
     )
   }
   await db.update(schema.chats).set({ lastActiveAt: new Date() }).where(eq(schema.chats.id, chatId))
@@ -145,13 +160,26 @@ export async function endCall(
   summary: string | null = null,
   { timed = true }: { timed?: boolean } = {},
 ) {
-  const [call] = await db
+  const [ended] = await db
     .update(schema.calls)
     .set({ endedAt: new Date(), ...(summary ? { summary } : {}) })
     .where(and(eq(schema.calls.room, room), isNull(schema.calls.endedAt)))
     .returning()
-  if (!call) return null
-  const minutes = Math.max(1, Math.round((Date.now() - call.startedAt.getTime()) / 60_000))
+  // Already closed (the last person left before Najimi finished writing): add the summary to it.
+  const [call] = ended
+    ? [ended]
+    : summary
+      ? await db
+          .update(schema.calls)
+          .set({ summary })
+          .where(and(eq(schema.calls.room, room), isNull(schema.calls.summary)))
+          .returning()
+      : []
+  if (!call?.endedAt) return null
+  const minutes = Math.max(
+    1,
+    Math.round((call.endedAt.getTime() - call.startedAt.getTime()) / 60_000),
+  )
   await postCard(call, timed ? `Call ended · ${minutes} min` : "Call ended")
   return call
 }

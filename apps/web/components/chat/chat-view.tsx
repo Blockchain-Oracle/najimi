@@ -22,6 +22,7 @@ import { useTranslations } from "next-intl"
 import { Suspense, useEffect, useRef, useState } from "react"
 import { QrCode } from "@/components/brands/qr-code"
 import { CallScreen } from "@/components/call/call-screen"
+import { JOIN_CALL_EVENT } from "@/components/call/incoming-call"
 import { GameSheet } from "@/components/games/game-sheet"
 import { ProfileLink } from "@/components/people/profile-link"
 import { type Track, usePlayer } from "@/components/player/player"
@@ -108,6 +109,14 @@ export function ChatView(props: ChatViewProps) {
     if (!callsOn || typeof window === "undefined") return
     if (new URLSearchParams(window.location.search).get("call") === "1") setCalling(true)
   }, [callsOn])
+  // Joined from the incoming-call banner while this chat is already on screen.
+  useEffect(() => {
+    const join = (e: Event) => {
+      if ((e as CustomEvent<string>).detail === props.chatId) setCalling(true)
+    }
+    window.addEventListener(JOIN_CALL_EVENT, join)
+    return () => window.removeEventListener(JOIN_CALL_EVENT, join)
+  }, [props.chatId])
   const [pollOpen, setPollOpen] = useState(false)
   const kind = props.kind ?? "agent"
   const people = new Map((props.members ?? []).map((m) => [m.userId, m]))
@@ -394,6 +403,25 @@ export function ChatView(props: ChatViewProps) {
               onStop={() => void room.stop()}
               initialText={props.ask}
               onPoll={kind === "agent" ? undefined : () => setPollOpen(true)}
+              mentions={
+                kind === "agent"
+                  ? undefined
+                  : [
+                      {
+                        id: "najimi",
+                        name: "Najimi",
+                        username: "najimi",
+                        look: null,
+                        najimi: true,
+                      },
+                      ...others.map((m) => ({
+                        id: m.userId,
+                        name: m.name,
+                        username: m.username,
+                        look: m.look,
+                      })),
+                    ]
+              }
               placeholder={
                 kind === "agent" ? undefined : t("roomPlaceholder", { name: roomTitle ?? "" })
               }
@@ -409,6 +437,7 @@ export function ChatView(props: ChatViewProps) {
       {calling && props.chatId ? (
         <CallScreen
           chatId={props.chatId}
+          kind={kind === "circle" ? "circle" : "dm"}
           title={roomTitle ?? ""}
           members={(props.members ?? []).map((m) => ({
             userId: m.userId,

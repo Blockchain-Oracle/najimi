@@ -1,5 +1,5 @@
 import { safeZone, todayIn, zonedTime } from "@najimi/booking"
-import { CALL_HOURS, callsOn, placeCall, venueZone } from "@najimi/booking/calls"
+import { CALL_HOURS, callsOn, placeCall, spokenWhen, venueZone } from "@najimi/booking/calls"
 import { hotelsNear, hotelsOn } from "@najimi/booking/nuitee"
 import { locate, planNight, planTrip } from "@najimi/booking/plan"
 import { FEED, MEDIA, TASTE, TASTE_DOMAINS } from "@najimi/config"
@@ -1000,14 +1000,7 @@ export function buildTools(ctx: TurnContext, messageId: () => string | undefined
             note: `It's outside calling hours where ${input.venue} is (${CALL_HOURS.from}am–9pm). Ask me again then.`,
           }
         const startsAt = zonedTime(input.date, input.time.padStart(5, "0"), tz)
-        const when = startsAt.toLocaleString("en-GB", {
-          timeZone: tz,
-          weekday: "long",
-          day: "numeric",
-          month: "long",
-          hour: "numeric",
-          minute: "2-digit",
-        })
+        const when = spokenWhen(startsAt, tz)
         // A call costs real money and goes out in their name: it comes from a daily allowance.
         if (!(await charge(ctx.userId, ctx.guest, "calls")))
           return {
@@ -1056,12 +1049,8 @@ export function buildTools(ctx: TurnContext, messageId: () => string | undefined
               ref: { conversationId: placed.conversationId ?? "", callSid: placed.callSid ?? "" },
             })
             .where(eq(schema.bookings.id, booking.id))
-          // If the call's webhook never comes, Najimi looks for the result itself.
-          await enqueueAt(
-            "bookingCheck",
-            { bookingId: booking.id },
-            new Date(Date.now() + 5 * 60_000),
-          )
+          // Najimi follows the call itself (the line from Twilio, the outcome from ElevenLabs).
+          await enqueueAt("bookingCheck", { bookingId: booking.id }, new Date(Date.now() + 60_000))
           return { bookingId: booking.id, status: "calling" as const, phone, note: null }
         } catch (error) {
           await refund(ctx.userId, "calls")
