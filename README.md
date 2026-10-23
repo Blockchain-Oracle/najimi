@@ -3,11 +3,11 @@
 </p>
 
 <p align="center">
-  <a href="https://najimi.84.46.247.92.sslip.io"><b>Open Najimi</b></a>
+  <a href="https://najimi.xyz"><b>Open Najimi</b></a>
   &nbsp;·&nbsp;
-  <a href="https://najimi-docs.84.46.247.92.sslip.io"><b>Documentation</b></a>
+  <a href="https://docs.najimi.xyz"><b>Documentation</b></a>
   &nbsp;·&nbsp;
-  <a href="https://najimi-docs.84.46.247.92.sslip.io/qloo"><b>How it uses Qloo</b></a>
+  <a href="https://docs.najimi.xyz/qloo"><b>How it uses Qloo</b></a>
 </p>
 
 <p align="center">
@@ -82,7 +82,7 @@ Everything above is a Qloo answer, seen a different way.
 | `urn:demographics`, `audience_growth` | A business's lean, and what's rising nearby |
 | `/search`, `/entities`, `/v2/tags`, `/v2/audiences` | Names to ids, imports by handle, tags by meaning, audiences |
 
-Every call is logged and cached (Postgres, keyed by path, parameters and body), and the Qloo chip on any card opens the exact request behind it. The full map is on the [Qloo page of the docs](https://najimi-docs.84.46.247.92.sslip.io/qloo).
+Every call is logged and cached (Postgres, keyed by path, parameters and body), and the Qloo chip on any card opens the exact request behind it. The full map is on the [Qloo page of the docs](https://docs.najimi.xyz/qloo).
 
 ## Architecture
 
@@ -100,7 +100,7 @@ A pnpm and Turborepo monorepo, every piece a container on one Coolify server.
 | [`packages/connectors`](packages/connectors) | Imports, the daily tune-up, X (rettiwt-api), sealed sessions, the bridge client |
 | [`packages/games`](packages/games), [`geo`](packages/geo), [`db`](packages/db), [`live`](packages/live), [`jobs`](packages/jobs), [`sources`](packages/sources) | Rounds and scoring; geohash squares; Drizzle schema and migrations; the live pipe; queues; outside fetching and caching |
 
-Every chat is a room. A message is saved and announced on the room's live topic; if it calls Najimi, the worker runs the turn and streams it to everyone in the room. One Postgres `LISTEN/NOTIFY` channel carries every live event to pages over server-sent events, and to phones as Web Push. More on the [architecture page](https://najimi-docs.84.46.247.92.sslip.io/architecture).
+Every chat is a room. A message is saved and announced on the room's live topic; if it calls Najimi, the worker runs the turn and streams it to everyone in the room. One Postgres `LISTEN/NOTIFY` channel carries every live event to pages over server-sent events, and to phones as Web Push. More on the [architecture page](https://docs.najimi.xyz/architecture).
 
 ## Run it locally
 
