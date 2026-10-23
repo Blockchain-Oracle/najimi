@@ -1,6 +1,5 @@
 import {
   ArrowRight,
-  BedDouble,
   BellRing,
   BookOpen,
   Boxes,
@@ -18,6 +17,7 @@ import {
 import type { Metadata } from "next"
 import Link from "next/link"
 import type { ReactNode } from "react"
+import { Diagram } from "@/components/diagram"
 import { Stats } from "@/components/flow"
 import { Tile } from "@/components/home/tile"
 import { LogoCloud } from "@/components/logo-cloud"
@@ -44,26 +44,43 @@ const FAN = [
     turn: "-rotate-[9deg] translate-y-10",
   },
   {
-    src: "/shots/phone/c-earth.webp",
-    alt: "Earth over Lagos",
+    src: "/shots/phone/m-feed.webp",
+    alt: "The feed playing a song preview",
     turn: "-rotate-[4deg] translate-y-3",
   },
   {
-    src: "/shots/phone/m-feed.webp",
-    alt: "The feed playing a song preview",
+    src: "/shots/phone/c-group-fit.webp",
+    alt: "Najimi in a circle: five Lagos places, each scored for both friends",
     turn: "z-10 scale-[1.04]",
-  },
-  {
-    src: "/shots/phone/l-game.webp",
-    alt: "Guess my wavelength against Najimi",
-    turn: "rotate-[4deg] translate-y-3",
   },
   {
     src: "/shots/phone/c-plan.webp",
     alt: "A night around Lekki, planned",
+    turn: "rotate-[4deg] translate-y-3",
+  },
+  {
+    src: "/shots/phone/c-earth.webp",
+    alt: "Earth over Lagos",
     turn: "rotate-[9deg] translate-y-10",
   },
 ] as const
+
+/** One ask in a circle, from the message to the booked night (the README's worked example). */
+const GROUP_TURN: { title: string; line: string }[] = [
+  { title: "One line in the circle", line: "“@najimi find us a spot tonight.”" },
+  {
+    title: "Both tastes, blended",
+    line: "Each friend's loves count the same in one Qloo ask for Lagos places.",
+  },
+  {
+    title: "Each friend, scored",
+    line: "The same five places go back to Qloo once per member: 74% for Juno, 74% for Kemi.",
+  },
+  {
+    title: "Picked, routed, booked",
+    line: "The reason in a line, then the night in order with an Uber per leg and a call to book on your yes.",
+  },
+]
 
 const ACTIONS: { icon: LucideIcon; title: string; line: string; yes?: string }[] = [
   {
@@ -71,12 +88,6 @@ const ACTIONS: { icon: LucideIcon; title: string; line: string; yes?: string }[]
     title: "Phones the venue",
     line: "An AI voice call to book your table, after you approve how it opens.",
     yes: "asks first",
-  },
-  {
-    icon: BedDouble,
-    title: "Books the hotel",
-    line: "Real rooms and prices. You pay in Nuitee's own sheet.",
-    yes: "you pay",
   },
   { icon: Send, title: "Posts on X", line: "In your voice, from your account.", yes: "asks first" },
   {
@@ -193,6 +204,59 @@ export default function Home() {
           Qloo at the core, with the services that make it playable and bookable
         </p>
         <LogoCloud brands={BRANDS} />
+      </section>
+
+      {/* One ask, two tastes */}
+      <section className="mx-auto w-full max-w-6xl px-4 pb-24">
+        <div className="grid items-center gap-10 lg:grid-cols-[0.9fr_1.1fr]">
+          <div>
+            <Kicker>Najimi in a circle</Kicker>
+            <SectionTitle>One ask. Everyone's taste.</SectionTitle>
+            <p className="mt-4 max-w-xl text-[16px] leading-relaxed text-fd-muted-foreground">
+              Juno and Kemi share a circle. One of them asks; Najimi answers for both, with each
+              person's fit on every pick.
+            </p>
+            <ol className="mt-8 flex flex-col gap-5">
+              {GROUP_TURN.map((step, i) => (
+                <li key={step.title} className="flex gap-3.5">
+                  <span className="grid size-7 shrink-0 place-items-center rounded-full border border-fd-border bg-fd-background font-mono text-[12px]">
+                    {i + 1}
+                  </span>
+                  <span className="flex flex-col gap-0.5">
+                    <span className="text-[15px] font-semibold">{step.title}</span>
+                    <span className="text-[14px] leading-snug text-fd-muted-foreground">
+                      {step.line}
+                    </span>
+                  </span>
+                </li>
+              ))}
+            </ol>
+            <Link
+              href="/docs/agent/turns"
+              className="mt-9 inline-flex items-center gap-1.5 text-[15px] font-semibold underline-offset-4 hover:underline"
+            >
+              How a turn in a room works <ArrowRight className="size-4" />
+            </Link>
+          </div>
+          <div className="mx-auto w-[72%] max-w-[18rem] lg:hidden">
+            <Phone
+              src="/shots/phone/c-group-fit.webp"
+              alt="In the Friday crew circle, five Lagos places, each scored for Juno and for Kemi"
+            />
+          </div>
+          <figure className="hidden overflow-hidden rounded-[18px] border border-fd-border bg-black shadow-[0_30px_80px_-40px_rgb(0_0_0/0.6)] lg:block">
+            {/* biome-ignore lint/performance/noImgElement: a static export; the file is pre-sized */}
+            <img
+              src="/shots/wide/group-fit.webp"
+              alt="In the Friday crew circle, “@najimi find us a spot tonight” returns five Lagos places, each scored for Juno and for Kemi"
+              width={1600}
+              height={1000}
+              loading="lazy"
+              decoding="async"
+              className="block h-auto w-full"
+            />
+          </figure>
+        </div>
       </section>
 
       {/* Everything is your taste */}
@@ -410,6 +474,30 @@ export default function Home() {
             { value: "5", label: "Qloo tools the agent composes freely" },
             { value: "19", label: "agent tools in all, with web search" },
           ]}
+        />
+      </section>
+
+      {/* How it's built */}
+      <section className="mx-auto w-full max-w-6xl px-4 pb-24">
+        <div className="grid items-end gap-8 lg:grid-cols-[1fr_auto]">
+          <div className="max-w-2xl">
+            <Kicker>How it's built</Kicker>
+            <SectionTitle>One taste engine under every screen.</SectionTitle>
+            <p className="mt-4 text-[16px] leading-relaxed text-fd-muted-foreground">
+              The web app takes the message; a worker runs Najimi's turn with its tools; Qloo
+              answers every taste question; the result reaches everyone in the room live.
+            </p>
+          </div>
+          <Link
+            href={DOCS.build}
+            className="inline-flex h-11 items-center gap-2 self-start rounded-full border border-fd-border px-5 text-[14px] font-semibold transition-colors hover:bg-fd-accent lg:self-end"
+          >
+            The architecture <ArrowRight className="size-4" />
+          </Link>
+        </div>
+        <Diagram
+          name="system"
+          alt="Najimi's system: friends on phones, the Next.js web app, the pg-boss worker running Najimi's turns, Postgres with live events and the Qloo call log, then Qloo, OpenAI and the services that play, route, book and call"
         />
       </section>
 

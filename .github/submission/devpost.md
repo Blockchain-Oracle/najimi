@@ -4,17 +4,33 @@
 
 *Everyone's taste, one plan.* Najimi reads each friend's taste through Qloo, then picks the film, plans the night and routes the trip, showing why each pick fits.
 
-**Try it:** [najimi.xyz](https://najimi.xyz) · **Code:** [GitHub](https://github.com/Blockchain-Oracle/najimi) · **Docs:** [docs.najimi.xyz](https://docs.najimi.xyz) · **Qloo integration:** [API map](https://docs.najimi.xyz/qloo)
+**Try it:** [najimi.xyz](https://najimi.xyz) · **Code:** [GitHub](https://github.com/Blockchain-Oracle/najimi) · **Docs:** [docs.najimi.xyz](https://docs.najimi.xyz) · **Qloo integration:** [API map](https://docs.najimi.xyz/docs/qloo)
 
 ## Inspiration
 
-Most apps treat taste as a filter: pick a genre, get another list. But what we love also shapes where we go, who we click with, what we play together, and what a good night looks like. We wanted that connection to feel tangible. *Najimi* (馴染み) means someone familiar, someone who knows you well. Our question was: what would a social app feel like if it knew your taste that way?
+Every group chat has the same thread: "where should we go tonight?", "what are we watching?". Someone suggests their own favourite, someone else is too polite to object, and the plan ends up fitting nobody in particular. A general assistant can't fix that: it guesses a crowd-pleaser. It doesn't know that Juno leans eclectic and Kemi artful-indie.
 
-Qloo made this possible. Its graph connects things across culture, so three different loves can become more than three separate recommendation lists. They can become one shared language for a feed, a map, a friendship, and an agent that helps you do something with them.
+Qloo does. Its taste graph connects what each person loves across music, film, books, places and more, and it can score any candidate against any one person's taste. *Najimi* (馴染み) means someone you know well. We wanted an agent that knows everyone in the chat that way, and plans for all of them at once.
 
 ## What it does
 
-**Start with three things you love.** Pick an artist, show, book, place, or brand and weight how much each counts. You can also bring in taste from Letterboxd, Goodreads, Last.fm, or names and handles from X and Instagram. Najimi builds a profile across music, films, TV, books, podcasts, brands, places, destinations, games, and people. Each pick shows *why* it appeared. Open one for its own detail view: watch a film trailer and find where to stream it; play an artist's songs and see upcoming concerts; open a book's reading and review links; or get directions, hours, and a ride to a place. The view also shows the Qloo connection behind the pick.
+**Say `@najimi` in a group chat.** The agent blends everyone's loves into one Qloo signal, scores every candidate against each person's own taste, and answers with a card the whole room sees live, each pick with its *because*.
+
+In the *Friday crew* circle, Juno wrote "@najimi find us a spot tonight". Najimi asked Qloo for places in Lagos for both members' tastes, then scored the same five places once per member:
+
+- Afrinolly Creative Hub (Oregun): Juno 75%, Kemi 75%
+- Rele Gallery: Juno 74%, Kemi 76%
+- **NOK by Alara (Victoria Island): Juno 74%, Kemi 74%**
+- Crescendo Lounge And Bar: Juno 74%, Kemi 73%
+- Ikoyi Club Suya (Ikoyi): Juno 74%, Kemi 73%
+
+It picked NOK by Alara, "an equally strong match for Juno and Kemi at 74% each, so neither person's taste takes a back seat." Asked for a night out, it routes three Qloo places in order (on najimi.xyz: THE HOUSE Lagos at 20:00, NOK by Alara at 21:30, Lagos Jet Ski Riders at 23:30, 71 minutes and 6 km), with an Uber per leg, calendar links and *Ask Najimi to book*, a phone call that waits for a yes. The next morning it asks how the night went.
+
+![In the Friday crew circle, one ask returns five Lagos places, each scored for Juno and for Kemi](https://raw.githubusercontent.com/Blockchain-Oracle/najimi/main/.github/assets/captures/group-fit.jpg)
+
+![Najimi's night plan card: three stops in order, each with its time and because](https://raw.githubusercontent.com/Blockchain-Oracle/najimi/main/.github/assets/submission/fullwide/19-agent-night-plan.jpg)
+
+Around the agent sits a whole app built on the same taste. You start with three things you love (or bring Letterboxd, Goodreads, Last.fm, X or Instagram), and Najimi builds a profile across music, films, TV, books, podcasts, brands, places, destinations, games and people, each pick showing *why* it appeared. Open any pick for its own sheet: a film's trailer and where to stream it, an artist's songs and next concerts, a book's reading links, or a place's directions, hours and a ride.
 
 That taste becomes a whole app:
 
@@ -74,13 +90,30 @@ The captures below come from a guest walkthrough made for this submission. Its p
 
 Najimi is in your own chat and in every circle. It can see the screen you opened it from, use your taste and the group's tastes, then compose tools for the request. Ask for hidden-gem films from the 1970s, a place for everyone tonight, a route through a city, or a business idea for your street. It can search Qloo, look up tags and audiences, request insights with filters, compare tastes, and score specific candidates. It turns those results into group fit cards, games, plans, and business plans. Steps appear in chat as they run. Actions in your name, such as a call or post, require approval.
 
-The core taste reveal sends **weighted entity signals** to Qloo's /v2/insights across ten domains with explainability enabled. Qloo's tag insights become the words of your taste; its heatmaps become Earth and trip areas; location signals describe a square's scene; entity filters score game answers and each person's fit; and /v2/analysis/compare supports person-to-person and business-to-street comparisons. The agent can also use /search, /entities, /v2/tags, and /v2/audiences. A Qloo chip exposes the request behind a pick or chat card. [The docs map every call to its screen](https://docs.najimi.xyz/qloo).
+The core taste reveal sends **weighted entity signals** to Qloo's /v2/insights across ten domains with explainability enabled. Qloo's tag insights become the words of your taste; its heatmaps become Earth and trip areas; location signals describe a square's scene; entity filters score game answers and each person's fit; and /v2/analysis/compare supports person-to-person and business-to-street comparisons. The agent can also use /search, /entities, /v2/tags, and /v2/audiences. A Qloo chip exposes the request behind a pick or chat card. [The docs map every call to its screen](https://docs.najimi.xyz/docs/qloo).
 
 In a live guest walkthrough, three weighted loves—Burna Boy, *Insecure*, and *Americanah*—produced a profile spanning Jorja Smith, books, places in Lagos, destinations, and more. Earth then opened Victoria Island's scene with local artists, venues, brands, and tags. Those relationships are the product's raw material; the agent does not invent the cultural fit.
 
+## How it works
+
+Every chat is a room. A message is saved and announced on the room's live topic; if it calls Najimi, a worker runs one turn for that room, with Qloo as its instrument, and streams each step to everyone in it.
+
+![The system: phones talk to the web app; Postgres carries rooms, tastes, plans and the Qloo call log; the worker runs Najimi's turns against Qloo, the model and outside services](https://raw.githubusercontent.com/Blockchain-Oracle/najimi/main/.github/assets/system-light.png)
+
+![A group turn: Juno asks, the web app queues one turn for the room, Najimi asks Qloo for places for both tastes, scores them per person, and streams the card to Juno and Kemi](https://raw.githubusercontent.com/Blockchain-Oracle/najimi/main/.github/assets/group-turn-light.png)
+
+## How Najimi meets the brief
+
+*Agents, but with taste*: Najimi is an application built with an agent framework (the AI SDK's tool loop), with Qloo's API as its instrument, and its first rule is *Qloo or nothing*: every recommendation comes from a Qloo result in that chat.
+
+- **Technological Implementation:** rooms on Postgres, one agent turn per room in a pg-boss worker, every step streamed to every member over server-sent events; a cached, rate-limited, logged Qloo client; actions in someone's name approved only by the person who asked.
+- **Design:** one coherent app, where a single sheet opens any thing the same way everywhere and cards play, route and book in place.
+- **Potential Impact:** the group chat is where friends already decide; Najimi answers there, for everyone at once, and can book.
+- **Quality of the Idea:** Qloo scores each pick for each person, so the room sees whose taste it fits and why, instead of one person's feed or a model's guess.
+
 ## How we built it
 
-Najimi is a Next.js 16 app in a pnpm monorepo, with Postgres, Drizzle, a pg-boss worker, and server-sent live events. The worker handles Qloo taste refreshes, agent turns, plans, scheduled tasks, and follow-ups. Qloo requests pass through one typed client with a concurrency limit, retries, a body-aware cache, and a per-call log. The interface uses React, Tailwind CSS, MapLibre, and a globe and graph for geographic and relational views. The AI agent uses the Vercel AI SDK and OpenAI. Supporting integrations include Apple previews and TMDB trailers in the feed, Mapbox routes and Ticketmaster shows in plans, and optional Nuitee, ElevenLabs/Twilio, X, and Instagram connections for actions. [The architecture is documented here](https://docs.najimi.xyz/architecture).
+Najimi is a Next.js 16 app in a pnpm monorepo, with Postgres, Drizzle, a pg-boss worker, and server-sent live events. The worker handles Qloo taste refreshes, agent turns, plans, scheduled tasks, and follow-ups. Qloo requests pass through one typed client with a concurrency limit, retries, a body-aware cache, and a per-call log. The interface uses React, Tailwind CSS, MapLibre, and a globe and graph for geographic and relational views. The AI agent uses the Vercel AI SDK and OpenAI. Supporting integrations include Apple previews and TMDB trailers in the feed, Mapbox routes and Ticketmaster shows in plans, and optional Nuitee, ElevenLabs/Twilio, X, and Instagram connections for actions. [The architecture is documented here](https://docs.najimi.xyz/docs/build).
 
 ## Challenges and what we learned
 
@@ -103,6 +136,7 @@ This is version one. Next we want to make the group experience richer, improve t
 
 1. Open [najimi.xyz](https://najimi.xyz) on desktop or phone and tap **Start — it's free**. A guest can begin without an account.
 2. Pick three different loves and adjust their weights. Open a “Why this?” chip on a pick to see the Qloo connection.
-3. Try the feed, an entity's deeper view, Earth, People, and the taste graph. Play a game. Ask Najimi for a night out that fits your taste.
+3. Open **People**, start a circle with a friend, and ask "@najimi find us a spot tonight": the card shows each member's fit. Then ask for a night out.
+4. Try the feed, a pick's own sheet, Earth and the taste graph. Play a game.
 
-Explore the [public code](https://github.com/Blockchain-Oracle/najimi), [product guide](https://docs.najimi.xyz/guide), and [Qloo call map](https://docs.najimi.xyz/qloo).
+Explore the [public code](https://github.com/Blockchain-Oracle/najimi), [product guide](https://docs.najimi.xyz/docs/guide), and [Qloo call map](https://docs.najimi.xyz/docs/qloo).

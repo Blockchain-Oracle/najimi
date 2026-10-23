@@ -4,6 +4,12 @@ description: How Najimi is built and run, from the phone in your hand to Qloo an
 icon: Boxes
 ---
 
+<Diagram
+  name="system"
+  alt="The system: phones talk to the web app; Postgres carries rooms, tastes, plans and the Qloo call log; the worker runs Najimi's turns against Qloo, the model and outside services"
+  caption="The whole system on one server. Tap to open it full size."
+/>
+
 <Layers
   label="The system, top to bottom"
   rows={[
@@ -47,6 +53,12 @@ Most product constants (limits, timeouts, sizes, models, prices) live in `packag
 ## Rooms and the agent
 
 Every chat (yours with Najimi, a DM, a circle) is a room with its own messages. A message is saved, announced on the room's live topic, and if it calls Najimi, an agent turn is queued for the worker: one per room at a time, never retried (a turn may have acted). The turn streams its answer to everyone through the same live pipe, so it finishes even if everyone leaves. See [How a turn runs](/docs/agent/turns).
+
+<Diagram
+  name="group-turn"
+  alt="A group turn: Juno asks, the web app queues one turn for the room, Najimi asks Qloo for places for both tastes, scores them per person, and streams the card to Juno and Kemi"
+  caption="One real turn in the Friday crew circle: one ask, two tastes, one card for both."
+/>
 
 <Flow
   label="One turn in a room"

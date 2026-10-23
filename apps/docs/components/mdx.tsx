@@ -9,6 +9,7 @@ import { icons } from "lucide-react"
 import type { MDXComponents } from "mdx/types"
 import type { ComponentProps } from "react"
 import { BRANDS } from "@/lib/brands"
+import { Diagram } from "./diagram"
 import { Flow, Layers, Stats } from "./flow"
 import { Logo, LogoCloud } from "./logo-cloud"
 import { Orb } from "./orb"
@@ -44,6 +45,7 @@ export function getMDXComponents(components?: MDXComponents) {
     Tab,
     Tabs,
     TypeTable,
+    Diagram,
     Flow,
     Layers,
     Stats,

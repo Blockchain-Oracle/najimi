@@ -1,0 +1,21 @@
+flowchart LR
+  YOU["Friends on phones<br/>najimi.xyz · installable"]
+
+  subgraph APP["Najimi · one Coolify server"]
+    WEB["Web app · Next.js 16<br/>pages · API · live events"]
+    DB[("Postgres<br/>rooms · tastes · plans<br/>Qloo call log + cache")]
+    WORKER["Worker · pg-boss<br/>Najimi's turns · tastes<br/>bookings · stories"]
+  end
+
+  QLOO["Qloo Taste AI<br/>insights · explainability<br/>heatmaps · compare · search"]
+  MODEL["OpenAI<br/>the agent's model<br/>+ web search"]
+  WORLD["Apple previews · TMDB<br/>Mapbox · Ticketmaster<br/>Nuitee · ElevenLabs + Twilio"]
+
+  YOU <-->|"messages · cards live"| WEB
+  WEB <-->|"save · LISTEN/NOTIFY"| DB
+  DB -->|"a turn per room"| WORKER
+  WORKER -->|"cards, step by step"| DB
+  WORKER -->|"every recommendation"| QLOO
+  WEB -->|"feed · profile · map"| QLOO
+  WORKER -->|"plan the next step"| MODEL
+  WORKER -->|"play · route · book · call"| WORLD

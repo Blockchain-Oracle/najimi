@@ -17,7 +17,7 @@ Try it out links:
 - https://najimi.xyz
 - https://github.com/Blockchain-Oracle/najimi
 - https://docs.najimi.xyz
-- https://docs.najimi.xyz/qloo
+- https://docs.najimi.xyz/docs/qloo
 
 Built with tags entered in Devpost: Qloo, Next.js, React, TypeScript, OpenAI, PostgreSQL, Drizzle, pg-boss, Tailwind, MapLibre, Mapbox, TMDB, Ticketmaster, ElevenLabs, Twilio, Docker, Coolify, Nuitee, Vercel-AI-SDK. Devpost splits tags on spaces; the story names the full library and API names.
 

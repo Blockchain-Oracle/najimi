@@ -1,0 +1,17 @@
+sequenceDiagram
+  autonumber
+  participant J as Juno, in a circle
+  participant W as Web app
+  participant N as Najimi (worker)
+  participant Q as Qloo
+  participant K as Kemi's phone
+
+  J->>W: "@najimi find us a spot tonight"
+  W->>N: save, announce, queue one turn for the room
+  N->>Q: insights: places in Lagos for Juno's and Kemi's loves, blended
+  Q-->>N: five places
+  N->>Q: the same five, scored against each person's taste
+  Q-->>N: NOK by Alara · Juno 74% · Kemi 74%
+  N-->>J: the card, streamed as each step lands
+  N-->>K: the same card, live
+  Note over J,K: Tap a place: map, Uber, call. "Plan the night" routes three stops.
