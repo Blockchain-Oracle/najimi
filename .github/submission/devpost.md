@@ -131,7 +131,7 @@ The group card makes the cultural reasoning visible to everyone at once: one req
 
 ## Honest limits
 
-The people in the captures are test members; we have not tested Najimi with outside users yet. The public demo has not completed a live venue call, and hotel booking is not switched on there. These are the real-world flows we will test next.
+The people in the captures are test members; we have not tested Najimi with outside users yet. On najimi.xyz Najimi has phoned a venue and booked a table in a live call (23 October); hotel booking is not switched on there yet. These are the real-world flows we will test next.
 
 ## What's next
 

@@ -112,8 +112,27 @@ export default async function Landing({ params }: PageProps<"/[locale]">) {
       />
       <header className="pointer-events-none fixed inset-x-0 top-0 z-30 mx-auto flex h-16 w-full max-w-6xl items-center justify-between gap-4 px-6">
         <span className="pointer-events-auto font-title text-[22px]">{APP.name.toLowerCase()}</span>
-        <div className="pointer-events-auto flex items-center gap-2">
-          <LanguageMenu />
+        <div className="pointer-events-auto flex items-center gap-1 sm:gap-2">
+          <Link
+            href="/demo"
+            className="rounded-pill px-2.5 py-2 text-[14px] font-semibold text-text-2 transition-colors hover:text-foreground"
+          >
+            {t("demo")}
+          </Link>
+          {APP.docs ? (
+            <a
+              href={APP.docs}
+              className="rounded-pill px-2.5 py-2 text-[14px] font-semibold text-text-2 transition-colors hover:text-foreground"
+            >
+              {t("docs")}
+            </a>
+          ) : null}
+          <span className="hidden sm:inline-flex">
+            <LanguageMenu />
+          </span>
+          <span className="sm:hidden">
+            <LanguageMenu variant="compact" />
+          </span>
           <Suspense fallback={null}>
             <MainAction start={t("startShort")} open={t("openShort")} />
           </Suspense>
@@ -163,6 +182,18 @@ export default async function Landing({ params }: PageProps<"/[locale]">) {
             className="font-semibold text-text-2 underline-offset-4 hover:text-foreground hover:underline focus-visible:underline"
           >
             {t("getApp")} →
+          </Link>
+          <Link
+            href="/demo"
+            className="font-semibold text-text-2 underline-offset-4 hover:text-foreground hover:underline focus-visible:underline"
+          >
+            {t("demo")}
+          </Link>
+          <Link
+            href="/pitch"
+            className="font-semibold text-text-2 underline-offset-4 hover:text-foreground hover:underline focus-visible:underline"
+          >
+            {t("pitch")}
           </Link>
           {APP.docs ? (
             <a

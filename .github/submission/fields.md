@@ -17,6 +17,8 @@ Story: paste the contents of devpost.md. The reviewed banner, diagrams, and desk
 Try it out links:
 
 - https://najimi.xyz
+- https://najimi.xyz/demo
+- https://najimi.xyz/pitch
 - https://github.com/Blockchain-Oracle/najimi
 - https://docs.najimi.xyz
 - https://docs.najimi.xyz/docs/qloo

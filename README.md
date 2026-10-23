@@ -16,7 +16,9 @@
 <p align="center">
   <a href="https://najimi.xyz"><b>Open the app</b></a>
   &nbsp;·&nbsp;
-  <a href="#demo-video"><b>Demo</b></a>
+  <a href="https://najimi.xyz/demo"><b>Demo</b></a>
+  &nbsp;·&nbsp;
+  <a href="https://najimi.xyz/pitch"><b>Pitch</b></a>
   &nbsp;·&nbsp;
   <a href="https://docs.najimi.xyz"><b>Docs</b></a>
   &nbsp;·&nbsp;
@@ -69,15 +71,15 @@ Juno and Kemi share a circle called *Friday crew*. Juno writes one line; Najimi 
 ## Demo video
 
 <p align="center">
-  <a href="https://najimi.xyz">
+  <a href="https://najimi.xyz/demo">
     <img src=".github/assets/demo-cover.png" alt="Play: Najimi, from three loves to a night planned for two tastes" width="100%">
   </a>
 </p>
 
-The recorded walkthrough will play here. Until then, follow the proof on [najimi.xyz](https://najimi.xyz):
+The recorded walkthrough will play at [najimi.xyz/demo](https://najimi.xyz/demo). Until then, follow the proof on the live app (the demo page walks the same steps with links):
 
 1. Start, pick three things you love, and watch Qloo build your taste live (picks in ten kinds, your taste words, where your people cluster).
-2. Open **People**, start a circle with a friend (or send them its invite link), and ask "@najimi find us a spot tonight". The card shows each member's fit.
+2. Join the public [Najimi Lounge](https://najimi.xyz/join/najimilounge) (or start a circle with a friend), and ask "@najimi find us a spot tonight". The card shows each member's fit.
 3. Tap a place: its map, Uber, phone, site and socials open in one sheet.
 4. Ask "plan our night in Victoria Island at 8": three stops, routed, with *Ask Najimi to book*.
 5. Tap the Qloo chip on a picks card to see the exact request behind it.

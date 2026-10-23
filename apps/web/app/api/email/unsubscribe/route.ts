@@ -1,5 +1,6 @@
 import { db, schema } from "@najimi/db"
 import { type EmailKind, readUnsubscribe } from "@najimi/email"
+import { env } from "@najimi/env/server"
 import { eq, sql } from "drizzle-orm"
 import { NextResponse } from "next/server"
 
@@ -21,9 +22,11 @@ async function turnOff(token: string | null): Promise<EmailKind | null> {
 }
 
 export async function GET(request: Request) {
-  const url = new URL(request.url)
-  const kind = await turnOff(url.searchParams.get("t"))
-  return NextResponse.redirect(new URL(`/unsubscribed${kind ? `?k=${kind}` : ""}`, url))
+  const kind = await turnOff(new URL(request.url).searchParams.get("t"))
+  // The public address: behind the proxy, the request's own URL is the container's.
+  return NextResponse.redirect(
+    new URL(`/unsubscribed${kind ? `?k=${kind}` : ""}`, env.BETTER_AUTH_URL),
+  )
 }
 
 /** The mail app's one-click unsubscribe (List-Unsubscribe-Post). */
