@@ -48,6 +48,8 @@ export type NotificationKind =
   | "tuneup"
   /** A data download asked for from Najimi is usually ready by now. */
   | "export"
+  /** Someone started a call in your circle or DM. */
+  | "call"
 
 /** Your news (the inbox): a follow, someone joining your circle, a mention, a new DM. */
 export const notifications = pgTable(

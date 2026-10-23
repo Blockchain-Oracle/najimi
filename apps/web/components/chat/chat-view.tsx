@@ -11,6 +11,7 @@ import {
   History,
   Loader2,
   Pause,
+  Phone,
   Play,
   Plus,
   RotateCcw,
@@ -20,6 +21,7 @@ import {
 import { useTranslations } from "next-intl"
 import { Suspense, useEffect, useRef, useState } from "react"
 import { QrCode } from "@/components/brands/qr-code"
+import { CallScreen } from "@/components/call/call-screen"
 import { GameSheet } from "@/components/games/game-sheet"
 import { ProfileLink } from "@/components/people/profile-link"
 import { type Track, usePlayer } from "@/components/player/player"
@@ -90,6 +92,22 @@ export function ChatView(props: ChatViewProps) {
   const [history, setHistory] = useState(false)
   const [membersOpen, setMembersOpen] = useState(false)
   const [gamesOpen, setGamesOpen] = useState(false)
+  // Calls (circles and DMs): whether they're on here, and the call screen once someone joins.
+  const [calling, setCalling] = useState(false)
+  const callState = useQuery({
+    queryKey: ["call", props.chatId],
+    queryFn: () =>
+      api<{ ready: boolean; live: { id: string; najimi: boolean } | null }>(
+        `/api/rooms/${props.chatId}/call`,
+      ),
+    enabled: Boolean(props.chatId) && (props.kind ?? "agent") !== "agent",
+  })
+  const callsOn = Boolean(callState.data?.ready)
+  // Opened from a call's notification (?call=1): straight into the call.
+  useEffect(() => {
+    if (!callsOn || typeof window === "undefined") return
+    if (new URLSearchParams(window.location.search).get("call") === "1") setCalling(true)
+  }, [callsOn])
   const [pollOpen, setPollOpen] = useState(false)
   const kind = props.kind ?? "agent"
   const people = new Map((props.members ?? []).map((m) => [m.userId, m]))
@@ -206,6 +224,20 @@ export function ChatView(props: ChatViewProps) {
               <h1 className="truncate text-[15px] font-semibold">{roomTitle}</h1>
             </button>
           )}
+          {kind !== "agent" && callsOn ? (
+            <button
+              type="button"
+              onClick={() => setCalling(true)}
+              aria-label={t("call")}
+              title={t("call")}
+              className={cn(
+                "grid size-10 place-items-center rounded-full transition-colors hover:bg-card hover:text-foreground",
+                callState.data?.live ? "text-success" : "text-text-2",
+              )}
+            >
+              <Phone className="size-5" />
+            </button>
+          ) : null}
           {kind === "agent" ? null : (
             <button
               type="button"
@@ -278,6 +310,7 @@ export function ChatView(props: ChatViewProps) {
                           onAnswer: (toolCallId, output) =>
                             void room.answer(m.id, toolCallId, output),
                           onApprove: (id, approved) => void room.approve(m.id, id, approved),
+                          onJoinCall: callsOn ? () => setCalling(true) : undefined,
                         }}
                       />
                       {/* Copy, again and share sit under the latest answer; older ones show
@@ -372,6 +405,22 @@ export function ChatView(props: ChatViewProps) {
       {kind === "agent" ? null : (
         <PollSheet open={pollOpen} onOpenChange={setPollOpen} chatId={props.chatId} />
       )}
+
+      {calling && props.chatId ? (
+        <CallScreen
+          chatId={props.chatId}
+          title={roomTitle ?? ""}
+          members={(props.members ?? []).map((m) => ({
+            userId: m.userId,
+            name: m.name,
+            look: m.look,
+          }))}
+          onClose={() => {
+            setCalling(false)
+            void callState.refetch()
+          }}
+        />
+      ) : null}
 
       {kind === "agent" ? null : (
         <GameSheet

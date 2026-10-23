@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX "calls_live_idx" ON "calls" USING btree ("chat_id") WHERE ended_at is null;

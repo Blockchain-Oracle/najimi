@@ -185,3 +185,34 @@ export const pollVotes = pgTable(
   },
   (t) => [primaryKey({ columns: [t.pollId, t.userId] })],
 )
+
+/** One thing said in a call, by whom (a member, or Najimi). */
+export type CallLine = { at: string; userId: string | null; name: string; text: string }
+
+/**
+ * A voice call in a circle or a DM (LiveKit): who started it, whether Najimi was brought in, what
+ * was said (Najimi hears each speaker separately), and the summary it leaves in the chat at the end.
+ */
+export const calls = pgTable(
+  "calls",
+  {
+    id: uuid().defaultRandom().primaryKey(),
+    chatId: uuid()
+      .references(() => chats.id, { onDelete: "cascade" })
+      .notNull(),
+    /** The LiveKit room. */
+    room: text().notNull(),
+    startedBy: text().references(() => user.id, { onDelete: "set null" }),
+    najimi: boolean().notNull().default(false),
+    transcript: jsonb().$type<CallLine[]>().default([]).notNull(),
+    summary: text(),
+    startedAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
+    endedAt: timestamp({ withTimezone: true }),
+  },
+  (t) => [
+    uniqueIndex("calls_room_idx").on(t.room),
+    index("calls_chat_idx").on(t.chatId, t.startedAt),
+    // One live call per chat: two people tapping Call at once join the same one.
+    uniqueIndex("calls_live_idx").on(t.chatId).where(sql`ended_at is null`),
+  ],
+)

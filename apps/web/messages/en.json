@@ -660,7 +660,8 @@
     "inviteQr": "Scan to join this circle",
     "inviteScan": "Scan this, or send the link.",
     "shareInvite": "Share the invite",
-    "older": "Earlier messages…"
+    "older": "Earlier messages…",
+    "call": "Call"
   },
   "Cards": {
     "asking": "Asking Qloo…",
@@ -1554,5 +1555,24 @@
       "push": "Notifications",
       "pushLine": "Messages, games, plans and these agents' news, on the devices you turned them on for."
     }
+  },
+  "Call": {
+    "kicker": "Call",
+    "you": "You",
+    "speaking": "Speaking",
+    "listening": "Listening",
+    "mute": "Mute",
+    "unmute": "Unmute",
+    "leave": "Leave the call",
+    "bring": "Bring Najimi",
+    "najimiComing": "Najimi is joining…",
+    "sayName": "Say \"Najimi\" and ask: it answers out loud, and what it finds lands in the chat.",
+    "alone": "{count, plural, one {Waiting for the others to join.} other {Bring Najimi in to plan together.}}",
+    "tapToHear": "Tap to hear the call",
+    "failed": "That didn't work. Try again.",
+    "join": "Join",
+    "live": "On now",
+    "liveWithNajimi": "On now, with Najimi",
+    "over": "Over"
   }
 }

@@ -146,7 +146,7 @@ The brief, *Agents, but with taste*: a working application that integrates Qloo'
 - **Your taste in a minute:** pick three loves, or bring a Letterboxd, Last.fm or Goodreads name, X and Instagram handles, or your data from X, Instagram, TikTok, YouTube or Spotify (each platform's download page one tap away, a reminder when the file is ready, read in your browser). [Quickstart](https://docs.najimi.xyz/docs/guide/quickstart) · [Your feeds](https://docs.najimi.xyz/docs/guide/feeds)
 - **One sheet for any thing:** a film's trailer and where to watch it, an artist's songs, music videos and next concerts, a place's map, phone and socials, what people say on TikTok, YouTube and X. [Profile](https://docs.najimi.xyz/docs/guide/profile)
 - **Feed:** full-screen cards with Apple previews, trailers, podcast episodes and places, tuned like a mixing desk, one player across the app. [Feed](https://docs.najimi.xyz/docs/guide/feed)
-- **Circles and chats:** polls, the circle's soundtrack, QR invites, games with a daily drop and a weekly board. [Chats](https://docs.najimi.xyz/docs/guide/chats) · [Games](https://docs.najimi.xyz/docs/guide/games)
+- **Circles and chats:** voice calls with Najimi in the room (it answers when named and posts its cards in the chat), polls, the circle's soundtrack, QR invites, games with a daily drop and a weekly board. [Chats](https://docs.najimi.xyz/docs/guide/chats) · [Games](https://docs.najimi.xyz/docs/guide/games)
 - **Stories:** a photo, a video, a song, a pick or a plan for a day; replies land in your DMs. [People](https://docs.najimi.xyz/docs/guide/people)
 - **Earth and the graph:** where your taste lives, square by square; your taste as a web you can pull. [Earth](https://docs.najimi.xyz/docs/guide/earth) · [Graph](https://docs.najimi.xyz/docs/guide/graph)
 - **Business mode:** "I run a café in Yaba" becomes a plan you read in one screen: who its people are, then three moves for the week, each with one next step (post it, invite the partner, plan it with Najimi, play the set). Rebuilt every Monday. [Business](https://docs.najimi.xyz/docs/guide/business)
@@ -173,7 +173,7 @@ A pnpm and Turborepo monorepo; every piece runs as a container on one Coolify se
 | Path | What |
 | --- | --- |
 | [`apps/web`](apps/web) | Next.js 16: pages, API routes, cards, the landing, link previews and story slides |
-| [`apps/worker`](apps/worker) | pg-boss: Najimi's turns, taste reveals, business plans, bookings and follow-ups, video stories, push; runs migrations |
+| [`apps/worker`](apps/worker) | pg-boss: Najimi's turns, taste reveals, business plans, bookings and follow-ups, video stories, push, Najimi in calls (LiveKit); runs migrations |
 | [`apps/docs`](apps/docs) | The documentation (Fumadocs) |
 | [`apps/social-bridge`](apps/social-bridge) | Python FastAPI, internal only: Instagram |
 | [`packages/qloo`](packages/qloo) | The Qloo client: cache, concurrency limit, retries, call log, taste and explore helpers |
@@ -193,7 +193,7 @@ A pnpm and Turborepo monorepo; every piece runs as a container on one Coolify se
 ## Honest limits
 
 - The circles in the captures are test members; Najimi has had no outside testers yet.
-- Hotel booking runs through Nuitee's live key, which isn't set on najimi.xyz yet, so hotels say they aren't switched on there. Table calls work end to end: on 23 October Najimi phoned a test line playing the venue, booked a table for two and posted the confirmed booking card in the chat. The Twilio account is still a trial, which only rings verified numbers, so calling any venue needs it upgraded; from Nigeria the call shows a US number.
+- Hotel booking runs through Nuitee's live key, which isn't set on najimi.xyz yet, so hotels say they aren't switched on there. Table calls work end to end: on 23 October Najimi phoned a test line playing the venue, booked a table for two and posted the confirmed booking card in the chat. From Nigeria the call shows a US number (a Nigerian caller ID needs a registered local business number).
 - Acting on X and Instagram for you needs your own signed-in session, which those platforms can lock; reading your taste never does. Google and TikTok sign-in and Connect YouTube are built and switch on once their developer apps are set up.
 - A platform's data download gives only what the platform puts in it: X's archive lists follows by account number only (connect X to read them), and TikTok's likes and watch history carry no creator, so they're left out.
 - The interface is in English; eleven other languages fall back to English where they're incomplete.

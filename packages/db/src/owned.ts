@@ -4,6 +4,7 @@ import {
   blocks,
   bookings,
   businesses,
+  calls,
   chatMembers,
   chats,
   connectorSessions,
@@ -196,6 +197,7 @@ export async function reownUserData(db: Db, fromUserId: string, toUserId: string
           and q.platform = r.platform)`)
     await tx.delete(exportRequests).where(eq(exportRequests.userId, fromUserId))
     await tx.update(postDrafts).set({ userId: toUserId }).where(eq(postDrafts.userId, fromUserId))
+    await tx.update(calls).set({ startedBy: toUserId }).where(eq(calls.startedBy, fromUserId))
     // Games: rounds they dealt or that are about them, and their goes (a round both accounts
     // played keeps the account's own go).
     await tx

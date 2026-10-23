@@ -25,6 +25,7 @@ const GROUP: Record<NotificationKind, keyof PushPrefs> = {
   booking: "plans",
   tuneup: "feeds",
   export: "feeds",
+  call: "messages",
 }
 
 type Push = { title: string; body: string; url: string; tag?: string }
@@ -95,6 +96,13 @@ async function compose(n: typeof schema.notifications.$inferSelect): Promise<Pus
       }
     case "tuneup":
       return { title: "Najimi", body: text, url: "/connect", tag: "tuneup" }
+    case "call":
+      return {
+        title: room || "Najimi",
+        body: text,
+        url: `${inChat}?call=1`,
+        tag: `call-${n.chatId ?? ""}`,
+      }
     case "export":
       return {
         title: "Najimi",

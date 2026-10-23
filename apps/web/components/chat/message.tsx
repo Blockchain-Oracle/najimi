@@ -20,6 +20,7 @@ import { ImageCard } from "./cards/media-card"
 import { PlanCard } from "./cards/plan-card"
 import { PollCard } from "./cards/poll-card"
 import { PostApproval, PostCard } from "./cards/post-card"
+import { RoomCallNotice } from "./cards/room-call"
 import { SteerCard } from "./cards/steer-card"
 import { WizardCard } from "./cards/wizard-card"
 import { Run } from "./run"
@@ -32,6 +33,8 @@ export type MessageActions = {
   onApprove: (approvalId: string, approved: boolean) => void
   /** Only the newest message's open cards take answers. */
   live: boolean
+  /** Opens the room's call (from its card). */
+  onJoinCall?: () => void
 }
 
 function ToolPart({
@@ -233,6 +236,8 @@ export function Message({
     // A booking's news is a card; other room notices ("Juno joined") stay a quiet line.
     if (message.metadata?.booking)
       return <BookingNotice note={message.metadata.booking} text={text} />
+    if (message.metadata?.call)
+      return <RoomCallNotice note={message.metadata.call} text={text} onJoin={actions.onJoinCall} />
     return <p className="text-center text-[12px] text-text-3">{text}</p>
   }
   if (message.role === "user" && from && !from.mine) {

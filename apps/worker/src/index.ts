@@ -19,6 +19,7 @@ import { tasteRefresh, tasteRetune } from "./jobs/taste-refresh"
 import { tuneUpNudge } from "./jobs/tune-up-nudge"
 import { startPush } from "./push"
 import { seedSamples } from "./samples"
+import { joinCall } from "./voice/call"
 
 /*
  * The worker: every slow job runs here, never inside a web request. It applies the
@@ -188,6 +189,15 @@ async function main() {
     await socialMornings()
   })
   await queues.schedule(QUEUES.socialMornings.name, "5 * * * *", {}, { tz: "UTC" })
+  // Najimi in a call: one job per call, alive for the whole call (it leaves when everyone has).
+  await queues.work<Payload<"callJoin">>(
+    QUEUES.callJoin.name,
+    { localConcurrency: 4 },
+    async ([job]) => {
+      if (!job) return
+      await joinCall(job.data).catch((error) => console.error("[call] join", error))
+    },
+  )
   await queues.work(QUEUES.socialPosts.name, async ([job]) => {
     if (!job) return
     await socialPosts()

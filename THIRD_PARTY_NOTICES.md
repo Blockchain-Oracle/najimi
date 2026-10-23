@@ -9,6 +9,8 @@ Components, assets and services used by Najimi, with their licences.
 | Mixkit sound effects (mixkit.co/free-sound-effects) | Interface sounds | Mixkit free licence |
 | rettiwt-api (github.com/Rishikant181/Rettiwt-API) | X connector | ISC |
 | instagrapi (github.com/subzeroid/instagrapi) | Instagram connector | MIT |
+| LiveKit server and SDKs (github.com/livekit) | In-app voice calls | Apache-2.0 |
+| ElevenLabs, OpenAI speech-to-text | Najimi's voice in calls, transcripts | Each provider's terms |
 | OpenStreetMap contributors, via Nominatim | Places and geocoding | ODbL, (c) OpenStreetMap contributors |
 | Mapbox Directions | Routes | Mapbox terms |
 | Apple previews, TMDB, Open Library, Ticketmaster, Wikidata | Music previews, trailers, book covers, shows, social accounts | Each provider's terms |

@@ -42,6 +42,33 @@ export const EXPORTS = {
   texts: 60,
 } as const
 
+/** Voice calls in circles and DMs (LiveKit), with Najimi able to join. */
+export const CALLS = {
+  /** A member's call token lasts this long. */
+  tokenTtlSeconds: 2 * 60 * 60,
+  /** A call still open this long after it started is closed (its room is long gone). */
+  maxMs: 3 * 60 * 60 * 1000,
+  /** A call nobody has joined this long after it started never happened: its card closes. */
+  joinGraceMs: 2 * 60 * 1000,
+  /** The voice agent's name, for LiveKit's explicit dispatch. */
+  agentName: "najimi",
+  /** Lines kept in a call's transcript (the newest). */
+  transcriptMax: 400,
+  /** What Najimi hears with (one utterance at a time) and speaks with. */
+  sttModel: "gpt-4o-mini-transcribe",
+  ttsModel: "eleven_flash_v2_5",
+  /** Najimi's voice in calls (ElevenLabs). */
+  voiceId: "cjVigY5qzO86Huf0OWal",
+  /** An utterance ends this long after its speaker stops (LiveKit's active-speaker signal). */
+  endOfSpeechMs: 700,
+  minUtteranceMs: 450,
+  maxUtteranceMs: 25_000,
+  /** Najimi waits this long for its answer before saying it's still looking. */
+  answerWaitMs: 60_000,
+  /** With nobody left in the room for this long, Najimi wraps up and leaves. */
+  emptyLeaveMs: 20_000,
+} as const
+
 /** The privacy policy and terms: where to write, and when they last changed. */
 export const LEGAL = {
   contact: "hello@najimi.xyz",

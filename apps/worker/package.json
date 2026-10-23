@@ -10,6 +10,7 @@
     "build": "node scripts/build.mjs"
   },
   "dependencies": {
+    "@livekit/rtc-node": "1.2.1",
     "@najimi/agent": "workspace:*",
     "@najimi/booking": "workspace:*",
     "@najimi/config": "workspace:*",
@@ -25,6 +26,7 @@
     "@najimi/storage": "workspace:*",
     "ai": "catalog:",
     "drizzle-orm": "catalog:",
+    "livekit-server-sdk": "2.19.2",
     "pg-boss": "catalog:",
     "sharp": "catalog:",
     "web-push": "3.6.7",

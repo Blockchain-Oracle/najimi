@@ -40,6 +40,13 @@ export const QUEUES = {
    * the key), and the waiting one answers everything said in the meantime. Never retried: a turn
    * may have acted (made an image, booked).
    */
+  /** Najimi joins a call's room and stays until everyone has left (then it leaves its summary). */
+  callJoin: {
+    name: "call-join",
+    payload: z.object({ room: z.string().min(1), chatId: z.uuid(), callId: z.uuid() }),
+    options: { policy: "singleton", retryLimit: 0, expireInSeconds: 3 * 60 * 60 },
+    send: { heartbeatSeconds: JOBS.heartbeatSeconds },
+  },
   agentTurn: {
     name: "agent-turn",
     payload: z.object({ chatId: z.uuid() }),

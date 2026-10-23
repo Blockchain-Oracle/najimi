@@ -20,6 +20,10 @@ export const env = createEnv({
     GOOGLE_CLIENT_ID: z.string().min(1).optional(),
     GOOGLE_CLIENT_SECRET: z.string().min(1).optional(),
     TIKTOK_CLIENT_KEY: z.string().min(1).optional(),
+    /** LiveKit (calls): the server's wss address, and the key pair it was started with. */
+    LIVEKIT_URL: z.string().url().optional(),
+    LIVEKIT_API_KEY: z.string().min(1).optional(),
+    LIVEKIT_API_SECRET: z.string().min(1).optional(),
     TIKTOK_CLIENT_SECRET: z.string().min(1).optional(),
 
     /** Qloo hackathon key: server-side only, never in a bundle, repo or recording. */
