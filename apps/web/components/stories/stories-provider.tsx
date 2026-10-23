@@ -147,7 +147,12 @@ export function StoryRing({
 }
 
 /** The People tab's row of stories: yours first (with +), then everyone you follow with one up. */
-export function StoryTray() {
+export function StoryTray({
+  self,
+}: {
+  /** Your own face and name (a guest's account name is only a placeholder). */
+  self?: { name: string; look: string | null } | null
+} = {}) {
   const t = useTranslations("Stories")
   const { tray, open, compose } = useStories()
   const session = authClient.useSession()
@@ -180,7 +185,7 @@ export function StoryTray() {
                 aria-label={t("new")}
                 className="rounded-full p-[4.5px]"
               >
-                <Face look={null} name={me?.name ?? "?"} size="lg" />
+                <Face look={self?.look ?? null} name={self?.name ?? me?.name ?? "?"} size="lg" />
               </button>
             )}
             <button

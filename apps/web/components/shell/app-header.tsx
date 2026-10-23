@@ -43,6 +43,7 @@ export function SheetForMe() {
 function Account({ onSignIn }: { onSignIn: () => void }) {
   const t = useTranslations("Nav")
   const ta = useTranslations("Auth")
+  const ts = useTranslations("Settings")
   const router = useRouter()
   const session = authClient.useSession()
   const user = session.data?.user
@@ -64,7 +65,10 @@ function Account({ onSignIn }: { onSignIn: () => void }) {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="min-w-56">
         <p className="px-2 py-1.5 text-xs text-muted-foreground">
-          {ta("signedInAs", { email: user?.email ?? "" })}
+          {/* Some sign-ins (TikTok) carry a stand-in address that's not theirs to see. */}
+          {user?.email && !user.email.endsWith(".invalid")
+            ? ta("signedInAs", { email: user.email })
+            : ts("signedIn")}
         </p>
         <DropdownMenuItem onClick={() => router.push("/settings")}>
           {t("settings")}

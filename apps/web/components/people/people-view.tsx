@@ -25,6 +25,8 @@ import { AuraFace, FollowButton, type PersonCard, PersonRow } from "./person-row
 export type PeopleHome = {
   /** Your own taste's artwork (the game tiles wear it). */
   art: string[]
+  /** You, as people see you (your face on "Your story"). */
+  self?: { name: string; look: string | null } | null
   lounge: { id: string; member: boolean; members: number } | null
   friends: PersonCard[]
   twins: (PersonCard & { shared: number })[]
@@ -334,7 +336,7 @@ export function PeopleView({ home }: { home: PeopleHome }) {
         <Inbox initialUnread={home.unread} after={home.after} />
       </header>
 
-      <StoryTray />
+      <StoryTray self={home.self ? { name: home.self.name, look: home.self.look } : null} />
 
       <label className="flex h-12 items-center gap-2 rounded-pill bg-card px-4 ring-1 ring-border focus-within:ring-2 focus-within:ring-ring">
         <Search className="size-4 text-text-3" />

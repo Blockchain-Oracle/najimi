@@ -20,6 +20,7 @@ async function People() {
     <PeopleView
       home={{
         art: home.art,
+        self: { name: home.self.name, look: home.self.look },
         lounge: home.lounge,
         friends: home.friends,
         twins: home.twins,
