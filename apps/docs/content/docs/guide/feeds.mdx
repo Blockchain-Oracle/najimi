@@ -22,16 +22,33 @@ Your taste as topics, ready to copy into Instagram's *Your Algorithm* or TikTok'
 
 ## Connect, and "Do it for me"
 
-On **X** and **Instagram** you can connect your own account by pasting your session from the browser. It's sealed (AES-256-GCM) the moment it arrives, only opened on the server to act for you, and deleted when you disconnect.
+X and Instagram have no official way for an app to follow or post for a person, so on those two Najimi acts through **your own signed-in session**. The sheet says that first, shows the risk (platforms can limit accounts that automate) before you paste anything, and shows where the session cookie lives in your browser. The session is sealed (AES-256-GCM) the moment it arrives, only opened on the server to act for you, and deleted when you disconnect.
 
 Then switch on **Do it for me**: each morning at 9am your time, Najimi follows that day's tune-up accounts for you, **slowly** (a random pause between each, at most 25 a day on X and 15 on Instagram). It tells you as it goes and when it's done, and at the first sign the platform objects it stops for a day and says so.
 
-TikTok and YouTube can't be connected; use their data exports below.
+**YouTube** connects with Google instead, read-only: **Connect YouTube** asks Google for permission to read your subscriptions and liked videos, and nothing else (it never likes, subscribes or posts). It appears once Google sign-in is switched on for the server. TikTok can't be connected to act for you.
 
 ## Bring what you already follow
 
-- **X**: your account read by handle.
-- **Exports**, opened right in your browser (only a short list leaves it): Instagram (following, liked, saved), TikTok (`user_data.json`), Spotify (*YourLibrary.json*), YouTube Takeout (subscriptions).
-- **By name**: Letterboxd, Goodreads, Last.fm, or a list of handles.
+**Your data, in two taps.** Every platform lets you download what you follow and love. In each platform's sheet:
+
+<Steps>
+<Step>
+**Ask for your file.** One tap opens the platform's own download page, with a line on what to tick. Najimi remembers you asked, and when the file is usually ready it reminds you (a notification that opens the same sheet).
+</Step>
+<Step>
+**Choose the file** when it arrives. It's opened in your browser; only a short list leaves it (handles, artist and channel names, and a few dozen titles or posts to read for the names in them).
+</Step>
+</Steps>
+
+| Platform | Usually ready | What Najimi reads |
+| --- | --- | --- |
+| **X** | about a day | What you liked (the culture named in it). X's file lists who you follow only by number, so connect X or read your handle for those. Bookmarks aren't in X's file. |
+| **Instagram** | a few hours | Who you follow, and whose posts you liked and saved. |
+| **TikTok** | a few days | Who you follow, and your favourite sounds. Your likes and watch history are video links with no creator, so they're left out. |
+| **YouTube** (Google Takeout) | within the hour | The artists you play most on YouTube Music, the channels you subscribe to, and what you watched. |
+| **Spotify** | up to five days | The artists and shows in your library. |
+
+Also: **X** read by handle (who an account shares and mentions), and **by name** on Letterboxd, Goodreads, Last.fm, or a list of handles.
 
 Everything is matched to Qloo, and you choose what joins your taste.

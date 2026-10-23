@@ -46,6 +46,8 @@ export type NotificationKind =
   | "booking"
   /** Today's feed tune-up is ready. */
   | "tuneup"
+  /** A data download asked for from Najimi is usually ready by now. */
+  | "export"
 
 /** Your news (the inbox): a follow, someone joining your circle, a mention, a new DM. */
 export const notifications = pgTable(

@@ -10,6 +10,7 @@ import { bookingCheck, followUps } from "./jobs/bookings"
 import { businessWeekly } from "./jobs/business"
 import { chatTitle } from "./jobs/chat-title"
 import { dailyDrop } from "./jobs/daily-drop"
+import { exportNudges } from "./jobs/export-nudges"
 import { guestsCleanup } from "./jobs/forget"
 import { mediaGenerate, pollVideos } from "./jobs/media"
 import { socialMornings, socialRun } from "./jobs/social"
@@ -152,6 +153,11 @@ async function main() {
   })
   // Hourly: each person is nudged on their own morning.
   await queues.schedule(QUEUES.tuneUpNudge.name, "20 * * * *", {}, { tz: "UTC" })
+  await queues.work(QUEUES.exportNudges.name, async ([job]) => {
+    if (!job) return
+    await exportNudges()
+  })
+  await queues.schedule(QUEUES.exportNudges.name, "*/30 * * * *", {}, { tz: "UTC" })
 
   // Business plans (W19), one build per business at a time; Mondays, each again with what changed.
   await queues.work<Payload<"businessBuild">>(

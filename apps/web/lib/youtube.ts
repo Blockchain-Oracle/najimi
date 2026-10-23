@@ -1,6 +1,7 @@
 import "server-only"
 import { YOUTUBE } from "@najimi/config"
 import type { Candidate } from "@najimi/connectors"
+import { channelName } from "@najimi/connectors/exports"
 import { db, schema } from "@najimi/db"
 import { and, eq } from "drizzle-orm"
 import { headers } from "next/headers"
@@ -49,13 +50,6 @@ async function pages<T>(path: string, token: string, max: number): Promise<T[]> 
   }
   return out
 }
-
-/** An artist's auto-made channel ("Tems - Topic") and label channels ("TemsVEVO") name the artist. */
-export const channelName = (title: string) =>
-  title
-    .replace(/\s+-\s+Topic$/i, "")
-    .replace(/VEVO$/, "")
-    .trim()
 
 /** What a connected YouTube holds: subscribed channels as candidates, liked videos' titles. */
 export async function readYouTube(accountId: string) {

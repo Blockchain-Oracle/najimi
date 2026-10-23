@@ -24,6 +24,7 @@ const GROUP: Record<NotificationKind, keyof PushPrefs> = {
   game: "games",
   booking: "plans",
   tuneup: "feeds",
+  export: "feeds",
 }
 
 type Push = { title: string; body: string; url: string; tag?: string }
@@ -94,6 +95,13 @@ async function compose(n: typeof schema.notifications.$inferSelect): Promise<Pus
       }
     case "tuneup":
       return { title: "Najimi", body: text, url: "/connect", tag: "tuneup" }
+    case "export":
+      return {
+        title: "Najimi",
+        body: text,
+        url: `/connect?bring=${typeof data.platform === "string" ? data.platform : ""}`,
+        tag: `export-${typeof data.platform === "string" ? data.platform : ""}`,
+      }
   }
 }
 

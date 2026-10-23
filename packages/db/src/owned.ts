@@ -8,6 +8,7 @@ import {
   chats,
   connectorSessions,
   creations,
+  exportRequests,
   feedScores,
   follows,
   gameAnswers,
@@ -186,6 +187,13 @@ export async function reownUserData(db: Db, fromUserId: string, toUserId: string
       .update(socialActions)
       .set({ userId: toUserId })
       .where(eq(socialActions.userId, fromUserId))
+    // Data downloads asked for (the account's own request for a platform wins a clash).
+    await tx.execute(sql`
+      update ${exportRequests} r set user_id = ${toUserId}
+      where r.user_id = ${fromUserId}
+        and not exists (select 1 from ${exportRequests} q where q.user_id = ${toUserId}
+          and q.platform = r.platform)`)
+    await tx.delete(exportRequests).where(eq(exportRequests.userId, fromUserId))
     // Games: rounds they dealt or that are about them, and their goes (a round both accounts
     // played keeps the account's own go).
     await tx

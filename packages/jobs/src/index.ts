@@ -95,6 +95,13 @@ export const QUEUES = {
     options: { retryLimit: 1, retryDelay: 600, expireInSeconds: 15 * 60 },
     send: {},
   },
+  /** A data download asked for from Najimi is usually ready: remind its person, once. */
+  exportNudges: {
+    name: "export-nudges",
+    payload: z.object({}),
+    options: { retryLimit: 1, retryDelay: 600, expireInSeconds: 15 * 60 },
+    send: {},
+  },
   /** A business's plan (W19): its fans, where they are, its street, what's rising, the plan. */
   businessBuild: {
     name: "business-build",

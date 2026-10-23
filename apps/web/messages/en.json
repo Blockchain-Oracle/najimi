@@ -1095,28 +1095,6 @@
       "lastfm": "Your Last.fm username",
       "x": "@temsbaby"
     },
-    "how": {
-      "instagram": {
-        "1": "In Instagram: Profile → ≡ → Accounts Center → Your information and permissions → Export your information.",
-        "2": "Choose Followers and following, and Likes and saved; pick JSON; request it.",
-        "3": "When Instagram emails you (often minutes, up to a day), download the .zip and choose it here."
-      },
-      "tiktok": {
-        "1": "In TikTok: Profile → ≡ → Settings and privacy → Account → Download your data.",
-        "2": "Pick JSON and request it.",
-        "3": "When it's ready (in the same screen, a few days at most), download it and choose it here."
-      },
-      "spotify": {
-        "1": "On spotify.com: Account → Privacy settings → Download your data.",
-        "2": "Request your Account data (not the extended history).",
-        "3": "When Spotify emails you, download the .zip and choose it here."
-      },
-      "youtube": {
-        "1": "Open takeout.google.com and deselect all.",
-        "2": "Select YouTube and YouTube Music, then only 'subscriptions'.",
-        "3": "Download the .zip when it's ready and choose it here."
-      }
-    },
     "pasteHandles": "Or paste a list of handles",
     "connect": "Connect",
     "connected": "Connected",
@@ -1178,7 +1156,25 @@
     "readYouTube": "Read my YouTube",
     "youtubeReadOnly": "Read-only: your subscriptions and likes. Najimi never posts, likes or subscribes for you.",
     "orTakeout": "Or bring your Google Takeout file",
-    "whySession": "{name} has no official way for an app to follow or post for you, so Najimi uses your own signed-in session, and only acts when you say so."
+    "whySession": "{name} has no official way for an app to follow or post for you, so Najimi uses your own signed-in session, and only acts when you say so.",
+    "askFor": "Ask {name} for your file",
+    "asked": "Asked {when}. Usually ready {ready}; Najimi will remind you.",
+    "readyNow": "Asked {when}. It's usually ready by now.",
+    "choose": {
+      "x": "Choose Download an archive. X emails you when it's ready, usually within a day.",
+      "instagram": "Choose Some of your information: Followers and following, Likes and Saved, in JSON.",
+      "tiktok": "Choose All data, in JSON. It's usually ready in a few days.",
+      "youtube": "Keep only history and subscriptions, and set history to JSON.",
+      "spotify": "Request your Account data. Spotify emails you, usually within five days."
+    },
+    "reads": {
+      "x": "Reads what you liked. X's file lists who you follow only by number: connect X to read those.",
+      "instagram": "Reads who you follow, and whose posts you liked and saved.",
+      "tiktok": "Reads who you follow and your favourite sounds. Your likes and history are video links with no creator, so they're left out.",
+      "youtube": "Reads the channels you subscribe to and watch most, and what you watched.",
+      "spotify": "Reads the artists and shows in your library."
+    },
+    "orArchive": "Or bring your X archive"
   },
   "Business": {
     "title": "Your business",

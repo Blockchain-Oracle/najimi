@@ -1,10 +1,12 @@
-import { IMPORTS, TASTE_DOMAINS } from "@najimi/config"
+import { EXPORTS, IMPORTS, TASTE_DOMAINS } from "@najimi/config"
 import { resolve } from "@najimi/connectors"
 import { EXPORT_MAX } from "@najimi/connectors/exports"
 import { db, schema } from "@najimi/db"
+import { and, eq } from "drizzle-orm"
 import { z } from "zod"
 import type { LoveHit } from "@/app/api/qloo/search/route"
 import { body, fail, json, withSession } from "@/lib/api"
+import { CHARS, namedThings } from "@/lib/named-things"
 import { allow } from "@/lib/rate-limit"
 
 const input = z.object({
@@ -26,8 +28,12 @@ const input = z.object({
         exactName: z.boolean().optional(),
       }),
     )
-    .min(1)
     .max(EXPORT_MAX),
+  /** Liked posts, watched titles and favourite sounds, read for the culture they name. */
+  texts: z
+    .array(z.string().max(CHARS * 2))
+    .max(EXPORTS.texts)
+    .default([]),
 })
 
 /**
@@ -41,7 +47,13 @@ export async function POST(request: Request) {
     return fail("Slow down a little", 429)
   const parsed = await body(request, input)
   if ("error" in parsed) return parsed.error
-  const found = await resolve(parsed.data.candidates, {
+  const { platform, texts } = parsed.data
+  if (!parsed.data.candidates.length && !texts.length)
+    return fail("Nothing to read in that file", 400)
+  const named = texts.length
+    ? await namedThings({ userId: auth.session.user.id, platform, texts })
+    : []
+  const found = await resolve([...parsed.data.candidates, ...named], {
     userId: auth.session.user.id,
     purpose: `Import from ${parsed.data.platform}`,
   })
@@ -57,6 +69,15 @@ export async function POST(request: Request) {
       caption: f.caption,
       from: f.from,
     }))
+  // The file is in: no more reminding about it.
+  await db
+    .delete(schema.exportRequests)
+    .where(
+      and(
+        eq(schema.exportRequests.userId, auth.session.user.id),
+        eq(schema.exportRequests.platform, platform),
+      ),
+    )
   // The feed's card shows when its data last came in.
   if (parsed.data.platform !== "spotify")
     await db

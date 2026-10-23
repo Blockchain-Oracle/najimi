@@ -140,3 +140,28 @@ export const socialActions = pgTable(
   },
   (t) => [index("social_actions_user_idx").on(t.userId, t.platform, t.createdAt)],
 )
+
+/** A platform whose data a person can download and bring in (W14). */
+export type ExportSource = "x" | "instagram" | "tiktok" | "youtube" | "spotify"
+
+/**
+ * A data download someone asked a platform for, from Najimi: when, when it's usually ready, and
+ * when Najimi reminded them. Bringing the file in clears it.
+ */
+export const exportRequests = pgTable(
+  "export_requests",
+  {
+    id: uuid().defaultRandom().primaryKey(),
+    userId: text()
+      .references(() => user.id, { onDelete: "cascade" })
+      .notNull(),
+    platform: text().$type<ExportSource>().notNull(),
+    requestedAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
+    readyAt: timestamp({ withTimezone: true }).notNull(),
+    nudgedAt: timestamp({ withTimezone: true }),
+  },
+  (t) => [
+    uniqueIndex("export_requests_user_platform").on(t.userId, t.platform),
+    index("export_requests_ready_idx").on(t.readyAt),
+  ],
+)

@@ -54,6 +54,7 @@ type Notice = {
     | "game"
     | "booking"
     | "tuneup"
+    | "export"
   chatId: string | null
   data: Record<string, unknown>
   read: boolean
@@ -122,7 +123,7 @@ function Inbox({ initialUnread, after }: { initialUnread: number; after: number 
     if (n.kind === "drop") return t("noticeDrop", { name })
     if (n.kind === "game")
       return t("noticeGame", { who, title: (n.data.title as string | undefined) ?? "", name })
-    if (n.kind === "booking" || n.kind === "tuneup")
+    if (n.kind === "booking" || n.kind === "tuneup" || n.kind === "export")
       return (n.data.text as string | undefined) ?? name
     return t("noticeMention", { who })
   }
@@ -168,6 +169,8 @@ function Inbox({ initialUnread, after }: { initialUnread: number; after: number 
                     onClick={() => {
                       setOpen(false)
                       if (n.kind === "tuneup") router.push("/connect")
+                      else if (n.kind === "export")
+                        router.push(`/connect?bring=${String(n.data.platform ?? "")}`)
                       else if (typeof n.data.token === "string")
                         router.push(`/play/${n.data.token}`)
                       else if (typeof n.data.businessId === "string")

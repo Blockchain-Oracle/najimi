@@ -25,6 +25,23 @@ export const YOUTUBE = {
   likedPages: 2,
 } as const
 
+/**
+ * Each platform's own "download your data" page, and how long its file usually takes, so Najimi
+ * can open the page in one tap and remind you when the file is usually ready.
+ */
+export const EXPORTS = {
+  request: {
+    x: "https://x.com/settings/download_your_data",
+    instagram: "https://accountscenter.instagram.com/info_and_permissions/dyi/",
+    tiktok: "https://www.tiktok.com/setting/download-your-data",
+    youtube: "https://takeout.google.com/settings/takeout/custom/youtube",
+    spotify: "https://www.spotify.com/account/privacy/",
+  },
+  waitHours: { x: 24, instagram: 4, tiktok: 72, youtube: 1, spotify: 120 },
+  /** The texts one file sends to be read for the culture they name (likes, titles, sounds). */
+  texts: 60,
+} as const
+
 /** The privacy policy and terms: where to write, and when they last changed. */
 export const LEGAL = {
   contact: "hello@najimi.xyz",

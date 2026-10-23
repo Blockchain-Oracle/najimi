@@ -60,7 +60,7 @@ export async function namedThings(input: {
   const read = await generateObject({
     model: agentModel(modelId),
     schema: named,
-    prompt: `These are recent ${input.platform} posts by one person. List the artists, albums, films, TV shows, books, podcasts, games, brands and venues (bars, restaurants, clubs, shops, museums) they name or clearly refer to, with their exact names. Leave out countries, cities, private people, opinions and anything you're unsure is a real title.\n\n${texts.map((t, i) => `${i + 1}. ${t}`).join("\n")}`,
+    prompt: `These are recent ${input.platform} posts, likes or titles from one person. List the artists, albums, films, TV shows, books, podcasts, games, brands and venues (bars, restaurants, clubs, shops, museums) they name or clearly refer to, with their exact names. Leave out countries, cities, private people, opinions, the channel, network or account that posted something, and anything you're unsure is a real title.\n\n${texts.map((t, i) => `${i + 1}. ${t}`).join("\n")}`,
     maxOutputTokens: 900,
     providerOptions: { openai: { reasoningEffort: "low" } },
   }).catch(() => null)

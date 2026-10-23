@@ -50,7 +50,8 @@ Qloo is the core; everything else makes its answers playable, mappable and booka
 | --- | --- | --- |
 | <Logo name="x" /> **X** | Connect with your own session: read who you follow, follow, post. Through `rettiwt-api`. | `CONNECTOR_SECRET` |
 | <Logo name="instagram" /> **Instagram** | Connect with your own session: read, follow, like, save, post. Through `instagrapi` in the social bridge. | `CONNECTOR_SECRET`, `SOCIAL_BRIDGE_URL`, `SOCIAL_BRIDGE_TOKEN` |
-| <Logo name="tiktok" /> **TikTok**, <Logo name="youtube" /> YouTube, <Logo name="spotify" /> Spotify | Your data exports, read in your browser | none |
+| <Logo name="tiktok" /> **TikTok**, <Logo name="youtube" /> YouTube, <Logo name="spotify" /> Spotify | Your data downloads, read in your browser (also X's archive and Instagram's download); each platform's download page one tap away, with a reminder when the file is usually ready | none |
+| <Logo name="youtube" /> **YouTube Data API** | Connect YouTube: read-only subscriptions and liked videos, asked for only when tapped | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` |
 | <Logo name="letterboxd" /> **Letterboxd**, <Logo name="goodreads" /> **Goodreads** | Import by username (diary, shelf) | none |
 | <Logo name="lastdotfm" /> **Last.fm** | Import your top artists by username | `LASTFM_API_KEY` |
 
@@ -60,6 +61,6 @@ Qloo is the core; everything else makes its answers playable, mappable and booka
 | --- | --- | --- |
 | <Logo name="postgresql" /> **Postgres** | Everything: data, the Qloo cache, the queues, the live pipe | `DATABASE_URL` |
 | S3-compatible storage | Photos, pictures, files (RustFS locally) | `S3_ENDPOINT`, `S3_REGION`, `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY` |
-| **Better Auth** | Sessions, guests, usernames, email codes, Google sign-in | `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` |
+| **Better Auth** | Sessions, guests, usernames, email codes, Google and TikTok sign-in | `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `TIKTOK_CLIENT_KEY`, `TIKTOK_CLIENT_SECRET` |
 | <Logo name="resend" /> **Resend** | Sign-in codes; reports to the owner | `RESEND_API_KEY`, `EMAIL_FROM`, `REPORTS_EMAIL` |
 | Web Push | Notifications to installed phones | `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT` |
