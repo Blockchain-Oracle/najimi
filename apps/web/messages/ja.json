@@ -1605,7 +1605,8 @@
     "connecting": "接続中…",
     "incoming": "{who}から着信中",
     "incomingIn": "{who}から着信中 · {chat}",
-    "decline": "今は出ない"
+    "decline": "今は出ない",
+    "justTalk": "話しかけるだけで、Najimiが何でも答え、見つけたものをチャットに共有します。"
   },
   "Phone": {
     "off": "電話機能はまだ有効になっていません。",

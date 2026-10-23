@@ -1605,7 +1605,8 @@
     "connecting": "Inaunganisha…",
     "incoming": "{who} anakupigia",
     "incomingIn": "{who} anakupigia · {chat}",
-    "decline": "Si sasa"
+    "decline": "Si sasa",
+    "justTalk": "Zungumza tu: Najimi hujibu kila unachosema na kuweka inachopata kwenye gumzo."
   },
   "Phone": {
     "off": "Simu za kawaida bado hazijawashwa.",

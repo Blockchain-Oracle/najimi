@@ -1605,7 +1605,8 @@
     "connecting": "Connexion…",
     "incoming": "{who} t’appelle",
     "incomingIn": "{who} t’appelle · {chat}",
-    "decline": "Pas maintenant"
+    "decline": "Pas maintenant",
+    "justTalk": "Discute : Najimi répond à tout ce que tu dis et partage ses trouvailles dans le chat."
   },
   "Phone": {
     "off": "Les appels téléphoniques ne sont pas encore activés.",

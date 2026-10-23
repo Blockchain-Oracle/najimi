@@ -142,9 +142,10 @@ function Room({
 
   // It rings while nobody else has come, for as long as a phone would.
   const [ringing, setRinging] = useState(true)
+  // Someone came, or Najimi did: nothing left to ring for.
   useEffect(() => {
-    if (others > 0) setRinging(false)
-  }, [others])
+    if (others > 0 || najimiHere) setRinging(false)
+  }, [others, najimiHere])
   useEffect(() => {
     if (!ringing) return
     const stop = ring("out")
@@ -192,7 +193,9 @@ function Room({
   }
 
   const status = najimiHere
-    ? t("sayName")
+    ? others > 0
+      ? t("sayName")
+      : t("justTalk")
     : askedAt != null
       ? t("najimiComing")
       : najimiFailed

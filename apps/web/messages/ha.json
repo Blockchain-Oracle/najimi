@@ -1605,7 +1605,8 @@
     "connecting": "Ana haɗawa…",
     "incoming": "{who} na kira",
     "incomingIn": "{who} na kira · {chat}",
-    "decline": "Ba yanzu ba"
+    "decline": "Ba yanzu ba",
+    "justTalk": "Yi hira kawai: Najimi tana amsa duk abin da ka faɗa, ta kuma saka abin da ta gano a chat."
   },
   "Phone": {
     "off": "Ba a kunna kiran waya tukuna.",

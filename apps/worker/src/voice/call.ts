@@ -31,8 +31,14 @@ const HEAR_RATE = 16_000
 const SPEAK_RATE = 24_000
 /** 10 ms of audio at the speaking rate. */
 const SPEAK_FRAME = SPEAK_RATE / 100
-/** How "Najimi" tends to come back from speech-to-text. */
-const ADDRESSED = /\bn[aeio]\s?(?:j|g|dz|zh|y)\s?(?:i|ee|e|a)?\s?m(?:i|ee|y|e)\b/i
+/**
+ * How "Najimi" comes back from speech-to-text: as itself and its near spellings (Najimy, Nagimi,
+ * Nijimi), and as the name it's most often heard as, "(Na) Jimmy" (seen in real calls).
+ */
+const ADDRESSED =
+  /\bn[aeio]\s?(?:j|g|dz|zh|y)\s?(?:i|ee|e|a)?\s?m(?:i|ee|y|e)\b|\b(?:na[\s-]?)?jimm?(?:y|ie|i)\b/i
+/** Tells speech-to-text the name it will hear, so it spells it right more often. */
+const HEARING_HINT = "A voice call with Najimi, an AI. People say its name: Najimi."
 
 type Speaker = {
   identity: string
@@ -81,6 +87,7 @@ async function transcribe(samples: Int16Array): Promise<string> {
   if (!env.OPENAI_API_KEY) return ""
   const form = new FormData()
   form.set("model", CALLS.sttModel)
+  form.set("prompt", HEARING_HINT)
   form.set("file", wav(samples, HEAR_RATE), "speech.wav")
   const r = await fetch("https://api.openai.com/v1/audio/transcriptions", {
     method: "POST",
@@ -219,7 +226,10 @@ export async function joinCall({ room: roomName, chatId }: Payload<"callJoin">) 
       name: s.name,
       text,
     })
-    if (ADDRESSED.test(text)) {
+    // With one person in the call it's a conversation, and everything they say is for Najimi;
+    // with more, Najimi answers only when someone says its name.
+    const alone = room.remoteParticipants.size <= 1
+    if ((alone && text.split(/\s+/).length >= 2) || ADDRESSED.test(text)) {
       queue.push({ speaker: s, text })
       void answerNext()
     }
@@ -267,7 +277,12 @@ export async function joinCall({ room: roomName, chatId }: Payload<"callJoin">) 
     }
   })
 
-  await speak(source, "Hi, I'm Najimi. I'm listening; say my name when you want me.")
+  await speak(
+    source,
+    room.remoteParticipants.size <= 1
+      ? "Hi, I'm Najimi. Ask me anything: where to go tonight, what to watch, what to play."
+      : "Hi, I'm Najimi. I'm listening; say my name when you want me.",
+  )
   await addLine(roomName, {
     at: new Date().toISOString(),
     userId: null,

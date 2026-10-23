@@ -1605,7 +1605,8 @@
     "connecting": "Ń so pọ̀…",
     "incoming": "{who} ń pè ọ́",
     "incomingIn": "{who} ń pè ọ́ · {chat}",
-    "decline": "Kì í ṣe báyìí"
+    "decline": "Kì í ṣe báyìí",
+    "justTalk": "Máa bá a sọ̀rọ̀: Najimi máa dáhùn gbogbo ohun tí o bá sọ, ó sì máa fi ohun tó rí sínú chat."
   },
   "Phone": {
     "off": "A kò tíì tan àwọn ìpè fóònù sí.",
