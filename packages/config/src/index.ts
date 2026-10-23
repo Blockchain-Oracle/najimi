@@ -352,6 +352,23 @@ export const UPLOAD = {
   jpegQuality: 88,
 } as const
 
+/** Stories (S18): a day long, a short caption; videos up to a minute, made phone-ready. */
+export const STORIES = {
+  hours: 24,
+  captionMax: 140,
+  /** Stories one person can have up at once. */
+  perPerson: 30,
+  video: {
+    maxBytes: 80 * 1024 * 1024,
+    maxSeconds: 60,
+    mimes: ["video/mp4", "video/quicktime", "video/webm"],
+    /** The long edge the phone-ready copy is scaled to fit. */
+    maxEdge: 1920,
+  },
+  /** Reactions a viewer can send with one tap. */
+  reactions: ["❤️", "🔥", "😂", "😮", "😢", "👏"],
+} as const
+
 /** Object storage (RustFS, S3-compatible). One private bucket; keys are random, never per user. */
 export const STORAGE = {
   bucket: "najimi",

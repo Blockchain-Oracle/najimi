@@ -27,6 +27,8 @@ import {
   session,
   shares,
   socialActions,
+  stories,
+  storyViews,
   tuneUps,
   uploads,
   usageDays,
@@ -96,6 +98,7 @@ export async function reownUserData(db: Db, fromUserId: string, toUserId: string
       runs,
       plans,
       bookings,
+      stories,
     ]) {
       await tx.update(table).set({ ownerId: toUserId }).where(eq(table.ownerId, fromUserId))
     }
@@ -117,6 +120,12 @@ export async function reownUserData(db: Db, fromUserId: string, toUserId: string
       where user_id = ${fromUserId}
       on conflict do nothing`)
     await tx.delete(pollVotes).where(eq(pollVotes.userId, fromUserId))
+    await tx.execute(sql`
+      insert into ${storyViews} (story_id, viewer_id, reaction, at)
+      select story_id, ${toUserId}, reaction, at from ${storyViews}
+      where viewer_id = ${fromUserId}
+      on conflict do nothing`)
+    await tx.delete(storyViews).where(eq(storyViews.viewerId, fromUserId))
     await tx.execute(sql`
       insert into ${follows} (follower_id, followee_id, created_at)
       select ${toUserId}, followee_id, created_at from ${follows}

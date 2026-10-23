@@ -13,6 +13,7 @@ import { dailyDrop } from "./jobs/daily-drop"
 import { guestsCleanup } from "./jobs/forget"
 import { mediaGenerate, pollVideos } from "./jobs/media"
 import { socialMornings, socialRun } from "./jobs/social"
+import { storiesExpire, storyVideo } from "./jobs/stories"
 import { tasteRefresh, tasteRetune } from "./jobs/taste-refresh"
 import { tuneUpNudge } from "./jobs/tune-up-nudge"
 import { startPush } from "./push"
@@ -110,6 +111,21 @@ async function main() {
     await sweepLiveEvents(ROOMS.liveKeepMs).catch((error) => console.error("[live] sweep", error))
   })
   await queues.schedule(QUEUES.guestsCleanup.name, AUTH.guestSweepCron, {}, { tz: "UTC" })
+
+  // Stories (S18): a video made phone-ready; every hour, stories past their day go.
+  await queues.work<Payload<"storyVideo">>(
+    QUEUES.storyVideo.name,
+    { localConcurrency: 1 },
+    async ([job]) => {
+      if (!job) return
+      await storyVideo(QUEUES.storyVideo.payload.parse(job.data).storyId)
+    },
+  )
+  await queues.work(QUEUES.storiesExpire.name, async ([job]) => {
+    if (!job) return
+    await storiesExpire()
+  })
+  await queues.schedule(QUEUES.storiesExpire.name, "35 * * * *", {}, { tz: "UTC" })
 
   // Najimi's own account and the public circle it runs; then the morning's drops.
   await ensureLounge().catch((error) => console.error("[lounge]", error))

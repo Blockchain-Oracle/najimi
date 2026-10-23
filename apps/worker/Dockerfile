@@ -18,6 +18,10 @@ RUN pnpm --filter @najimi/worker build \
 
 FROM node:22.23.3-bookworm-slim
 ENV NODE_ENV=production
+# ffmpeg makes video stories phone-ready (H.264 + AAC, fast start) and takes their posters.
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends ffmpeg \
+  && rm -rf /var/lib/apt/lists/*
 # The bundle finds the migrations the way the source did (packages/db/drizzle from the repo root).
 WORKDIR /app/apps/worker
 COPY --from=build /out/package.json ./package.json

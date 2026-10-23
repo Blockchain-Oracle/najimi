@@ -1,15 +1,15 @@
 import { charge, ownsUploads, publishMessage, roomMessages, toUI } from "@najimi/agent/server"
-import { DEFAULT_LOCALE, ROOMS } from "@najimi/config"
+import { ROOMS } from "@najimi/config"
 import { db, schema } from "@najimi/db"
 import { enqueue } from "@najimi/jobs"
 import { and, eq, gte, isNull, ne } from "drizzle-orm"
 import { z } from "zod"
 import { body, fail, json, withSession } from "@/lib/api"
 import { chatExists, createAgentRoom, ownedChat } from "@/lib/chat/store"
-import { isLocale } from "@/lib/i18n"
 import { callsNajimi } from "@/lib/mention"
 import { selfOf } from "@/lib/people"
 import { allow } from "@/lib/rate-limit"
+import { localeFrom } from "@/lib/request-locale"
 import { blockedWith, notify } from "@/lib/social"
 
 /** Calling Najimi in a room: "@najimi", or a message that starts with its name. */
@@ -37,11 +37,6 @@ const input = z.object({
     .regex(/^[A-Za-z_+\-/0-9]{1,64}$/)
     .optional(),
 })
-
-const localeFrom = (request: Request) => {
-  const match = /(?:^|;\s*)NEXT_LOCALE=([a-z]{2})/.exec(request.headers.get("cookie") ?? "")
-  return match?.[1] && isLocale(match[1]) ? match[1] : DEFAULT_LOCALE
-}
 
 /** A page of a room's messages, oldest first: the newest, or those before `before` (ms). */
 export async function GET(request: Request, ctx: RouteContext<"/api/rooms/[id]/messages">) {

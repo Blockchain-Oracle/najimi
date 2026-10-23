@@ -4,6 +4,7 @@ import { and, eq, isNull, sql } from "drizzle-orm"
 import { z } from "zod"
 import { fail } from "@/lib/api"
 import { getSession } from "@/lib/session"
+import { sharedInStory } from "@/lib/stories"
 
 const params = z.object({ kind: z.enum(["upload", "creation"]), id: z.uuid() })
 const variants = z.enum(["original", "display", "thumb", "poster"]).catch("display")
@@ -105,6 +106,8 @@ export async function GET(request: Request, ctx: RouteContext<"/api/media/[kind]
     allowed = session?.user.id === found.ownerId
     // A photo someone shared in a room is readable by that room's members.
     if (!allowed && session && kind === "upload") allowed = await sharedInRoom(id, session.user.id)
+    // A story's photo, video or poster: whoever may see that person's stories.
+    if (!allowed && session && kind === "upload") allowed = await sharedInStory(id, session.user.id)
   }
   if (!allowed) return fail("Not found", 404)
 

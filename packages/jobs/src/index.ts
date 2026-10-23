@@ -144,6 +144,20 @@ export const QUEUES = {
     options: { retryLimit: 1, retryDelay: 600, expireInSeconds: 15 * 60 },
     send: {},
   },
+  /** A video story made phone-ready (H.264, fast start, a poster); retried once if ffmpeg trips. */
+  storyVideo: {
+    name: "story-video",
+    payload: z.object({ storyId: z.uuid() }),
+    options: { retryLimit: 1, retryDelay: 30, expireInSeconds: 10 * 60 },
+    send: { heartbeatSeconds: JOBS.heartbeatSeconds },
+  },
+  /** Hourly: stories past their day go, with their files. */
+  storiesExpire: {
+    name: "stories-expire",
+    payload: z.object({}),
+    options: { retryLimit: 1, retryDelay: 300, expireInSeconds: 10 * 60 },
+    send: {},
+  },
 } as const
 
 /** Queues an earlier version of the product used; the worker deletes them once at start. */
