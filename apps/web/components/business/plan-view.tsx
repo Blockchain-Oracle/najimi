@@ -319,6 +319,10 @@ function PeopleCard({ report: r, onChip }: { report: BusinessReport; onChip: (ta
     .concat(KINDS.flatMap(([type]) => r.fans[type]?.slice(1, 2) ?? []))
     .slice(0, 7)
   const rising = r.rising[0]
+  // Plans written before moves had a longer read: its first sentence says who the people are.
+  const summary = r.plan?.moves
+    ? r.plan.summary
+    : (r.plan?.summary.split(/(?<=[.!?])\s/)[0] ?? null)
   const chips = [
     lean?.band
       ? {
@@ -349,8 +353,8 @@ function PeopleCard({ report: r, onChip }: { report: BusinessReport; onChip: (ta
       <span className="text-[12px] font-bold tracking-[0.08em] text-text-3 uppercase">
         {t("yourPeople")}
       </span>
-      {r.plan?.summary ? (
-        <p className="mt-1.5 font-heading text-[17px] leading-snug">{r.plan.summary}</p>
+      {summary ? (
+        <p className="mt-1.5 line-clamp-3 font-heading text-[17px] leading-snug">{summary}</p>
       ) : null}
       {faces.length ? (
         <div className="mt-3 flex -space-x-2">
