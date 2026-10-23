@@ -41,11 +41,13 @@ That taste keeps working across the app:
 - **Earth:** see where your taste concentrates in a city. Open a square for its local scene: artists, places, brands, and words. Switch between your taste and a circle's, or use the taste twin radar.
 - **Graph:** pull a love's weight, expand a node into other categories, overlay a friend's taste, and revisit how yours changed.
 - **Plans:** ask for a night out or a trip. Najimi uses Qloo to choose areas and stops, shows how each stop fits the people involved, builds a route, adds nearby shows, and gives you a shareable plan and calendar link.
+- **Booking by phone:** with your yes, Najimi phones the venue, says it's an AI, and asks for the table. Within a minute the chat shows the outcome (booked, a time they offered, busy, no answer) with the call's recording; you get it by email too, a reminder the day before, and one tap into Google Calendar.
+- **Calls:** call your circle or a friend in the app, bring Najimi in, and it answers out loud when you say its name, puts its cards in the chat, and leaves a summary. You can also add Najimi to a phone call you're already on.
 - **Your feeds:** examine X, Instagram, TikTok, or YouTube one platform at a time. Bring in what you already follow, score a screenshot of your feed against your taste, see accounts and topics to try, and connect X or Instagram for a scheduled “Do it for me” follow flow.
 - **Business mode:** give Najimi a place you run. It reads the site, identifies the business or comparable places in Qloo, and builds a shareable plan: who its people are in one card, then three moves for the week, each with one next step (post it, invite the partner, plan it, play the set).
 - **Passport and Wrapped:** see the loves, nights, trips, and games that marked your year, then make story slides from them.
 
-Najimi works on desktop and mobile. A guest can start without an account, then keep their taste if they sign in later.
+Najimi works on desktop and mobile, in twelve languages, and writes to you in its own look (a welcome, a Sunday "week in taste", booking news), each email with one-click unsubscribe. A guest can start without an account, then keep their taste if they sign in later.
 
 ## Inside the working app
 
