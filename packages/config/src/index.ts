@@ -217,8 +217,9 @@ export const ROOMS = {
 export const GAMES = {
   /** Half-widths of the wavelength's target bands (points off Qloo's number): 90+, 76+, 50+ points. */
   bands: [5, 12, 25],
-  /** The daily drop: a wavelength round about a member, in every circle active this week (UTC). */
-  dailyCron: "0 9 * * *",
+  /** The daily drop: a wavelength round about a member, in every circle active this week, at this
+   * hour in the circle starter's own time zone (the job runs hourly). */
+  dropHour: 9,
   /** A circle counts as active if someone spoke in it within this long. */
   activeDays: 7,
   /** The public circle anyone can join from People, run by Najimi. */

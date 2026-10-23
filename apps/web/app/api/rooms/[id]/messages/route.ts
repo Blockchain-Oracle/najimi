@@ -99,6 +99,13 @@ export async function POST(request: Request, ctx: RouteContext<"/api/rooms/[id]/
   // ("@najimi", "Najimi, …"); a turn takes from today's allowance.
   const guest = Boolean((user as { isAnonymous?: boolean | null }).isAnonymous)
   const answers = callsNajimi(chat.kind, text)
+  // Their device's time zone, kept fresh: their mornings (drops, nudges) are theirs.
+  if (tz)
+    await db
+      .insert(schema.userPrefs)
+      .values({ userId: user.id, tz })
+      .onConflictDoUpdate({ target: schema.userPrefs.userId, set: { tz } })
+      .catch(() => null)
 
   // Blocking holds in rooms you already share: a DM with someone either of you blocked is closed,
   // and in a circle they don't hear about each other's messages.

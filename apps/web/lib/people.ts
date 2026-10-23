@@ -3,7 +3,7 @@ import { lookById } from "@najimi/config"
 import { db, schema } from "@najimi/db"
 import type { StoredPick } from "@najimi/db/schema"
 import { enqueue } from "@najimi/jobs"
-import { and, asc, desc, eq, sql } from "drizzle-orm"
+import { and, asc, desc, eq, gte, sql } from "drizzle-orm"
 
 export type PersonRow = typeof schema.people.$inferSelect
 export type LoveRow = typeof schema.loves.$inferSelect
@@ -101,6 +101,23 @@ export async function hidePick(personId: string, qlooId: string) {
 
 /** Starts recomputing a person's taste; the reveal watches the returned run. */
 export async function startTasteRun(ownerId: string, personId: string): Promise<string> {
+  // A run for this taste that hasn't started yet picks up every change made meanwhile (it reads
+  // the loves when it starts), so quick weight changes share one recompute instead of each
+  // starting their own.
+  const [waiting] = await db
+    .select({ id: schema.runs.id })
+    .from(schema.runs)
+    .where(
+      and(
+        eq(schema.runs.ownerId, ownerId),
+        eq(schema.runs.kind, "taste"),
+        eq(schema.runs.status, "queued"),
+        sql`${schema.runs.subject}->>'personId' = ${personId}`,
+        gte(schema.runs.createdAt, new Date(Date.now() - 60_000)),
+      ),
+    )
+    .limit(1)
+  if (waiting) return waiting.id
   const [run] = await db
     .insert(schema.runs)
     .values({ ownerId, kind: "taste", subject: { personId } })

@@ -71,6 +71,8 @@ export const userPrefs = pgTable("user_prefs", {
   /** Ask before making (default), make automatically, or plan only (rule 6). */
   mode: text().$type<"ask" | "auto" | "plan">().default("ask").notNull(),
   onboardedAt: timestamp({ withTimezone: true }),
+  /** Their time zone (from their device, kept fresh as they use the app): mornings are theirs. */
+  tz: text(),
   /** Which news reaches the phone as a push (W24); everything is on until they say. */
   push: jsonb()
     .$type<PushPrefs>()

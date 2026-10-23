@@ -53,7 +53,7 @@ Built for the **[Qloo Agentic Hackathon](https://qloo.devpost.com/)**. *Najimi* 
 - **Feed.** Full-screen cards with 30-second Apple previews, trailers, podcast episodes, books and places. Love or skip, tune the mix like a mixing desk, and one player follows you round the app (lock screen included).
 - **People and circles.** Search by username, see your match with anyone, find your taste twins, and make circles: group chats with Najimi in them.
 - **Games.** *Guess my wavelength*, *How well do you know me*, *Taste twins* and *Blind Taste*, with a daily drop per circle, a weekly leaderboard, and challenge links that work without an account.
-- **Earth.** A globe of where your taste (or a friend's, or a circle's) lives. Tap a square for its scene; the radar shows people near you who match.
+- **Earth.** A globe of where your taste (or a friend's, or a circle's) lives. Tap a square for its scene; the radar shows the people whose taste matches yours (for those who turned it on).
 - **Graph.** Your taste as a web: drag a love's weight, grow any node, lay a friend's taste over yours, slide back through your history.
 - **Your feeds.** One platform at a time (X, Instagram, TikTok, YouTube): a score for how much of your For You page is really you, today's accounts to follow and the topics to teach it, and **Do it for me**, where Najimi follows them for you each morning, slowly.
 - **Plans and booking.** "9pm in Lekki" or "Lisbon for three days": stops in order with the real route, each person's fit, shows that night, *Add to calendar*. The day after, Najimi asks how it was.

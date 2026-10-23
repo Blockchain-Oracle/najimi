@@ -61,6 +61,17 @@ export type InstructionContext = {
     name: string | null
     members: { name: string; city: string | null; loves: string[] }[]
   } | null
+  /** Their recent and coming plans and bookings, so "how was Saturday" or "cancel the hotel" land. */
+  life?: {
+    plans: { title: string; when: string | null; link: string; outcome: string | null }[]
+    bookings: {
+      what: string
+      kind: string
+      when: string | null
+      status: string
+      outcome: string | null
+    }[]
+  }
   /** The social accounts they connected (and whether you follow for them there each morning). */
   socials?: { platform: string; handle: string | null; active: boolean; autopilot: boolean }[]
   /** Where they were when they asked (the feed card on screen…). */
@@ -100,6 +111,12 @@ export function contextBlock(c: InstructionContext): string {
       : "Their taste words are still being computed.",
     c.room
       ? `This is ${c.room.kind === "circle" ? `the circle "${c.room.name ?? ""}"` : "a conversation between friends"}; you are one of the room and ${person.name} just called you. Everyone in it: ${c.room.members.map((m) => `${m.name}${m.city ? ` (${m.city})` : ""}, who loves ${m.loves.join(", ") || "nothing yet"}`).join("; ")}. Answer for the room: when you pick something, say who it fits and why, by name.`
+      : "",
+    c.life?.plans.length
+      ? `Their plans: ${c.life.plans.map((p) => `${p.title}${p.when ? ` (${p.when})` : ""} ${p.link}${p.outcome ? `, they said: ${p.outcome}` : ""}`).join("; ")}.`
+      : "",
+    c.life?.bookings.length
+      ? `Their bookings: ${c.life.bookings.map((b) => `${b.what} (${b.kind}${b.when ? `, ${b.when}` : ""}, ${b.status}${b.outcome ? `, they said: ${b.outcome}` : ""})`).join("; ")}.`
       : "",
     c.socials?.length
       ? `Their connected accounts: ${c.socials.map((x) => `${x.platform} @${x.handle ?? "?"}${x.active ? "" : " (needs reconnecting)"}${x.autopilot ? ", Do it for me on" : ""}`).join("; ")}.`

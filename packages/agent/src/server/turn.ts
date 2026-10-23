@@ -14,7 +14,7 @@ import {
   streamText,
   toUIMessageStream,
 } from "ai"
-import { and, asc, desc, eq } from "drizzle-orm"
+import { and, asc, desc, eq, gte } from "drizzle-orm"
 import { contextBlock, RULES } from "../instructions"
 import { agentModel, brainModelId, costOf } from "../models"
 import { toolDefs } from "../tools"
@@ -191,6 +191,48 @@ export async function runTurn(chatId: string): Promise<void> {
   }))
   // Their own clock: "tonight" and "9pm" mean where they are.
   const tz = safeZone(lastHuman?.metadata?.tz)
+  // What they planned and booked lately (and what's coming), with what they said about it.
+  const since = new Date(Date.now() - 30 * 24 * 3600_000)
+  const [plans, bookings] = await Promise.all([
+    db
+      .select()
+      .from(schema.plans)
+      .where(and(eq(schema.plans.ownerId, by), gte(schema.plans.createdAt, since)))
+      .orderBy(desc(schema.plans.createdAt))
+      .limit(5),
+    db
+      .select()
+      .from(schema.bookings)
+      .where(and(eq(schema.bookings.ownerId, by), gte(schema.bookings.createdAt, since)))
+      .orderBy(desc(schema.bookings.createdAt))
+      .limit(6),
+  ])
+  const at = (d: Date | null) =>
+    d
+      ? new Intl.DateTimeFormat("en-GB", {
+          timeZone: tz,
+          weekday: "short",
+          day: "numeric",
+          month: "short",
+          hour: "2-digit",
+          minute: "2-digit",
+        }).format(d)
+      : null
+  const life = {
+    plans: plans.map((p) => ({
+      title: p.title,
+      when: at(p.startsAt),
+      link: `/plan/${p.token}`,
+      outcome: p.outcome,
+    })),
+    bookings: bookings.map((b) => ({
+      what: b.venue ?? b.title,
+      kind: b.kind,
+      when: at(b.startsAt),
+      status: b.status,
+      outcome: b.outcome,
+    })),
+  }
   const tools = buildTools({ userId: by, guest, chatId, person, tz }, () => assistantId)
   const abort = new AbortController()
   // Stop: someone asked Najimi to stop; checked while it answers.
@@ -220,6 +262,7 @@ export async function runTurn(chatId: string): Promise<void> {
         },
         screen: lastHuman?.metadata?.screen ?? null,
         socials,
+        life,
         room,
         photos,
         creations: made,

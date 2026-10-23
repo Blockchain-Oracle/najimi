@@ -1,5 +1,5 @@
 import { buildBusiness, runTurn } from "@najimi/agent/server"
-import { AUTH, BUSINESS, GAMES, MEDIA, ROOMS } from "@najimi/config"
+import { AUTH, BUSINESS, MEDIA, ROOMS } from "@najimi/config"
 import { migrateDatabase } from "@najimi/db/migrate"
 import { ensureLounge } from "@najimi/games/lounge"
 import { boss, type Payload, QUEUES, RETIRED_QUEUES } from "@najimi/jobs"
@@ -117,7 +117,8 @@ async function main() {
     if (!job) return
     await dailyDrop()
   })
-  await queues.schedule(QUEUES.dailyDrop.name, GAMES.dailyCron, {}, { tz: "UTC" })
+  // Hourly: each circle gets its drop on its own morning.
+  await queues.schedule(QUEUES.dailyDrop.name, "10 * * * *", {}, { tz: "UTC" })
 
   // Bookings: a call's result when its webhook doesn't come; "How was it?" once things happen.
   await queues.work<Payload<"bookingCheck">>(QUEUES.bookingCheck.name, async ([job]) => {
@@ -133,7 +134,8 @@ async function main() {
     if (!job) return
     await tuneUpNudge()
   })
-  await queues.schedule(QUEUES.tuneUpNudge.name, "0 8 * * *", {}, { tz: "UTC" })
+  // Hourly: each person is nudged on their own morning.
+  await queues.schedule(QUEUES.tuneUpNudge.name, "20 * * * *", {}, { tz: "UTC" })
 
   // Business plans (W19), one build per business at a time; Mondays, each again with what changed.
   await queues.work<Payload<"businessBuild">>(

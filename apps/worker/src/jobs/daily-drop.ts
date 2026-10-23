@@ -5,6 +5,7 @@ import { NAJIMI_USER } from "@najimi/games/lounge"
 import { createRound, TITLES } from "@najimi/games/round"
 import { publish, topic } from "@najimi/live"
 import { and, eq, gte, sql } from "drizzle-orm"
+import { hourIn } from "../local-time"
 
 /*
  * The daily drop (W9): every morning Najimi deals a "Guess my wavelength" round into each circle
@@ -14,16 +15,21 @@ import { and, eq, gte, sql } from "drizzle-orm"
 
 const MIN_LOVES = 3
 
+/**
+ * Runs every hour: a circle gets its drop at GAMES.dropHour in its starter's own time zone (from
+ * their device), once a local day.
+ */
 export async function dailyDrop() {
   const since = new Date(Date.now() - GAMES.activeDays * 24 * 60 * 60 * 1000)
-  const today = new Date()
-  today.setUTCHours(0, 0, 0, 0)
   const circles = await db
-    .select({ id: schema.chats.id, name: schema.chats.name })
+    .select({ id: schema.chats.id, name: schema.chats.name, tz: schema.userPrefs.tz })
     .from(schema.chats)
+    .leftJoin(schema.userPrefs, eq(schema.userPrefs.userId, schema.chats.ownerId))
     .where(and(eq(schema.chats.kind, "circle"), gte(schema.chats.lastActiveAt, since)))
   let dealt = 0
   for (const circle of circles) {
+    if (hourIn(circle.tz) !== GAMES.dropHour) continue
+    // Once a local day: nothing dealt here in the last 20 hours.
     const [already] = await db
       .select({ id: schema.gameRounds.id })
       .from(schema.gameRounds)
@@ -31,7 +37,7 @@ export async function dailyDrop() {
         and(
           eq(schema.gameRounds.chatId, circle.id),
           eq(schema.gameRounds.daily, true),
-          gte(schema.gameRounds.createdAt, today),
+          gte(schema.gameRounds.createdAt, new Date(Date.now() - 20 * 3600_000)),
         ),
       )
     if (already) continue
