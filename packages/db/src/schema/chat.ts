@@ -65,6 +65,8 @@ export const chatMembers = pgTable(
       .references(() => user.id, { onDelete: "cascade" }),
     role: text().$type<"owner" | "member">().default("member").notNull(),
     lastReadAt: timestamp({ withTimezone: true }),
+    /** Pinned to the top of their chats (each person pins for themselves). */
+    pinnedAt: timestamp({ withTimezone: true }),
     joinedAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
   },
   (t) => [

@@ -160,5 +160,22 @@ export function useRoom({
     status === "stopping" ||
     last?.metadata?.status === "streaming" ||
     last?.metadata?.status === "resume"
+  // What's on screen counts as read (their unread count in Chats), a moment after it arrives and
+  // only while the page is in front.
+  const count = messages.length
+  useEffect(() => {
+    if (!count) return
+    const mark = () => {
+      if (document.visibilityState === "visible")
+        void api(`/api/rooms/${chatId}/read`, { method: "POST" }).catch(() => null)
+    }
+    const timer = setTimeout(mark, 1200)
+    document.addEventListener("visibilitychange", mark)
+    return () => {
+      clearTimeout(timer)
+      document.removeEventListener("visibilitychange", mark)
+    }
+  }, [chatId, count])
+
   return { messages, status, busy, error, send, answer, approve, stop, retry }
 }

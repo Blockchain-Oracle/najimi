@@ -74,9 +74,25 @@ export type ChatListItem = {
   lastActiveAt: Date
   /** A DM's other person (their name is the DM's name). */
   other: string | null
+  /** Who else is in it (a DM's other person, a circle's first few), for the row's faces. */
+  faces: { name: string; look: string | null }[]
+  /** The newest message: its words, the card it ended on, who wrote it. */
+  last: {
+    role: "user" | "assistant"
+    mine: boolean
+    author: string | null
+    text: string | null
+    tool: string | null
+  } | null
+  /** Messages from others since they last read it. */
+  unread: number
+  pinnedAt: Date | null
 }
 
-/** The rooms someone is in, most recently active first; `q` searches titles, circle names and people. */
+/**
+ * The rooms someone is in, most recently active first, each with what its row shows (faces, the
+ * last line, unread, pinned); `q` searches titles, circle names and people.
+ */
 export async function chatsOf(
   userId: string,
   opts: { q?: string; limit?: number; kind?: ChatRow["kind"] } = {},
@@ -87,8 +103,48 @@ export async function chatsOf(
     where m.chat_id = ${schema.chats.id} and m.user_id <> ${userId}
     limit 1
   )`
+  const faces = sql<{ name: string; look: string | null }[]>`(
+    select coalesce(json_agg(json_build_object('name', f.name, 'look', f.look)), '[]'::json)
+    from (
+      select p.name, p.look from chat_members as m
+      join people as p on p.owner_id = m.user_id and p.is_self
+      where m.chat_id = ${schema.chats.id} and m.user_id <> ${userId}
+      order by m.joined_at limit 3
+    ) as f
+  )`
+  const last = sql<{
+    role: "user" | "assistant"
+    author_id: string | null
+    author: string | null
+    text: string | null
+    tool: string | null
+  } | null>`(
+    select json_build_object(
+      'role', m.role,
+      'author_id', m.author_id,
+      'author', (select p.name from people as p where p.owner_id = m.author_id and p.is_self limit 1),
+      'text', left((
+        select string_agg(x.v->>'text', ' ') from jsonb_array_elements(m.parts) with ordinality as x(v, i)
+        where x.v->>'type' = 'text'
+      ), 160),
+      'tool', (
+        select x.v->>'type' from jsonb_array_elements(m.parts) with ordinality as x(v, i)
+        where x.v->>'type' like 'tool-%' and x.v->>'type' <> 'tool-tasteBrief'
+        order by x.i desc limit 1
+      )
+    )
+    from messages as m
+    where m.chat_id = ${schema.chats.id} and m.role <> 'system'
+    order by m.created_at desc limit 1
+  )`
+  const unread = sql<number>`(
+    select count(*)::int from messages as m
+    where m.chat_id = ${schema.chats.id} and m.role <> 'system'
+      and (m.author_id is null or m.author_id <> ${userId})
+      and m.created_at > coalesce(${schema.chatMembers.lastReadAt}, ${schema.chatMembers.joinedAt})
+  )`
   const q = opts.q ? `%${opts.q.replace(/[%_]/g, "")}%` : null
-  return db
+  const rows = await db
     .select({
       id: schema.chats.id,
       title: schema.chats.title,
@@ -96,7 +152,11 @@ export async function chatsOf(
       kind: schema.chats.kind,
       status: schema.chats.status,
       lastActiveAt: schema.chats.lastActiveAt,
+      pinnedAt: schema.chatMembers.pinnedAt,
       other,
+      faces,
+      last,
+      unread,
     })
     .from(schema.chatMembers)
     .innerJoin(schema.chats, eq(schema.chats.id, schema.chatMembers.chatId))
@@ -110,7 +170,36 @@ export async function chatsOf(
       ),
     )
     .orderBy(desc(schema.chats.lastActiveAt))
-    .limit(opts.limit ?? 50)
+    .limit(opts.limit ?? 60)
+  return rows.map((r) => ({
+    ...r,
+    faces: r.faces ?? [],
+    last: r.last
+      ? {
+          role: r.last.role,
+          mine: r.last.author_id === userId,
+          author: r.last.author,
+          text: r.last.text,
+          tool: r.last.tool,
+        }
+      : null,
+  }))
+}
+
+/** They've seen everything in this room up to now. */
+export async function markRead(userId: string, chatId: string) {
+  await db
+    .update(schema.chatMembers)
+    .set({ lastReadAt: new Date() })
+    .where(and(eq(schema.chatMembers.chatId, chatId), eq(schema.chatMembers.userId, userId)))
+}
+
+/** Pins a room to the top of their chats, or lets it go. */
+export async function setPinned(userId: string, chatId: string, pinned: boolean) {
+  await db
+    .update(schema.chatMembers)
+    .set({ pinnedAt: pinned ? new Date() : null })
+    .where(and(eq(schema.chatMembers.chatId, chatId), eq(schema.chatMembers.userId, userId)))
 }
 
 /** An invite token: lowercase letters and digits (the join page accepts only these). */

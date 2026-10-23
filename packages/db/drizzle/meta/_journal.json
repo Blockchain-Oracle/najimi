@@ -218,6 +218,13 @@
       "when": 1792743086917,
       "tag": "0030_plan_shows",
       "breakpoints": true
+    },
+    {
+      "idx": 31,
+      "version": "7",
+      "when": 1792747910240,
+      "tag": "0031_chat_pins",
+      "breakpoints": true
     }
   ]
 }

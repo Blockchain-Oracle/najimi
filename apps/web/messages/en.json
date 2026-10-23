@@ -1305,5 +1305,46 @@
     "whereToRead": "Where to read",
     "follow": "Follow",
     "googleReviews": "Google reviews"
+  },
+  "Chats": {
+    "title": "Chats",
+    "tabs": {
+      "all": "All",
+      "agent": "Najimi",
+      "circle": "Circles",
+      "dm": "People"
+    },
+    "pinned": "Pinned",
+    "groups": {
+      "today": "Today",
+      "week": "This week",
+      "earlier": "Earlier"
+    },
+    "pin": "Pin",
+    "unpin": "Unpin",
+    "leave": "Leave",
+    "confirmLeave": "Leave this chat? You can be invited back.",
+    "you": "You",
+    "empty": "No messages yet",
+    "card": "A card",
+    "thinking": "Najimi is thinking…",
+    "noMatch": "No chats match that.",
+    "tools": {
+      "qlooInsights": "Picks for you",
+      "groupFit": "Something for everyone",
+      "planNight": "A night plan",
+      "planTrip": "A trip plan",
+      "findHotels": "Hotels",
+      "callToBook": "A call to book",
+      "startGame": "A game",
+      "businessPlan": "A business plan",
+      "postToX": "A post for X",
+      "makeImage": "A picture",
+      "qlooCompare": "A match",
+      "steerFeed": "Feed tuned",
+      "askUser": "A question",
+      "qlooSearch": "A search",
+      "qlooTags": "Taste words"
+    }
   }
 }

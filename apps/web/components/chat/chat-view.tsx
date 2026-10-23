@@ -16,7 +16,7 @@ import { useNewChat } from "@/lib/new-chat"
 import type { Uploaded } from "@/lib/photo"
 import { type RoomStatus, useRoom } from "@/lib/use-room"
 import { ChatProvider, shareChat } from "./chat-context"
-import { ChatSidebar } from "./chat-sidebar"
+import { ChatList } from "./chat-list"
 import { ChatWelcome, type Starter, type WelcomeTaste } from "./chat-welcome"
 import { type ChatPerson, Composer } from "./composer"
 import { Message } from "./message"
@@ -409,7 +409,7 @@ export function ChatView(props: ChatViewProps) {
         <SheetContent side="left" className="w-[min(85vw,22rem)] border-0 bg-background p-0">
           <SheetTitle className="sr-only">{t("chats")}</SheetTitle>
           <Suspense fallback={null}>
-            <ChatSidebar onPick={() => setHistory(false)} />
+            <ChatList onPick={() => setHistory(false)} />
           </Suspense>
         </SheetContent>
       </Sheet>
