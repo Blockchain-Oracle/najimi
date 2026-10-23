@@ -11,6 +11,7 @@ import { AuraFace } from "@/components/people/person-row"
 import { ProfileForm } from "@/components/people/profile-form"
 import { BlockedPeople } from "@/components/settings/blocked-people"
 import { DeleteData } from "@/components/settings/delete-data"
+import { EmailSettings } from "@/components/settings/email-settings"
 import { ModePicker } from "@/components/settings/mode-picker"
 import { PhoneSettings } from "@/components/settings/phone-settings"
 import { PushSettings } from "@/components/settings/push-settings"
@@ -199,6 +200,21 @@ async function Mine() {
               body: <PushSettings />,
             },
           },
+          // Email, for anyone Najimi has a real address for.
+          ...(email
+            ? [
+                {
+                  id: "email",
+                  icon: "email" as const,
+                  label: t("email"),
+                  value:
+                    prefs?.emailPrefs.weekly === false && prefs?.emailPrefs.news === false
+                      ? t("off")
+                      : t("on"),
+                  sheet: { title: t("email"), body: <EmailSettings /> },
+                },
+              ]
+            : []),
           // Najimi on your phone calls: members only (it needs a number that's yours).
           ...(guest
             ? []

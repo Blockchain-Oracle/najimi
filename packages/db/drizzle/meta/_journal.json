@@ -281,6 +281,13 @@
       "when": 1792775041409,
       "tag": "0039_phone",
       "breakpoints": true
+    },
+    {
+      "idx": 40,
+      "version": "7",
+      "when": 1792780864358,
+      "tag": "0040_email_prefs",
+      "breakpoints": true
     }
   ]
 }

@@ -84,6 +84,11 @@ export const userPrefs = pgTable(
     phone: text(),
     /** Set when they first called Najimi from that number: only then does a call reach their chat. */
     phoneConfirmedAt: timestamp({ withTimezone: true }),
+    /** Which emails they want beyond sign-in codes: the weekly digest, and booking and plan news. */
+    emailPrefs: jsonb().$type<EmailPrefs>().default({ weekly: true, news: true }).notNull(),
+    /** When the welcome email went (once), and the last weekly digest (one a week). */
+    welcomedAt: timestamp({ withTimezone: true }),
+    digestAt: timestamp({ withTimezone: true }),
     ...timestamps,
   },
   (t) => [
@@ -93,6 +98,7 @@ export const userPrefs = pgTable(
 )
 
 export type PushPrefs = { messages: boolean; games: boolean; plans: boolean; feeds: boolean }
+export type EmailPrefs = { weekly: boolean; news: boolean }
 
 /** A person's own taste profile (one per user, `isSelf`): who they are and where. */
 export const people = pgTable(

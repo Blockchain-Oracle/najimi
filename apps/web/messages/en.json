@@ -584,7 +584,8 @@
     "signedIn": "Signed in",
     "phone": "Najimi on your calls",
     "phoneWaiting": "Confirm",
-    "phoneHint": "Add Najimi to a phone call you're on. It listens, and answers when you say its name."
+    "phoneHint": "Add Najimi to a phone call you're on. It listens, and answers when you say its name.",
+    "email": "Email"
   },
   "Chat": {
     "greeting": "What should we find for {name}?",
@@ -1614,5 +1615,23 @@
     "step1": "On any call, tap Add call.",
     "step2": "Dial Najimi: {number}, then Merge.",
     "step3": "Say “Najimi, …” when you want it. What it finds lands in your chats."
+  },
+  "Email": {
+    "to": "To {email}",
+    "weekly": {
+      "title": "Your week in taste",
+      "hint": "Sunday evening: what you loved, something new, what's coming up"
+    },
+    "news": {
+      "title": "Bookings and plans",
+      "hint": "How a call went, confirmations, and reminders before you go"
+    },
+    "codes": "Sign-in codes always come: they're how you get in.",
+    "failed": "That didn't save. Try again.",
+    "offWeekly": "No more weekly digest.",
+    "offNews": "No more booking and plan emails.",
+    "badLink": "That link didn't work.",
+    "changeBack": "You can turn it back on any time in Settings.",
+    "openSettings": "Open Settings"
   }
 }

@@ -10,6 +10,7 @@ import { bookingCheck, followUps } from "./jobs/bookings"
 import { businessWeekly } from "./jobs/business"
 import { chatTitle } from "./jobs/chat-title"
 import { dailyDrop } from "./jobs/daily-drop"
+import { emailRound } from "./jobs/emails"
 import { exportNudges } from "./jobs/export-nudges"
 import { guestsCleanup } from "./jobs/forget"
 import { mediaGenerate, pollVideos } from "./jobs/media"
@@ -148,6 +149,10 @@ async function main() {
     const { bookingId, when } = QUEUES.bookingReminder.payload.parse(job.data)
     await remindBooking(bookingId, when)
   })
+  await queues.work(QUEUES.emailRound.name, async () => {
+    await emailRound()
+  })
+  await queues.schedule(QUEUES.emailRound.name, "*/15 * * * *", {}, { tz: "UTC" })
   await queues.work(QUEUES.followUps.name, async ([job]) => {
     if (!job) return
     await followUps()

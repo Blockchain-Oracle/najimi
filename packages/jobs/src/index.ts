@@ -152,6 +152,13 @@ export const QUEUES = {
     send: {},
   },
   /** Every half hour: Najimi asks how the nights, stays and shows that just happened went. */
+  /** Every quarter hour: welcome emails, and Sunday's "your week in taste" where it's six o'clock. */
+  emailRound: {
+    name: "email-round",
+    payload: z.object({}),
+    options: { retryLimit: 1, retryDelay: 300, expireInSeconds: 10 * 60 },
+    send: {},
+  },
   /** A confirmed booking's reminder: the day before, or two hours before. */
   bookingReminder: {
     name: "booking-reminder",
