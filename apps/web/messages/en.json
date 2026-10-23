@@ -56,6 +56,25 @@
     "builtOn": "Built on <qloo>Qloo</qloo>",
     "openShort": "Open"
   },
+  "Download": {
+    "title": "Najimi on your phone.",
+    "line": "The iPhone and Android apps are on the way. Today, Najimi lives on your Home Screen, with notifications.",
+    "iphone": "iPhone",
+    "android": "Android",
+    "soon": "Coming soon",
+    "today": "On your Home Screen, today",
+    "iosStep1": "Tap Share in Safari",
+    "iosStep2": "Choose Add to Home Screen",
+    "install": "Add Najimi",
+    "installed": "Najimi is on this device",
+    "menuInstall": "Open your browser's menu and choose Install app.",
+    "scan": "Scan with your phone's camera",
+    "qr": "A code that opens Najimi on your phone",
+    "open": "Open Najimi",
+    "cardTitle": "Najimi on your phone",
+    "cardLine": "iPhone & Android coming soon · scan to add it today",
+    "close": "Close"
+  },
   "Language": {
     "label": "Language",
     "beta": "beta"

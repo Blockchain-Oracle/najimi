@@ -5,6 +5,7 @@ import { connection } from "next/server"
 import { getTranslations } from "next-intl/server"
 import { type ReactNode, Suspense } from "react"
 import { qlooTag } from "@/components/brands/qloo-logo"
+import { GetApp } from "@/components/landing/get-app"
 import { type Moment, Moments, WrappedFan } from "@/components/landing/moments"
 import { TasteRing } from "@/components/landing/taste-ring"
 import { LanguageMenu } from "@/components/language-menu"
@@ -149,6 +150,7 @@ export default async function Landing({ params }: PageProps<"/[locale]">) {
           {t.rich("builtOn", qlooTag("ms-0.5 h-[0.9em] text-foreground"))}
         </span>
       </footer>
+      <GetApp />
     </main>
   )
 }
