@@ -53,14 +53,15 @@ const MOMENTS = [
 ] as const
 
 async function Ring({
-  title,
-  subtitle,
+  headline,
+  engine,
   kicker,
   start,
   open,
 }: {
-  title: string
-  subtitle: string
+  /** The promise, large; then the engine behind it, quieter. */
+  headline: string
+  engine: string
   kicker: ReactNode
   start: string
   open: string
@@ -72,12 +73,17 @@ async function Ring({
     .slice(0, 18)
   return (
     <TasteRing art={art}>
-      {/* On a phone the words stay inside the ring's oval (about 17rem across), so no card covers them. */}
-      <div className="pointer-events-none flex w-full max-w-[17rem] flex-col items-center gap-5 text-center md:max-w-2xl md:gap-6">
-        <h1 className="font-title text-[1.9rem] leading-[1.02] md:max-w-[18ch] md:text-[4rem]">
-          {title}
+      {/* Few words inside the ring: the promise large, the agent behind it in one quiet line. On a
+          phone they stay inside the ring's oval (about 17rem across), so no card covers them. */}
+      <div className="pointer-events-none flex w-full max-w-[17rem] flex-col items-center gap-7 text-center md:max-w-2xl md:gap-8">
+        <h1 className="flex flex-col items-center gap-3 md:gap-4">
+          <span className="max-w-[11ch] font-title text-[2.6rem] leading-[0.98] text-balance md:text-[5.2rem]">
+            {headline}
+          </span>
+          <span className="font-heading text-[1.1rem] leading-snug text-text-2 text-balance md:text-[1.6rem]">
+            {engine}
+          </span>
         </h1>
-        <p className="text-[14px] leading-relaxed text-text-2 md:max-w-xl md:text-lg">{subtitle}</p>
         <Suspense fallback={null}>
           <MainAction start={start} open={open} large />
         </Suspense>
@@ -116,8 +122,8 @@ export default async function Landing({ params }: PageProps<"/[locale]">) {
 
       <Suspense fallback={<div className="h-svh" />}>
         <Ring
-          title={t("title")}
-          subtitle={t("subtitle")}
+          headline={t("headline")}
+          engine={t("engine")}
           kicker={t.rich("kicker", qlooTag("ms-0.5 h-[0.95em] text-foreground"))}
           start={t("start")}
           open={t("continue")}

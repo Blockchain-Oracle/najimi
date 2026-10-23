@@ -5,8 +5,8 @@
   },
   "Landing": {
     "kicker": "Taste AI by <qloo>Qloo</qloo>",
-    "title": "Your taste, made social, with an agent that plans for everyone.",
-    "subtitle": "Through Qloo, what you love becomes a feed, friends, games and a map, and an agent in every chat plans nights and trips for everyone's taste.",
+    "headline": "Your taste, made social,",
+    "engine": "with an agent that plans for everyone.",
     "start": "Start — it's free",
     "startShort": "Start",
     "continue": "Open Najimi",
