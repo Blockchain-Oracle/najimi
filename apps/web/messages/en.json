@@ -1296,6 +1296,8 @@
     "askAbout": "Tell me about {name}. Why would I like it?",
     "share": "Share",
     "copied": "Link copied",
-    "more": "More"
+    "more": "More",
+    "onTour": "On tour",
+    "tickets": "Tickets"
   }
 }

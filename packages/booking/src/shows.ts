@@ -90,3 +90,62 @@ export async function showsNear(input: {
     }
   })
 }
+
+/** One date on an artist's tour: where and when, and where to buy (Ticketmaster). */
+export type TourDate = {
+  id: string
+  url: string
+  venue: string | null
+  city: string | null
+  country: string | null
+  localDate: string | null
+  localTime: string | null
+}
+
+type TmTourEvent = TmEvent & {
+  _embedded?: TmEvent["_embedded"] & {
+    venues?: { name?: string; city?: { name?: string }; country?: { countryCode?: string } }[]
+    attractions?: { name?: string }[]
+  }
+}
+
+/**
+ * An artist's next concerts (the entity sheet's "On tour"): in the viewer's country first, else
+ * anywhere. Ticketmaster's keyword search is loose, so only events billing the artist by name
+ * count.
+ */
+export async function tourDates(artist: string, country: string): Promise<TourDate[]> {
+  if (!env.TICKETMASTER_API_KEY) return []
+  const name = artist.trim().toLowerCase()
+  const find = async (countryCode?: string) => {
+    const params = new URLSearchParams({
+      apikey: env.TICKETMASTER_API_KEY ?? "",
+      keyword: artist,
+      classificationName: "music",
+      size: "20",
+      sort: "date,asc",
+    })
+    if (countryCode) params.set("countryCode", countryCode)
+    const res = await fetch(`https://app.ticketmaster.com/discovery/v2/events.json?${params}`, {
+      signal: AbortSignal.timeout(10_000),
+    }).catch(() => null)
+    if (!res?.ok) return []
+    const body = (await res.json()) as { _embedded?: { events?: TmTourEvent[] } }
+    return (body._embedded?.events ?? [])
+      .filter((e) => e._embedded?.attractions?.some((a) => a.name?.trim().toLowerCase() === name))
+      .map((e) => {
+        const venue = e._embedded?.venues?.[0]
+        return {
+          id: e.id,
+          url: e.url,
+          venue: venue?.name ?? null,
+          city: venue?.city?.name ?? null,
+          country: venue?.country?.countryCode ?? null,
+          localDate: e.dates?.start?.localDate ?? null,
+          localTime: e.dates?.start?.localTime ?? null,
+        }
+      })
+  }
+  const near = /^[A-Z]{2}$/.test(country) ? await find(country) : []
+  return (near.length ? near : await find()).slice(0, 4)
+}

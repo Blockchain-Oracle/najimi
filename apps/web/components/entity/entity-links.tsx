@@ -1,11 +1,12 @@
 "use client"
 
 import { cn } from "@najimi/ui/lib/utils"
-import { Car, Clock, Globe, MapPin, Navigation, Phone, Play, Star } from "lucide-react"
-import { useTranslations } from "next-intl"
+import { BookOpen, Car, Clock, Globe, MapPin, Navigation, Phone, Play, Star } from "lucide-react"
+import { useFormatter, useTranslations } from "next-intl"
 import type { ReactNode } from "react"
 import {
   type SimpleIcon,
+  siGoodreads,
   siGoogle,
   siImdb,
   siInstagram,
@@ -282,6 +283,63 @@ export function AccountLinks({ details, isArtist }: { details: EntityDetails; is
       {a.website ? (
         <Pill href={a.website} icon={<Globe className="size-4" />} label={t("website")} />
       ) : null}
+    </Row>
+  )
+}
+
+/** An artist's next concerts, each straight to its tickets (Ticketmaster). */
+export function TourLinks({ tour }: { tour: EntityDetails["tour"] }) {
+  const t = useTranslations("Entity")
+  const format = useFormatter()
+  if (!tour.length) return null
+  return (
+    <section className="flex flex-col gap-2.5">
+      <h3 className="text-[12px] font-semibold tracking-[0.1em] text-white/50 uppercase">
+        {t("onTour")}
+      </h3>
+      <ul className="flex flex-col divide-y divide-white/[0.06] overflow-hidden rounded-tile bg-white/[0.05]">
+        {tour.map((d) => {
+          const day = d.localDate ? new Date(`${d.localDate}T12:00:00`) : null
+          return (
+            <li key={d.id}>
+              <a
+                href={d.url}
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center gap-3 px-3 py-2.5 transition-colors hover:bg-white/[0.05]"
+              >
+                <span className="flex w-11 shrink-0 flex-col items-center leading-none">
+                  <span className="text-[11px] font-semibold text-white/55 uppercase">
+                    {day ? format.dateTime(day, { month: "short" }) : "—"}
+                  </span>
+                  <span className="font-title text-[20px]">
+                    {day ? format.dateTime(day, { day: "numeric" }) : ""}
+                  </span>
+                </span>
+                <span className="flex min-w-0 flex-1 flex-col">
+                  <span className="truncate text-[14px] font-semibold">{d.city ?? d.venue}</span>
+                  <span className="truncate text-[12px] text-white/55">
+                    {[d.venue, d.localTime?.slice(0, 5)].filter(Boolean).join(" · ")}
+                  </span>
+                </span>
+                <span className="shrink-0 rounded-pill bg-white px-3 py-1.5 text-[12px] font-semibold text-black">
+                  {t("tickets")}
+                </span>
+              </a>
+            </li>
+          )
+        })}
+      </ul>
+    </section>
+  )
+}
+
+/** A book on Goodreads and Open Library. */
+export function BookLinks({ book }: { book: NonNullable<EntityDetails["book"]> }) {
+  return (
+    <Row>
+      {book.goodreads ? <Pill href={book.goodreads} brand={siGoodreads} label="Goodreads" /> : null}
+      <Pill href={book.openLibrary} icon={<BookOpen className="size-4" />} label="Open Library" />
     </Row>
   )
 }

@@ -13,7 +13,7 @@ import { type Track, usePlayer, usePlayerClock } from "@/components/player/playe
 import { type EntityDetails, type EntityRef, regionOf } from "@/lib/entity"
 import { api } from "@/lib/fetcher"
 import { qk } from "@/lib/query-keys"
-import { AccountLinks, FilmLinks, PlaceLinks } from "./entity-links"
+import { AccountLinks, BookLinks, FilmLinks, PlaceLinks, TourLinks } from "./entity-links"
 
 /*
  * Any thing, opened, from anywhere in the app (a pick on a profile, a film in a chat, a stop on a
@@ -282,7 +282,11 @@ function EntityBody({
             }}
           />
         ) : null}
-        {d && !d.place && !d.film ? <AccountLinks details={d} isArtist={isArtist} /> : null}
+        {d && !d.place && !d.film && !d.book ? (
+          <AccountLinks details={d} isArtist={isArtist} />
+        ) : null}
+        {d?.book ? <BookLinks book={d.book} /> : null}
+        {d?.tour.length ? <TourLinks tour={d.tour} /> : null}
 
         {d?.entity.description ? <About text={d.entity.description} /> : null}
 

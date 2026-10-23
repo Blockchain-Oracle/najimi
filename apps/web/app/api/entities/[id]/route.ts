@@ -1,6 +1,7 @@
+import { tourDates } from "@najimi/booking"
 import { db, schema } from "@najimi/db"
 import { entities, firstExternal, idsOf, linksOf } from "@najimi/qloo"
-import { filmExtras, mediaFor, siteLinks } from "@najimi/sources"
+import { cached, filmExtras, mediaFor, siteLinks } from "@najimi/sources"
 import { and, eq } from "drizzle-orm"
 import { fail, json } from "@/lib/api"
 import { selfOf } from "@/lib/people"
@@ -55,7 +56,7 @@ export async function GET(request: Request, ctx: { params: Promise<{ id: string 
   const website = p.website ?? p.official_site ?? item.handles.website ?? null
   const q = item.name
 
-  const [media, site, extras, saved] = await Promise.all([
+  const [media, site, extras, tour, saved] = await Promise.all([
     mediaFor([{ qlooId: item.entityId, type: item.type, name: item.name, image: item.image, ids }])
       .then((m) => m[item.entityId] ?? null)
       .catch(() => null),
@@ -65,6 +66,12 @@ export async function GET(request: Request, ctx: { params: Promise<{ id: string 
     (item.type === "urn:entity:movie" || item.type === "urn:entity:tv_show") && ids.imdb
       ? filmExtras(ids.imdb, region).catch(() => null)
       : Promise.resolve(null),
+    // An artist's next concerts (Ticketmaster), checked once a day.
+    item.type === "urn:entity:artist"
+      ? cached("tour", `${item.entityId}:${region}`, 1, () => tourDates(item.name, region)).catch(
+          () => [],
+        )
+      : Promise.resolve([]),
     // Whether you already kept it (the sheet's Keep shows Kept).
     (userId ? selfOf(userId) : Promise.resolve(null)).then(async (self) => {
       if (!self) return false
@@ -141,6 +148,18 @@ export async function GET(request: Request, ctx: { params: Promise<{ id: string 
             videos: extras?.videos ?? [],
             providers: extras?.providers ?? [],
             watchLink: extras?.watchLink ?? null,
+          }
+        : null,
+    tour,
+    book:
+      item.type === "urn:entity:book"
+        ? {
+            goodreads: ext("goodreads")
+              ? `https://www.goodreads.com/book/show/${ext("goodreads")}`
+              : null,
+            openLibrary: ids.isbn13
+              ? `https://openlibrary.org/isbn/${ids.isbn13}`
+              : `https://openlibrary.org/search?q=${encodeURIComponent(item.name)}`,
           }
         : null,
     /** What people say about it, where they say it. */

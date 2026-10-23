@@ -1,3 +1,4 @@
+import type { TourDate } from "@najimi/booking"
 import type { CardMedia } from "@najimi/sources"
 
 /**
@@ -61,6 +62,9 @@ export type EntityDetails = {
     providers: { name: string; logo: string | null; kind: "stream" | "rent" | "buy" }[]
     watchLink: string | null
   } | null
+  /** An artist's next concerts. */
+  tour: TourDate[]
+  book: { goodreads: string | null; openLibrary: string } | null
   talk: { tiktok: string; youtube: string }
 }
 
