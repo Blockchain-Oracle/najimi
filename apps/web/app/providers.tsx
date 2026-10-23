@@ -7,6 +7,7 @@ import { useEffect } from "react"
 import { AgentProvider } from "@/components/agent/agent-context"
 import { EntityProvider } from "@/components/entity/entity-provider"
 import { PlayerProvider } from "@/components/player/player"
+import { StoriesProvider } from "@/components/stories/stories-provider"
 import { startPush } from "@/lib/push-client"
 import { getQueryClient } from "@/lib/query-client"
 
@@ -22,7 +23,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
         <PlayerProvider>
           <AgentProvider>
             {/* Tap anything: one sheet that opens whatever a card shows, from every screen. */}
-            <EntityProvider>{children}</EntityProvider>
+            <EntityProvider>
+              <StoriesProvider>{children}</StoriesProvider>
+            </EntityProvider>
           </AgentProvider>
         </PlayerProvider>
       </MotionConfig>

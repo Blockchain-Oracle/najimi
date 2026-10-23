@@ -23,6 +23,7 @@ import { QrCode } from "@/components/brands/qr-code"
 import { GameSheet } from "@/components/games/game-sheet"
 import { ProfileLink } from "@/components/people/profile-link"
 import { type Track, usePlayer } from "@/components/player/player"
+import { StoryRing } from "@/components/stories/stories-provider"
 import { Face } from "@/components/taste/face"
 import { api } from "@/lib/fetcher"
 import { useNewChat } from "@/lib/new-chat"
@@ -196,7 +197,9 @@ export function ChatView(props: ChatViewProps) {
               <span className="flex -space-x-2">
                 {(props.members ?? []).slice(0, 4).map((m) => (
                   <span key={m.userId} className="rounded-full ring-2 ring-background">
-                    <Face look={m.look} name={m.name} size="xs" />
+                    <StoryRing userId={m.userId} name={m.name} look={m.look} decorative>
+                      <Face look={m.look} name={m.name} size="xs" />
+                    </StoryRing>
                   </span>
                 ))}
               </span>
@@ -400,7 +403,9 @@ export function ChatView(props: ChatViewProps) {
                     username={m.username}
                     className="flex items-center gap-3 rounded-tile px-1 py-2 hover:bg-card"
                   >
-                    <Face look={m.look} name={m.name} size="sm" />
+                    <StoryRing userId={m.userId} name={m.name} look={m.look} decorative>
+                      <Face look={m.look} name={m.name} size="sm" />
+                    </StoryRing>
                     <span className="flex min-w-0 flex-col">
                       <span className="truncate text-[15px] font-semibold">
                         {m.name}

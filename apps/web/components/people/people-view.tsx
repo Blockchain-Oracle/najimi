@@ -11,6 +11,7 @@ import { useTranslations } from "next-intl"
 import { useEffect, useState } from "react"
 import { useReportScreen } from "@/components/agent/agent-context"
 import { PlaySection } from "@/components/games/play-section"
+import { StoryTray } from "@/components/stories/stories-provider"
 import { Face } from "@/components/taste/face"
 import { api } from "@/lib/fetcher"
 import { useDebounced } from "@/lib/use-debounced"
@@ -328,6 +329,8 @@ export function PeopleView({ home }: { home: PeopleHome }) {
         <h1 className="font-title text-[2rem] leading-none">{t("title")}</h1>
         <Inbox initialUnread={home.unread} after={home.after} />
       </header>
+
+      <StoryTray />
 
       <label className="flex h-12 items-center gap-2 rounded-pill bg-card px-4 ring-1 ring-border focus-within:ring-2 focus-within:ring-ring">
         <Search className="size-4 text-text-3" />

@@ -30,11 +30,13 @@ import { EntitySheet } from "@/components/entity/entity-sheet"
 import { MoreSheet } from "@/components/picks/more-sheet"
 import type { PickActions } from "@/components/picks/pick-card"
 import { BuiltOnQloo } from "@/components/qloo/built-on-qloo"
+import { StoryRing } from "@/components/stories/stories-provider"
 import { Face } from "@/components/taste/face"
 import { useTasteLine, WordPalette } from "@/components/taste/taste-hero"
 import { TasteMap } from "@/components/taste/taste-map"
 import { YourPeople } from "@/components/taste/your-people"
 import { Tip } from "@/components/tip"
+import { authClient } from "@/lib/auth-client"
 import { api } from "@/lib/fetcher"
 import { shareLink } from "@/lib/share-link"
 import { sound } from "@/lib/sounds"
@@ -110,6 +112,9 @@ export function PersonView({ data, other }: { data: PersonViewData; other?: Othe
   const [runId, setRunId] = useState(data.taste?.runId ?? null)
   /** Your own profile (editable, live while your taste computes) or someone else's. */
   const mine = !other
+  const session = authClient.useSession()
+  // Whose stories the face plays: theirs, or yours.
+  const ownerId = other?.userId ?? session.data?.user.id ?? null
   const [live, setLive] = useState(mine && Boolean(data.runStatus && LIVE.has(data.runStatus)))
   const [failed, setFailed] = useState(data.runStatus === "failed")
   const [words, setWords] = useState<TasteWords | null>(data.taste?.words ?? null)
@@ -278,7 +283,19 @@ export function PersonView({ data, other }: { data: PersonViewData; other?: Othe
         <span className="relative grid size-36 place-items-center">
           <Orb size={144} colors={aura ?? undefined} working={live} className="absolute inset-0" />
           <span className="relative">
-            <Face look={person.look} name={person.name} size="xl" />
+            {ownerId ? (
+              <StoryRing
+                userId={ownerId}
+                name={person.name}
+                look={person.look}
+                username={person.username}
+                probe
+              >
+                <Face look={person.look} name={person.name} size="xl" />
+              </StoryRing>
+            ) : (
+              <Face look={person.look} name={person.name} size="xl" />
+            )}
           </span>
         </span>
         <div className="flex flex-col items-center gap-1">

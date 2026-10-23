@@ -14,6 +14,7 @@ import Link from "next/link"
 import { useParams } from "next/navigation"
 import { useFormatter, useTranslations } from "next-intl"
 import { useState } from "react"
+import { StoryRing } from "@/components/stories/stories-provider"
 import { Face } from "@/components/taste/face"
 import { api } from "@/lib/fetcher"
 import { useNewChat } from "@/lib/new-chat"
@@ -34,7 +35,7 @@ type ChatItem = {
   other: string | null
   status: string
   lastActiveAt: string
-  faces: { name: string; look: string | null }[]
+  faces: { userId: string; name: string; look: string | null }[]
   last: {
     role: "user" | "assistant"
     mine: boolean
@@ -55,12 +56,21 @@ const DAY = 24 * 60 * 60 * 1000
 function RoomFace({ chat, size = 44 }: { chat: ChatItem; size?: 44 | 56 }) {
   if (chat.kind === "agent") return <Orb size={size} working={chat.status === "generating"} />
   const [a, b] = chat.faces
-  if (chat.kind === "dm" || !b)
-    return (
+  if (chat.kind === "dm" || !b) {
+    const face = (
       <span className={cn("grid shrink-0 place-items-center", size === 56 ? "size-14" : "size-11")}>
         <Face look={a?.look ?? null} name={a?.name ?? chat.name ?? "?"} size="md" />
       </span>
     )
+    // A DM shows the other person's story ring; the row still opens the chat.
+    return chat.kind === "dm" && a ? (
+      <StoryRing userId={a.userId} name={a.name} look={a.look} decorative>
+        {face}
+      </StoryRing>
+    ) : (
+      face
+    )
+  }
   return (
     <span className={cn("relative shrink-0", size === 56 ? "size-14" : "size-11")}>
       <span className="absolute top-0 start-0">

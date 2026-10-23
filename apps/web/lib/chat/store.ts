@@ -75,7 +75,7 @@ export type ChatListItem = {
   /** A DM's other person (their name is the DM's name). */
   other: string | null
   /** Who else is in it (a DM's other person, a circle's first few), for the row's faces. */
-  faces: { name: string; look: string | null }[]
+  faces: { userId: string; name: string; look: string | null }[]
   /** The newest message: its words, the card it ended on, who wrote it. */
   last: {
     role: "user" | "assistant"
@@ -103,10 +103,10 @@ export async function chatsOf(
     where m.chat_id = ${schema.chats.id} and m.user_id <> ${userId}
     limit 1
   )`
-  const faces = sql<{ name: string; look: string | null }[]>`(
-    select coalesce(json_agg(json_build_object('name', f.name, 'look', f.look)), '[]'::json)
+  const faces = sql<{ userId: string; name: string; look: string | null }[]>`(
+    select coalesce(json_agg(json_build_object('userId', f.user_id, 'name', f.name, 'look', f.look)), '[]'::json)
     from (
-      select p.name, p.look from chat_members as m
+      select m.user_id, p.name, p.look from chat_members as m
       join people as p on p.owner_id = m.user_id and p.is_self
       where m.chat_id = ${schema.chats.id} and m.user_id <> ${userId}
       order by m.joined_at limit 3

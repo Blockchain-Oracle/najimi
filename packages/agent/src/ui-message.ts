@@ -34,6 +34,8 @@ export type ChatMeta = {
   error?: string
   /** A booking notice in the room: the booking as it is now, drawn as a card. */
   booking?: BookingNote
+  /** A reply (or a reaction) to someone's story: the story it answers. */
+  story?: { id: string; kind: string; image: string | null; label: string | null }
 }
 
 /** What a booking notice shows (no payment details, no secrets). */

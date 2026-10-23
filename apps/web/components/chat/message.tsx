@@ -186,6 +186,31 @@ function ToolPart({
   }
 }
 
+/** The story a reply answers, small above it (after Instagram's replied-to-your-story). */
+function StoryQuote({
+  story,
+  mine,
+}: {
+  story: NonNullable<NajimiUIMessage["metadata"]>["story"] & {}
+  mine: boolean
+}) {
+  const t = useTranslations("Stories")
+  return (
+    <span className="flex items-center gap-2.5 text-[12px] text-text-3">
+      {story.image ? (
+        // biome-ignore lint/performance/noImgElement: the story's own still
+        <img src={story.image} alt="" className="h-16 w-9 rounded-[6px] object-cover opacity-90" />
+      ) : (
+        <span className="h-16 w-9 rounded-[6px] bg-[linear-gradient(160deg,var(--color-aura-1),var(--color-aura-2))]" />
+      )}
+      <span className="flex max-w-[12rem] flex-col">
+        <span>{mine ? t("youReplied") : t("repliedToYours")}</span>
+        {story.label ? <span className="truncate text-text-2">{story.label}</span> : null}
+      </span>
+    </span>
+  )
+}
+
 /** One message: the person's words and photos, or Najimi's reply with its cards in order. */
 export function Message({
   message,
@@ -221,6 +246,9 @@ export function Message({
         <Face look={from.look} name={from.name} size="sm" />
         <div className="flex max-w-[85%] flex-col gap-1">
           <span className="ps-1 text-[12px] font-semibold text-text-3">{from.name}</span>
+          {message.metadata?.story ? (
+            <StoryQuote story={message.metadata.story} mine={false} />
+          ) : null}
           {photos.length ? (
             <div className="flex flex-wrap gap-2">
               {photos.map((p) =>
@@ -248,6 +276,7 @@ export function Message({
       .trim()
     return (
       <div className="flex flex-col items-end gap-2">
+        {message.metadata?.story ? <StoryQuote story={message.metadata.story} mine /> : null}
         {photos.length ? (
           <div className="flex flex-wrap justify-end gap-2">
             {photos.map((p) =>
