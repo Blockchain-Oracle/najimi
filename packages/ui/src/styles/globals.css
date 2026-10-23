@@ -194,7 +194,7 @@
   }
 }
 
-/* The orb (packages/ui/src/components/orb.tsx), after 21st.dev's Siri Orb by educalvolpz. */
+/* The orb (packages/ui/src/components/orb.tsx). */
 @property --orb-angle {
   syntax: "<angle>";
   inherits: false;

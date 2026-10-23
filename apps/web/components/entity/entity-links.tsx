@@ -45,10 +45,10 @@ import { uberLink } from "@/lib/rides"
 
 /*
  * Where a thing leads, in the same sections for every kind, under the entity sheet's stage: how to
- * have it (a place's Directions-first pill row after Google Maps' place sheet, Refero d81cff6d;
- * where to watch, listen or read), more videos that play in the stage, an artist's next concerts,
- * what people say (TikTok, YouTube, Instagram, X and the review site of its kind), and the
- * accounts to follow. Every link carries the site's own mark.
+ * have it (a place's Directions-first pill row; where to watch, listen or read), more videos that
+ * play in the stage, an artist's next concerts, what people say (TikTok,
+ * YouTube, Instagram, X and the review site of its kind), and the accounts to follow. Every link
+ * carries the site's own mark.
  */
 
 /** Each site's mark and name (brand names stay as they are in every language). */

@@ -11,7 +11,7 @@ import { BrandIcon } from "@/components/brands/brand-icon"
  * A podcast episode plays from the show's own feed, with the show on Apple Podcasts one tap away.
  */
 
-/** "Listen on Apple Music": the store link every preview carries (after Airbuds, Refero c410e046). */
+/** "Listen on Apple Music": the store link every preview carries. */
 export function AppleMusicBadge({ href, className }: { href: string; className?: string }) {
   const t = useTranslations("Feed")
   return (

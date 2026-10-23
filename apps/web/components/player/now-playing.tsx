@@ -11,9 +11,9 @@ import { AppleMusicBadge, PodcastCredit, PreviewCredit } from "./credit"
 import { formatTime, usePlayer, usePlayerClock } from "./player"
 
 /*
- * The full player (after Spotify's now playing, Refero 2c11c95f): the artwork floods the screen
- * as a blurred wash, the cover sits large, then title, a scrubber with times, and the controls.
- * The credit sits under the controls, where the eye lands next.
+ * The full player: the artwork floods the screen as a blurred wash, the cover sits large, then
+ * title, a scrubber with times, and the controls. The credit sits under the controls, where the eye
+ * lands next.
  */
 
 /** A seek bar on the shared clock; dragging pauses and resumes like a real player. */

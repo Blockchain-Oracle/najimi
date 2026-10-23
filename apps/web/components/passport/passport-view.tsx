@@ -126,9 +126,9 @@ function Wrapped({ token: initial, personId }: { token: string | null; personId:
 }
 
 /**
- * One Wrapped slide, shared (after Binge's share step, Refero 4504892f): the slide large, then
- * where it goes: Instagram Stories through the phone's own share sheet, your Najimi story, saved
- * to the phone, or its link. A sheet over everything, never under the tab bar.
+ * One Wrapped slide, shared: the slide large, then where it goes: Instagram Stories through the
+ * phone's own share sheet, your Najimi story, saved to the phone, or its link. A sheet over
+ * everything, never under the tab bar.
  */
 function ShareSlide({
   token,

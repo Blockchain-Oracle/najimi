@@ -19,7 +19,6 @@ import { sound } from "@/lib/sounds"
  * "Bring your taste": what you already keep somewhere else, read by name with no sign-in. A
  * Letterboxd diary, a Goodreads shelf, Last.fm's top artists, or X / Instagram handles. Qloo
  * matches each to the real thing (exactly, by its id there, where it can); you keep what's you.
- * After SeatGeek's and Airbuds' "connect your music" steps (Refero 9cca4ae4, 563e2499).
  */
 
 type Source = "letterboxd" | "goodreads" | "lastfm" | "handles"

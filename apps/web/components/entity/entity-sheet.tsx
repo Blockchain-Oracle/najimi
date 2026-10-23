@@ -23,11 +23,8 @@ import { LinkRow, PlaceLinks, TourLinks, VideoRow, WhereToWatch } from "./entity
  * videos, an artist's songs on a record that slides out of the cover and spins while it plays, a
  * podcast's latest episode), then what it is, where it leads (a place's Directions, Uber, Call,
  * site and socials; where to watch a film and what people say about it; an artist's or brand's
- * accounts), what it's made of (each love's share, from Qloo's explainability) and what to do
- * with it. The stage after Netflix's detail sheet (Refero fce97bd8) and 21st.dev's
- * diriktv/music-artwork and ravikatiyar162/video-thumbnail-player; the track list after Vinyls
- * (Refero 02744840); the place row after Google Maps (d81cff6d); the film after Showcase
- * (18e5b761). Music plays through the app's one player, so it keeps going after the sheet closes.
+ * accounts), what it's made of (each love's share, from Qloo's explainability) and what to do with
+ * it. Music plays through the app's one player, so it keeps going after the sheet closes.
  */
 
 const sized = (url: string | null, width: number) =>

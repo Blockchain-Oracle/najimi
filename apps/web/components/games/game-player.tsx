@@ -25,10 +25,8 @@ import { WavelengthDial } from "./wavelength-dial"
 /*
  * Playing a round (W9): the round's things dealt as a hand, then one at a time — swing the
  * wavelength needle, swipe Blind Taste's deck, or pick a tile — and each answer opens on Qloo's
- * truth beside Najimi's guess. The end is you against Najimi, then the round's podium.
- * Patterns: Abode's in-thread trivia (Refero b0bf2fc4) for the one-question screen and running
- * tally, Turf's prediction reveal (4cccee1d) for Blind Taste's bar, Airbuds' match result
- * (1904948a) for the face-off. The artwork is the colour: each thing tints the whole screen.
+ * truth beside Najimi's guess. The end is you against Najimi, then the round's podium. The artwork
+ * is the colour: each thing tints the whole screen.
  */
 
 type Stage = "intro" | "play" | "reveal" | "done"

@@ -14,11 +14,10 @@ import {
 /*
  * One player for the whole app (W5): a single <audio> element in the root providers, so what you
  * start in the feed keeps playing on every other screen, and one tap unlocks it for good (phones
- * only let audio start from a tap; after that the same element can change source freely).
- * Adapted from ElevenLabs UI's audio player (21st.dev ElevenLabs/audio-player, MIT): the playing
- * state and the clock live in separate contexts, so only progress bars re-render while it plays.
- * Added here: a queue owner (the feed) for next / previous / ended, Media Session for the lock
- * screen, and the credit each source needs (Apple previews link back to Apple Music).
+ * only let audio start from a tap; after that the same element can change source freely). The
+ * playing state and the clock live in separate contexts, so only progress bars re-render while it
+ * plays. A queue owner (the feed) handles next / previous / ended, Media Session the lock screen,
+ * and each source carries its credit (Apple previews link back to Apple Music).
  */
 
 export type Track = {

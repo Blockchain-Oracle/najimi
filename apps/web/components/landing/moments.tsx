@@ -5,8 +5,7 @@ import { motion, useReducedMotion } from "motion/react"
 
 /*
  * What Najimi is, shown rather than told: real screens from the app in a phone, a few words each,
- * and one detail lifted out of the screen beside it. After 21st.dev jahed/cinematic-landing-hero
- * (the phone with floating cards) and Refero's app-store style showcases.
+ * and one detail lifted out of the screen beside it.
  */
 
 export type Moment = {

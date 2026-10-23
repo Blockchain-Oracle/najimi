@@ -5,8 +5,8 @@ import { motion, useReducedMotion } from "motion/react"
 
 /*
  * What Najimi is working through, one row per step: a box that draws its own tick, a travelling
- * underline under the one that's running, finished rows going quiet. From 21st.dev
- * educalvolpz/ai-task-list, on our tokens; counts are derived from the rows so they never disagree.
+ * underline under the one that's running, finished rows going quiet. Counts come from the rows,
+ * so they never disagree.
  */
 
 export type TaskStatus = "pending" | "running" | "done" | "failed"

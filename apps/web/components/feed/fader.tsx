@@ -7,9 +7,9 @@ import { type KeyboardEvent, type PointerEvent, useRef, useState } from "react"
 
 /*
  * One channel of the mixing desk: how much of a category the feed plays. A tall track that snaps
- * between Off, Less, Normal and More, filling with the aura as it rises; its cap is the artwork
- * of that category's next card, so you see what you're turning up. Drag, tap a height, or use
- * the arrow keys. Hand-built (no fader on 21st.dev fits); the springs match the tab bar's.
+ * between Off, Less, Normal and More, filling with the aura as it rises; its cap is the artwork of
+ * that category's next card, so you see what you're turning up. Drag, tap a height, or use the
+ * arrow keys. Hand-built; the springs match the tab bar's.
  */
 
 const SPRING = { type: "spring", stiffness: 420, damping: 32 } as const

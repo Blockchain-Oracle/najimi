@@ -12,10 +12,9 @@ import { Face } from "@/components/taste/face"
 import { api } from "@/lib/fetcher"
 
 /*
- * A spot's scene (W12): what the people around it love (its artists, places, brands and words,
- * from a location-only signal with no person in it), who here lives near, and one tap to have
- * Najimi plan a night there. A frosted sheet over the map, after CARROT Weather's area sheet
- * (Refero de65fc1d).
+ * A spot's scene (W12): what the people around it love (its artists, places, brands and words, from
+ * a location-only signal with no person in it), who here lives near, and one tap to have Najimi
+ * plan a night there. A frosted sheet over the map.
  */
 
 export type SceneSpot = {

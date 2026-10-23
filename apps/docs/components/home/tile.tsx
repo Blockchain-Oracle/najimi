@@ -2,10 +2,9 @@ import { ArrowUpRight } from "lucide-react"
 import Link from "next/link"
 
 /*
- * A feature tile on the front page, after 21st.dev's Bento Grid by manuarora700 (Aceternity /
- * Magic UI): the card holds a real capture of the app, the words lift on hover and a "Read" line
- * rises into view. Rebuilt on the docs' tokens; a phone capture peeks up from the bottom in its
- * frame, a desktop capture sits flush like a window.
+ * A feature tile on the front page: the card holds a real capture of the app, the words lift on
+ * hover and a "Read" line rises into view. A phone capture peeks up from the bottom in its frame,
+ * a desktop capture sits flush like a window.
  */
 
 export function Tile({

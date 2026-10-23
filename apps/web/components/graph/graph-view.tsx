@@ -19,10 +19,9 @@ import { type GraphNode, NodeSheet } from "./node-sheet"
  * The Graph (W13): you in the middle, your loves round you, and the things Qloo picked for you
  * beyond, each tied to the loves that brought it (thicker the bigger that love's share, with light
  * running along the ties). Pull a node and the rest springs back. Tap one: turn a love up or down
- * and the picks it carries grow or fade at once (Qloo's explainability), then make it real and
- * Qloo refines the whole taste; grow the graph from any node; lay a friend's taste over yours and
- * what you share glows; slide back through when each love arrived.
- * After Kin's memory graph (Refero 97b74a67) and Memotron's graph with a side panel (f3b58721).
+ * and the picks it carries grow or fade at once (Qloo's explainability), then make it real and Qloo
+ * refines the whole taste; grow the graph from any node; lay a friend's taste over yours and what
+ * you share glows; slide back through when each love arrived.
  */
 
 // Client only (canvas and d3), loaded with the screen; typed as the library's own component.

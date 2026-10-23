@@ -16,10 +16,8 @@ import { SocialRead } from "./social-read"
 import type { SocialAction } from "./use-feeds"
 
 /*
- * One connected account: connect it with your own session (two cookies for X, one for
- * Instagram, sealed the moment they arrive), then read what you follow, see what Najimi did, or
- * forget it. After SeatGeek's connect step (Refero 9cca4ae4); the log after 21st.dev
- * olewandowski1/activity-3.
+ * One connected account: connect it with your own session (two cookies for X, one for Instagram,
+ * sealed the moment they arrive), then read what you follow, see what Najimi did, or forget it.
  */
 
 function ConnectForm({ platform, onConnected }: { platform: Live; onConnected: () => void }) {

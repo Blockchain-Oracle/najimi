@@ -186,7 +186,7 @@ function ToolPart({
   }
 }
 
-/** The story a reply answers, small above it (after Instagram's replied-to-your-story). */
+/** The story a reply answers, small above it. */
 function StoryQuote({
   story,
   mine,

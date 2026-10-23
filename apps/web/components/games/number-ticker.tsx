@@ -5,10 +5,9 @@ import { useMotionValue, useReducedMotion, useSpring } from "motion/react"
 import { useEffect, useRef } from "react"
 
 /*
- * A score that counts up to its number. Adapted from Magic UI's Number Ticker (21st.dev
- * dillionverma/number-ticker, MIT, © Dillion Verma): the spring and the text written straight
- * into the node (no re-render per frame). Changed here: motion/react, counts from the last value
- * rather than zero (a running score climbs), still under reduced motion, our type.
+ * A score that counts up to its number on a spring, the text written straight into the node (no
+ * re-render per frame). It counts from the last value rather than zero (a running score climbs)
+ * and stays still under reduced motion.
  */
 export function NumberTicker({
   value,

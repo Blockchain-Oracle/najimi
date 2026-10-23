@@ -25,10 +25,9 @@ import { SocialRead } from "./social-read"
 /*
  * Bring your taste in (W14): what you already follow and love elsewhere. Exports (Instagram,
  * TikTok, Spotify, YouTube) are opened here in your browser and only the short lists inside
- * (handles, artists, channel names) are sent on; an X account is read by its handle (who it
- * shares and mentions); usernames and handles are read by name. Qloo matches each to the real
- * thing; you keep what's you. After SeatGeek's connect step (Refero 9cca4ae4) and BeReal's
- * "connected" toast (76a2af67).
+ * (handles, artists, channel names) are sent on; an X account is read by its handle (who it shares
+ * and mentions); usernames and handles are read by name. Qloo matches each to the real thing; you
+ * keep what's you.
  */
 
 export type Source =

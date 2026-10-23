@@ -10,9 +10,8 @@ import { OpenThing } from "@/components/entity/entity-provider"
 import { Face } from "@/components/taste/face"
 
 /*
- * A plan in the thread (W16, W17): the route on a map, then the stops in order — when, where,
- * why, and in a circle who each one suits — with shows that night and the calendar one tap away.
- * After Tripsy's itinerary (Refero 398c4935) and Uber's stops (a2107fdd).
+ * A plan in the thread (W16, W17): the route on a map, then the stops in order — when, where, why,
+ * and in a circle who each one suits — with shows that night and the calendar one tap away.
  */
 
 type Output = NajimiTools["planNight"]["output"]

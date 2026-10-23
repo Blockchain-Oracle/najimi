@@ -19,8 +19,7 @@ import { AuraFace, FollowButton, type PersonCard, PersonRow } from "./person-row
 
 /*
  * People (W7, W8): find someone by @username, your circles, your friends, people here whose taste
- * is like yours, and people in culture who share it. After Daze's username search and Bond's
- * requests (Refero 2a6a5c17, b16f1edd) and Duolingo's friends with suggestions (fa4e3d25).
+ * is like yours, and people in culture who share it.
  */
 
 export type PeopleHome = {

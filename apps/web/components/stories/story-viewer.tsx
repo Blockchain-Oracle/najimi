@@ -31,8 +31,7 @@ import { StoryContent } from "./story-content"
  * Stories, played: one person after another, each story full-bleed under thin segment bars, the
  * name, the time and (for a song) what's playing; tap right for the next, left for the one before,
  * hold to pause, swipe down to close. Others' stories end in a reply field and reactions (both land
- * in your DM with them); your own show who saw them. After Bond's bare viewer (Refero 8660fa72)
- * and TikTok's music line in the header (18d0112f).
+ * in your DM with them); your own show who saw them.
  */
 
 const STILL_MS = 6000

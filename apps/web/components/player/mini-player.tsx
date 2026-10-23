@@ -10,9 +10,8 @@ import { NowPlaying, PlayPause } from "./now-playing"
 import { usePlayer, usePlayerClock } from "./player"
 
 /*
- * What's playing, on every screen but the feed (where the card is the player): a glass bar
- * floating just above the tab bar on phones (after Spotify's mini player, Refero b31e04a0), and
- * beside the rail on desktop. Tap it for the full player.
+ * What's playing, on every screen but the feed (where the card is the player): a glass bar floating
+ * just above the tab bar on phones, and beside the rail on desktop. Tap it for the full player.
  */
 
 function Progress() {

@@ -20,11 +20,10 @@ import { api } from "@/lib/fetcher"
 import { useNewChat } from "@/lib/new-chat"
 
 /*
- * Chats (replaces the plain history list): search, tabs by kind (All · Najimi · Circles ·
- * People), a band of pinned rooms on top, and rows grouped Today / This week / Earlier, each with
- * the room's face (Najimi's orb, the person, the circle's people), its last line, the time and
- * how many messages wait unread. After Telegram's pinned band and tabs (Refero b0f51fe1) and
- * Gemini's Pinned / Today grouping (70a9cd65).
+ * Chats (replaces the plain history list): search, tabs by kind (All · Najimi · Circles · People),
+ * a band of pinned rooms on top, and rows grouped Today / This week / Earlier, each with the room's
+ * face (Najimi's orb, the person, the circle's people), its last line, the time and how many
+ * messages wait unread.
  */
 
 type ChatItem = {

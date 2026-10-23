@@ -3,9 +3,9 @@ import { cn } from "@najimi/ui/lib/utils"
 import { cva, type VariantProps } from "class-variance-authority"
 
 /*
- * The OurSpaces pill: sentence case, semibold, a hard sticker shadow under the action that presses
- * down when tapped. A button's words say what will happen ("Show me my taste"), never "Submit".
- * Lime is the one action per view; paper and sticker are the quiet ones.
+ * The pill: sentence case, semibold, a hard sticker shadow under the action that presses down when
+ * tapped. A button's words say what will happen ("Show me my taste"), never "Submit". Lime is the one
+ * action per view; paper and sticker are the quiet ones.
  */
 const buttonVariants = cva(
   "group/button inline-flex shrink-0 items-center justify-center rounded-pill border border-transparent text-sm font-semibold whitespace-nowrap transition-[background-color,color,border-color,opacity,translate,box-shadow] duration-(--motion-quick) ease-(--motion-ease-out) outline-none select-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-40 aria-invalid:border-destructive [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",

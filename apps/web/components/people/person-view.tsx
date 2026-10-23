@@ -80,10 +80,9 @@ const LIVE = new Set(["queued", "running", "waiting"])
 type Tab = "taste" | "loves" | "kept"
 
 /**
- * A person's profile (after Sora's and TikTok's profiles, Refero 261b3605, 9d54f8a6, and Airbuds'
- * music identity, cdb87543): their face on their aura, who they are, their taste in one line, the
- * numbers, one clear action; then tabs of artwork, never lists of words. Their taste is computed
- * live (the words land, then each domain's picks), watched over the run's event stream.
+ * A person's profile: their face on their aura, who they are, their taste in one line, the numbers,
+ * one clear action; then tabs of artwork, never lists of words. Their taste is computed live (the
+ * words land, then each domain's picks), watched over the run's event stream.
  */
 /** Someone else's profile, as the viewer sees it. */
 export type OtherView = {

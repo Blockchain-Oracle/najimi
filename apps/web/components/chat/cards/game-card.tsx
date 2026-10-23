@@ -17,8 +17,7 @@ import { GAME_PLAYED } from "@/lib/use-room"
 /*
  * A game dropped into the thread: the round's hand of artwork, who it's about against Najimi, a
  * Play button and the challenge link, and the round's scoreboard, live (it refreshes the moment
- * anyone in the room finishes). After Abode's trivia widget inside a group chat (Refero
- * b0bf2fc4, ba876062): the game lives in the conversation, scores and all.
+ * anyone in the room finishes).
  */
 
 const sized = (url: string | null | undefined, width: number) =>

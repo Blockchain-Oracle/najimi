@@ -5,9 +5,8 @@ import { motion } from "motion/react"
 import { type RefObject, useEffect, useId, useState } from "react"
 
 /*
- * A light travelling along a curved path between two elements. Magic UI's Animated Beam
- * (21st.dev, @dillionverma/animated-beam, MIT), on `motion` instead of framer-motion, and
- * standing still for anyone who asked for less motion.
+ * A light travelling along a curved path between two elements, on `motion`, standing still for
+ * anyone who asked for less motion.
  */
 
 export function AnimatedBeam({

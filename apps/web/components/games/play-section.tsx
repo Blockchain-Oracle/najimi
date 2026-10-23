@@ -16,8 +16,7 @@ import { type BoardEntry, Leaderboard } from "./leaderboard"
 /*
  * The arcade on People (W9): games made from your own taste's artwork (send your wavelength to
  * friends, let Qloo read you blind, quiz people on your loves, join the Lounge), your streak, how
- * often Qloo was right about you, and this week's leaderboard. After Duolingo's quests and
- * leagues (Refero 0966d27a, 9e82bb9c) and Brilliant's daily streak (c118f203).
+ * often Qloo was right about you, and this week's leaderboard.
  */
 
 type Weekly = {

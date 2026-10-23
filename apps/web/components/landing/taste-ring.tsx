@@ -5,9 +5,9 @@ import { type ReactNode, useEffect, useMemo, useRef, useState } from "react"
 
 /*
  * The landing's hero: real things people love (Qloo's own artwork) gather from everywhere into a
- * line, then a ring around the promise; scrolling bends the ring into an arc that lifts away.
- * After 21st.dev prashantsom75/scroll-morph-hero, driven by the page's own scroll (a sticky
- * section) instead of capturing the wheel, so phones scroll normally.
+ * line, then a ring around the promise; scrolling bends the ring into an arc that lifts away. It's
+ * driven by the page's own scroll (a sticky section) instead of capturing the wheel, so phones
+ * scroll normally.
  */
 
 type Phase = "scatter" | "line" | "ring"

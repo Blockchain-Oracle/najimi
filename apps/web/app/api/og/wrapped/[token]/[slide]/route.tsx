@@ -8,9 +8,8 @@ import { liveShare } from "@/lib/shares"
 
 /*
  * The Wrapped story set (W22): five 9:16 slides (1080×1920, for Stories and Status) drawn on the
- * server, and a landscape card for link previews. What you see in the app is exactly what's
- * shared. After Airbuds' recap (Refero ac0fa41e): big ghost type, ranked portraits, a "join me"
- * footer; colours are the app's own aura, nothing else.
+ * server, and a landscape card for link previews. What you see in the app is exactly what's shared:
+ * big ghost type, ranked portraits, a "join me" footer, in the app's own aura and nothing else.
  */
 
 const dark = tokens.themes.dark as Record<string, string>

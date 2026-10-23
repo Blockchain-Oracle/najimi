@@ -25,9 +25,9 @@ import { OpenThing } from "@/components/entity/entity-provider"
 
 /*
  * A business's plan (W19), from Qloo evidence only. The city with its people rising out of it,
- * stats floating over it (Shopify's location analytics, Refero e52ed0dd); Najimi's read in two or
- * three sentences; the ideas, each showing the things it stands on; what the fans love; the
- * business against its own street; what's rising; partners; posts. Shared as is.
+ * stats floating over it; Najimi's read in two or three sentences; the ideas, each showing the
+ * things it stands on; what the fans love; the business against its own street; what's rising;
+ * partners; posts. Shared as is.
  */
 
 const BusinessMap = dynamic(() => import("./business-map").then((m) => m.BusinessMap), {

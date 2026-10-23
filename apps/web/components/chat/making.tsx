@@ -6,9 +6,8 @@ import { TextShimmer } from "./text-shimmer"
 
 /*
  * An image being made. A restyle starts from your own photo, so it shows that photo blurred with a
- * band of clarity sweeping down it while the model works (after gonzalochale's AI chat image
- * generation, 21st.dev); a new image shows the taste's colours drifting. The words it's being made
- * from go by underneath.
+ * band of clarity sweeping down it while the model works; a new image shows the taste's colours
+ * drifting. The words it's being made from go by underneath.
  */
 
 /** How long an image usually takes; the sweep slows near the end and waits for the real one. */

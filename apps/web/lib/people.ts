@@ -135,8 +135,7 @@ const IDENTITY = ["violet", "pink", "cobalt", "orange", "teal", "butter"] as con
 export type Identity = (typeof IDENTITY)[number]
 
 /**
- * Each person keeps one identity colour (OurSpaces: every space owns one): the face they picked,
- * or one drawn from their id.
+ * Each person keeps one identity colour: the face they picked, or one drawn from their id.
  */
 export function identityOf(personId: string, look?: string | null): Identity {
   const picked = lookById(look)

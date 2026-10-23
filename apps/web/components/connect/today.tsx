@@ -11,8 +11,7 @@ import type { LiveState } from "./use-feeds"
 /*
  * Today's accounts for one feed: real people, artists and brands Qloo matched to what you love,
  * each with its reason. Tap Follow (it opens the exact profile and ticks off), or let Najimi do it:
- * then the row being followed carries a travelling underline (21st.dev educalvolpz/ai-task-list)
- * and ticks itself. After Duolingo's daily quests (Refero 0966d27a).
+ * then the row being followed carries a travelling underline and ticks itself.
  */
 
 function Progress({ done, total }: { done: number; total: number }) {

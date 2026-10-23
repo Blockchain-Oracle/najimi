@@ -9,8 +9,7 @@ import { Face } from "@/components/taste/face"
 
 /*
  * Something for everyone in the circle: each pick with each member's own fit (Qloo scored the
- * shortlist against every taste), so the room sees at a glance who it's for. After Genie's place
- * cards in a group thread (Refero fa455185) with Airbuds' faces-and-score (1904948a).
+ * shortlist against every taste), so the room sees at a glance who it's for.
  */
 
 const sized = (url: string | null, width: number) =>

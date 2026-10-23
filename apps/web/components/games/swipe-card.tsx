@@ -14,9 +14,8 @@ import { type KeyboardEvent, type ReactNode, useRef } from "react"
 /*
  * Blind Taste's deck: swipe right if you'd love it, left if it's not for you, up for maybe (the
  * buttons and the arrow keys do the same). The stamp grows as you pull; a long pull or a quick
- * flick throws the card off the deck, and the next ones wait underneath. After the Swipe Deck
- * (21st.dev ddoemonn/swipe-deck, MIT): its distance-or-flick release, keyboard arrows and leave
- * curve; made three-way here, with no undo (an answer is kept the moment it's given).
+ * flick throws the card off the deck, and the next ones wait underneath. Three ways, and no undo:
+ * an answer is kept the moment it's given.
  */
 
 const THROW = 110

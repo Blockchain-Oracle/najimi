@@ -19,9 +19,9 @@ import { motion } from "motion/react"
 import { useTranslations } from "next-intl"
 
 /*
- * A profile's grid (after Sora's and TikTok's profile grids, Refero 261b3605, 9d54f8a6): artwork
- * edge to edge, three across on a phone, the name over a fade and a small badge for its kind.
- * Filter chips above choose a kind. Tiles without artwork set their name large on the aura.
+ * A profile's grid: artwork edge to edge, three across on a phone, the name over a fade and a small
+ * badge for its kind. Filter chips above choose a kind. Tiles without artwork set their name large
+ * on the aura.
  */
 
 export const KIND_ICON: Record<string, LucideIcon> = {

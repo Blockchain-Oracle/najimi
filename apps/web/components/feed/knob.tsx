@@ -16,11 +16,9 @@ import { type KeyboardEvent, type PointerEvent, useEffect, useId, useRef, useSta
 
 /*
  * A love's knob on the mixing desk: turn it and the love counts more or less in your taste. Its
- * face is the love's own artwork. Adapted from Kokonut UI's Detent Dial (21st.dev
- * kokonutd/kokonut-detent-dial, MIT, © 2025 kokonutUI): the 270° sweep, the pull toward each
- * notch, the flick that coasts, the swell travelling round the ticks, the rolling readout, the
- * keyboard and wheel steps. Changed here: the artwork face, the aura-lit ticks, no end labels,
- * sized for a grid of knobs.
+ * face is the love's own artwork. A 270° sweep that pulls toward each notch, a flick that coasts,
+ * a swell travelling round the aura-lit ticks, a rolling readout, keyboard and wheel steps; no end
+ * labels, sized for a grid of knobs.
  */
 
 const SWEEP = 270

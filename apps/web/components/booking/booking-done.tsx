@@ -14,7 +14,7 @@ import { api } from "@/lib/fetcher"
 /*
  * Back from the payment sheet: the booking is made (once, however often this page loads), then
  * shown as a ticket: confirmed with its code, or failed with why. Cancellable from here while the
- * policy allows. After District's "Booking confirmed" (Refero 9290ecf9).
+ * policy allows.
  */
 
 const dateOf = (iso: string | null) =>

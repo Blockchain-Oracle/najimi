@@ -3,9 +3,9 @@
 import { SOUNDS, type UiSound } from "@najimi/config"
 
 /*
- * Najimi's sound engine, ported from Konkyo (which took it from OurSpaces): one Web Audio context
- * unlocked by the first tap (browsers allow audio only after a gesture), buffers decoded once and
- * played with no latency. Soft, short and optional; the choice is kept per browser.
+ * Najimi's sound engine: one Web Audio context unlocked by the first tap (browsers allow audio only
+ * after a gesture), buffers decoded once and played with no latency. Soft, short and optional; the
+ * choice is kept per browser.
  */
 
 let context: AudioContext | null = null

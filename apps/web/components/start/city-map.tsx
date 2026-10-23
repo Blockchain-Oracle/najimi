@@ -14,9 +14,9 @@ import { sound } from "@/lib/sounds"
 import { useDebounced } from "@/lib/use-debounced"
 
 /*
- * "Where are you": a real map, after mapcn's MapLibre components (21st.dev, @mapcn), on
- * OpenFreeMap's free dark style. Search names a city from Qloo's own localities; picking one flies
- * there and drops a lime pin, so places near you come from the same point Qloo uses.
+ * "Where are you": a real map, on OpenFreeMap's free dark style. Search names a city from Qloo's
+ * own localities; picking one flies there and drops a lime pin, so
+ * places near you come from the same point Qloo uses.
  */
 
 export type City = { name: string; lat: number; lon: number }

@@ -29,11 +29,10 @@ import { Scrubber } from "@/components/player/now-playing"
 import type { FeedCard as Card, FeedDomain } from "@/lib/feed-shared"
 
 /*
- * One card of the feed: the whole screen (after TikTok's For You, Refero b79c7237). The artwork's
- * own colour floods the background as a blurred wash, the artwork sits large (square for music
- * and podcasts, a poster for films, shows and books; places and brands fill the screen with their
- * photo), and the details sit bottom-left over a fade. The action rail runs down the right.
- * Tap to pause or play; double-tap to love.
+ * One card of the feed: the whole screen. The artwork's own colour floods the background as a
+ * blurred wash, the artwork sits large (square for music and podcasts, a poster for films, shows
+ * and books; places and brands fill the screen with their photo), and the details sit bottom-left
+ * over a fade. The action rail runs down the right. Tap to pause or play; double-tap to love.
  */
 
 export const DOMAIN_ICON: Record<FeedDomain, typeof Music2> = {

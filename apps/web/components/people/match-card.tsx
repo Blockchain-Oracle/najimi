@@ -16,9 +16,8 @@ type Match = {
 } | null
 
 /*
- * How your taste and theirs meet (after 222's overlap and Airbuds' compatibility, Refero 00ade516,
- * 1904948a): both faces, one big number from Qloo's compare, the loves you share, and the taste
- * words you both are.
+ * How your taste and theirs meet: both faces, one big number from Qloo's compare, the loves you
+ * share, and the taste words you both are.
  */
 export function MatchCard({
   username,

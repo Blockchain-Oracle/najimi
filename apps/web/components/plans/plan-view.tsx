@@ -29,8 +29,7 @@ import { mapsRoute, type Spot, uberLink } from "@/lib/rides"
 /*
  * A plan's own page (W16, W17), open to anyone with its link: the real route on a dark map with
  * numbered stops, then each stop — when, why, who it suits — with directions, and (for the person
- * who made it) Najimi booking the table or finding the hotel. After Tripsy's map-and-sheet
- * itinerary (Refero 0e71e57c) and Google Maps' stops (23a9701d).
+ * who made it) Najimi booking the table or finding the hotel.
  */
 
 type Plan = {

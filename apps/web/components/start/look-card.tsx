@@ -8,10 +8,9 @@ import { useTranslations } from "next-intl"
 import { sound } from "@/lib/sounds"
 
 /*
- * "Who are you": the face you'll wear and the name Najimi greets you by. The card follows Kokonut
- * UI's Avatar Picker (21st.dev, @kokonutd/avatar-picker): a colour band, the chosen face large
- * with a spring turn when it changes, the row of faces with one ring that glides between them.
- * The faces and the "a look's name is a placeholder until you type yours" rule are OurSpaces'.
+ * "Who are you": the face you'll wear and the name Najimi greets you by. A colour band, the chosen
+ * face large with a spring turn when it changes, the row of faces with one ring that glides between
+ * them; a look's name is a placeholder until you type yours.
  */
 
 export const LOOK_BG: Record<string, string> = {

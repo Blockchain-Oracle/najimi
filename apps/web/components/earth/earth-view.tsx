@@ -25,9 +25,6 @@ import { SceneSheet, type SceneSpot } from "./scene-sheet"
  * city and raises your taste out of it, a column per square kilometre, taller and hotter where your
  * kind of people are. Switch to a friend's taste or a circle's, one kind of thing at a time; your
  * people stand on the globe as faces. Tap a column, or a named area, for its scene.
- * After CARROT Weather's layered map and Bump's people-on-a-globe (Refero de65fc1d, 8af1edeb);
- * area tags after the Location Tag (21st.dev jatin-yadav05/location-tag), people pins after
- * mapcn's MapLibre markers (21st.dev mapcn), the radar after Aceternity's Radar Effect.
  */
 
 type Cell = [string, number, number | null, Record<string, number>]

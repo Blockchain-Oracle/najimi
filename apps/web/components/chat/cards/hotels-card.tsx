@@ -12,7 +12,7 @@ import { useChatId } from "../chat-context"
 /*
  * Rooms with real prices (W18), side by side: the photo, stars and guest rating, the price for the
  * whole stay, and whether it's refundable. Book holds the price with Nuitee and opens its payment
- * sheet. After Booking-style result cards and SeatGeek's checkout sheet (Refero b584bf27).
+ * sheet.
  */
 
 type Output = NajimiTools["findHotels"]["output"]

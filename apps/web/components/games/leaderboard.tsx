@@ -10,11 +10,10 @@ import { Face } from "@/components/taste/face"
 import { NumberTicker } from "./number-ticker"
 
 /*
- * A leaderboard: the top three on a podium, everyone else in rows, your row marked (and pinned
- * at the bottom when you're further down). Adapted from trophy.so's Leaderboard Podium and Card
- * (21st.dev trophyso/leaderboard-podium, leaderboard-card): the 2-1-3 order, the crown, the
- * stepped blocks with the rank on top. Changed here: faces and Najimi's orb for avatars, blocks
- * that rise in turn, one accent (first place glows), scores that count up.
+ * A leaderboard: the top three on a podium, everyone else in rows, your row marked (and pinned at
+ * the bottom when you're further down). The podium goes 2-1-3 with a crown on first; faces and
+ * Najimi's orb for avatars, blocks that rise in turn, one accent (first place glows), scores that
+ * count up.
  */
 
 export type BoardEntry = {

@@ -542,7 +542,7 @@ type Overlap = {
   words: string[]
 }
 
-/** What the circle shares (after 222's "you both…", Refero 00ade516): loves, then words. */
+/** What the circle shares: loves, then words. */
 function CircleOverlap({ chatId, open }: { chatId: string; open: boolean }) {
   const t = useTranslations("Chat")
   const overlap = useQuery({

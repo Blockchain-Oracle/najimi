@@ -16,10 +16,9 @@ import { POLL_VOTED } from "@/lib/use-room"
 import { useChatId } from "../chat-context"
 
 /*
- * A poll in the thread: the question, each choice as a bar that fills with its share and the
- * faces of who picked it, your own choice ticked. A tap votes (another tap changes it); every
- * vote reaches the room at once. After Turf's vote with avatars (Refero 4cccee1d). A choice that's
- * a thing from Qloo shows its art, which opens it.
+ * A poll in the thread: the question, each choice as a bar that fills with its share and the faces
+ * of who picked it, your own choice ticked. A tap votes (another tap changes it); every vote
+ * reaches the room at once. A choice that's a thing from Qloo shows its art, which opens it.
  */
 
 const sized = (url: string | null | undefined, width: number) =>

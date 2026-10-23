@@ -2,9 +2,9 @@ import type { CSSProperties } from "react"
 
 /*
  * The orb, exactly as in the app (packages/ui/src/components/orb.tsx): Najimi's presence, lit in
- * the agent's three taste colours. After 21st.dev's Siri Orb by educalvolpz (SmoothUI, MIT): six
- * conic gradients turning on one animated angle, blurred, with a dotted overlay. Pure CSS (the
- * keyframes live in app/global.css); `working` turns it faster; reduced motion stops it.
+ * the agent's three taste colours: six conic gradients turning on one animated angle, blurred, with
+ * a dotted overlay. Pure CSS (the keyframes live in app/global.css); `working` turns it faster;
+ * reduced motion stops it.
  */
 
 type Props = {

@@ -5,9 +5,9 @@ import { cn } from "../lib/utils"
 
 /*
  * The orb: Najimi's presence (the tab bar, the agent sheet, the run) and each person's taste aura,
- * lit in their three taste colours. Adapted from 21st.dev's Siri Orb by educalvolpz (SmoothUI,
- * MIT): six conic gradients turning on one animated angle, blurred, with a dotted overlay. Pure
- * CSS, no canvas. `working` spins it faster; reduced motion stops it.
+ * lit in their three taste colours: six conic gradients turning on one animated angle, blurred,
+ * with a dotted overlay. Pure CSS, no canvas. `working` spins it faster; reduced motion
+ * stops it.
  */
 
 export type OrbColors = { c1: string; c2: string; c3: string }

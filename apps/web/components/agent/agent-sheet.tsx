@@ -15,11 +15,9 @@ import { type RoomStatus, useRoom } from "@/lib/use-room"
 import { useAgent } from "./agent-context"
 
 /*
- * Najimi on every screen (W6): a sheet over whatever you're on (a bottom sheet on a phone, a
- * panel on the right on desktop), carrying on your latest conversation. It knows what you're
- * looking at (the feed's card), shown as a chip, and sends it with what you ask. After Meta AI's
- * and Perplexity's in-context assistants (Refero 9fc66616, dd3d7374): the run's steps stream in
- * the thread, the input stays at the bottom with Stop.
+ * Najimi on every screen (W6): a sheet over whatever you're on (a bottom sheet on a phone, a panel
+ * on the right on desktop), carrying on your latest conversation. It knows what you're looking at
+ * (the feed's card), shown as a chip, and sends it with what you ask.
  */
 
 type Latest = {

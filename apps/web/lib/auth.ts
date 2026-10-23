@@ -74,8 +74,8 @@ export const auth = betterAuth({
     anonymous({
       emailDomainName: AUTH.guestEmailDomain,
       // A guest who signs in keeps everything: rows move to the signed-in user (including into an
-      // account that already exists). The plugin's own cleanup is off: Konkyo found it skips
-      // first-time social sign-ups; guests.cleanup removes old guests instead.
+      // account that already exists). The plugin's own cleanup is off: it skips first-time social
+      // sign-ups; guests.cleanup removes old guests instead.
       disableDeleteAnonymousUser: true,
       onLinkAccount: async ({ anonymousUser, newUser }) => {
         await reownUserData(db, anonymousUser.user.id, newUser.user.id)

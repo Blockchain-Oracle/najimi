@@ -5,8 +5,8 @@ import { motion } from "motion/react"
 import type { CSSProperties } from "react"
 
 /*
- * Words with light running across them, for "working on it" moments. ibelick's Text Shimmer
- * (21st.dev, @ibelick/text-shimmer), on `motion`, in two tones: on paper and on the wall.
+ * Words with light running across them, for "working on it" moments, on `motion`, in two tones: on
+ * paper and on the wall.
  */
 export function TextShimmer({
   children,

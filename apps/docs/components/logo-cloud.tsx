@@ -1,10 +1,9 @@
 import type { CSSProperties } from "react"
 
 /*
- * The services Najimi works with, as an endless row. After 21st.dev's Logo Cloud 3 by efferd (the
- * faded edges, the reversed slow drift, monochrome marks), moved from motion + react-use-measure
- * to one CSS keyframe so the docs ship no animation library. Marks are Simple Icons (CC0) drawn
- * as masks, so they take the text colour in light and dark; hover pauses the row.
+ * The services Najimi works with, as an endless row with faded edges and a slow drift, on one CSS
+ * keyframe so the docs ship no animation library. Marks are Simple Icons (CC0) drawn as masks, so
+ * they take the text colour in light and dark; hover pauses the row.
  */
 
 export type Brand = { name: string; logo?: string }

@@ -1,10 +1,8 @@
 import type { ReactNode } from "react"
 
 /*
- * A real screen from the app in a phone. Adapted from 21st.dev's iPhone Mockup by
- * lovesickfromthe6ix (the 15 Pro spec: a 12px bezel round a 56px screen corner, the Dynamic
- * Island, a frame gradient from space black, inner shadow), made fluid: it takes its column's
- * width instead of fixed pixels, so a row of them works from a phone to a wide screen.
+ * A real screen from the app in a phone: a 12px bezel round a 56px screen corner, the Dynamic
+ * Island and an inner shadow, fluid so it takes its column's width, from a phone to a wide screen.
  */
 
 const FRAME = "linear-gradient(135deg, #24262b 0%, #1c1e22 40%, #18191d 100%)"

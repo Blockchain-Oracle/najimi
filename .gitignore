@@ -27,6 +27,7 @@ logs/
 
 # local tooling and research (never public: research notes, cloned references, raw scrapes)
 .claude/
+.21st/
 context/
 refs/
 .firecrawl/

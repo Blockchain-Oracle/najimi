@@ -16,7 +16,7 @@ export const APP = {
   docs: "https://docs.najimi.xyz" as string | null,
 } as const
 
-/** Local development ports, chosen to sit beside Konkyo (3210/3211/54320) without clashing. */
+/** Local development ports, chosen off the common defaults so they don't clash with other apps. */
 export const LOCAL_PORTS = {
   web: 3310,
   docs: 3311,
@@ -399,7 +399,8 @@ export type LocaleCode = (typeof LOCALES)[number]["code"]
 export const DEFAULT_LOCALE: LocaleCode = "en"
 
 export const EMAIL = {
-  from: "Najimi <najimi@konkyo.xyz>",
+  /** The default sender; a server sets its own verified address in `EMAIL_FROM`. */
+  from: "Najimi <hello@mail.najimi.xyz>",
   /** Sign-in codes (Better Auth email OTP): six digits, ten minutes, five tries. */
   codeLength: 6,
   codeExpiresInSeconds: 10 * 60,
@@ -407,9 +408,8 @@ export const EMAIL = {
 } as const
 
 /**
- * The faces you can be (ported from OurSpaces, MIT, © 2026 Thomas Nguyen): one per identity
- * colour, so the face you pick is the colour your taste wears everywhere. The name is a
- * placeholder until you type your own.
+ * The faces you can be: one per identity colour, so the face you pick is the colour your taste
+ * wears everywhere. The name is a placeholder until you type your own.
  */
 export const LOOKS = [
   { id: "juno", name: "Juno", identity: "violet" },
@@ -423,9 +423,8 @@ export type LookId = (typeof LOOKS)[number]["id"]
 export const lookById = (id: string | null | undefined) => LOOKS.find((l) => l.id === id)
 
 /**
- * Interface sounds (OurSpaces' set, Mixkit Sound Effects Free License): soft and short. `tap`
- * by default, `place` when something lands (a pin, a love), `check` when a result arrives,
- * `promote` for the big moments (your taste revealed).
+ * Interface sounds: soft and short. `tap` by default, `place` when something lands (a pin, a love),
+ * `check` when a result arrives, `promote` for the big moments (your taste revealed).
  */
 export const SOUNDS = {
   files: {

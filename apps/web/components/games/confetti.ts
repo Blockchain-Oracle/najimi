@@ -1,8 +1,7 @@
 "use client"
 
 /*
- * A win: a burst from the middle, then one from each side. After Magic UI's Confetti (21st.dev
- * dillionverma/confetti, MIT) and its side-cannons demo. canvas-confetti loads on the first win
+ * A win: a burst from the middle, then one from each side. canvas-confetti loads on the first win
  * (it needs the window), in the aura colours, and stays still under reduced motion.
  */
 

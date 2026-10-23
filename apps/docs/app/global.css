@@ -133,7 +133,7 @@ html {
   opacity: 0.85;
 }
 
-/* The orb (components/orb.tsx), the same as the app's: after 21st.dev's Siri Orb by educalvolpz. */
+/* The orb (components/orb.tsx), the same as the app's. */
 @property --orb-angle {
   syntax: "<angle>";
   inherits: false;

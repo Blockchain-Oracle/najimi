@@ -28,9 +28,8 @@ import { TextShimmer } from "./text-shimmer"
  * came back ("qloo.insights · place · Lagos → 5"). Open while it works, with the step in progress
  * in the signal; folded to one line when it's done ("6 steps · 3 Qloo calls · 14s").
  *
- * After starc007's Agent Activity (21st.dev, beui.dev): the live/summary header, the disclosure
- * that never animates height, the rows that fade in as they stream. Rebuilt on our parts and
- * tokens, with a rail joining the steps (Grok and Perplexity's visible steps).
+ * A live or summary header, a disclosure that never animates height, rows that fade in as they
+ * stream, and a rail joining the steps.
  */
 
 type Part = NajimiUIMessage["parts"][number]

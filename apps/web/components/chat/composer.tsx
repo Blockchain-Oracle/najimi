@@ -24,10 +24,10 @@ export type ChatPerson = {
 export type Mode = "ask" | "auto" | "plan"
 
 /**
- * The composer, light (after Bond's text · camera · voice composer, Refero e535dc3e): + (a photo
- * from the library or the camera) · words · mic · send. Photos are resized in the browser and
- * re-encoded on the server. Enter sends; Shift+Enter is a new line; while a turn runs, Send
- * becomes Stop. How Najimi acts (ask first, just do it) is one setting, not a switch here.
+ * The composer, light: + (a photo from the library or the camera) · words · mic · send. Photos are
+ * resized in the browser and re-encoded on the server. Enter sends; Shift+Enter is a new line;
+ * while a turn runs, Send becomes Stop. How Najimi acts (ask first, just do it) is one setting, not
+ * a switch here.
  */
 export function Composer({
   person,

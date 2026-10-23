@@ -11,9 +11,9 @@ import { useAgent } from "@/components/agent/agent-context"
 import { isHere, NAV, opensSheet } from "./nav"
 
 /*
- * The phone tab bar: a floating glass pill where the tab you're on opens to show its name, and
- * the others are a tap away. Adapted from 21st.dev's Expanding Tabs (aicanvas): the same spring,
- * the layout animation and the pressed scale, on our tokens and our routes. Najimi's tab is its orb.
+ * The phone tab bar: a floating glass pill where the tab you're on opens to show its name, and the
+ * others are a tap away: one spring, a layout animation and a pressed scale. Najimi's tab is its
+ * orb.
  */
 
 const SPRING = { type: "spring", stiffness: 420, damping: 30, mass: 0.7 } as const

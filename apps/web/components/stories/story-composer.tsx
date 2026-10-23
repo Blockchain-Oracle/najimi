@@ -25,8 +25,7 @@ import { StoryContent, type StoryShape } from "./story-content"
 /*
  * A new story, in two steps: what it is (a photo or video from the library or the camera, a song
  * from your taste, one of your picks, a plan, a Wrapped slide), then the story as it'll show, with
- * a caption (and, on a photo, a song that plays with it). After Tilt's half-height picker of what
- * to add (Refero 0946ab1b); the preview is the viewer's own renderer.
+ * a caption (and, on a photo, a song that plays with it).
  */
 
 type Song = StorySong & { thing: StoryThing }

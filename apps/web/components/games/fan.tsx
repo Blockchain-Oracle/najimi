@@ -4,10 +4,9 @@ import { cn } from "@najimi/ui/lib/utils"
 import { motion, useReducedMotion } from "motion/react"
 
 /*
- * A hand of cards: the round's things fanned out, face up (the answers stay hidden). Adapted from
- * the Card Fan Carousel (21st.dev aayush-duhan/card-fan-carousel, MIT): the fan maths (each card's
- * turn, scale, spread and drop by its distance from the middle). Changed here: motion instead of
- * GSAP, no paging (a round is five), cards deal in from below, a mark per card once it's played.
+ * A hand of cards: the round's things fanned out, face up (the answers stay hidden). Each card turns,
+ * scales, spreads and drops by its distance from the middle; cards deal in from below on `motion`,
+ * and each carries a mark once it's played.
  */
 
 export type FanCard = { key: string; image: string | null; label: string; mark?: string | null }

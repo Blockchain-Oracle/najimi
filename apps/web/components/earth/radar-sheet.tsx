@@ -12,9 +12,8 @@ import { api } from "@/lib/fetcher"
 /*
  * The taste-twin radar (W10): you in the middle, a beam sweeping round, and your people placed by
  * how close their taste is — app people on the inner rings (the most loves and picks in common
- * nearest), the public figures Qloo predicts for you on the outer ring. Adapted from Aceternity's
- * Radar Effect (21st.dev manuarora700/radar-effect): the concentric rings and the rotating sweep.
- * Changed here: one accent, people instead of icons, placed by match, motion/react.
+ * nearest), the public figures Qloo predicts for you on the outer ring: concentric rings, a
+ * rotating sweep, one accent.
  */
 
 type Radar = {
