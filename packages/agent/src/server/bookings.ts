@@ -32,7 +32,12 @@ const noteOf = (b: Booking): BookingNote => ({
 })
 
 /** A card in the booking's room (its line and the booking as it is now), and the owner's news. */
-export async function tellBooking(booking: Booking, text: string) {
+export async function tellBooking(
+  booking: Booking,
+  text: string,
+  /** More for the news item (a reminder says which). */
+  extra: Record<string, unknown> = {},
+) {
   if (booking.chatId) {
     const [row] = await db
       .insert(schema.messages)
@@ -52,7 +57,7 @@ export async function tellBooking(booking: Booking, text: string) {
       userId: booking.ownerId,
       kind: "booking",
       chatId: booking.chatId,
-      data: { bookingId: booking.id, text, name: booking.title },
+      data: { bookingId: booking.id, text, name: booking.title, ...extra },
     })
     .returning({ id: schema.notifications.id })
   await publish(topic.user(booking.ownerId), "notification", { id: note?.id, kind: "booking" })
@@ -96,6 +101,7 @@ export async function remindBooking(bookingId: string, when: "day" | "soon") {
     when === "day"
       ? `Tomorrow: ${what}${at}${under ? `, under ${under}` : ""}.`
       : `In two hours: ${what}${at}${under ? `, under ${under}` : ""}. Have a good one.`,
+    { reminder: when },
   )
 }
 
