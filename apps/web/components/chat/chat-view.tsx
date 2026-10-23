@@ -3,6 +3,7 @@
 import type { NajimiUIMessage } from "@najimi/agent"
 import { Sheet, SheetContent, SheetTitle } from "@najimi/ui/components/sheet"
 import { toast } from "@najimi/ui/components/sonner"
+import { cn } from "@najimi/ui/lib/utils"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { Copy, Gamepad2, History, Plus, RotateCcw, Share2, UserPlus } from "lucide-react"
 import { useTranslations } from "next-intl"
@@ -17,7 +18,7 @@ import { type RoomStatus, useRoom } from "@/lib/use-room"
 import { ChatProvider, shareChat } from "./chat-context"
 import { ChatSidebar } from "./chat-sidebar"
 import { ChatWelcome, type Starter, type WelcomeTaste } from "./chat-welcome"
-import { type ChatPerson, Composer, type Mode } from "./composer"
+import { type ChatPerson, Composer } from "./composer"
 import { Message } from "./message"
 import { RoomWelcome } from "./room-welcome"
 
@@ -46,7 +47,6 @@ export type ChatViewProps = {
   /** The room's newest live event when the page was made. */
   after: number
   me: string
-  mode: Mode
   people: ChatPerson[]
   starters: Starter[]
   /** The taste an empty chat says it will use. */
@@ -71,7 +71,6 @@ export function ChatView(props: ChatViewProps) {
   const t = useTranslations("Chat")
   const newChat = useNewChat()
   const queryClient = useQueryClient()
-  const [mode, setMode] = useState<Mode>(props.mode)
   const [title, setTitle] = useState(props.title)
   const [history, setHistory] = useState(false)
   const [membersOpen, setMembersOpen] = useState(false)
@@ -129,12 +128,17 @@ export function ChatView(props: ChatViewProps) {
     }
   }
 
-  const changeMode = async (next: Mode) => {
-    setMode(next)
-    if (messages.length)
-      await api(`/api/chats/${props.chatId}`, { method: "PATCH", json: { mode: next } }).catch(
-        () => undefined,
-      )
+  const rename = async (next: string) => {
+    const value = next.trim().slice(0, 120)
+    if (!value || value === title) return
+    const before = title
+    setTitle(value)
+    try {
+      await api(`/api/chats/${props.chatId}`, { method: "PATCH", json: { title: value } })
+      void queryClient.invalidateQueries({ queryKey: ["chats"] })
+    } catch {
+      setTitle(before)
+    }
   }
   const lastAssistant = [...messages].reverse().find((m) => m.role === "assistant")
   const failed = lastAssistant?.metadata?.status === "failed"
@@ -153,9 +157,12 @@ export function ChatView(props: ChatViewProps) {
             <History className="size-5" />
           </button>
           {kind === "agent" ? (
-            <h1 className="min-w-0 flex-1 truncate text-center text-[15px] font-semibold">
-              {title ?? (messages.length ? t("untitled") : "")}
-            </h1>
+            <Title
+              value={title ?? (messages.length ? t("untitled") : "")}
+              editable={messages.length > 0}
+              label={t("rename")}
+              onRename={(next) => void rename(next)}
+            />
           ) : kind === "dm" ? (
             // A DM's title is the other person: it opens their profile when they have one.
             <ProfileLink
@@ -227,7 +234,7 @@ export function ChatView(props: ChatViewProps) {
                   const isLast = i === messages.length - 1
                   const streaming = isLast && m.metadata?.status === "streaming"
                   return (
-                    <div key={m.id} className="flex flex-col gap-2">
+                    <div key={m.id} className="group/msg flex flex-col gap-2">
                       <Message
                         message={m}
                         from={fromOf(m)}
@@ -240,10 +247,19 @@ export function ChatView(props: ChatViewProps) {
                           onApprove: (id, approved) => void room.approve(m.id, id, approved),
                         }}
                       />
+                      {/* Copy, again and share sit under the latest answer; older ones show
+                          them on hover, so the thread stays quiet. */}
                       {m.role === "assistant" &&
                       !streaming &&
                       (textOf(m) || m.id === lastAssistant?.id) ? (
-                        <div className="flex flex-wrap items-center gap-1 text-text-3">
+                        <div
+                          className={cn(
+                            "flex flex-wrap items-center gap-1 text-text-3 transition-opacity",
+                            m.id === lastAssistant?.id
+                              ? "opacity-100"
+                              : "opacity-0 group-hover/msg:opacity-100 focus-within:opacity-100",
+                          )}
+                        >
                           {textOf(m) ? (
                             <IconButton
                               label={t("copy")}
@@ -307,8 +323,6 @@ export function ChatView(props: ChatViewProps) {
           <div className="mx-auto w-full max-w-3xl">
             <Composer
               person={props.people[0]}
-              mode={mode}
-              onMode={kind === "agent" ? changeMode : undefined}
               busy={busy}
               onSend={(text, photos) => void send(text, photos)}
               onStop={() => void room.stop()}
@@ -452,6 +466,60 @@ function CircleOverlap({ chatId, open }: { chatId: string; open: boolean }) {
         </div>
       ) : null}
     </section>
+  )
+}
+
+/** Your chat's title; a tap turns it into a field (Enter or leaving it saves, Escape doesn't). */
+function Title({
+  value,
+  editable,
+  label,
+  onRename,
+}: {
+  value: string
+  editable: boolean
+  label: string
+  onRename: (next: string) => void
+}) {
+  const [editing, setEditing] = useState(false)
+  if (editing)
+    return (
+      <input
+        // biome-ignore lint/a11y/noAutofocus: the field appears because they asked to rename
+        autoFocus
+        defaultValue={value}
+        aria-label={label}
+        maxLength={120}
+        onFocus={(e) => e.currentTarget.select()}
+        onBlur={(e) => {
+          setEditing(false)
+          onRename(e.currentTarget.value)
+        }}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") e.currentTarget.blur()
+          if (e.key === "Escape") {
+            e.currentTarget.value = value
+            e.currentTarget.blur()
+          }
+        }}
+        className="min-w-0 flex-1 rounded-tile bg-card px-3 py-1.5 text-center text-[15px] font-semibold outline-none ring-1 ring-white/15"
+      />
+    )
+  return (
+    <h1 className="flex min-w-0 flex-1 justify-center">
+      {editable ? (
+        <button
+          type="button"
+          onClick={() => setEditing(true)}
+          title={label}
+          className="max-w-full truncate rounded-tile px-2 py-1 text-[15px] font-semibold transition-colors hover:bg-card"
+        >
+          {value}
+        </button>
+      ) : (
+        <span className="truncate text-[15px] font-semibold">{value}</span>
+      )}
+    </h1>
   )
 }
 

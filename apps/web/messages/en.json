@@ -626,7 +626,9 @@
     "you": "you",
     "youAllLove": "Loved in this circle",
     "youAllAre": "You're all",
-    "play": "Play a game"
+    "play": "Play a game",
+    "add": "Add",
+    "takePhoto": "Take a photo"
   },
   "Cards": {
     "asking": "Asking Qloo…",

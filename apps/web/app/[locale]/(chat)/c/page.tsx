@@ -24,7 +24,6 @@ async function NewChat({ ask }: { ask: Promise<string | undefined> }) {
       status="idle"
       after={0}
       me={session.user.id}
-      mode={data.mode}
       people={data.people}
       starters={data.starters}
       taste={data.taste}

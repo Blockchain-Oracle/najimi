@@ -74,15 +74,12 @@ export async function runTurn(chatId: string): Promise<void> {
   ])
   if (!person) return
   const guest = Boolean(author?.isAnonymous)
-  // Your own chat keeps its own mode; in a circle or DM the person who asked brings theirs.
-  const [prefs] =
-    chat.kind === "agent"
-      ? [null]
-      : await db
-          .select({ mode: schema.userPrefs.mode })
-          .from(schema.userPrefs)
-          .where(eq(schema.userPrefs.userId, by))
-  const mode = chat.kind === "agent" ? chat.mode : (prefs?.mode ?? "ask")
+  // How Najimi acts is the asker's own setting (ask first, just do it, plan only), in every room.
+  const [prefs] = await db
+    .select({ mode: schema.userPrefs.mode })
+    .from(schema.userPrefs)
+    .where(eq(schema.userPrefs.userId, by))
+  const mode = prefs?.mode ?? "ask"
 
   const validated = await safeValidateUIMessages<NajimiUIMessage>({
     messages: stored,
