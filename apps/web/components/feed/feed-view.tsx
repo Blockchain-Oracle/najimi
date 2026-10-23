@@ -10,9 +10,10 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
-import { useReportScreen } from "@/components/agent/agent-context"
+import { useAgent, useReportScreen } from "@/components/agent/agent-context"
 import { FEED_RESTART } from "@/components/chat/cards/steer-card"
-import { useEntity } from "@/components/entity/entity-provider"
+import { useAskAbout } from "@/components/entity/entity-provider"
+import { EntitySheet } from "@/components/entity/entity-sheet"
 import { type Track, usePlayer } from "@/components/player/player"
 import {
   type FeedCard as Card,
@@ -27,7 +28,7 @@ import { api } from "@/lib/fetcher"
 import { qk } from "@/lib/query-keys"
 import { sound } from "@/lib/sounds"
 import { FeedCard, FeedCardSkeleton } from "./feed-card"
-import { MoreSheet, TrailerSheet, TuneSheet, WhySheet } from "./feed-sheets"
+import { TrailerSheet, TuneSheet, WhySheet } from "./feed-sheets"
 import { useSignals } from "./use-signals"
 
 /*
@@ -143,7 +144,9 @@ export function FeedView() {
   const [refining, setRefining] = useState(false)
   const [why, setWhy] = useState<Card | null>(null)
   const [more, setMore] = useState<Card | null>(null)
-  const entity = useEntity()
+  const askAbout = useAskAbout()
+  const agent = useAgent()
+  const tp = useTranslations("Pick")
   const [trailer, setTrailer] = useState<Card | null>(null)
   const [tune, setTune] = useState(false)
 
@@ -637,19 +640,30 @@ export function FeedView() {
       ) : null}
 
       <WhySheet card={why} loves={loves} onClose={() => setWhy(null)} />
-      <MoreSheet
-        card={more}
+      {/* More: the same sheet as everywhere else (plays, where to watch or listen, what people
+          say, who to follow), with the feed's own Keep and Not for me. */}
+      <EntitySheet
+        thing={more ? { ...more, qlooId: more.id } : null}
+        loves={loves}
+        surface="feed"
         onClose={() => setMore(null)}
-        onOpen={() => {
-          if (!more) return
-          entity.open({ ...more, qlooId: more.id }, { surface: "feed" })
-          setMore(null)
-        }}
-        onWhy={() => {
-          setWhy(more)
-          setMore(null)
-        }}
-        onHide={() => more && hide(more)}
+        actions={
+          more
+            ? {
+                saved: isSaved(more),
+                onToggleSave: () => save(more),
+                onMore: () => {
+                  setMore(null)
+                  agent.ask(tp("moreLike", { name: more.name }))
+                },
+                onAsk: () => {
+                  setMore(null)
+                  askAbout({ ...more, qlooId: more.id })
+                },
+                onNotForMe: () => hide(more),
+              }
+            : {}
+        }
       />
       <TrailerSheet card={trailer} onClose={() => setTrailer(null)} />
       <TuneSheet

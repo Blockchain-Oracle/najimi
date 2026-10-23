@@ -1,5 +1,6 @@
 "use client"
 
+import type { CardMedia } from "@najimi/sources"
 import { toast } from "@najimi/ui/components/sonner"
 import { cn } from "@najimi/ui/lib/utils"
 import { useQuery } from "@tanstack/react-query"
@@ -10,10 +11,10 @@ import { DarkSheet } from "@/components/feed/dark-sheet"
 import type { ShareLove } from "@/components/feed/share-bars"
 import { AppleMusicBadge, PodcastCredit, PreviewCredit } from "@/components/player/credit"
 import { type Track, usePlayer, usePlayerClock } from "@/components/player/player"
-import { type EntityDetails, type EntityRef, regionOf } from "@/lib/entity"
+import { type EntityDetails, type EntityRef, type EntityVideo, regionOf } from "@/lib/entity"
 import { api } from "@/lib/fetcher"
 import { qk } from "@/lib/query-keys"
-import { AccountLinks, BookLinks, FilmLinks, PlaceLinks, TourLinks } from "./entity-links"
+import { LinkRow, PlaceLinks, TourLinks, VideoRow, WhereToWatch } from "./entity-links"
 
 /*
  * Any thing, opened, from anywhere in the app (a pick on a profile, a film in a chat, a stop on a
@@ -69,8 +70,7 @@ export function useEntityDetails(thing: EntityRef | null) {
   })
 }
 
-function tracksOf(thing: EntityRef, details: EntityDetails | undefined): Track[] {
-  const media = details?.media
+function tracksOf(thing: EntityRef, media: CardMedia | null): Track[] {
   if (media?.kind === "songs")
     return media.songs.map((song) => ({
       id: `${thing.qlooId}:${song.preview}`,
@@ -107,13 +107,13 @@ function shareUrl(d: EntityDetails | undefined) {
   if (!d) return null
   return (
     d.place?.maps ??
-    d.film?.letterboxd ??
-    d.film?.imdb ??
-    d.links.spotify ??
+    d.say.find((l) => l.site === "letterboxd" || l.site === "imdb" || l.site === "goodreads")
+      ?.url ??
+    d.listen[0]?.url ??
+    d.read[0]?.url ??
     d.links.open ??
-    d.accounts.website ??
-    (d.accounts.instagram ? `https://www.instagram.com/${d.accounts.instagram}/` : null) ??
-    d.talk.youtube
+    d.follow[0]?.url ??
+    null
   )
 }
 
@@ -168,19 +168,26 @@ function EntityBody({
   const player = usePlayer()
   const details = useEntityDetails(thing)
   const d = details.data
-  const tracks = tracksOf(thing, d)
+  // What the card already had plays at once; the full record replaces it when it lands.
+  const media = d?.media ?? thing.media ?? null
+  const tracks = tracksOf(thing, media)
   const waiting = details.isPending
   const stageRef = useRef<HTMLDivElement>(null)
-  // A film's other videos play in the same stage, from the top.
-  const [video, setVideo] = useState<{ youtube: string; title: string } | null>(null)
+  // A video from "More videos" plays in the same stage, from the top.
+  const [video, setVideo] = useState<EntityVideo | null>(null)
+  const isFilm = FILM.has(thing.type)
   const trailer =
-    video ?? (d?.media?.kind === "trailer" ? d.media.trailer : null) ?? d?.film?.videos[0] ?? null
+    media?.kind === "trailer"
+      ? media.trailer
+      : isFilm
+        ? (d?.videos.find((v) => v.youtube) ?? null)
+        : null
   const saved = actions.saved ?? d?.saved ?? false
   const caption = thing.caption ?? d?.entity.caption ?? null
   const year = d?.entity.year ?? null
-  const isArtist = thing.type === "urn:entity:artist"
 
   const play = async (track: Track) => {
+    setVideo(null)
     const result = await player.play(track, tracks)
     if (result !== "playing") return
     // A play from here counts the same as one in the feed: it tells the taste what you reached for.
@@ -217,30 +224,30 @@ function EntityBody({
   return (
     <div className="flex flex-col">
       <div ref={stageRef}>
-        {trailer ? (
+        {video?.src ? (
+          <AppleVideoStage key={video.id} video={video} onStart={player.pause} />
+        ) : video?.youtube ? (
           <TrailerStage
-            key={trailer.youtube}
-            trailer={trailer}
-            autoplay={Boolean(video)}
+            key={video.id}
+            trailer={{ youtube: video.youtube, title: video.title }}
+            autoplay
             onStart={player.pause}
           />
-        ) : waiting && FILM.has(thing.type) ? (
+        ) : trailer ? (
+          <TrailerStage
+            key={trailer.youtube}
+            trailer={{ youtube: trailer.youtube ?? "", title: trailer.title }}
+            autoplay={false}
+            onStart={player.pause}
+          />
+        ) : waiting && isFilm ? (
           <TrailerWaiting thing={thing} />
         ) : tracks.length ? (
-          <RecordStage
-            thing={thing}
-            tracks={tracks}
-            disc={d?.media?.kind === "songs"}
-            onPlay={play}
-          />
+          <RecordStage thing={thing} tracks={tracks} disc={media?.kind === "songs"} onPlay={play} />
         ) : (
           <ArtStage
             thing={thing}
-            cover={
-              d?.media?.kind === "cover"
-                ? d.media.image
-                : (d?.place?.logo ?? d?.accounts.logo ?? null)
-            }
+            cover={media?.kind === "cover" ? media.image : (d?.place?.logo ?? d?.logo ?? null)}
             waiting={waiting}
           />
         )}
@@ -267,26 +274,26 @@ function EntityBody({
           </p>
         </header>
 
+        {/* The same sections for every kind, in the same order; a kind shows the ones it has. */}
         {tracks.length ? <TrackList tracks={tracks} owner={thing.name} onPlay={play} /> : null}
-
         {waiting ? <LinksWaiting /> : null}
         {d?.place ? <PlaceLinks name={thing.name} place={d.place} /> : null}
-        {d?.film ? (
-          <FilmLinks
-            film={d.film}
-            talk={d.talk}
-            instagram={d.accounts.instagram}
+        {d?.film ? <WhereToWatch film={d.film} /> : null}
+        {d ? <LinkRow title={te("whereToListen")} links={d.listen} /> : null}
+        {d ? <LinkRow title={te("whereToRead")} links={d.read} /> : null}
+        {d ? (
+          <VideoRow
+            videos={d.videos}
+            playing={video?.id ?? null}
             onPlay={(v) => {
               setVideo(v)
               stageRef.current?.scrollIntoView({ block: "start", behavior: "smooth" })
             }}
           />
         ) : null}
-        {d && !d.place && !d.film && !d.book ? (
-          <AccountLinks details={d} isArtist={isArtist} />
-        ) : null}
-        {d?.book ? <BookLinks book={d.book} /> : null}
-        {d?.tour.length ? <TourLinks tour={d.tour} /> : null}
+        {d ? <TourLinks tour={d.tour} /> : null}
+        {d ? <LinkRow title={te("whatPeopleSay")} links={d.say} /> : null}
+        {d ? <LinkRow title={te("follow")} links={d.follow} /> : null}
 
         {d?.entity.description ? <About text={d.entity.description} /> : null}
 
@@ -465,6 +472,27 @@ function TrailerWaiting({ thing }: { thing: EntityRef }) {
     <div className="relative isolate grid aspect-video w-full place-items-center overflow-hidden">
       <Backdrop src={sized(thing.image, 600)} />
       <span className="size-16 animate-pulse rounded-full bg-white/15 ring-1 ring-white/25 backdrop-blur-md" />
+    </div>
+  )
+}
+
+/** An artist's music video: Apple's 30-second preview, played right here. */
+function AppleVideoStage({ video, onStart }: { video: EntityVideo; onStart: () => void }) {
+  return (
+    <div className="relative aspect-video w-full bg-black">
+      {/* biome-ignore lint/a11y/useMediaCaption: Apple's music video previews come without captions */}
+      <video
+        src={video.src}
+        poster={video.poster ?? undefined}
+        autoPlay
+        controls
+        playsInline
+        onPlay={onStart}
+        className="size-full"
+      />
+      {video.store ? (
+        <AppleMusicBadge href={video.store} className="absolute top-3 left-3" />
+      ) : null}
     </div>
   )
 }

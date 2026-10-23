@@ -1,7 +1,7 @@
 import { MEDIA_LINKS } from "@najimi/config"
 import { env } from "@najimi/env/server"
 import { XMLParser } from "fast-xml-parser"
-import { cachedMany } from "./cache"
+import { cached, cachedMany } from "./cache"
 import { fetchPublic } from "./fetch"
 
 /*
@@ -206,6 +206,62 @@ export async function songsFor(
     if (list?.length) out[a.qlooId] = list
   }
   return out
+}
+
+/** A music video's 30-second preview on Apple, played in our own video element. */
+export type MusicVideo = { title: string; preview: string; poster: string | null; store: string }
+
+/** An artist's Apple Music id: Wikidata's (P2850), else an exact name search; both cached. */
+export async function appleArtistOf(a: {
+  name: string
+  wikidata?: string
+}): Promise<string | null> {
+  if (a.wikidata) {
+    const found = await cachedMany(
+      "apple-artist-wd",
+      [a.wikidata],
+      MEDIA_LINKS.days.appleId,
+      appleIdsFromWikidata,
+    )
+    if (found[a.wikidata]) return found[a.wikidata] ?? null
+  }
+  const key = norm(a.name)
+  if (!key) return null
+  const byName = await cachedMany(
+    "apple-artist-name",
+    [key],
+    MEDIA_LINKS.days.appleId,
+    appleIdsByName(new Map([[key, a.name]])),
+  )
+  return byName[key] ?? null
+}
+
+/**
+ * An artist's music videos with previews (the entity sheet's "More videos"). Films and
+ * documentaries in the list are left out: only videos of a song's length.
+ */
+export async function musicVideosOf(appleId: string): Promise<MusicVideo[]> {
+  return cached("apple-videos", appleId, MEDIA_LINKS.days.songs, async () => {
+    const body = await itunes("lookup", { id: appleId, entity: "musicVideo", limit: "15" })
+    if (!body) throw new Error("iTunes didn't answer")
+    return (body.results ?? [])
+      .filter(
+        (r) =>
+          r.kind === "music-video" &&
+          r.previewUrl &&
+          r.trackName &&
+          r.trackViewUrl &&
+          (r.trackTimeMillis ?? 0) > 60_000 &&
+          (r.trackTimeMillis ?? 0) < 12 * 60_000,
+      )
+      .slice(0, 8)
+      .map((r) => ({
+        title: r.trackName ?? "",
+        preview: r.previewUrl ?? "",
+        poster: r.artworkUrl100?.replace(/\/\d+x\d+bb\./, "/640x360bb.") ?? null,
+        store: r.trackViewUrl ?? "",
+      }))
+  }).catch(() => [])
 }
 
 // ── Podcasts → latest episode ─────────────────────────────────────────────────────────────────

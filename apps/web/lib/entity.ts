@@ -16,6 +16,40 @@ export type EntityRef = {
   /** Each love's share of it (Qloo's explainability), for "Made of your loves". */
   shares?: { id: string; share: number }[]
   area?: string | null
+  /** What the card already plays (the feed's), so the stage shows at once. */
+  media?: CardMedia | null
+}
+
+/** Where a link goes, so the sheet draws its mark and name. */
+export type Site =
+  | "apple_music"
+  | "spotify"
+  | "youtube_music"
+  | "apple_podcasts"
+  | "open_library"
+  | "google_books"
+  | "tiktok"
+  | "youtube"
+  | "instagram"
+  | "x"
+  | "facebook"
+  | "letterboxd"
+  | "imdb"
+  | "goodreads"
+  | "google"
+  | "website"
+
+export type OutLink = { site: Site; url: string }
+
+/** A video the sheet's stage plays: on YouTube (a film's), or Apple's preview (a music video). */
+export type EntityVideo = {
+  id: string
+  title: string
+  poster: string | null
+  youtube?: string
+  src?: string
+  /** The video on Apple Music. */
+  store?: string
 }
 
 /** What `/api/entities/[id]` answers: one thing, what it plays and where it leads. */
@@ -44,28 +78,25 @@ export type EntityDetails = {
     lon: number | null
     maps: string
     directions: string
-    instagram: string | null
-    tiktok: string | null
     logo: string | null
   } | null
-  accounts: {
-    instagram: string | null
-    x: string | null
-    tiktok: string | null
-    website: string | null
-    logo: string | null
-  }
   film: {
-    imdb: string | null
-    letterboxd: string | null
-    videos: { youtube: string; title: string; type: string }[]
     providers: { name: string; logo: string | null; kind: "stream" | "rent" | "buy" }[]
     watchLink: string | null
   } | null
+  /** A brand's own icon. */
+  logo: string | null
+  /** Where to listen (an artist, a podcast) and where to read (a book). */
+  listen: OutLink[]
+  read: OutLink[]
+  /** More videos: a film's featurettes and clips, an artist's music videos. */
+  videos: EntityVideo[]
   /** An artist's next concerts. */
   tour: TourDate[]
-  book: { goodreads: string | null; openLibrary: string } | null
-  talk: { tiktok: string; youtube: string }
+  /** What people say about it, and where. */
+  say: OutLink[]
+  /** Its own accounts. */
+  follow: OutLink[]
 }
 
 /** The viewer's country for "where to watch": the browser's own region, else none. */

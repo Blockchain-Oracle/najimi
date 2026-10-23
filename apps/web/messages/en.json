@@ -174,8 +174,7 @@
     "full": "Your taste is full. Let go of a love on your taste page to add this one.",
     "upNext": "Up next",
     "tuned": "Your feed, retuned",
-    "openFeed": "Open my feed",
-    "everything": "See everything about it"
+    "openFeed": "Open my feed"
   },
   "Player": {
     "play": "Play",
@@ -1298,6 +1297,10 @@
     "copied": "Link copied",
     "more": "More",
     "onTour": "On tour",
-    "tickets": "Tickets"
+    "tickets": "Tickets",
+    "whereToListen": "Where to listen",
+    "whereToRead": "Where to read",
+    "follow": "Follow",
+    "googleReviews": "Google reviews"
   }
 }

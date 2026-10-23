@@ -1,12 +1,9 @@
 "use client"
 
 import { FEED, TASTE } from "@najimi/config"
-import { cn } from "@najimi/ui/lib/utils"
-import { EyeOff, Heart, Info, Loader2 } from "lucide-react"
+import { Loader2 } from "lucide-react"
 import { motion } from "motion/react"
 import { useTranslations } from "next-intl"
-import { siApplemusic, siImdb, siSpotify } from "simple-icons"
-import { BrandIcon } from "@/components/brands/brand-icon"
 import { CallDetails } from "@/components/qloo/call-details"
 import {
   FEED_DOMAINS,
@@ -58,75 +55,6 @@ export function WhySheet({
             </p>
             <CallDetails callId={card.callId} />
           </div>
-        </div>
-      ) : null}
-    </DarkSheet>
-  )
-}
-
-/** More: everything about it, not for me, why this, and where to open it. */
-export function MoreSheet({
-  card,
-  onClose,
-  onOpen,
-  onWhy,
-  onHide,
-}: {
-  card: FeedCard | null
-  onClose: () => void
-  /** Everything about it, in the entity sheet (where to watch, the map, its socials). */
-  onOpen: () => void
-  onWhy: () => void
-  onHide: () => void
-}) {
-  const t = useTranslations("Feed")
-  const song = card?.media?.kind === "songs" ? card.media.songs[0] : null
-  const row =
-    "flex w-full items-center gap-3 rounded-tile px-3 py-3 text-start text-[15px] font-semibold hover:bg-white/5"
-  const site = (href: string) => {
-    try {
-      return new URL(href).hostname.replace(/^www\./, "")
-    } catch {
-      return href
-    }
-  }
-  return (
-    <DarkSheet
-      open={Boolean(card)}
-      onOpenChange={(o) => (o ? null : onClose())}
-      title={card?.name ?? ""}
-    >
-      {card ? (
-        <div className="flex flex-col">
-          <button type="button" className={row} onClick={onOpen}>
-            <Info className="size-5" /> {t("everything")}
-          </button>
-          <button type="button" className={row} onClick={onWhy}>
-            <Heart className="size-5" /> {t("why")}
-          </button>
-          {song ? (
-            <a className={row} href={song.store} target="_blank" rel="noopener noreferrer">
-              <BrandIcon icon={siApplemusic} colored /> {t("listenOn")} {t("appleMusic")}
-            </a>
-          ) : null}
-          {card.links.spotify ? (
-            <a className={row} href={card.links.spotify} target="_blank" rel="noopener noreferrer">
-              <BrandIcon icon={siSpotify} colored /> {t("openSpotify")}
-            </a>
-          ) : null}
-          {card.links.imdb ? (
-            <a className={row} href={card.links.imdb} target="_blank" rel="noopener noreferrer">
-              <BrandIcon icon={siImdb} colored /> {t("openOn", { site: "IMDb" })}
-            </a>
-          ) : card.links.open && !card.links.spotify ? (
-            <a className={row} href={card.links.open} target="_blank" rel="noopener noreferrer">
-              <span className="grid size-5 place-items-center text-[13px]">↗</span>
-              {t("openOn", { site: site(card.links.open) })}
-            </a>
-          ) : null}
-          <button type="button" className={cn(row, "text-[#FF6B7A]")} onClick={onHide}>
-            <EyeOff className="size-5" /> {t("hide")}
-          </button>
         </div>
       ) : null}
     </DarkSheet>

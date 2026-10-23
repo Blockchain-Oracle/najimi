@@ -4,11 +4,14 @@ export { type Geocoded, geocode } from "./geocode"
 export { type Product, parseProduct } from "./jsonld"
 export { type FilmExtras, filmExtras, siteLinks } from "./links"
 export {
+  appleArtistOf,
   type CardMedia,
   coverOf,
   type Episode,
   episodesFor,
+  type MusicVideo,
   mediaFor,
+  musicVideosOf,
   type SocialAccounts,
   type Song,
   socialAccountsFor,

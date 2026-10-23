@@ -1,32 +1,75 @@
 "use client"
 
 import { cn } from "@najimi/ui/lib/utils"
-import { BookOpen, Car, Clock, Globe, MapPin, Navigation, Phone, Play, Star } from "lucide-react"
+import {
+  BookOpen,
+  Car,
+  Clock,
+  Globe,
+  type LucideIcon,
+  MapPin,
+  Navigation,
+  Phone,
+  Play,
+  Star,
+} from "lucide-react"
 import { useFormatter, useTranslations } from "next-intl"
 import type { ReactNode } from "react"
 import {
   type SimpleIcon,
+  siApplemusic,
+  siApplepodcasts,
+  siFacebook,
   siGoodreads,
   siGoogle,
+  siGooglemaps,
   siImdb,
   siInstagram,
   siLetterboxd,
   siSpotify,
+  siTicketmaster,
   siTiktok,
   siX,
   siYoutube,
+  siYoutubemusic,
 } from "simple-icons"
 import { BrandIcon } from "@/components/brands/brand-icon"
-import { type EntityDetails, openingToday } from "@/lib/entity"
+import {
+  type EntityDetails,
+  type EntityVideo,
+  type OutLink,
+  openingToday,
+  type Site,
+} from "@/lib/entity"
 import { uberLink } from "@/lib/rides"
 
 /*
- * Where a thing leads, by kind, under the entity sheet's stage. A place: a pill row after Google
- * Maps' place sheet (Refero d81cff6d: Directions first and filled, then the rest), today's hours,
- * the address. A film or show: where to watch it (JustWatch's data, credited), more videos that
- * play in the stage, and what people say on TikTok, YouTube and Instagram. Anyone with accounts
- * (artists, brands, films): their accounts.
+ * Where a thing leads, in the same sections for every kind, under the entity sheet's stage: how to
+ * have it (a place's Directions-first pill row after Google Maps' place sheet, Refero d81cff6d;
+ * where to watch, listen or read), more videos that play in the stage, an artist's next concerts,
+ * what people say (TikTok, YouTube, Instagram, X and the review site of its kind), and the
+ * accounts to follow. Every link carries the site's own mark.
  */
+
+/** Each site's mark and name (brand names stay as they are in every language). */
+const SITES: Record<Site, { brand?: SimpleIcon; icon?: LucideIcon; label?: string }> = {
+  apple_music: { brand: siApplemusic, label: "Apple Music" },
+  spotify: { brand: siSpotify, label: "Spotify" },
+  youtube_music: { brand: siYoutubemusic, label: "YouTube Music" },
+  apple_podcasts: { brand: siApplepodcasts, label: "Apple Podcasts" },
+  open_library: { icon: BookOpen, label: "Open Library" },
+  google_books: { brand: siGoogle, label: "Google Books" },
+  tiktok: { brand: siTiktok, label: "TikTok" },
+  youtube: { brand: siYoutube, label: "YouTube" },
+  instagram: { brand: siInstagram, label: "Instagram" },
+  x: { brand: siX, label: "X" },
+  facebook: { brand: siFacebook, label: "Facebook" },
+  letterboxd: { brand: siLetterboxd, label: "Letterboxd" },
+  imdb: { brand: siImdb, label: "IMDb" },
+  goodreads: { brand: siGoodreads, label: "Goodreads" },
+  google: { brand: siGooglemaps },
+  website: { icon: Globe },
+}
 
 function Pill({
   href,
@@ -65,6 +108,44 @@ const Row = ({ children }: { children: ReactNode }) => (
   </div>
 )
 
+export function Section({ title, children }: { title: string; children: ReactNode }) {
+  return (
+    <section className="flex flex-col gap-2.5">
+      <h3 className="text-[12px] font-semibold tracking-[0.1em] text-white/50 uppercase">
+        {title}
+      </h3>
+      {children}
+    </section>
+  )
+}
+
+/** A row of links, each with its site's mark: where to listen, what people say, who to follow. */
+export function LinkRow({ title, links }: { title: string; links: OutLink[] }) {
+  const t = useTranslations("Entity")
+  if (!links.length) return null
+  return (
+    <Section title={title}>
+      <Row>
+        {links.map((l) => {
+          const s = SITES[l.site]
+          const Icon = s.icon
+          const label = s.label ?? (l.site === "google" ? t("googleReviews") : t("website"))
+          return (
+            <Pill
+              key={`${l.site}-${l.url}`}
+              href={l.url}
+              brand={s.brand}
+              icon={Icon ? <Icon className="size-4" /> : undefined}
+              label={label}
+            />
+          )
+        })}
+      </Row>
+    </Section>
+  )
+}
+
+/** A place: Directions first and filled, then Uber, Call, its site and Maps; today's hours. */
 export function PlaceLinks({
   name,
   place,
@@ -94,17 +175,7 @@ export function PlaceLinks({
         {place.website ? (
           <Pill href={place.website} icon={<Globe className="size-4" />} label={t("website")} />
         ) : null}
-        {place.instagram ? (
-          <Pill
-            href={`https://www.instagram.com/${place.instagram}/`}
-            brand={siInstagram}
-            label="Instagram"
-          />
-        ) : null}
-        {place.tiktok ? (
-          <Pill href={`https://www.tiktok.com/@${place.tiktok}`} brand={siTiktok} label="TikTok" />
-        ) : null}
-        <Pill href={place.maps} brand={siGoogle} label={t("maps")} />
+        <Pill href={place.maps} brand={siGooglemaps} label={t("maps")} />
       </Row>
       <div className="flex flex-col gap-1.5 text-[14px] text-white/70">
         {today ? (
@@ -144,146 +215,96 @@ export function PlaceLinks({
   )
 }
 
-export function FilmLinks({
-  film,
-  talk,
-  instagram,
-  onPlay,
-}: {
-  film: NonNullable<EntityDetails["film"]>
-  talk: EntityDetails["talk"]
-  instagram: string | null
-  onPlay: (video: { youtube: string; title: string }) => void
-}) {
+/** Where a film or show streams, rents or sells in your country (JustWatch's data, credited). */
+export function WhereToWatch({ film }: { film: NonNullable<EntityDetails["film"]> }) {
   const t = useTranslations("Entity")
+  if (!film.providers.length) return null
   return (
-    <section className="flex flex-col gap-5">
-      {film.providers.length ? (
-        <div className="flex flex-col gap-2.5">
-          <h3 className="text-[12px] font-semibold tracking-[0.1em] text-white/50 uppercase">
-            {t("whereToWatch")}
-          </h3>
-          <Row>
-            {film.providers.map((p) => (
-              <a
-                key={p.name}
-                href={film.watchLink ?? "#"}
-                target="_blank"
-                rel="noreferrer"
-                title={p.name}
-                className="flex shrink-0 flex-col items-center gap-1.5"
-              >
-                {p.logo ? (
-                  // biome-ignore lint/performance/noImgElement: the service's own logo (TMDB)
-                  <img src={p.logo} alt={p.name} className="size-12 rounded-[12px] object-cover" />
-                ) : (
-                  <span className="grid size-12 place-items-center rounded-[12px] bg-white/10 text-[11px]">
-                    {p.name.slice(0, 2)}
-                  </span>
-                )}
-                <span className="text-[11px] text-white/55">{t(`provider.${p.kind}`)}</span>
-              </a>
-            ))}
-          </Row>
-          {film.watchLink ? (
-            <a
-              href={film.watchLink}
-              target="_blank"
-              rel="noreferrer"
-              className="text-[11px] text-white/45 hover:text-white/70"
-            >
-              {t("justwatch")}
-            </a>
-          ) : null}
-        </div>
+    <Section title={t("whereToWatch")}>
+      <Row>
+        {film.providers.map((p) => (
+          <a
+            key={p.name}
+            href={film.watchLink ?? "#"}
+            target="_blank"
+            rel="noreferrer"
+            title={p.name}
+            className="flex shrink-0 flex-col items-center gap-1.5"
+          >
+            {p.logo ? (
+              // biome-ignore lint/performance/noImgElement: the service's own logo (TMDB)
+              <img src={p.logo} alt={p.name} className="size-12 rounded-[12px] object-cover" />
+            ) : (
+              <span className="grid size-12 place-items-center rounded-[12px] bg-white/10 text-[11px]">
+                {p.name.slice(0, 2)}
+              </span>
+            )}
+            <span className="text-[11px] text-white/55">{t(`provider.${p.kind}`)}</span>
+          </a>
+        ))}
+      </Row>
+      {film.watchLink ? (
+        <a
+          href={film.watchLink}
+          target="_blank"
+          rel="noreferrer"
+          className="text-[11px] text-white/45 hover:text-white/70"
+        >
+          {t("justwatch")}
+        </a>
       ) : null}
-
-      {film.videos.length ? (
-        <div className="flex flex-col gap-2.5">
-          <h3 className="text-[12px] font-semibold tracking-[0.1em] text-white/50 uppercase">
-            {t("moreVideos")}
-          </h3>
-          <Row>
-            {film.videos.map((v) => (
-              <button
-                key={v.youtube}
-                type="button"
-                onClick={() => onPlay(v)}
-                className="group flex w-44 shrink-0 flex-col gap-1.5 text-start"
-              >
-                <span className="relative block aspect-video overflow-hidden rounded-tile bg-black">
-                  {/* biome-ignore lint/performance/noImgElement: YouTube's own still */}
-                  <img
-                    src={`https://i.ytimg.com/vi/${v.youtube}/mqdefault.jpg`}
-                    alt=""
-                    className="size-full object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
-                  <span className="absolute inset-0 grid place-items-center">
-                    <span className="grid size-9 place-items-center rounded-full bg-black/50 ring-1 ring-white/30 backdrop-blur">
-                      <Play className="ms-0.5 size-4 fill-white text-white" />
-                    </span>
-                  </span>
-                </span>
-                <span className="line-clamp-2 text-[12px] leading-snug text-white/75">
-                  {v.title}
-                </span>
-              </button>
-            ))}
-          </Row>
-        </div>
-      ) : null}
-
-      <div className="flex flex-col gap-2.5">
-        <h3 className="text-[12px] font-semibold tracking-[0.1em] text-white/50 uppercase">
-          {t("whatPeopleSay")}
-        </h3>
-        <Row>
-          <Pill href={talk.tiktok} brand={siTiktok} label="TikTok" />
-          <Pill href={talk.youtube} brand={siYoutube} label="YouTube" />
-          {instagram ? (
-            <Pill
-              href={`https://www.instagram.com/${instagram}/`}
-              brand={siInstagram}
-              label="Instagram"
-            />
-          ) : null}
-          {film.letterboxd ? (
-            <Pill href={film.letterboxd} brand={siLetterboxd} label="Letterboxd" />
-          ) : null}
-          {film.imdb ? <Pill href={film.imdb} brand={siImdb} label="IMDb" /> : null}
-        </Row>
-      </div>
-    </section>
+    </Section>
   )
 }
 
-/** An artist's, brand's or anyone's accounts, and where people talk about them. */
-export function AccountLinks({ details, isArtist }: { details: EntityDetails; isArtist: boolean }) {
+/** More videos (a film's clips, an artist's music videos); a tap plays it in the stage. */
+export function VideoRow({
+  videos,
+  playing,
+  onPlay,
+}: {
+  videos: EntityVideo[]
+  playing: string | null
+  onPlay: (video: EntityVideo) => void
+}) {
   const t = useTranslations("Entity")
-  const a = details.accounts
-  const spotify = details.links.spotify ?? null
-  if (!a.instagram && !a.x && !a.tiktok && !a.website && !spotify && !isArtist) return null
+  if (!videos.length) return null
   return (
-    <Row>
-      {spotify ? <Pill href={spotify} brand={siSpotify} label="Spotify" /> : null}
-      {a.instagram ? (
-        <Pill
-          href={`https://www.instagram.com/${a.instagram}/`}
-          brand={siInstagram}
-          label="Instagram"
-        />
-      ) : null}
-      {a.tiktok ? (
-        <Pill href={`https://www.tiktok.com/@${a.tiktok}`} brand={siTiktok} label="TikTok" />
-      ) : (
-        <Pill href={details.talk.tiktok} brand={siTiktok} label="TikTok" />
-      )}
-      {a.x ? <Pill href={`https://x.com/${a.x}`} brand={siX} label="X" /> : null}
-      {isArtist ? <Pill href={details.talk.youtube} brand={siYoutube} label="YouTube" /> : null}
-      {a.website ? (
-        <Pill href={a.website} icon={<Globe className="size-4" />} label={t("website")} />
-      ) : null}
-    </Row>
+    <Section title={t("moreVideos")}>
+      <Row>
+        {videos.map((v) => (
+          <button
+            key={v.id}
+            type="button"
+            onClick={() => onPlay(v)}
+            aria-pressed={playing === v.id}
+            className="group flex w-44 shrink-0 flex-col gap-1.5 text-start"
+          >
+            <span
+              className={cn(
+                "relative block aspect-video overflow-hidden rounded-tile bg-black",
+                playing === v.id && "ring-2 ring-[var(--color-aura-1)]",
+              )}
+            >
+              {v.poster ? (
+                // biome-ignore lint/performance/noImgElement: the video's own still
+                <img
+                  src={v.poster}
+                  alt=""
+                  className="size-full object-cover transition-transform duration-500 group-hover:scale-105"
+                />
+              ) : null}
+              <span className="absolute inset-0 grid place-items-center">
+                <span className="grid size-9 place-items-center rounded-full bg-black/50 ring-1 ring-white/30 backdrop-blur">
+                  <Play className="ms-0.5 size-4 fill-white text-white" />
+                </span>
+              </span>
+            </span>
+            <span className="line-clamp-2 text-[12px] leading-snug text-white/75">{v.title}</span>
+          </button>
+        ))}
+      </Row>
+    </Section>
   )
 }
 
@@ -293,10 +314,7 @@ export function TourLinks({ tour }: { tour: EntityDetails["tour"] }) {
   const format = useFormatter()
   if (!tour.length) return null
   return (
-    <section className="flex flex-col gap-2.5">
-      <h3 className="text-[12px] font-semibold tracking-[0.1em] text-white/50 uppercase">
-        {t("onTour")}
-      </h3>
+    <Section title={t("onTour")}>
       <ul className="flex flex-col divide-y divide-white/[0.06] overflow-hidden rounded-tile bg-white/[0.05]">
         {tour.map((d) => {
           const day = d.localDate ? new Date(`${d.localDate}T12:00:00`) : null
@@ -322,7 +340,8 @@ export function TourLinks({ tour }: { tour: EntityDetails["tour"] }) {
                     {[d.venue, d.localTime?.slice(0, 5)].filter(Boolean).join(" · ")}
                   </span>
                 </span>
-                <span className="shrink-0 rounded-pill bg-white px-3 py-1.5 text-[12px] font-semibold text-black">
+                <span className="flex shrink-0 items-center gap-1.5 rounded-pill bg-white px-3 py-1.5 text-[12px] font-semibold text-black">
+                  <BrandIcon icon={siTicketmaster} className="size-3.5" />
                   {t("tickets")}
                 </span>
               </a>
@@ -330,16 +349,6 @@ export function TourLinks({ tour }: { tour: EntityDetails["tour"] }) {
           )
         })}
       </ul>
-    </section>
-  )
-}
-
-/** A book on Goodreads and Open Library. */
-export function BookLinks({ book }: { book: NonNullable<EntityDetails["book"]> }) {
-  return (
-    <Row>
-      {book.goodreads ? <Pill href={book.goodreads} brand={siGoodreads} label="Goodreads" /> : null}
-      <Pill href={book.openLibrary} icon={<BookOpen className="size-4" />} label="Open Library" />
-    </Row>
+    </Section>
   )
 }
