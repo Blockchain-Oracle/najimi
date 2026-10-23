@@ -2,9 +2,20 @@
 
 import "maplibre-gl/dist/maplibre-gl.css"
 import { EARTH } from "@najimi/config"
-import type { PlanRoute, PlanStop } from "@najimi/db/schema"
+import type { PlanRoute, PlanShow, PlanStop } from "@najimi/db/schema"
 import { toast } from "@najimi/ui/components/sonner"
-import { CalendarPlus, Car, Footprints, MapPin, Navigation, Phone, Share2, X } from "lucide-react"
+import {
+  BedDouble,
+  CalendarPlus,
+  Car,
+  Footprints,
+  MapPin,
+  Navigation,
+  Phone,
+  Share2,
+  Ticket,
+  X,
+} from "lucide-react"
 import type { Map as MapLibreMap } from "maplibre-gl"
 import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
@@ -12,6 +23,7 @@ import { useEffect, useMemo, useRef, useState } from "react"
 import { useAgent } from "@/components/agent/agent-context"
 import { SheetForMe } from "@/components/shell/app-header"
 import { Face } from "@/components/taste/face"
+import { mapsRoute, type Spot, uberLink } from "@/lib/rides"
 
 /*
  * A plan's own page (W16, W17), open to anyone with its link: the real route on a dark map with
@@ -31,7 +43,13 @@ type Plan = {
   route: PlanRoute | null
   lat: number | null
   lon: number | null
+  shows: PlanShow[]
 }
+
+type Stay = { name: string; image: string | null; status: string; startsAt: string | null }
+
+const pillLink =
+  "glass flex h-10 items-center gap-2 rounded-pill px-4 text-[14px] font-semibold transition-opacity hover:opacity-90"
 
 const sized = (url: string | null | undefined, width: number) =>
   url?.includes("images.qloo.com") ? url.replace(/-\d+x-auto\./, `-${width}x-auto.`) : (url ?? null)
@@ -61,7 +79,19 @@ function pin(n: number) {
   return el
 }
 
-export function PlanView({ plan, signedIn }: { plan: Plan; signedIn: boolean }) {
+export function PlanView({
+  plan,
+  signedIn,
+  calendar,
+  stays,
+}: {
+  plan: Plan
+  signedIn: boolean
+  /** One-tap Google and Outlook links (the .ics is always there). */
+  calendar: { google: string; outlook: string } | null
+  /** A stay booked in the plan's chat for those dates. */
+  stays: Stay[]
+}) {
   const router = useRouter()
   const t = useTranslations("Plans")
   const agent = useAgent()
@@ -77,6 +107,13 @@ export function PlanView({ plan, signedIn }: { plan: Plan; signedIn: boolean }) 
     [plan],
   )
   const minutes = plan.route?.legs.reduce((n, l) => n + l.minutes, 0) ?? 0
+  // The located stops as places a ride or a route can go through.
+  const spots: Spot[] = located.map((s) => ({
+    lat: s.lat,
+    lon: s.lon,
+    name: s.name,
+    address: s.area,
+  }))
 
   useEffect(() => {
     let cancelled = false
@@ -218,32 +255,82 @@ export function PlanView({ plan, signedIn }: { plan: Plan; signedIn: boolean }) 
               </span>
             ) : null}
           </div>
-          <div className="mt-2 flex gap-2">
+          <div className="mt-2 flex flex-wrap gap-2">
             <a
               href={`/api/plans/${plan.token}/ics`}
               className="flex h-10 items-center gap-2 rounded-pill bg-foreground px-4 text-[14px] font-semibold text-background"
             >
               <CalendarPlus className="size-4" /> {t("calendar")}
             </a>
-            {signedIn && plan.kind === "trip" && located[0] ? (
-              <button
-                type="button"
-                onClick={() =>
-                  agent.ask(
-                    t("askHotels", {
-                      area: located[0]?.area ?? plan.city ?? "",
-                      date: dateOf(plan.startsAt),
-                      nights: Math.max(1, days.length),
-                      party: plan.party,
-                    }),
-                  )
-                }
-                className="glass flex h-10 items-center gap-2 rounded-pill px-4 text-[14px] font-semibold"
-              >
-                {t("hotelsNear")}
-              </button>
+            {calendar ? (
+              <>
+                <a href={calendar.google} target="_blank" rel="noreferrer" className={pillLink}>
+                  Google
+                </a>
+                <a href={calendar.outlook} target="_blank" rel="noreferrer" className={pillLink}>
+                  Outlook
+                </a>
+              </>
             ) : null}
           </div>
+          {located.length ? (
+            <div className="flex flex-wrap gap-2">
+              {located.length > 1 ? (
+                <a
+                  href={
+                    mapsRoute(spots, plan.route?.profile === "walking" ? "walking" : "driving") ??
+                    "#"
+                  }
+                  target="_blank"
+                  rel="noreferrer"
+                  className={pillLink}
+                >
+                  <Navigation className="size-4" /> {t("wholeRoute")}
+                </a>
+              ) : null}
+              <a href={uberLink(spots)} target="_blank" rel="noreferrer" className={pillLink}>
+                <Car className="size-4" /> {t("uberAll")}
+              </a>
+              {signedIn && !stays.length ? (
+                <button
+                  type="button"
+                  onClick={() =>
+                    agent.ask(
+                      t("askHotels", {
+                        area:
+                          (plan.kind === "trip" ? located[0] : located.at(-1))?.area ??
+                          plan.city ??
+                          "",
+                        date: dateOf(plan.startsAt),
+                        nights: Math.max(1, days.length),
+                        party: plan.party,
+                      }),
+                    )
+                  }
+                  className={pillLink}
+                >
+                  <BedDouble className="size-4" />
+                  {plan.kind === "trip" ? t("hotelsNear") : t("stayNight")}
+                </button>
+              ) : null}
+            </div>
+          ) : null}
+          {stays.map((s) => (
+            <div key={s.name} className="flex items-center gap-3 rounded-card bg-card p-3">
+              {s.image ? (
+                // biome-ignore lint/performance/noImgElement: remote artwork
+                <img src={s.image} alt="" className="size-12 rounded-tile object-cover" />
+              ) : (
+                <span className="grid size-12 place-items-center rounded-tile bg-white/5">
+                  <BedDouble className="size-5 text-text-3" />
+                </span>
+              )}
+              <span className="flex min-w-0 flex-col">
+                <span className="text-[12px] font-semibold text-text-3">{t("yourStay")}</span>
+                <span className="truncate font-heading text-[15px]">{s.name}</span>
+              </span>
+            </div>
+          ))}
         </header>
 
         {days.map((day) => (
@@ -270,6 +357,16 @@ export function PlanView({ plan, signedIn }: { plan: Plan; signedIn: boolean }) 
                           <Car className="size-3.5" />
                         )}
                         {leg.minutes} min · {leg.km} km
+                        {spots[n - 2] && spots[n - 1] ? (
+                          <a
+                            href={uberLink([spots[n - 1] as Spot], spots[n - 2])}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="ms-1 rounded-pill bg-white/8 px-2 py-0.5 font-semibold text-foreground transition-colors hover:bg-white/12"
+                          >
+                            {t("uber")}
+                          </a>
+                        ) : null}
                       </span>
                     ) : null}
                     <article className="flex gap-3 rounded-card bg-card p-3">
@@ -352,6 +449,45 @@ export function PlanView({ plan, signedIn }: { plan: Plan; signedIn: boolean }) 
               })}
           </section>
         ))}
+
+        {plan.shows.length ? (
+          <section className="flex flex-col gap-3">
+            <h2 className="font-heading text-[16px]">{t("showsTonight")}</h2>
+            <div className="-mx-5 flex snap-x gap-3 overflow-x-auto px-5 pb-1">
+              {plan.shows.map((show) => (
+                <a
+                  key={show.id}
+                  href={show.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex w-44 shrink-0 snap-start flex-col gap-2 rounded-card bg-card p-2 transition-colors hover:bg-white/8"
+                >
+                  {show.image ? (
+                    // biome-ignore lint/performance/noImgElement: the show's own picture
+                    <img
+                      src={show.image}
+                      alt=""
+                      className="aspect-video w-full rounded-tile object-cover"
+                    />
+                  ) : (
+                    <span className="grid aspect-video w-full place-items-center rounded-tile bg-white/5">
+                      <Ticket className="size-6 text-text-3" />
+                    </span>
+                  )}
+                  <span className="line-clamp-2 px-1 text-[14px] font-semibold leading-snug">
+                    {show.name}
+                  </span>
+                  <span className="truncate px-1 text-[12px] text-text-3">
+                    {[show.localTime?.slice(0, 5), show.venue].filter(Boolean).join(" · ")}
+                  </span>
+                  <span className="mx-1 mb-1 inline-flex items-center gap-1 text-[12px] font-semibold text-signal">
+                    <Ticket className="size-3.5" /> {t("tickets")}
+                  </span>
+                </a>
+              ))}
+            </div>
+          </section>
+        ) : null}
       </div>
       {/* Outside the app's shell: Najimi's sheet lives here too, for "book this" and "find a hotel". */}
       {signedIn ? <SheetForMe /> : null}

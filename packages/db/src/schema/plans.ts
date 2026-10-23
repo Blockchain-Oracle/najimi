@@ -14,6 +14,18 @@ import { chats } from "./chat"
 export type PlanKind = "night" | "trip"
 
 /** One stop of a plan: a place (or a show, or the hotel), when, and why it's there. */
+/** A show near a night's plan (Ticketmaster), as the plan page shows it. */
+export type PlanShow = {
+  id: string
+  name: string
+  url: string
+  image: string | null
+  venue: string | null
+  startsAt: string | null
+  localTime: string | null
+  genre: string | null
+}
+
 export type PlanStop = {
   /** Day of the trip (1…), or 1 for a night. */
   day: number
@@ -70,6 +82,8 @@ export const plans = pgTable(
     party: integer().default(1).notNull(),
     stops: jsonb().$type<PlanStop[]>().notNull(),
     route: jsonb().$type<PlanRoute | null>(),
+    /** Shows on that night near the plan (Ticketmaster), kept so the plan page has them. */
+    shows: jsonb().$type<PlanShow[]>().default([]).notNull(),
     status: text().$type<"draft" | "booked" | "done">().default("draft").notNull(),
     /** "How was it?", answered the day after: loved, fine, not, skipped. The Passport counts it then. */
     outcome: text(),

@@ -960,6 +960,13 @@
     "callToBook": "Ask Najimi to book",
     "askBook": "Book a table at {name} for {party} at {time} on {date}.",
     "hotelsNear": "Find a hotel near here",
+    "stayNight": "Somewhere to stay",
+    "yourStay": "Your stay",
+    "wholeRoute": "The whole route",
+    "uberAll": "Uber",
+    "uber": "Uber",
+    "showsTonight": "Shows that night",
+    "tickets": "Tickets",
     "askHotels": "Find me a hotel near {area} from {date} for {nights} nights for {party}."
   },
   "Booking": {

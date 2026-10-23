@@ -211,6 +211,13 @@
       "when": 1792711041700,
       "tag": "0029_user_tz",
       "breakpoints": true
+    },
+    {
+      "idx": 30,
+      "version": "7",
+      "when": 1792743086917,
+      "tag": "0030_plan_shows",
+      "breakpoints": true
     }
   ]
 }

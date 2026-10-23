@@ -268,6 +268,16 @@ export async function planNight(input: {
       party: Math.max(1, input.goers.length),
       stops,
       route,
+      shows: shows.map((sh) => ({
+        id: sh.id,
+        name: sh.name,
+        url: sh.url,
+        image: sh.image,
+        venue: sh.venue,
+        startsAt: sh.startsAt,
+        localTime: sh.localTime,
+        genre: sh.genre,
+      })),
       token: token(),
     })
     .returning()
