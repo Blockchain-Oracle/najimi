@@ -2,14 +2,17 @@
 
 import type { NajimiTools } from "@najimi/agent"
 import { Orb } from "@najimi/ui/components/orb"
+import { useQuery } from "@tanstack/react-query"
 import { Loader2, Phone, PhoneOff } from "lucide-react"
 import { useTranslations } from "next-intl"
 import { useState } from "react"
+import { api } from "@/lib/fetcher"
 
 /*
  * A phone call Najimi wants to make for a table (W18): before it rings, exactly what it will say
  * (that it's an AI, that it's recorded, what it's asking for), and a yes or no. While it's on, a
- * calling line; the outcome lands in the thread as a notice.
+ * calling line that follows the booking until there's an answer; the outcome itself lands in the
+ * thread as a booking card.
  */
 
 type Input = Partial<NajimiTools["callToBook"]["input"]>
@@ -75,20 +78,39 @@ export function CallApproval({
 
 export function CallCard({ input, output }: { input: Input; output: Output }) {
   const t = useTranslations("Booking")
+  const ts = useTranslations("Bookings")
+  const booking = useQuery({
+    queryKey: ["booking", output.bookingId],
+    queryFn: () => api<{ status: string }>(`/api/bookings/${output.bookingId}`),
+    enabled: output.status === "calling" && Boolean(output.bookingId),
+    // Asked again only while the phone is ringing; it stops once there's an answer.
+    refetchInterval: (q) => (q.state.data && q.state.data.status !== "calling" ? false : 10_000),
+  })
   if (output.status !== "calling")
     return (
       <p className="rounded-card bg-card px-4 py-3 text-sm text-text-2">
         {output.note ?? t("callFailed")}
       </p>
     )
+  const done = booking.data && booking.data.status !== "calling" ? booking.data.status : null
   return (
     <section className="dark flex items-center gap-3 rounded-card bg-[#0b0b0d] p-4 text-foreground ring-1 ring-white/10">
-      <Orb size={40} working />
+      {done ? (
+        <span className="grid size-10 shrink-0 place-items-center rounded-full bg-white/8">
+          <Phone className="size-4" />
+        </span>
+      ) : (
+        <Orb size={40} working />
+      )}
       <div className="flex min-w-0 flex-col">
         <span className="font-heading text-[15px]">
-          {t("calling", { venue: input.venue ?? "" })}
+          {done
+            ? t("called", { venue: input.venue ?? "" })
+            : t("calling", { venue: input.venue ?? "" })}
         </span>
-        <span className="text-[13px] text-text-3">{t("callingHint")}</span>
+        <span className="text-[13px] text-text-3">
+          {done ? ts(`status.${done}` as "status.confirmed") : t("callingHint")}
+        </span>
       </div>
     </section>
   )

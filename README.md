@@ -193,7 +193,7 @@ A pnpm and Turborepo monorepo; every piece runs as a container on one Coolify se
 ## Honest limits
 
 - The circles in the captures are test members; Najimi has had no outside testers yet.
-- Hotel booking runs through Nuitee's live key, which isn't set on najimi.xyz yet, so hotels say they aren't switched on there. Table calls are configured (an ElevenLabs voice agent over Twilio) but haven't rung a real venue yet; from Nigeria they show a US number.
+- Hotel booking runs through Nuitee's live key, which isn't set on najimi.xyz yet, so hotels say they aren't switched on there. Table calls work end to end: on 23 October Najimi phoned a test line playing the venue, booked a table for two and posted the confirmed booking card in the chat. The Twilio account is still a trial, which only rings verified numbers, so calling any venue needs it upgraded; from Nigeria the call shows a US number.
 - Acting on X and Instagram for you needs your own signed-in session, which those platforms can lock; reading your taste never does. Google and TikTok sign-in and Connect YouTube are built and switch on once their developer apps are set up.
 - A platform's data download gives only what the platform puts in it: X's archive lists follows by account number only (connect X to read them), and TikTok's likes and watch history carry no creator, so they're left out.
 - The interface is in English; eleven other languages fall back to English where they're incomplete.

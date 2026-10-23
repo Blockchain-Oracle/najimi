@@ -1062,7 +1062,8 @@
     "callNow": "Call",
     "calling": "Calling {venue}…",
     "callingHint": "You'll see their answer here in a few minutes.",
-    "callFailed": "The call didn't go out."
+    "callFailed": "The call didn't go out.",
+    "called": "Called {venue}"
   },
   "Connect": {
     "title": "Your feeds",
