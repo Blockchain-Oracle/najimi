@@ -66,6 +66,13 @@ export function Onboarding({ next }: { next: string | null }) {
       return r.data?.available ?? false
     },
   })
+  // A name Najimi suggested that's taken quietly becomes a free one (juno → juno482); only a
+  // username someone typed themselves shows "taken".
+  useEffect(() => {
+    if (ownUsername || availability.data !== false || settled !== username) return
+    const base = toUsername(name).slice(0, AUTH.usernameMax - 3) || "najimi"
+    setUsername(`${base}${Math.floor(100 + Math.random() * 900)}`)
+  }, [ownUsername, availability.data, settled, username, name])
   const usernameState: UsernameState = !username
     ? "empty"
     : !validUsername

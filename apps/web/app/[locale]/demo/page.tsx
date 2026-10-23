@@ -20,7 +20,7 @@ const FILM: string | null = null
 const STEPS = [
   {
     title: "Start with three loves",
-    text: "Pick a few things you love (or bring your YouTube). Qloo reads your taste in seconds.",
+    text: "Pick three things you love (or bring Letterboxd, Goodreads or Last.fm). Qloo reads your taste in seconds.",
     image: "/demo/people.webp",
     href: "/start",
     open: "Start",
