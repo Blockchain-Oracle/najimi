@@ -10,7 +10,7 @@ Public project URL: https://najimi.xyz
 
 Public code repository: https://github.com/Blockchain-Oracle/najimi
 
-Story: paste the contents of devpost.md, then add the reviewed image links.
+Story: paste the contents of devpost.md. The reviewed banner, diagrams, and desktop and mobile images are already linked in the Markdown.
 
 Try it out links:
 

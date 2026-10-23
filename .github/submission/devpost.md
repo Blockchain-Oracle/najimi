@@ -36,6 +36,7 @@ That taste becomes a whole app:
 
 - **Feed:** a full-screen mix of songs, trailers, podcasts, books, and places. Play a preview or trailer, love or skip a pick, or tune the mix. A “Why this?” chip connects the card to one of your loves and its Qloo call.
 - **People and circles:** find people with overlapping taste, compare with a friend, make a circle, and ask Najimi in the group chat. The agent can suggest something for everyone and show each person's fit.
+- **Stories:** share a photo, video, song, pick, or plan for a day; friends can reply in your DMs.
 - **Games:** play *Guess my wavelength*, *How well do you know me*, *Taste twins*, or *Blind Taste*. Qloo scores the hidden answer; daily circle drops, challenge links, and a leaderboard give friends a reason to return.
 - **Earth:** see where your taste concentrates in a city. Open a square for its local scene: artists, places, brands, and words. Switch between your taste and a circle's, or use the taste twin radar.
 - **Graph:** pull a love's weight, expand a node into other categories, overlay a friend's taste, and revisit how yours changed.
@@ -126,11 +127,15 @@ We learned that Qloo is strongest here as a shared model of taste across actions
 
 ## What we're proud of
 
-The first version is a usable guest journey: choose three loves, see a taste across categories with reasons, play the feed, explore it on Earth, meet people, and ask an agent that uses the same taste. The public repository includes the source, assets, run instructions, and MIT license. The live app and docs are hosted externally.
+The group card makes the cultural reasoning visible to everyone at once: one request, five real Qloo places, and a separate fit for Juno and Kemi on each. It carries forward into a routed night instead of ending as a list of recommendations. The same Qloo-backed taste also powers a guest journey across picks, playable media, people, games, Earth, and the feed. The public repository includes the source, assets, run instructions, and MIT license; the app and docs are live.
+
+## Honest limits
+
+The people in the captures are test members; we have not tested Najimi with outside users yet. The public demo has not completed a live venue call, and hotel booking is not switched on there. These are the real-world flows we will test next.
 
 ## What's next
 
-This is version one. Next we want to make the group experience richer, improve the clarity of connected social-account controls, and keep testing the real-world booking and follow-up flows. We also want to measure whether Qloo-grounded choices beat a generic assistant in real sessions, instead of assuming they do.
+This is version one. Next we want to make the group experience richer, improve the clarity of connected social-account controls, and test booking and follow-up flows with real people. We also want to measure whether Qloo-grounded choices beat a generic assistant in real sessions, instead of assuming they do.
 
 ## Try it yourself
 
