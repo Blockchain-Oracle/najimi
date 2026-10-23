@@ -6,7 +6,7 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: APP.name,
     short_name: APP.name,
-    description: "The group-chat agent that plans for everyone's taste.",
+    description: "Your taste, made social, with an agent that plans for everyone.",
     start_url: "/feed",
     scope: "/",
     display: "standalone",

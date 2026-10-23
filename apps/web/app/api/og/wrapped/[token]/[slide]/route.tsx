@@ -89,7 +89,7 @@ function Frame({ w, n, children }: { w: Wrapped; n: number; children: React.Reac
             {w.username ? `@${w.username}` : w.name}
           </div>
           <div style={{ display: "flex", fontSize: 28, color: C.muted }}>
-            The group-chat agent that plans for everyone's taste
+            Your taste, made social, with an agent that plans for everyone
           </div>
         </div>
         <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 14 }}>

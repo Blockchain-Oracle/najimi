@@ -14,7 +14,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const images = [{ url: `/api/og/join/${token}`, width: 1200, height: 630 }]
   return {
     title: "Join the circle",
-    description: "The group-chat agent that plans for everyone's taste.",
+    description: "Your taste, made social, with an agent that plans for everyone.",
     robots: { index: false },
     openGraph: { title: "Join the circle on Najimi", images },
     twitter: { card: "summary_large_image", images },

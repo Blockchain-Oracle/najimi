@@ -1,8 +1,8 @@
 # Najimi · Make more of what you love
 
-![Najimi banner showing the group-chat agent and the live app](https://raw.githubusercontent.com/Blockchain-Oracle/najimi/main/.github/assets/banner.png)
+![Najimi: Make more of what you love. Your taste, made social, with an agent that plans for everyone.](https://raw.githubusercontent.com/Blockchain-Oracle/najimi/main/.github/assets/banner.png)
 
-**Najimi turns what you love into a living taste:** a feed, people, games, places and plans. Qloo powers every match, and an agent helps you and your friends act on it. Open any pick to see *why* it fits.
+**Your taste, made social, with an agent that plans for everyone.** Through Qloo, what you love becomes a feed, friends, games and a map, and an agent in every chat plans nights and trips for everyone's taste. Open any pick to see *why* it fits.
 
 **Try it:** [najimi.xyz](https://najimi.xyz) · **Code:** [GitHub](https://github.com/Blockchain-Oracle/najimi) · **Docs:** [docs.najimi.xyz](https://docs.najimi.xyz) · **Qloo integration:** [API map](https://docs.najimi.xyz/docs/qloo)
 
@@ -108,8 +108,8 @@ Every chat is a room. A message is saved and announced on the room's live topic;
 *Agents, but with taste*: Najimi is an application built with an agent framework (the AI SDK's tool loop), with Qloo's API as its instrument, and its first rule is *Qloo or nothing*: every recommendation comes from a Qloo result in that chat.
 
 - **Technological Implementation:** rooms on Postgres, one agent turn per room in a pg-boss worker, every step streamed to every member over server-sent events; a cached, rate-limited, logged Qloo client; actions in someone's name approved only by the person who asked.
-- **Design:** one coherent app, where a single sheet opens any thing the same way everywhere and cards play, route and book in place.
-- **Potential Impact:** the group chat is where friends already decide; Najimi answers there, for everyone at once, and can book.
+- **Design:** one coherent app across the feed, people, games, the map and the agent, where a single sheet opens any thing the same way everywhere and cards play and route in place.
+- **Potential Impact:** the group chat is where friends already decide; Najimi answers there, for everyone at once, routes the night and asks before it books. The same taste runs the feed, games, map and a business owner's weekly moves.
 - **Quality of the Idea:** Qloo scores each pick for each person, so the room sees whose taste it fits and why, instead of one person's feed or a model's guess.
 
 ## How we built it

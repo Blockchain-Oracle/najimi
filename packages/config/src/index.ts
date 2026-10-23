@@ -7,9 +7,9 @@ export const APP = {
   name: "Najimi",
   /** 馴染み: someone you know well. */
   meaning: "someone you know well",
-  tagline: "The group-chat agent that plans for everyone's taste.",
+  tagline: "Your taste, made social, with an agent that plans for everyone.",
   description:
-    "Najimi is an agent for your group chats: it reads each friend's taste through Qloo, then picks the film, plans the night and routes the trip, showing why each pick fits.",
+    "Najimi is a social taste app. Through Qloo, what you love becomes a feed, friends, games and a map, and Najimi, the agent in every chat, plans nights and trips for everyone's taste, showing why each pick fits.",
   /** The public repository and live URLs, once they exist; links stay hidden until then. */
   repository: null as string | null,
   url: "https://najimi.xyz" as string | null,

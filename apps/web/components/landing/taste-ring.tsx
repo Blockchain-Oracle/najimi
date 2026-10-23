@@ -129,7 +129,7 @@ export function TasteRing({ art, children }: { art: Art[]; children: ReactNode }
           ))}
         </div>
         <motion.div
-          className="absolute inset-0 flex items-center justify-center px-6"
+          className="absolute inset-0 z-10 flex items-center justify-center px-6"
           animate={{
             opacity: phase === "ring" ? 1 - fade : 0,
             y: phase === "ring" ? -morph * size.h * 0.08 : 16,

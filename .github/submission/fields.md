@@ -2,7 +2,9 @@
 
 Project name: Najimi
 
-Elevator pitch: Najimi turns what you love into a living taste: a feed, people, games, places and plans. Qloo powers every match, and an agent helps you and your friends act on it.
+Elevator pitch: An agent with taste in every chat: through Qloo, what you love becomes a feed, friends, games and a map, and Najimi plans nights and trips for everyone's taste.
+
+(160 characters. The exact field limit isn't published; this stays under Devpost's usual 200.)
 
 Project start date: 2026-10-20
 

@@ -168,11 +168,11 @@ async function banner() {
               letterSpacing: -1.5,
             }}
           >
-            The group-chat agent that plans for everyone's taste.
+            Your taste, made social, with an agent that plans for everyone.
           </div>
           <div style={{ display: "flex", fontSize: 26, color: C.muted, lineHeight: 1.3 }}>
-            Reads each friend's taste through Qloo, then picks the film, plans the night and routes
-            the trip.
+            Through Qloo, what you love becomes a feed, friends, games and a map, and an agent in
+            every chat plans for everyone's taste.
           </div>
         </div>
         <div

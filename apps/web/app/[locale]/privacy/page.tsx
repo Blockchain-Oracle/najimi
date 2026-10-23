@@ -14,7 +14,7 @@ export default function PrivacyPage() {
   return (
     <LegalPage
       title="Privacy"
-      lead="Najimi is a taste app and an agent for your group chats. This is what it keeps about you, what it sends to other services and why, who can see your taste, and how to delete all of it."
+      lead="Najimi is a social taste app with an agent in every chat. This is what it keeps about you, what it sends to other services and why, who can see your taste, and how to delete all of it."
     >
       <Part title="What Najimi keeps">
         <ul>

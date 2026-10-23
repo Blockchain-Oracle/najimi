@@ -72,11 +72,12 @@ async function Ring({
     .slice(0, 18)
   return (
     <TasteRing art={art}>
-      <div className="pointer-events-none flex w-full max-w-2xl flex-col items-center gap-6 text-center">
-        <h1 className="max-w-[16ch] font-title text-[2.1rem] leading-[1.02] md:max-w-[18ch] md:text-[4rem]">
+      {/* On a phone the words stay inside the ring's oval (about 17rem across), so no card covers them. */}
+      <div className="pointer-events-none flex w-full max-w-[17rem] flex-col items-center gap-5 text-center md:max-w-2xl md:gap-6">
+        <h1 className="font-title text-[1.9rem] leading-[1.02] md:max-w-[18ch] md:text-[4rem]">
           {title}
         </h1>
-        <p className="max-w-xl text-[15px] leading-relaxed text-text-2 md:text-lg">{subtitle}</p>
+        <p className="text-[14px] leading-relaxed text-text-2 md:max-w-xl md:text-lg">{subtitle}</p>
         <Suspense fallback={null}>
           <MainAction start={start} open={open} large />
         </Suspense>

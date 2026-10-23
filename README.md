@@ -1,7 +1,7 @@
 <p align="center">
   <a href="https://najimi.xyz">
     <picture>
-      <img src=".github/assets/banner.png" alt="Najimi · Everyone's taste, one plan. The group-chat agent that plans for everyone's taste." width="100%">
+      <img src=".github/assets/banner.png" alt="Najimi · Make more of what you love. Your taste, made social, with an agent that plans for everyone." width="100%">
     </picture>
   </a>
 </p>
@@ -10,13 +10,13 @@
 
 <p align="center">
   <i>Make more of what you love.</i><br>
-  <b>A living taste: things to discover, people to meet, games to play, places to go, and plans to make.</b>
+  <b>Your taste, made social, with an agent that plans for everyone.</b>
 </p>
 
 <p align="center">
   <a href="https://najimi.xyz"><b>Open the app</b></a>
   &nbsp;·&nbsp;
-  <a href="#try-the-demo"><b>Demo</b></a>
+  <a href="#demo-video"><b>Demo</b></a>
   &nbsp;·&nbsp;
   <a href="https://docs.najimi.xyz"><b>Docs</b></a>
   &nbsp;·&nbsp;
@@ -33,7 +33,7 @@
   </a>
 </p>
 
-Najimi turns what you love into a living taste through **Qloo**. Start with three loves and explore a playable feed, people and circles, social games, an Earth map of local scenes, a graph of your influences, and picks that explain *why* they fit. Open a film for its trailer, an artist for their songs and shows, or a place for its map, hours and a ride. Then ask the agent to find something for you or plan with your friends. In a group chat, `@najimi` blends everyone's loves, scores candidates for each person, and plans a night that the whole room can see and act on. Every recommendation comes from Qloo, not a model's guess.
+Through **Qloo**, what you love becomes a feed, friends, games and a map, and an agent in every chat plans nights and trips for everyone's taste. Start with three loves (or bring your data from X, Instagram, TikTok, YouTube or Spotify): Najimi builds your taste from Qloo, then plays it back as a feed of songs, trailers, episodes and places; matches you with people and circles who share it; deals games about it; shows where your people are on an Earth map; and keeps your year in a Passport. **Najimi, the agent, is the engine.** In your own chat and in every circle it reads each person's taste from Qloo, scores every pick for every member, plans and routes the night or the trip, and asks before it calls, posts or books, showing *why* each pick fits. A general model alone would guess a crowd-pleaser; Najimi only recommends what Qloo returned for these people.
 
 Built for the **[Qloo Agentic Hackathon](https://qloo.devpost.com/)** · [how it meets the brief](#how-najimi-meets-the-hackathon). *Najimi* (馴染み) means **someone you know well**.
 
@@ -66,15 +66,15 @@ Juno and Kemi share a circle called *Friday crew*. Juno writes one line; Najimi 
   <img src=".github/assets/submission/fullwide/20-plan-route.jpg" alt="The plan page: the route on the map, calendar, Uber and Ask Najimi to book" width="49%">
 </p>
 
-## Try the demo
+## Demo video
 
 <p align="center">
   <a href="https://najimi.xyz">
-    <img src=".github/assets/demo-cover.png" alt="Open the live Najimi walkthrough" width="100%">
+    <img src=".github/assets/demo-cover.png" alt="Play: Najimi, from three loves to a night planned for two tastes" width="100%">
   </a>
 </p>
 
-Follow the proof on [najimi.xyz](https://najimi.xyz):
+The recorded walkthrough will play here. Until then, follow the proof on [najimi.xyz](https://najimi.xyz):
 
 1. Start, pick three things you love, and watch Qloo build your taste live (picks in ten kinds, your taste words, where your people cluster).
 2. Open **People**, start a circle with a friend (or send them its invite link), and ask "@najimi find us a spot tonight". The card shows each member's fit.
@@ -128,11 +128,11 @@ The brief, *Agents, but with taste*: a working application that integrates Qloo'
 
 | Requirement or criterion (verbatim) | How Najimi meets it | Where to check |
 | --- | --- | --- |
-| Stage one: viable theme fit | An agent that lives in group chats and plans for the people in them; Qloo decides every pick | [The journey above](#one-ask-two-tastes); [`packages/agent/src/instructions.ts`](packages/agent/src/instructions.ts) rule 1 |
+| Stage one: viable theme fit | A social taste app whose agent, in your chat and every circle, plans for the people in it; Qloo decides every pick | [The journey above](#one-ask-two-tastes); [`packages/agent/src/instructions.ts`](packages/agent/src/instructions.ts) rule 1 |
 | Stage one: reasonable application of the required APIs | Insights, explainability, heatmaps, location signals, per-entity scoring, compare, search, entities, tags and audiences, all live | [Built on Qloo](#built-on-qloo); [`packages/qloo/src`](packages/qloo/src) |
 | **Technological Implementation** | Rooms on Postgres with one turn per room in a pg-boss worker, every step streamed to every member over server-sent events; a cached, rate-limited, logged Qloo client; approvals bound to the asker | [`packages/agent/src/server/turn.ts`](packages/agent/src/server/turn.ts), [`packages/live`](packages/live), [`packages/qloo/src/client.ts`](packages/qloo/src/client.ts) |
 | **Design** | One coherent app: a sheet that opens any thing the same way everywhere, cards that play and route in place, stories, a feed, a globe | [najimi.xyz](https://najimi.xyz); [the docs' guide](https://docs.najimi.xyz/docs/guide) |
-| **Potential Impact** | The group chat is where friends already decide where to go and what to watch; Najimi answers there, for everyone at once, and books | [Plans and booking](https://docs.najimi.xyz/docs/guide/plans) |
+| **Potential Impact** | The group chat is where friends already decide where to go and what to watch; Najimi answers there, for everyone at once, routes the night and asks before it books. The same taste runs the feed, games, map and a business owner's weekly moves | [Plans and booking](https://docs.najimi.xyz/docs/guide/plans) |
 | **Quality of the Idea** | Qloo scores each pick for each person, so the room sees whose taste it fits and why, instead of one person's feed or a model's guess | [`groupFit`](packages/agent/src/server/tools.ts); the card in the capture above |
 
 ## Proof and evidence
@@ -143,13 +143,13 @@ The brief, *Agents, but with taste*: a working application that integrates Qloo'
 
 ### The rest of Najimi
 
-- **Your taste in a minute:** pick three loves, or bring a Letterboxd, Last.fm or Goodreads name, or X and Instagram handles. [Quickstart](https://docs.najimi.xyz/docs/guide/quickstart)
+- **Your taste in a minute:** pick three loves, or bring a Letterboxd, Last.fm or Goodreads name, X and Instagram handles, or your data from X, Instagram, TikTok, YouTube or Spotify (each platform's download page one tap away, a reminder when the file is ready, read in your browser). [Quickstart](https://docs.najimi.xyz/docs/guide/quickstart) · [Your feeds](https://docs.najimi.xyz/docs/guide/feeds)
 - **One sheet for any thing:** a film's trailer and where to watch it, an artist's songs, music videos and next concerts, a place's map, phone and socials, what people say on TikTok, YouTube and X. [Profile](https://docs.najimi.xyz/docs/guide/profile)
 - **Feed:** full-screen cards with Apple previews, trailers, podcast episodes and places, tuned like a mixing desk, one player across the app. [Feed](https://docs.najimi.xyz/docs/guide/feed)
 - **Circles and chats:** polls, the circle's soundtrack, QR invites, games with a daily drop and a weekly board. [Chats](https://docs.najimi.xyz/docs/guide/chats) · [Games](https://docs.najimi.xyz/docs/guide/games)
 - **Stories:** a photo, a video, a song, a pick or a plan for a day; replies land in your DMs. [People](https://docs.najimi.xyz/docs/guide/people)
 - **Earth and the graph:** where your taste lives, square by square; your taste as a web you can pull. [Earth](https://docs.najimi.xyz/docs/guide/earth) · [Graph](https://docs.najimi.xyz/docs/guide/graph)
-- **Business mode:** "I run a café in Yaba" becomes a plan you can share, rebuilt every Monday. [Business](https://docs.najimi.xyz/docs/guide/business)
+- **Business mode:** "I run a café in Yaba" becomes a plan you read in one screen: who its people are, then three moves for the week, each with one next step (post it, invite the partner, plan it with Najimi, play the set). Rebuilt every Monday. [Business](https://docs.najimi.xyz/docs/guide/business)
 - **Passport and Wrapped:** the year at a glance, five slides to share to Instagram Stories. [Passport](https://docs.najimi.xyz/docs/guide/passport)
 - **Your feeds:** a score for how much of your For You page is you, and accounts to follow from your taste. [Your feeds](https://docs.najimi.xyz/docs/guide/feeds)
 
@@ -194,7 +194,8 @@ A pnpm and Turborepo monorepo; every piece runs as a container on one Coolify se
 
 - The circles in the captures are test members; Najimi has had no outside testers yet.
 - Hotel booking runs through Nuitee's live key, which isn't set on najimi.xyz yet, so hotels say they aren't switched on there. Table calls are configured (an ElevenLabs voice agent over Twilio) but haven't rung a real venue yet; from Nigeria they show a US number.
-- Acting on X and Instagram for you needs your own signed-in session, which those platforms can lock; reading your taste never does.
+- Acting on X and Instagram for you needs your own signed-in session, which those platforms can lock; reading your taste never does. Google and TikTok sign-in and Connect YouTube are built and switch on once their developer apps are set up.
+- A platform's data download gives only what the platform puts in it: X's archive lists follows by account number only (connect X to read them), and TikTok's likes and watch history carry no creator, so they're left out.
 - The interface is in English; eleven other languages fall back to English where they're incomplete.
 
 ## License
