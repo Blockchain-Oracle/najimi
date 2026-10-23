@@ -42,11 +42,28 @@ export type FilmExtras = {
   providers: { name: string; logo: string | null; kind: "stream" | "rent" | "buy" }[]
   /** TMDB's watch page for that country (the link JustWatch's terms ask us to show). */
   watchLink: string | null
+  /** The film's or show's own accounts (TMDB's external ids), and its Wikidata id. */
+  accounts: {
+    instagram: string | null
+    x: string | null
+    facebook: string | null
+    tiktok: string | null
+    youtube: string | null
+    wikidata: string | null
+  }
 }
 
 type Find = { movie_results?: { id: number }[]; tv_results?: { id: number }[] }
 type Videos = { results?: { key: string; site: string; type: string; name: string }[] }
 type Provider = { provider_name: string; logo_path: string | null }
+type ExternalIds = {
+  wikidata_id?: string | null
+  facebook_id?: string | null
+  instagram_id?: string | null
+  twitter_id?: string | null
+  tiktok_id?: string | null
+  youtube_id?: string | null
+}
 type Providers = {
   results?: Record<
     string,
@@ -67,7 +84,7 @@ const tmdb = async <T>(path: string): Promise<T | null> => {
 /** A film's or show's extra videos and where to watch it, by its IMDb id and a country (ISO 3166-1). */
 export async function filmExtras(imdb: string, country: string): Promise<FilmExtras | null> {
   if (!/^tt\d+$/.test(imdb) || !/^[A-Z]{2}$/.test(country)) return null
-  return cached<FilmExtras | null>("film-extras", `${imdb}:${country}`, 7, async () => {
+  return cached<FilmExtras | null>("film-extras-2", `${imdb}:${country}`, 7, async () => {
     const found = await tmdb<Find>(`find/${imdb}?external_source=imdb_id`)
     // TMDB not answering isn't "nothing": don't keep it.
     if (!found) throw new Error("TMDB didn't answer")
@@ -75,9 +92,10 @@ export async function filmExtras(imdb: string, country: string): Promise<FilmExt
     const tv = found?.tv_results?.[0]
     const path = movie ? `movie/${movie.id}` : tv ? `tv/${tv.id}` : null
     if (!path) return null
-    const [videos, providers] = await Promise.all([
+    const [videos, providers, external] = await Promise.all([
       tmdb<Videos>(`${path}/videos`),
       tmdb<Providers>(`${path}/watch/providers`),
+      tmdb<ExternalIds>(`${path}/external_ids`),
     ])
     const extra = (videos?.results ?? [])
       .filter(
@@ -100,6 +118,18 @@ export async function filmExtras(imdb: string, country: string): Promise<FilmExt
           seen.add(p.provider_name)
           list.push({ name: p.provider_name, logo: logo(p), kind })
         }
-    return { videos: extra, providers: list.slice(0, 8), watchLink: here?.link ?? null }
+    return {
+      videos: extra,
+      providers: list.slice(0, 8),
+      watchLink: here?.link ?? null,
+      accounts: {
+        instagram: external?.instagram_id || null,
+        x: external?.twitter_id || null,
+        facebook: external?.facebook_id || null,
+        tiktok: external?.tiktok_id || null,
+        youtube: external?.youtube_id || null,
+        wikidata: external?.wikidata_id || null,
+      },
+    }
   }).catch(() => null)
 }

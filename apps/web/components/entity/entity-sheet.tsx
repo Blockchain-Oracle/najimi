@@ -1,10 +1,11 @@
 "use client"
 
 import type { CardMedia } from "@najimi/sources"
+import { Orb } from "@najimi/ui/components/orb"
 import { toast } from "@najimi/ui/components/sonner"
 import { cn } from "@najimi/ui/lib/utils"
 import { useQuery } from "@tanstack/react-query"
-import { Bookmark, EyeOff, Pause, Play, Share2, Sparkles, WandSparkles } from "lucide-react"
+import { Bookmark, ChevronDown, EyeOff, GitBranchPlus, Pause, Play, Share2 } from "lucide-react"
 import { useTranslations } from "next-intl"
 import { type ReactNode, useRef, useState } from "react"
 import { DarkSheet } from "@/components/feed/dark-sheet"
@@ -274,6 +275,8 @@ function EntityBody({
           </p>
         </header>
 
+        <MadeOf shares={thing.shares ?? []} loves={loves} />
+
         {/* The same sections for every kind, in the same order; a kind shows the ones it has. */}
         {tracks.length ? <TrackList tracks={tracks} owner={thing.name} onPlay={play} /> : null}
         {waiting ? <LinksWaiting /> : null}
@@ -297,8 +300,6 @@ function EntityBody({
 
         {d?.entity.description ? <About text={d.entity.description} /> : null}
 
-        <MadeOf shares={thing.shares ?? []} loves={loves} label={tp("madeOf")} />
-
         <div className="flex justify-around border-t border-white/[0.08] pt-3">
           {actions.onToggleSave ? (
             <Action
@@ -311,12 +312,12 @@ function EntityBody({
           ) : null}
           {actions.onMore ? (
             <Action label={tp("more")} onClick={actions.onMore}>
-              <Sparkles className="size-6" strokeWidth={1.75} />
+              <GitBranchPlus className="size-6" strokeWidth={1.75} />
             </Action>
           ) : null}
           {actions.onAsk ? (
             <Action label={te("ask")} onClick={actions.onAsk}>
-              <WandSparkles className="size-6" strokeWidth={1.75} />
+              <Orb size={24} />
             </Action>
           ) : null}
           <Action label={te("share")} onClick={share}>
@@ -716,16 +717,19 @@ function Progress() {
   )
 }
 
-/** Each love's share of this pick, as one bar split between them, coloured along the aura. */
+/**
+ * Why it's here, in one line: the loves it's made of (Qloo's explainability) as faces, the top
+ * two named. A tap opens each love's share as one bar split between them.
+ */
 function MadeOf({
   shares,
   loves,
-  label,
 }: {
   shares: { id: string; share: number }[]
   loves: ShareLove[]
-  label: string
 }) {
+  const tp = useTranslations("Pick")
+  const [open, setOpen] = useState(false)
   const byId = new Map(loves.map((l) => [l.qlooId.toLowerCase(), l]))
   const rows = shares
     .map((s) => ({ ...s, love: byId.get(s.id.toLowerCase()) }))
@@ -735,42 +739,76 @@ function MadeOf({
   const total = rows.reduce((sum, s) => sum + s.share, 0) || 1
   const colour = (i: number) =>
     `color-mix(in oklab, var(--color-aura-1) ${Math.round(100 - (i * 100) / Math.max(rows.length - 1, 1))}%, var(--color-aura-2))`
+  const face = (r: (typeof rows)[number], i: number, size: string) =>
+    r.love.image ? (
+      // biome-ignore lint/performance/noImgElement: remote artwork thumbnail
+      <img
+        src={r.love.image}
+        alt=""
+        className={cn(size, "rounded-full object-cover")}
+        style={{ boxShadow: `0 0 0 2px ${colour(i)}` }}
+      />
+    ) : (
+      <span className={cn(size, "rounded-full")} style={{ background: colour(i) }} />
+    )
   return (
-    <section className="flex flex-col gap-3">
-      <p className="text-[12px] font-semibold tracking-[0.1em] text-white/50 uppercase">{label}</p>
-      <div className="flex h-2.5 w-full gap-1">
-        {rows.map((r, i) => (
-          <span
-            key={r.id}
-            className="h-full rounded-full"
-            style={{ flexGrow: r.share / total, background: colour(i) }}
-          />
-        ))}
-      </div>
-      <ul className="flex flex-wrap gap-2">
-        {rows.map((r, i) => (
-          <li
-            key={r.id}
-            className="flex items-center gap-2 rounded-pill bg-white/[0.06] py-1 ps-1 pe-3"
-          >
-            {r.love.image ? (
-              // biome-ignore lint/performance/noImgElement: remote artwork thumbnail
-              <img
-                src={r.love.image}
-                alt=""
-                className="size-7 rounded-full object-cover"
-                style={{ boxShadow: `0 0 0 2px ${colour(i)}` }}
-              />
-            ) : (
-              <span className="size-7 rounded-full" style={{ background: colour(i) }} />
-            )}
-            <span className="max-w-[9rem] truncate text-[13px] font-semibold">{r.love.name}</span>
-            <span className="text-[13px] text-white/60 tabular-nums">
-              {Math.round((r.share / total) * 100)}%
+    <section className="-mt-2 flex flex-col gap-3">
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        aria-expanded={open}
+        title={tp("madeOf")}
+        className="flex w-fit max-w-full items-center gap-2.5 text-start"
+      >
+        <span className="flex shrink-0 -space-x-1.5">
+          {rows.slice(0, 4).map((r, i) => (
+            <span key={r.id} className="rounded-full ring-2 ring-[#121214]">
+              {face(r, i, "size-6")}
             </span>
-          </li>
-        ))}
-      </ul>
+          ))}
+        </span>
+        <span className="min-w-0 truncate text-[13px] text-white/65">
+          {tp("madeOfLine", {
+            names: rows
+              .slice(0, 2)
+              .map((r) => r.love.name)
+              .join(", "),
+            more: Math.max(0, rows.length - 2),
+          })}
+        </span>
+        <ChevronDown
+          className={cn("size-4 shrink-0 text-white/45 transition-transform", open && "rotate-180")}
+        />
+      </button>
+      {open ? (
+        <div className="flex flex-col gap-3">
+          <div className="flex h-2 w-full gap-1">
+            {rows.map((r, i) => (
+              <span
+                key={r.id}
+                className="h-full rounded-full"
+                style={{ flexGrow: r.share / total, background: colour(i) }}
+              />
+            ))}
+          </div>
+          <ul className="flex flex-wrap gap-2">
+            {rows.map((r, i) => (
+              <li
+                key={r.id}
+                className="flex items-center gap-2 rounded-pill bg-white/[0.06] py-1 ps-1 pe-3"
+              >
+                {face(r, i, "size-6")}
+                <span className="max-w-[9rem] truncate text-[13px] font-semibold">
+                  {r.love.name}
+                </span>
+                <span className="text-[13px] text-white/60 tabular-nums">
+                  {Math.round((r.share / total) * 100)}%
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
     </section>
   )
 }

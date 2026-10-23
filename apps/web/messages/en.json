@@ -448,7 +448,8 @@
     "play": "Play",
     "pause": "Pause",
     "latest": "Latest episode",
-    "openThing": "Open {name}"
+    "openThing": "Open {name}",
+    "madeOfLine": "From {names}{more, plural, =0 {} other { +#}}"
   },
   "Evidence": {
     "title": "The <qloo>Qloo</qloo> call behind this",

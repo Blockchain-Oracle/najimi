@@ -28,7 +28,7 @@ export function DarkSheet({
         <Dialog.Backdrop className="fixed inset-0 z-[60] bg-black/50 backdrop-blur-[2px] transition-opacity duration-200 data-ending-style:opacity-0 data-starting-style:opacity-0" />
         <Dialog.Popup
           className={cn(
-            "fixed inset-x-0 bottom-0 z-[61] mx-auto flex max-h-[88svh] w-full max-w-lg flex-col overflow-hidden rounded-t-sheet bg-[#121214] text-white shadow-float transition duration-300 ease-out data-ending-style:translate-y-full data-starting-style:translate-y-full md:bottom-6 md:rounded-sheet",
+            "fixed inset-x-0 bottom-0 z-[61] mx-auto flex max-h-[88svh] w-full max-w-lg flex-col overflow-hidden rounded-t-sheet bg-[#121214] text-white shadow-float [color-scheme:dark] transition duration-300 ease-out data-ending-style:translate-y-full data-starting-style:translate-y-full md:bottom-6 md:rounded-sheet",
             className,
           )}
         >

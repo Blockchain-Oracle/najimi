@@ -73,3 +73,77 @@ export async function geocode(query: string): Promise<Geocoded | null> {
     }
   })
 }
+
+/** What OpenStreetMap knows about a venue: its own site and social accounts, when mapped. */
+export type VenueTags = {
+  website: string | null
+  instagram: string | null
+  facebook: string | null
+  tiktok: string | null
+  x: string | null
+}
+
+const fold = (s: string) =>
+  s
+    .normalize("NFKD")
+    .replace(/[^\p{L}\p{N}]/gu, "")
+    .toLowerCase()
+
+/** "https://instagram.com/name/" or "name" → "name". */
+const handleOf = (raw: string | undefined, host: RegExp) => {
+  if (!raw) return null
+  const m = raw.match(new RegExp(`${host.source}/@?([A-Za-z0-9_.]{1,40})`, "i"))
+  const handle = m?.[1] ?? (/^@?[A-Za-z0-9_.]{1,40}$/.test(raw) ? raw.replace(/^@/, "") : null)
+  return handle && !["p", "reel", "profile.php", "pages"].includes(handle) ? handle : null
+}
+
+/**
+ * A venue found on OpenStreetMap by its name within a few hundred metres of where Qloo puts it
+ * (so a same-named place in another city never matches), with its website and social tags.
+ * Kept a month; places OSM doesn't have are remembered too.
+ */
+export async function venueTags(name: string, lat: number, lon: number): Promise<VenueTags | null> {
+  const want = fold(name)
+  if (want.length < 2) return null
+  const key = `${want}:${lat.toFixed(3)},${lon.toFixed(3)}`
+  return cached<VenueTags | null>("osm-venue", key, 30, async () => {
+    await turn()
+    const d = 0.005
+    const url = new URL("https://nominatim.openstreetmap.org/search")
+    url.searchParams.set("q", name)
+    url.searchParams.set("format", "jsonv2")
+    url.searchParams.set("extratags", "1")
+    url.searchParams.set("limit", "5")
+    url.searchParams.set("viewbox", `${lon - d},${lat + d},${lon + d},${lat - d}`)
+    url.searchParams.set("bounded", "1")
+    const res = await fetch(url, {
+      headers: { "user-agent": MEDIA_LINKS.userAgent, "accept-language": "en" },
+      signal: AbortSignal.timeout(8_000),
+    }).catch(() => null)
+    if (!res?.ok) throw new Error("Nominatim didn't answer")
+    const hits = (await res.json().catch(() => [])) as {
+      name?: string
+      extratags?: Record<string, string> | null
+    }[]
+    const hit = hits.find((h) => {
+      const got = fold(h.name ?? "")
+      return got.length > 1 && (got.includes(want) || want.includes(got))
+    })
+    const tags = hit?.extratags ?? null
+    if (!tags) return null
+    const tag = (...keys: string[]) => keys.map((k) => tags[k]).find(Boolean)
+    const website = tag("website", "contact:website", "url") ?? null
+    return {
+      // A Facebook page given as the website is an account, not a site.
+      website: website && !/facebook\.com|instagram\.com/i.test(website) ? website : null,
+      instagram: handleOf(tag("contact:instagram", "instagram"), /instagram\.com/),
+      facebook: handleOf(
+        tag("contact:facebook", "facebook") ??
+          (website && /facebook\.com/i.test(website) ? website : undefined),
+        /facebook\.com/,
+      ),
+      tiktok: handleOf(tag("contact:tiktok", "tiktok"), /tiktok\.com/),
+      x: handleOf(tag("contact:twitter", "twitter", "contact:x"), /(?:twitter|x)\.com/),
+    }
+  }).catch(() => null)
+}

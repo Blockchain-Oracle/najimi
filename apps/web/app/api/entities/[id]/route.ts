@@ -5,10 +5,12 @@ import {
   appleArtistOf,
   cached,
   filmExtras,
+  type MusicVideo,
   mediaFor,
   musicVideosOf,
   siteLinks,
   socialAccountsFor,
+  venueTags,
 } from "@najimi/sources"
 import { and, eq } from "drizzle-orm"
 import { fail, json } from "@/lib/api"
@@ -91,13 +93,16 @@ export async function GET(request: Request, ctx: { params: Promise<{ id: string 
   const isArtist = type === "urn:entity:artist"
   const name = item.name
 
-  const [media, site, extras, wiki, apple, saved] = await Promise.all([
+  const loc = item.location
+  const [media, site, osm, extras, wikiOwn, apple, saved] = await Promise.all([
     mediaFor([{ qlooId: item.entityId, type, name, image: item.image, ids }])
       .then((m) => m[item.entityId] ?? null)
       .catch(() => null),
     (isPlace || type === "urn:entity:brand") && website
       ? siteLinks(website).catch(() => null)
       : Promise.resolve(null),
+    // A place as OpenStreetMap maps it, near where Qloo puts it: its site and accounts.
+    isPlace && loc ? venueTags(name, loc.lat, loc.lon) : Promise.resolve(null),
     FILM.has(type) && ids.imdb
       ? filmExtras(ids.imdb, region).catch(() => null)
       : Promise.resolve(null),
@@ -119,15 +124,28 @@ export async function GET(request: Request, ctx: { params: Promise<{ id: string 
       return Boolean(row)
     }),
   ])
-  const [tour, musicVideos] = await Promise.all([
+  // A film without a Wikidata id in Qloo has one on TMDB.
+  const filmQid = !ids.wikidata ? extras?.accounts?.wikidata : null
+  // A place Qloo has no site for may have one on OpenStreetMap, and its socials are on it.
+  const osmSite = isPlace && !website ? (osm?.website ?? null) : null
+  const [tour, musicVideos, wikiFilm, siteFromOsm] = await Promise.all([
     // An artist's next concerts (Ticketmaster), checked once a day.
     isArtist
       ? cached("tour", `${item.entityId}:${region}`, 1, () => tourDates(name, region)).catch(
           () => [],
         )
       : [],
-    apple ? musicVideosOf(apple) : [],
+    apple ? musicVideosOf(apple) : ([] as MusicVideo[]),
+    filmQid
+      ? socialAccountsFor([filmQid])
+          .then((s) => s[filmQid.toUpperCase()] ?? null)
+          .catch(() => null)
+      : null,
+    osmSite ? siteLinks(osmSite).catch(() => null) : null,
   ])
+  const wiki = wikiOwn ?? wikiFilm
+  const pageLinks = site ?? siteFromOsm
+  const film = extras?.accounts
 
   const placeId = (() => {
     const g = item.external.google_place
@@ -221,18 +239,24 @@ export async function GET(request: Request, ctx: { params: Promise<{ id: string 
                 ...link("x", onX(name)),
               ]
 
-  // Its own accounts: Qloo's, then Wikidata's, then the links on its own site.
+  // Its own accounts: Qloo's, then TMDB's (films), Wikidata's, OpenStreetMap's (places), then
+  // the links on its own site.
   const ig = isPlace
-    ? (site?.instagram ?? item.handles.instagram ?? ext("instagram"))
-    : (item.handles.instagram ?? ext("instagram") ?? site?.instagram)
-  const xHandle = item.handles.twitter ?? ext("twitter") ?? wiki?.x ?? site?.x
-  const tt = wiki?.tiktok ?? site?.tiktok
+    ? (pageLinks?.instagram ?? osm?.instagram ?? item.handles.instagram ?? ext("instagram"))
+    : (item.handles.instagram ??
+      ext("instagram") ??
+      film?.instagram ??
+      wiki?.instagram ??
+      pageLinks?.instagram)
+  const xHandle =
+    item.handles.twitter ?? ext("twitter") ?? film?.x ?? wiki?.x ?? osm?.x ?? pageLinks?.x
+  const tt = wiki?.tiktok ?? film?.tiktok ?? osm?.tiktok ?? pageLinks?.tiktok
   const yt = wiki?.youtube
     ? `https://www.youtube.com/channel/${wiki.youtube}`
-    : site?.youtube
-      ? `https://www.youtube.com/${site.youtube}`
+    : pageLinks?.youtube
+      ? `https://www.youtube.com/${pageLinks.youtube}`
       : null
-  const fb = ext("facebook") ?? site?.facebook
+  const fb = ext("facebook") ?? film?.facebook ?? osm?.facebook ?? pageLinks?.facebook
   const follow: OutLink[] = [
     ...link("instagram", ig ? `https://www.instagram.com/${ig}/` : null),
     ...link("tiktok", tt ? `https://www.tiktok.com/@${tt}` : null),
@@ -259,7 +283,6 @@ export async function GET(request: Request, ctx: { params: Promise<{ id: string 
     })),
   ]
 
-  const loc = item.location
   return json({
     entity: {
       id: item.entityId,
@@ -277,7 +300,7 @@ export async function GET(request: Request, ctx: { params: Promise<{ id: string 
       ? {
           address: p.address ?? null,
           phone: p.phone ?? null,
-          website,
+          website: website ?? osmSite,
           hours: p.hours ?? null,
           price: p.price_level ?? null,
           rating: p.business_rating ?? null,
@@ -285,7 +308,7 @@ export async function GET(request: Request, ctx: { params: Promise<{ id: string 
           lon: loc?.lon ?? null,
           maps,
           directions: `https://www.google.com/maps/dir/?api=1&destination=${enc(where)}${placeId ? `&destination_place_id=${placeId}` : ""}`,
-          logo: site?.logo ?? null,
+          logo: pageLinks?.logo ?? null,
         }
       : null,
     film: FILM.has(type)

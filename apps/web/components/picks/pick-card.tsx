@@ -8,7 +8,7 @@ import {
   DropdownMenuTrigger,
 } from "@najimi/ui/components/dropdown-menu"
 import { cn } from "@najimi/ui/lib/utils"
-import { Bookmark, BookmarkCheck, EyeOff, MoreHorizontal, Play, Sparkles } from "lucide-react"
+import { Bookmark, BookmarkCheck, EyeOff, GitBranchPlus, MoreHorizontal, Play } from "lucide-react"
 import { useTranslations } from "next-intl"
 import { Artwork, shapeOf } from "@/components/artwork"
 import { usePublicShare } from "@/components/chat/public-share"
@@ -119,7 +119,7 @@ export function PickCard({
                 {actions.saved ? t("unsave") : t("save")}
               </DropdownMenuItem>
               <DropdownMenuItem onClick={actions.onMore}>
-                <Sparkles /> {t("more")}
+                <GitBranchPlus /> {t("more")}
               </DropdownMenuItem>
               <DropdownMenuItem onClick={actions.onNotForMe}>
                 <EyeOff /> {t("notForMe")}

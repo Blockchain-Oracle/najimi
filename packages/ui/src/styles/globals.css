@@ -76,6 +76,12 @@
   * {
     @apply border-border outline-ring/50;
   }
+  /* Scrollbars: a thin, faint thumb in the text's own colour and no track, on every surface
+     (the light-grey default looked broken on the dark sheets). */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in oklab, currentColor 22%, transparent) transparent;
+  }
   html {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;

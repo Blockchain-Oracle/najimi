@@ -1,6 +1,6 @@
 export { cached, cachedMany } from "./cache"
 export { fetchPublic, fetchSitePage, sameSite } from "./fetch"
-export { type Geocoded, geocode } from "./geocode"
+export { type Geocoded, geocode, type VenueTags, venueTags } from "./geocode"
 export { type Product, parseProduct } from "./jsonld"
 export { type FilmExtras, filmExtras, siteLinks } from "./links"
 export {
