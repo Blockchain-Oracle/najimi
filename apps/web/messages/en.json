@@ -988,6 +988,23 @@
     "tickets": "Tickets",
     "askHotels": "Find me a hotel near {area} from {date} for {nights} nights for {party}."
   },
+  "Bookings": {
+    "status": {
+      "proposed": "Planned",
+      "prebooked": "Held",
+      "paid": "Paid",
+      "calling": "Calling",
+      "confirmed": "Confirmed",
+      "completed": "Done",
+      "failed": "Not booked",
+      "cancelled": "Cancelled"
+    },
+    "confirmation": "Confirmation",
+    "calendar": "Add to calendar",
+    "cancel": "Cancel the stay",
+    "cancelSure": "Cancel this stay? Nuitee refunds it under its cancellation terms.",
+    "cancelFailed": "That didn't cancel. Try again."
+  },
   "Booking": {
     "error": "Something went wrong. Try again.",
     "nights": "{count, plural, one {# night} other {# nights}}",

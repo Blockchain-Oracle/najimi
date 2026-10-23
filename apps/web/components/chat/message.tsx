@@ -7,6 +7,7 @@ import { Streamdown } from "streamdown"
 import { Face } from "@/components/taste/face"
 import { CardBoundary } from "./card-boundary"
 import { ApprovalCard } from "./cards/approval-card"
+import { BookingNotice } from "./cards/booking-notice"
 import { BriefCard } from "./cards/brief-card"
 import { BusinessCard } from "./cards/business-card"
 import { CallApproval, CallCard } from "./cards/call-card"
@@ -199,6 +200,9 @@ export function Message({
       .map((p) => (p.type === "text" ? p.text : ""))
       .join(" ")
       .trim()
+    // A booking's news is a card; other room notices ("Juno joined") stay a quiet line.
+    if (message.metadata?.booking)
+      return <BookingNotice note={message.metadata.booking} text={text} />
     return <p className="text-center text-[12px] text-text-3">{text}</p>
   }
   if (message.role === "user" && from && !from.mine) {

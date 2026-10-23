@@ -140,7 +140,7 @@ export function ChatView(props: ChatViewProps) {
   const failed = lastAssistant?.metadata?.status === "failed"
 
   return (
-    <ChatProvider value={{ chatId: props.chatId, people: props.people }}>
+    <ChatProvider value={{ chatId: props.chatId, people: props.people, me: props.me }}>
       <div className="flex h-[calc(100dvh-3.5rem)] flex-col md:h-dvh">
         <header className="flex h-14 shrink-0 items-center gap-2 px-3 md:px-5">
           <button

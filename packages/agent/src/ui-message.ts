@@ -32,6 +32,23 @@ export type ChatMeta = {
   tz?: string
   /** A failed answer's reason, in plain words. */
   error?: string
+  /** A booking notice in the room: the booking as it is now, drawn as a card. */
+  booking?: BookingNote
+}
+
+/** What a booking notice shows (no payment details, no secrets). */
+export type BookingNote = {
+  id: string
+  ownerId: string
+  kind: string
+  title: string
+  venue: string | null
+  image: string | null
+  status: string
+  startsAt: string | null
+  endsAt: string | null
+  confirmation: string | null
+  refundable: boolean
 }
 
 export type NajimiTools = InferUITools<ToolDefs>

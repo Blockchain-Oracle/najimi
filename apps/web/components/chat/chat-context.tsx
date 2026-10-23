@@ -9,10 +9,12 @@ import { usePublicShare } from "./public-share"
  * The chat a card sits in: its id (cards that share or act on their whole chat) and the people
  * the owner keeps (so any card that names someone can lead to them).
  */
-type ChatContext = { chatId: string; people?: { id: string; name: string }[] }
+type ChatContext = { chatId: string; people?: { id: string; name: string }[]; me?: string }
 const Ctx = createContext<ChatContext | null>(null)
 export const ChatProvider = Ctx.Provider
 export const useChatId = () => useContext(Ctx)?.chatId ?? null
+/** Who is looking (actions only the owner of something may take). */
+export const useMe = () => useContext(Ctx)?.me ?? null
 
 /** Makes (or reuses) the chat's public link and copies it. */
 export const shareChat = (chatId: string, copied: string) => shareLink("chat", chatId, copied)

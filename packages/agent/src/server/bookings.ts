@@ -2,6 +2,7 @@ import { db, schema } from "@najimi/db"
 import type { BookingStatus } from "@najimi/db/schema"
 import { publish, topic } from "@najimi/live"
 import { eq } from "drizzle-orm"
+import type { BookingNote } from "../ui-message"
 import { publishMessage, toUI } from "./room"
 
 /*
@@ -12,7 +13,22 @@ import { publishMessage, toUI } from "./room"
 
 type Booking = typeof schema.bookings.$inferSelect
 
-/** A line in the booking's room, and the owner's news. */
+/** The booking as a notice card shows it. */
+const noteOf = (b: Booking): BookingNote => ({
+  id: b.id,
+  ownerId: b.ownerId,
+  kind: b.kind,
+  title: b.title,
+  venue: b.venue,
+  image: b.image,
+  status: b.status,
+  startsAt: b.startsAt?.toISOString() ?? null,
+  endsAt: b.endsAt?.toISOString() ?? null,
+  confirmation: (b.ref as Record<string, string>).confirmation || null,
+  refundable: Boolean((b.data as { refundable?: boolean }).refundable),
+})
+
+/** A card in the booking's room (its line and the booking as it is now), and the owner's news. */
 export async function tellBooking(booking: Booking, text: string) {
   if (booking.chatId) {
     const [row] = await db
@@ -22,6 +38,7 @@ export async function tellBooking(booking: Booking, text: string) {
         chatId: booking.chatId,
         role: "system",
         parts: [{ type: "text", text }],
+        metadata: { booking: noteOf(booking) },
       })
       .returning()
     if (row) await publishMessage(booking.chatId, toUI(row))
