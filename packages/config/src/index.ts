@@ -16,6 +16,12 @@ export const APP = {
   docs: "https://docs.najimi.xyz" as string | null,
 } as const
 
+/** The privacy policy and terms: where to write, and when they last changed. */
+export const LEGAL = {
+  contact: "hello@najimi.xyz",
+  updated: "2026-10-23",
+} as const
+
 /** Local development ports, chosen off the common defaults so they don't clash with other apps. */
 export const LOCAL_PORTS = {
   web: 3310,

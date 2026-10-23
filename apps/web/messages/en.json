@@ -56,7 +56,10 @@
     "footer": "Najimi, made for the Qloo hackathon.",
     "builtOn": "Built on <qloo>Qloo</qloo>",
     "getApp": "Najimi on your phone",
-    "openShort": "Open"
+    "openShort": "Open",
+    "docs": "Docs",
+    "privacy": "Privacy",
+    "terms": "Terms"
   },
   "Download": {
     "title": "Najimi on your phone.",
