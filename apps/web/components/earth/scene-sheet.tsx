@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query"
 import { MapPin, MessageCircle, Moon, Store } from "lucide-react"
 import { useTranslations } from "next-intl"
 import { useAgent } from "@/components/agent/agent-context"
+import { OpenThing } from "@/components/entity/entity-provider"
 import { ProfileLink } from "@/components/people/profile-link"
 import { Face } from "@/components/taste/face"
 import { api } from "@/lib/fetcher"
@@ -169,8 +170,10 @@ export function SceneSheet({ spot, onClose }: { spot: SceneSpot | null; onClose:
                 <Row title={t("soundsLike")}>
                   <div className="-mx-5 flex gap-4 overflow-x-auto px-5 [scrollbar-width:none]">
                     {s.artists.map((a) => (
-                      <span
+                      <OpenThing
                         key={a.qlooId}
+                        thing={{ ...a, type: "urn:entity:artist" }}
+                        surface="earth"
                         className="flex w-16 shrink-0 flex-col items-center gap-1.5"
                       >
                         {/* biome-ignore lint/performance/noImgElement: remote artwork */}
@@ -182,7 +185,7 @@ export function SceneSheet({ spot, onClose }: { spot: SceneSpot | null; onClose:
                         <span className="w-full truncate text-center text-[12px] font-semibold">
                           {a.name}
                         </span>
-                      </span>
+                      </OpenThing>
                     ))}
                   </div>
                 </Row>
@@ -191,7 +194,12 @@ export function SceneSheet({ spot, onClose }: { spot: SceneSpot | null; onClose:
                 <Row title={t("goTo")}>
                   <div className="-mx-5 flex gap-3 overflow-x-auto px-5 [scrollbar-width:none]">
                     {s.places.map((p) => (
-                      <span key={p.qlooId} className="flex w-36 shrink-0 flex-col gap-1.5">
+                      <OpenThing
+                        key={p.qlooId}
+                        thing={{ ...p, type: "urn:entity:place" }}
+                        surface="earth"
+                        className="flex w-36 shrink-0 flex-col gap-1.5"
+                      >
                         {/* biome-ignore lint/performance/noImgElement: remote artwork */}
                         <img
                           src={sized(p.image, 320) ?? ""}
@@ -204,7 +212,7 @@ export function SceneSheet({ spot, onClose }: { spot: SceneSpot | null; onClose:
                             {p.caption}
                           </span>
                         ) : null}
-                      </span>
+                      </OpenThing>
                     ))}
                   </div>
                 </Row>
@@ -213,9 +221,11 @@ export function SceneSheet({ spot, onClose }: { spot: SceneSpot | null; onClose:
                 <Row title={t("wears")}>
                   <div className="flex flex-wrap gap-2">
                     {s.brands.map((b) => (
-                      <span
+                      <OpenThing
                         key={b.qlooId}
-                        className="flex items-center gap-2 rounded-pill bg-white/8 py-1 ps-1 pe-3 text-[13px] font-semibold"
+                        thing={{ ...b, type: "urn:entity:brand" }}
+                        surface="earth"
+                        className="flex items-center gap-2 rounded-pill bg-white/8 py-1 ps-1 pe-3 text-[13px] font-semibold transition-colors hover:bg-white/14"
                       >
                         {/* biome-ignore lint/performance/noImgElement: remote logo */}
                         <img
@@ -224,7 +234,7 @@ export function SceneSheet({ spot, onClose }: { spot: SceneSpot | null; onClose:
                           className="size-6 rounded-full bg-white object-contain"
                         />
                         {b.name}
-                      </span>
+                      </OpenThing>
                     ))}
                   </div>
                 </Row>

@@ -2,7 +2,7 @@
 
 import { FEED, TASTE } from "@najimi/config"
 import { cn } from "@najimi/ui/lib/utils"
-import { EyeOff, Heart, Loader2 } from "lucide-react"
+import { EyeOff, Heart, Info, Loader2 } from "lucide-react"
 import { motion } from "motion/react"
 import { useTranslations } from "next-intl"
 import { siApplemusic, siImdb, siSpotify } from "simple-icons"
@@ -64,15 +64,18 @@ export function WhySheet({
   )
 }
 
-/** More: not for me, why this, and where to open it. */
+/** More: everything about it, not for me, why this, and where to open it. */
 export function MoreSheet({
   card,
   onClose,
+  onOpen,
   onWhy,
   onHide,
 }: {
   card: FeedCard | null
   onClose: () => void
+  /** Everything about it, in the entity sheet (where to watch, the map, its socials). */
+  onOpen: () => void
   onWhy: () => void
   onHide: () => void
 }) {
@@ -95,6 +98,9 @@ export function MoreSheet({
     >
       {card ? (
         <div className="flex flex-col">
+          <button type="button" className={row} onClick={onOpen}>
+            <Info className="size-5" /> {t("everything")}
+          </button>
           <button type="button" className={row} onClick={onWhy}>
             <Heart className="size-5" /> {t("why")}
           </button>

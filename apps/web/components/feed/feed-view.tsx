@@ -12,6 +12,7 @@ import { useTranslations } from "next-intl"
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useReportScreen } from "@/components/agent/agent-context"
 import { FEED_RESTART } from "@/components/chat/cards/steer-card"
+import { useEntity } from "@/components/entity/entity-provider"
 import { type Track, usePlayer } from "@/components/player/player"
 import {
   type FeedCard as Card,
@@ -142,6 +143,7 @@ export function FeedView() {
   const [refining, setRefining] = useState(false)
   const [why, setWhy] = useState<Card | null>(null)
   const [more, setMore] = useState<Card | null>(null)
+  const entity = useEntity()
   const [trailer, setTrailer] = useState<Card | null>(null)
   const [tune, setTune] = useState(false)
 
@@ -638,6 +640,11 @@ export function FeedView() {
       <MoreSheet
         card={more}
         onClose={() => setMore(null)}
+        onOpen={() => {
+          if (!more) return
+          entity.open({ ...more, qlooId: more.id }, { surface: "feed" })
+          setMore(null)
+        }}
         onWhy={() => {
           setWhy(more)
           setMore(null)

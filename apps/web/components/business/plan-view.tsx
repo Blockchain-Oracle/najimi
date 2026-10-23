@@ -21,6 +21,7 @@ import { siX } from "simple-icons"
 import { BrandIcon } from "@/components/brands/brand-icon"
 import { qlooTag } from "@/components/brands/qloo-logo"
 import { sized } from "@/components/connect/platforms"
+import { OpenThing } from "@/components/entity/entity-provider"
 
 /*
  * A business's plan (W19), from Qloo evidence only. The city with its people rising out of it,
@@ -71,7 +72,16 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
   )
 }
 
+/** A thing's face; a tap opens it (the business's fans, partners and street are all things). */
 function Art({ thing, size = 40 }: { thing: BusinessThing; size?: number }) {
+  return (
+    <OpenThing thing={thing} surface="business" className="shrink-0 rounded-full">
+      <ThingFace thing={thing} size={size} />
+    </OpenThing>
+  )
+}
+
+function ThingFace({ thing, size }: { thing: BusinessThing; size: number }) {
   return thing.image ? (
     // biome-ignore lint/performance/noImgElement: remote artwork
     <img
@@ -246,23 +256,29 @@ export function PlanView({ business, actions }: { business: PlanBusiness; action
           </div>
           <ul className="-mx-5 flex snap-x gap-3 overflow-x-auto px-5 pb-2 md:mx-0 md:px-0">
             {(r.fans[kind] ?? []).map((item) => (
-              <li key={item.qlooId} className="flex w-32 shrink-0 snap-start flex-col gap-1.5">
-                {item.image ? (
-                  // biome-ignore lint/performance/noImgElement: remote artwork
-                  <img
-                    src={sized(item.image, 320) ?? ""}
-                    alt=""
-                    className="aspect-square w-full rounded-tile object-cover"
-                  />
-                ) : (
-                  <span className="aspect-square w-full rounded-tile bg-secondary" />
-                )}
-                <span className="line-clamp-2 text-[13px] font-semibold leading-tight">
-                  {item.name}
-                </span>
-                {item.caption ? (
-                  <span className="truncate text-[11px] text-text-3">{item.caption}</span>
-                ) : null}
+              <li key={item.qlooId} className="w-32 shrink-0 snap-start">
+                <OpenThing
+                  thing={item}
+                  surface="business"
+                  className="flex w-full flex-col gap-1.5 rounded-tile"
+                >
+                  {item.image ? (
+                    // biome-ignore lint/performance/noImgElement: remote artwork
+                    <img
+                      src={sized(item.image, 320) ?? ""}
+                      alt=""
+                      className="aspect-square w-full rounded-tile object-cover"
+                    />
+                  ) : (
+                    <span className="aspect-square w-full rounded-tile bg-secondary" />
+                  )}
+                  <span className="line-clamp-2 text-[13px] font-semibold leading-tight">
+                    {item.name}
+                  </span>
+                  {item.caption ? (
+                    <span className="truncate text-[11px] text-text-3">{item.caption}</span>
+                  ) : null}
+                </OpenThing>
               </li>
             ))}
           </ul>
@@ -325,7 +341,9 @@ export function PlanView({ business, actions }: { business: PlanBusiness; action
               <li key={p.qlooId} className="flex items-center gap-3 px-4 py-3">
                 <Art thing={p} size={36} />
                 <span className="flex min-w-0 flex-1 flex-col">
-                  <span className="truncate text-[14px] font-semibold">{p.name}</span>
+                  <OpenThing thing={p} surface="business" chevron className="max-w-full">
+                    <span className="truncate text-[14px] font-semibold">{p.name}</span>
+                  </OpenThing>
                   {p.caption ? (
                     <span className="truncate text-[12px] text-text-3">{p.caption}</span>
                   ) : null}
@@ -352,7 +370,9 @@ export function PlanView({ business, actions }: { business: PlanBusiness; action
                 >
                   <Art thing={found} size={44} />
                   <span className="flex min-w-0 flex-col gap-0.5">
-                    <span className="truncate font-heading text-[15px]">{found.name}</span>
+                    <OpenThing thing={found} surface="business" chevron className="max-w-full">
+                      <span className="truncate font-heading text-[15px]">{found.name}</span>
+                    </OpenThing>
                     <span className="text-[13px] leading-snug text-text-2">{p.why}</span>
                   </span>
                 </li>

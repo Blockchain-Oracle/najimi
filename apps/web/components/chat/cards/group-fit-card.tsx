@@ -4,6 +4,7 @@ import type { NajimiTools } from "@najimi/agent"
 import { cn } from "@najimi/ui/lib/utils"
 import { MapPin } from "lucide-react"
 import { useTranslations } from "next-intl"
+import { OpenThing } from "@/components/entity/entity-provider"
 import { Face } from "@/components/taste/face"
 
 /*
@@ -37,7 +38,7 @@ export function GroupFitCard({ output }: { output: NajimiTools["groupFit"]["outp
           const best = Math.max(...p.fits.map((f) => f.fit ?? 0))
           return (
             <li key={p.qlooId} className="flex gap-3">
-              <span className="relative shrink-0">
+              <OpenThing thing={p} className="relative shrink-0 rounded-tile">
                 {p.image ? (
                   // biome-ignore lint/performance/noImgElement: remote artwork thumbnail
                   <img
@@ -53,10 +54,12 @@ export function GroupFitCard({ output }: { output: NajimiTools["groupFit"]["outp
                 <span className="absolute -top-1.5 -start-1.5 grid size-5 place-items-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
                   {i + 1}
                 </span>
-              </span>
+              </OpenThing>
               <div className="flex min-w-0 flex-1 flex-col gap-1.5">
                 <div className="flex min-w-0 flex-col">
-                  <span className="truncate text-[15px] font-semibold">{p.name}</span>
+                  <OpenThing thing={p} chevron className="max-w-full">
+                    <span className="truncate text-[15px] font-semibold">{p.name}</span>
+                  </OpenThing>
                   {p.area || p.caption ? (
                     <span className="flex items-center gap-1 truncate text-[12px] text-text-3">
                       {p.area ? <MapPin className="size-3 shrink-0" /> : null}

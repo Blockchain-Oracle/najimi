@@ -4,13 +4,14 @@ import { useQuery } from "@tanstack/react-query"
 import { Loader2 } from "lucide-react"
 import { motion } from "motion/react"
 import { useTranslations } from "next-intl"
+import { OpenThing } from "@/components/entity/entity-provider"
 import { api } from "@/lib/fetcher"
 import { AuraFace, type PersonCard } from "./person-row"
 
 type Match = {
   percent: number
   words: string[]
-  loves: { qlooId: string; name: string; image: string | null }[]
+  loves: { qlooId: string; name: string; image: string | null; type?: string }[]
   callId: string | null
 } | null
 
@@ -71,16 +72,18 @@ export function MatchCard({
           </p>
           <div className="flex flex-wrap gap-2">
             {m.loves.map((l) => (
-              <span
+              <OpenThing
                 key={l.qlooId}
-                className="inline-flex items-center gap-2 rounded-pill bg-secondary py-1 ps-1 pe-3 text-[13px] font-semibold"
+                thing={l.type ? { ...l, type: l.type } : null}
+                surface="taste"
+                className="inline-flex items-center gap-2 rounded-pill bg-secondary py-1 ps-1 pe-3 text-[13px] font-semibold transition-colors hover:bg-secondary/70"
               >
                 {l.image ? (
                   // biome-ignore lint/performance/noImgElement: remote artwork thumbnail
                   <img src={l.image} alt="" className="size-6 rounded-full object-cover" />
                 ) : null}
                 {l.name}
-              </span>
+              </OpenThing>
             ))}
           </div>
         </div>

@@ -100,14 +100,15 @@ export function becauseOf(item: TasteItem, loves: Love[]): StoredPick["because"]
   return heaviest ? { qlooId: heaviest.qlooId, name: heaviest.name, share: null } : null
 }
 
-const firstExternal = (item: TasteItem, key: string): string | null => {
+export const firstExternal = (item: TasteItem, key: string): string | null => {
   const value = item.external[key]
-  const first = Array.isArray(value) ? value[0] : null
+  // Insights give a list of { id }; `/entities` (under properties.external) one { id }.
+  const first = Array.isArray(value) ? value[0] : value
   return first && typeof first === "object" && "id" in first ? String(first.id) : null
 }
 
 /** The pick's ids elsewhere (only the ones it has), for its media: previews, trailers, episodes. */
-function idsOf(item: TasteItem): NonNullable<StoredPick["ids"]> {
+export function idsOf(item: TasteItem): NonNullable<StoredPick["ids"]> {
   const isbn13 = (item.properties as { isbn13?: string }).isbn13
   const ids = {
     wikidata: firstExternal(item, "wikidata")?.toUpperCase(),

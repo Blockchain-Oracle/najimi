@@ -5,6 +5,7 @@ import { QueryClientProvider } from "@tanstack/react-query"
 import { MotionConfig } from "motion/react"
 import { useEffect } from "react"
 import { AgentProvider } from "@/components/agent/agent-context"
+import { EntityProvider } from "@/components/entity/entity-provider"
 import { PlayerProvider } from "@/components/player/player"
 import { startPush } from "@/lib/push-client"
 import { getQueryClient } from "@/lib/query-client"
@@ -19,7 +20,10 @@ export function Providers({ children }: { children: React.ReactNode }) {
       <MotionConfig reducedMotion="user">
         {/* One player for every screen: what the feed starts keeps playing as you move around. */}
         <PlayerProvider>
-          <AgentProvider>{children}</AgentProvider>
+          <AgentProvider>
+            {/* Tap anything: one sheet that opens whatever a card shows, from every screen. */}
+            <EntityProvider>{children}</EntityProvider>
+          </AgentProvider>
         </PlayerProvider>
       </MotionConfig>
       <Toaster theme="system" position="bottom-center" />

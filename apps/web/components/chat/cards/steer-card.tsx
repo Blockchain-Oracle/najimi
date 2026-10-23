@@ -5,6 +5,7 @@ import { Heart, SlidersHorizontal } from "lucide-react"
 import Link from "next/link"
 import { useTranslations } from "next-intl"
 import { useEffect, useRef } from "react"
+import { OpenThing } from "@/components/entity/entity-provider"
 
 /** Tells the feed (wherever it's open) to start over on the new mix. */
 export const FEED_RESTART = "najimi:feed-restart"
@@ -44,17 +45,27 @@ export function SteerCard({
           </span>
         ))}
         {output.loved ? (
-          <span className="inline-flex items-center gap-1 rounded-pill bg-secondary px-2.5 py-1 text-[12px] font-semibold">
+          <OpenThing
+            thing={output.lovedThing ? { ...output.lovedThing, name: output.loved } : null}
+            surface="feed"
+            className="inline-flex items-center gap-1 rounded-pill bg-secondary px-2.5 py-1 text-[12px] font-semibold"
+          >
             <Heart className="size-3 fill-current" /> {output.loved}
-          </span>
+          </OpenThing>
         ) : null}
         {output.weights.map((w) => (
-          <span
+          <OpenThing
             key={w.name}
+            thing={
+              w.qlooId && w.type
+                ? { qlooId: w.qlooId, type: w.type, name: w.name, image: w.image ?? null }
+                : null
+            }
+            surface="feed"
             className="rounded-pill bg-secondary px-2.5 py-1 text-[12px] font-semibold"
           >
             {w.name} · {w.weight}
-          </span>
+          </OpenThing>
         ))}
       </div>
       <Link

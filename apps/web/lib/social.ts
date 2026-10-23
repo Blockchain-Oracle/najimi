@@ -222,7 +222,7 @@ export type Match = {
   /** Taste words you share, strongest first. */
   words: string[]
   /** Loves you both have. */
-  loves: { qlooId: string; name: string; image: string | null }[]
+  loves: { qlooId: string; name: string; image: string | null; type: string }[]
   callId: string | null
 }
 
@@ -232,7 +232,10 @@ export type Match = {
  * metal ≈ 0.33 on 2026-10-22) reads as a percentage, scaled so a strong match lands near 90.
  */
 export async function matchOf(
-  a: { userId: string; loves: { qlooId: string; name: string; imageUrl: string | null }[] },
+  a: {
+    userId: string
+    loves: { qlooId: string; name: string; imageUrl: string | null; type: string }[]
+  },
   b: { loves: { qlooId: string }[] },
 ): Promise<Match | null> {
   if (!a.loves.length || !b.loves.length) return null
@@ -251,7 +254,7 @@ export async function matchOf(
     words: shared.slice(0, 8),
     loves: a.loves
       .filter((l) => theirs.has(l.qlooId))
-      .map((l) => ({ qlooId: l.qlooId, name: l.name, image: l.imageUrl })),
+      .map((l) => ({ qlooId: l.qlooId, name: l.name, image: l.imageUrl, type: l.type })),
     callId: result.call.callId,
   }
 }

@@ -5,6 +5,7 @@ import { Sheet, SheetContent, SheetTitle } from "@najimi/ui/components/sheet"
 import { GitBranchPlus, Loader2, MessageCircle } from "lucide-react"
 import { useTranslations } from "next-intl"
 import { useAgent } from "@/components/agent/agent-context"
+import { OpenThing } from "@/components/entity/entity-provider"
 
 /*
  * One node of the graph: why it's there (each love's share of it, from Qloo's explainability),
@@ -63,12 +64,18 @@ export function NodeSheet({
           <div className="flex flex-col gap-4 pt-5">
             <div className="flex items-center gap-3">
               {node.image ? (
-                // biome-ignore lint/performance/noImgElement: remote artwork
-                <img
-                  src={sized(node.image, 240) ?? ""}
-                  alt=""
-                  className="size-16 shrink-0 rounded-tile object-cover ring-1 ring-white/15"
-                />
+                <OpenThing
+                  thing={{ ...node, qlooId: node.id }}
+                  surface="graph"
+                  className="shrink-0 rounded-tile"
+                >
+                  {/* biome-ignore lint/performance/noImgElement: remote artwork */}
+                  <img
+                    src={sized(node.image, 240) ?? ""}
+                    alt=""
+                    className="size-16 rounded-tile object-cover ring-1 ring-white/15"
+                  />
+                </OpenThing>
               ) : null}
               <div className="flex min-w-0 flex-col">
                 <span className="text-[11px] font-bold tracking-[0.1em] text-signal uppercase">
@@ -78,9 +85,11 @@ export function NodeSheet({
                       ? t("grown")
                       : t("aPick")}
                 </span>
-                <SheetTitle className="truncate font-title text-[1.5rem] leading-tight font-normal">
-                  {node.name}
-                </SheetTitle>
+                <OpenThing thing={{ ...node, qlooId: node.id }} surface="graph" chevron>
+                  <SheetTitle className="truncate font-title text-[1.5rem] leading-tight font-normal">
+                    {node.name}
+                  </SheetTitle>
+                </OpenThing>
                 {node.caption ? (
                   <span className="truncate text-[13px] text-text-3">{node.caption}</span>
                 ) : null}

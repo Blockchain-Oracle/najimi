@@ -2,6 +2,7 @@ import { TASTE_DOMAINS } from "@najimi/config"
 import type { StoredPick, TasteWords } from "@najimi/db/schema"
 import { getTranslations } from "next-intl/server"
 import { PublicShareProvider } from "@/components/chat/public-share"
+import { OpenThing } from "@/components/entity/entity-provider"
 import { LovePill } from "@/components/loves/love-pill"
 import { PickRail } from "@/components/picks/pick-rail"
 import { TasteHero, WordPalette } from "@/components/taste/taste-hero"
@@ -60,7 +61,14 @@ export async function SharedTaste({ data }: { data: SharedTasteData }) {
             </p>
             <div className="flex flex-wrap items-center gap-2">
               {data.loves.map((l) => (
-                <LovePill key={l.qlooId} name={l.name} image={l.imageUrl} type={l.type} />
+                <OpenThing
+                  key={l.qlooId}
+                  thing={{ qlooId: l.qlooId, name: l.name, image: l.imageUrl, type: l.type }}
+                  surface="taste"
+                  className="rounded-pill"
+                >
+                  <LovePill name={l.name} image={l.imageUrl} type={l.type} />
+                </OpenThing>
               ))}
             </div>
           </div>

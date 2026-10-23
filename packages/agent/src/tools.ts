@@ -136,6 +136,8 @@ const planOutput = z.object({
     z.object({
       day: z.number(),
       slot: z.string(),
+      /** The place in Qloo, so the card opens it (older cards have none). */
+      qlooId: z.string().nullable().optional(),
       name: z.string(),
       image: z.string().nullable(),
       area: z.string().nullable(),
@@ -560,7 +562,20 @@ export const toolDefs = {
     outputSchema: z.object({
       mix: z.array(z.object({ category: z.string(), level: z.number() })),
       loved: z.string().nullable(),
-      weights: z.array(z.object({ name: z.string(), weight: z.number() })),
+      /** The new love as a thing the card opens (older cards have none). */
+      lovedThing: z
+        .object({ qlooId: z.string(), type: z.string(), image: z.string().nullable() })
+        .nullable()
+        .optional(),
+      weights: z.array(
+        z.object({
+          name: z.string(),
+          weight: z.number(),
+          qlooId: z.string().optional(),
+          type: z.string().optional(),
+          image: z.string().nullable().optional(),
+        }),
+      ),
       note: z.string().nullable(),
     }),
   }),

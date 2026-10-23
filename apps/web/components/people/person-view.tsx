@@ -24,6 +24,8 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { useCallback, useMemo, useState } from "react"
+import { useAskAbout } from "@/components/entity/entity-provider"
+import { EntitySheet } from "@/components/entity/entity-sheet"
 import { MoreSheet } from "@/components/picks/more-sheet"
 import type { PickActions } from "@/components/picks/pick-card"
 import { BuiltOnQloo } from "@/components/qloo/built-on-qloo"
@@ -40,7 +42,6 @@ import { type EditableLove, LovesEditor } from "./loves-editor"
 import { MatchCard } from "./match-card"
 import { PersonMenu } from "./person-menu"
 import { FollowButton } from "./person-row"
-import { PickSheet } from "./pick-sheet"
 import { ProfileForm } from "./profile-form"
 import { Grid, GridTile, KindChips, kindOf, weave } from "./taste-grid"
 
@@ -93,6 +94,7 @@ export type OtherView = {
 
 export function PersonView({ data, other }: { data: PersonViewData; other?: OtherView }) {
   const t = useTranslations("Taste")
+  const askAbout = useAskAbout()
   const tp = useTranslations("Pick")
   const ts = useTranslations("Social")
   const router = useRouter()
@@ -579,19 +581,30 @@ export function PersonView({ data, other }: { data: PersonViewData; other?: Othe
         <BuiltOnQloo runId={runId} />
       </div>
 
-      <PickSheet
-        readOnly={!mine}
-        pick={opened}
+      <EntitySheet
+        thing={opened}
         loves={shareLoves}
-        saved={opened ? isKept(opened.qlooId) : false}
         onClose={() => setOpened(null)}
-        onToggleSave={() => opened && void toggleSave(opened)}
-        onMore={() => {
-          if (!opened) return
-          setMore({ pick: opened, domain: domainOf.get(opened.qlooId) ?? kindOf(opened.type) })
-          setOpened(null)
-        }}
-        onNotForMe={() => opened && void notForMe(opened)}
+        actions={
+          mine && opened
+            ? {
+                saved: isKept(opened.qlooId),
+                onToggleSave: () => void toggleSave(opened),
+                onMore: () => {
+                  setMore({
+                    pick: opened,
+                    domain: domainOf.get(opened.qlooId) ?? kindOf(opened.type),
+                  })
+                  setOpened(null)
+                },
+                onAsk: () => {
+                  setOpened(null)
+                  askAbout(opened)
+                },
+                onNotForMe: () => void notForMe(opened),
+              }
+            : {}
+        }
       />
       <MoreSheet
         personId={person.id}

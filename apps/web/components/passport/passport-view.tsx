@@ -17,6 +17,7 @@ import Link from "next/link"
 import { useFormatter, useTranslations } from "next-intl"
 import { useState } from "react"
 import { sized } from "@/components/connect/platforms"
+import { OpenThing } from "@/components/entity/entity-provider"
 import { api } from "@/lib/fetcher"
 import type { Stamp, StampKind, Upcoming } from "@/lib/passport"
 import { sound } from "@/lib/sounds"
@@ -361,6 +362,14 @@ export function PassportView({
                       <Link href={s.href} className="flex flex-col items-center gap-1.5">
                         {body}
                       </Link>
+                    ) : s.qlooId && s.type ? (
+                      <OpenThing
+                        thing={{ qlooId: s.qlooId, type: s.type, name: s.title, image: s.image }}
+                        surface="passport"
+                        className="flex flex-col items-center gap-1.5"
+                      >
+                        {body}
+                      </OpenThing>
                     ) : (
                       body
                     )}

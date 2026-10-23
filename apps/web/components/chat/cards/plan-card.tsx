@@ -6,6 +6,7 @@ import { CalendarPlus, Car, Footprints, MapPin, Ticket } from "lucide-react"
 import Link from "next/link"
 import { useTranslations } from "next-intl"
 import { useState } from "react"
+import { OpenThing } from "@/components/entity/entity-provider"
 import { Face } from "@/components/taste/face"
 
 /*
@@ -18,6 +19,15 @@ type Output = NajimiTools["planNight"]["output"]
 
 const sized = (url: string | null | undefined, width: number) =>
   url?.includes("images.qloo.com") ? url.replace(/-\d+x-auto\./, `-${width}x-auto.`) : (url ?? null)
+
+/** A stop as something to open (a place in Qloo; hotels and shows have no id). */
+const placeOf = (s: Output["stops"][number]) => ({
+  qlooId: s.qlooId ?? null,
+  type: "urn:entity:place",
+  name: s.name,
+  image: s.image,
+  area: s.area,
+})
 
 export function PlanCard({ output }: { output: Output }) {
   const t = useTranslations("Plans")
@@ -76,19 +86,23 @@ export function PlanCard({ output }: { output: Output }) {
                   <li key={`${s.day}-${s.slot}-${s.name}`} className="relative flex gap-3">
                     <span className="absolute -start-5 top-1.5 size-3.5 rounded-full border-2 border-[#0b0b0d] bg-signal" />
                     {s.image ? (
-                      // biome-ignore lint/performance/noImgElement: remote artwork
-                      <img
-                        src={sized(s.image, 240) ?? ""}
-                        alt=""
-                        className="size-16 shrink-0 rounded-tile object-cover"
-                      />
+                      <OpenThing thing={placeOf(s)} className="shrink-0 rounded-tile">
+                        {/* biome-ignore lint/performance/noImgElement: remote artwork */}
+                        <img
+                          src={sized(s.image, 240) ?? ""}
+                          alt=""
+                          className="size-16 rounded-tile object-cover"
+                        />
+                      </OpenThing>
                     ) : null}
                     <div className="flex min-w-0 flex-1 flex-col gap-0.5">
                       <span className="text-[12px] font-semibold text-text-3">
                         {s.at ? `${s.at} · ` : ""}
                         {t(`slots.${s.slot}` as "slots.drinks")}
                       </span>
-                      <span className="truncate text-[15px] font-semibold">{s.name}</span>
+                      <OpenThing thing={placeOf(s)} chevron className="max-w-full">
+                        <span className="truncate text-[15px] font-semibold">{s.name}</span>
+                      </OpenThing>
                       {s.area ? (
                         <span className="flex items-center gap-1 truncate text-[12px] text-text-3">
                           <MapPin className="size-3 shrink-0" /> {s.area}

@@ -174,7 +174,8 @@
     "full": "Your taste is full. Let go of a love on your taste page to add this one.",
     "upNext": "Up next",
     "tuned": "Your feed, retuned",
-    "openFeed": "Open my feed"
+    "openFeed": "Open my feed",
+    "everything": "See everything about it"
   },
   "Player": {
     "play": "Play",
@@ -447,7 +448,8 @@
     "playTrailer": "Play the trailer",
     "play": "Play",
     "pause": "Pause",
-    "latest": "Latest episode"
+    "latest": "Latest episode",
+    "openThing": "Open {name}"
   },
   "Evidence": {
     "title": "The <qloo>Qloo</qloo> call behind this",
@@ -1271,5 +1273,29 @@
     "next": "Next",
     "close": "Close",
     "yourOwn": "Find your people"
+  },
+  "Entity": {
+    "directions": "Directions",
+    "call": "Call",
+    "website": "Website",
+    "maps": "Maps",
+    "openNow": "Open",
+    "closedNow": "Closed",
+    "until": "until {time}",
+    "opensAt": "opens {time}",
+    "whereToWatch": "Where to watch",
+    "provider": {
+      "stream": "Stream",
+      "rent": "Rent",
+      "buy": "Buy"
+    },
+    "justwatch": "Streaming data from JustWatch",
+    "moreVideos": "More videos",
+    "whatPeopleSay": "What people say",
+    "ask": "Ask Najimi",
+    "askAbout": "Tell me about {name}. Why would I like it?",
+    "share": "Share",
+    "copied": "Link copied",
+    "more": "More"
   }
 }

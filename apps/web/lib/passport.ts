@@ -20,6 +20,8 @@ export type Stamp = {
   image: string | null
   /** The thing's own kind (urn:entity:artist…) for loves. */
   type: string | null
+  /** A love's Qloo id: the stamp opens it. */
+  qlooId?: string | null
   at: string
   href: string | null
 }
@@ -109,6 +111,7 @@ export async function stampsOf(userId: string, year: number): Promise<Stamp[]> {
       detail: null,
       image: l.imageUrl,
       type: l.type,
+      qlooId: l.qlooId,
       at: l.createdAt.toISOString(),
       href: null,
     })),

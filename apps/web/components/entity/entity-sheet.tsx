@@ -1,27 +1,31 @@
 "use client"
 
-import type { StoredPick } from "@najimi/db/schema"
-import type { CardMedia } from "@najimi/sources"
+import { toast } from "@najimi/ui/components/sonner"
 import { cn } from "@najimi/ui/lib/utils"
 import { useQuery } from "@tanstack/react-query"
-import { Bookmark, ExternalLink, EyeOff, Pause, Play, Sparkles } from "lucide-react"
+import { Bookmark, EyeOff, Pause, Play, Share2, Sparkles, WandSparkles } from "lucide-react"
 import { useTranslations } from "next-intl"
-import { type ReactNode, useState } from "react"
+import { type ReactNode, useRef, useState } from "react"
 import { DarkSheet } from "@/components/feed/dark-sheet"
 import type { ShareLove } from "@/components/feed/share-bars"
 import { AppleMusicBadge, PodcastCredit, PreviewCredit } from "@/components/player/credit"
 import { type Track, usePlayer, usePlayerClock } from "@/components/player/player"
+import { type EntityDetails, type EntityRef, regionOf } from "@/lib/entity"
 import { api } from "@/lib/fetcher"
 import { qk } from "@/lib/query-keys"
+import { AccountLinks, FilmLinks, PlaceLinks } from "./entity-links"
 
 /*
- * One pick, opened from a profile: a stage that plays it right here (a film's trailer, an artist's
- * songs on a record that slides out of the cover and spins while it plays, a podcast's latest
- * episode), then what it is, what it's made of (each love's share, from Qloo's explainability)
- * and what to do with it. The stage after Netflix's detail sheet (Refero fce97bd8) and 21st.dev's
+ * Any thing, opened, from anywhere in the app (a pick on a profile, a film in a chat, a stop on a
+ * plan, a node on the graph): a stage that plays it right here (a film's trailer and its other
+ * videos, an artist's songs on a record that slides out of the cover and spins while it plays, a
+ * podcast's latest episode), then what it is, where it leads (a place's Directions, Uber, Call,
+ * site and socials; where to watch a film and what people say about it; an artist's or brand's
+ * accounts), what it's made of (each love's share, from Qloo's explainability) and what to do
+ * with it. The stage after Netflix's detail sheet (Refero fce97bd8) and 21st.dev's
  * diriktv/music-artwork and ravikatiyar162/video-thumbnail-player; the track list after Vinyls
- * (Refero 02744840). Music plays through the app's one player, so it keeps going after the sheet
- * closes, with the mini player and the lock screen.
+ * (Refero 02744840); the place row after Google Maps (d81cff6d); the film after Showcase
+ * (18e5b761). Music plays through the app's one player, so it keeps going after the sheet closes.
  */
 
 const sized = (url: string | null, width: number) =>
@@ -30,131 +34,151 @@ const sized = (url: string | null, width: number) =>
 const POSTER = new Set(["urn:entity:movie", "urn:entity:tv_show", "urn:entity:book"])
 const FILM = new Set(["urn:entity:movie", "urn:entity:tv_show"])
 const WIDE = new Set(["urn:entity:place", "urn:entity:destination"])
-const PLAYABLE = new Set([
-  "urn:entity:artist",
-  "urn:entity:podcast",
-  "urn:entity:movie",
-  "urn:entity:tv_show",
-  "urn:entity:book",
-])
 const DARK = "#121214"
 
-function usePickMedia(pick: StoredPick | null) {
+export type Surface =
+  | "feed"
+  | "taste"
+  | "graph"
+  | "room"
+  | "player"
+  | "earth"
+  | "plan"
+  | "business"
+  | "passport"
+
+/** What the sheet's bottom row does; a missing handler hides its button (someone else's pick). */
+export type EntityActions = {
+  /** Overrides what the server says (a screen that already knows). */
+  saved?: boolean
+  onToggleSave?: (saved: boolean) => void
+  onMore?: () => void
+  onAsk?: () => void
+  onNotForMe?: () => void
+}
+
+export function useEntityDetails(thing: EntityRef | null) {
+  const region = regionOf()
   return useQuery({
-    queryKey: qk.pickMedia(pick?.qlooId ?? ""),
-    queryFn: async () => {
-      if (!pick) return null
-      const { qlooId, type, name, image, ids } = pick
-      const { media } = await api<{ media: CardMedia | null }>("/api/picks/media", {
-        json: { qlooId, type, name, image, ids },
-      })
-      return media
-    },
-    enabled: Boolean(pick && PLAYABLE.has(pick.type)),
-    staleTime: Number.POSITIVE_INFINITY,
+    queryKey: qk.entity(thing?.qlooId ?? "", region),
+    queryFn: () =>
+      api<EntityDetails>(`/api/entities/${thing?.qlooId}?region=${encodeURIComponent(region)}`),
+    enabled: Boolean(thing),
+    staleTime: 10 * 60_000,
     retry: false,
   })
 }
 
-function tracksOf(pick: StoredPick, media: CardMedia | null | undefined): Track[] {
+function tracksOf(thing: EntityRef, details: EntityDetails | undefined): Track[] {
+  const media = details?.media
   if (media?.kind === "songs")
     return media.songs.map((song) => ({
-      id: `${pick.qlooId}:${song.preview}`,
+      id: `${thing.qlooId}:${song.preview}`,
       src: song.preview,
       title: song.title,
       by: song.artist,
-      artwork: song.artwork ?? pick.image,
+      artwork: song.artwork ?? thing.image,
       source: "apple",
       store: song.store,
-      pickId: pick.qlooId,
-      pickType: pick.type,
+      pickId: thing.qlooId,
+      pickType: thing.type,
     }))
   if (media?.kind === "episode") {
     const e = media.episode
     return [
       {
-        id: `${pick.qlooId}:episode`,
+        id: `${thing.qlooId}:episode`,
         src: e.audio,
         title: e.title,
-        by: e.show || pick.name,
-        artwork: e.artwork ?? pick.image,
+        by: e.show || thing.name,
+        artwork: e.artwork ?? thing.image,
         source: "podcast",
         store: e.store,
-        pickId: pick.qlooId,
-        pickType: pick.type,
+        pickId: thing.qlooId,
+        pickType: thing.type,
       },
     ]
   }
   return []
 }
 
-export function PickSheet({
-  readOnly = false,
-  pick,
-  loves,
-  saved,
+/** The best page to send someone for this thing. */
+function shareUrl(d: EntityDetails | undefined) {
+  if (!d) return null
+  return (
+    d.place?.maps ??
+    d.film?.letterboxd ??
+    d.film?.imdb ??
+    d.links.spotify ??
+    d.links.open ??
+    d.accounts.website ??
+    (d.accounts.instagram ? `https://www.instagram.com/${d.accounts.instagram}/` : null) ??
+    d.talk.youtube
+  )
+}
+
+export function EntitySheet({
+  thing,
+  loves = [],
+  actions,
+  surface = "taste",
   onClose,
-  onToggleSave,
-  onMore,
-  onNotForMe,
 }: {
-  /** Someone else's pick: look, play and open, nothing to change. */
-  readOnly?: boolean
-  pick: StoredPick | null
-  loves: ShareLove[]
-  saved: boolean
+  thing: EntityRef | null
+  /** The viewer's loves, to name the shares in "Made of your loves". */
+  loves?: ShareLove[]
+  actions: EntityActions
+  surface?: Surface
   onClose: () => void
-  onToggleSave: () => void
-  onMore: () => void
-  onNotForMe: () => void
 }) {
   return (
     <DarkSheet
       bare
-      open={Boolean(pick)}
+      open={Boolean(thing)}
       onOpenChange={(o) => (o ? null : onClose())}
-      title={pick?.name ?? ""}
+      title={thing?.name ?? ""}
     >
-      {pick ? (
-        <PickBody
-          key={pick.qlooId}
-          pick={pick}
+      {thing ? (
+        <EntityBody
+          key={thing.qlooId}
+          thing={thing}
           loves={loves}
-          readOnly={readOnly}
-          saved={saved}
-          onToggleSave={onToggleSave}
-          onMore={onMore}
-          onNotForMe={onNotForMe}
+          actions={actions}
+          surface={surface}
         />
       ) : null}
     </DarkSheet>
   )
 }
 
-function PickBody({
-  pick,
+function EntityBody({
+  thing,
   loves,
-  readOnly,
-  saved,
-  onToggleSave,
-  onMore,
-  onNotForMe,
+  actions,
+  surface,
 }: {
-  pick: StoredPick
+  thing: EntityRef
   loves: ShareLove[]
-  readOnly: boolean
-  saved: boolean
-  onToggleSave: () => void
-  onMore: () => void
-  onNotForMe: () => void
+  actions: EntityActions
+  surface: Surface
 }) {
   const t = useTranslations("Feed")
   const tp = useTranslations("Pick")
+  const te = useTranslations("Entity")
   const player = usePlayer()
-  const media = usePickMedia(pick)
-  const tracks = tracksOf(pick, media.data)
-  const waiting = media.isPending && media.fetchStatus !== "idle"
-  const open = pick.links?.imdb ?? pick.links?.spotify ?? pick.links?.open ?? null
+  const details = useEntityDetails(thing)
+  const d = details.data
+  const tracks = tracksOf(thing, d)
+  const waiting = details.isPending
+  const stageRef = useRef<HTMLDivElement>(null)
+  // A film's other videos play in the same stage, from the top.
+  const [video, setVideo] = useState<{ youtube: string; title: string } | null>(null)
+  const trailer =
+    video ?? (d?.media?.kind === "trailer" ? d.media.trailer : null) ?? d?.film?.videos[0] ?? null
+  const saved = actions.saved ?? d?.saved ?? false
+  const caption = thing.caption ?? d?.entity.caption ?? null
+  const year = d?.entity.year ?? null
+  const isArtist = thing.type === "urn:entity:artist"
 
   const play = async (track: Track) => {
     const result = await player.play(track, tracks)
@@ -164,91 +188,171 @@ function PickBody({
       json: {
         signals: [
           {
-            qlooId: pick.qlooId,
-            type: pick.type,
+            qlooId: thing.qlooId,
+            type: thing.type,
             kind: "play",
-            surface: "taste",
-            name: pick.name,
-            image: pick.image,
+            surface,
+            name: thing.name,
+            image: thing.image,
           },
         ],
       },
     }).catch(() => null)
   }
 
+  const share = async () => {
+    const url = shareUrl(d)
+    const data = { title: thing.name, text: thing.name, ...(url ? { url } : {}) }
+    try {
+      if (navigator.share) await navigator.share(data)
+      else {
+        await navigator.clipboard.writeText(url ?? thing.name)
+        toast(te("copied"))
+      }
+    } catch {
+      // Closing the share sheet is not an error.
+    }
+  }
+
   return (
     <div className="flex flex-col">
-      {media.data?.kind === "trailer" ? (
-        <TrailerStage trailer={media.data.trailer} onStart={player.pause} />
-      ) : waiting && FILM.has(pick.type) ? (
-        <TrailerWaiting pick={pick} />
-      ) : tracks.length ? (
-        <RecordStage
-          pick={pick}
-          tracks={tracks}
-          disc={media.data?.kind === "songs"}
-          onPlay={play}
-        />
-      ) : (
-        <ArtStage
-          pick={pick}
-          cover={media.data?.kind === "cover" ? media.data.image : null}
-          waiting={waiting}
-        />
-      )}
+      <div ref={stageRef}>
+        {trailer ? (
+          <TrailerStage
+            key={trailer.youtube}
+            trailer={trailer}
+            autoplay={Boolean(video)}
+            onStart={player.pause}
+          />
+        ) : waiting && FILM.has(thing.type) ? (
+          <TrailerWaiting thing={thing} />
+        ) : tracks.length ? (
+          <RecordStage
+            thing={thing}
+            tracks={tracks}
+            disc={d?.media?.kind === "songs"}
+            onPlay={play}
+          />
+        ) : (
+          <ArtStage
+            thing={thing}
+            cover={
+              d?.media?.kind === "cover"
+                ? d.media.image
+                : (d?.place?.logo ?? d?.accounts.logo ?? null)
+            }
+            waiting={waiting}
+          />
+        )}
+      </div>
 
       <div className="flex flex-col gap-6 px-5 pt-2">
         <header className="flex flex-col gap-2">
           {/* The sheet's own (screen-reader) title carries the name; this is its visible face. */}
           <p aria-hidden className="font-title text-[30px] leading-[1.02] text-balance">
-            {pick.name}
+            {thing.name}
           </p>
           <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[14px] text-white/60">
-            {pick.affinity != null ? (
+            {thing.affinity != null ? (
               <span className="font-semibold text-white">
                 <span className="bg-[linear-gradient(90deg,var(--color-aura-1),var(--color-aura-2))] bg-clip-text font-title text-[17px] text-transparent">
-                  {Math.round(pick.affinity * 100)}%
+                  {Math.round(thing.affinity * 100)}%
                 </span>{" "}
                 {tp("matchWord")}
               </span>
             ) : null}
-            {pick.caption ? <span>{pick.caption}</span> : null}
-            {pick.area ? <span>{t("near", { area: pick.area })}</span> : null}
+            {caption ? <span>{caption}</span> : null}
+            {year ? <span>{year}</span> : null}
+            {thing.area ? <span>{t("near", { area: thing.area })}</span> : null}
           </p>
         </header>
 
-        {tracks.length ? <TrackList tracks={tracks} owner={pick.name} onPlay={play} /> : null}
+        {tracks.length ? <TrackList tracks={tracks} owner={thing.name} onPlay={play} /> : null}
 
-        <MadeOf shares={pick.shares ?? []} loves={loves} label={tp("madeOf")} />
+        {waiting ? <LinksWaiting /> : null}
+        {d?.place ? <PlaceLinks name={thing.name} place={d.place} /> : null}
+        {d?.film ? (
+          <FilmLinks
+            film={d.film}
+            talk={d.talk}
+            instagram={d.accounts.instagram}
+            onPlay={(v) => {
+              setVideo(v)
+              stageRef.current?.scrollIntoView({ block: "start", behavior: "smooth" })
+            }}
+          />
+        ) : null}
+        {d && !d.place && !d.film ? <AccountLinks details={d} isArtist={isArtist} /> : null}
+
+        {d?.entity.description ? <About text={d.entity.description} /> : null}
+
+        <MadeOf shares={thing.shares ?? []} loves={loves} label={tp("madeOf")} />
 
         <div className="flex justify-around border-t border-white/[0.08] pt-3">
-          {readOnly ? null : (
+          {actions.onToggleSave ? (
             <Action
               label={saved ? tp("unsave") : tp("save")}
-              onClick={onToggleSave}
+              onClick={() => actions.onToggleSave?.(saved)}
               pressed={saved}
             >
               <Bookmark className={cn("size-6", saved && "fill-current")} strokeWidth={1.75} />
             </Action>
-          )}
-          {readOnly ? null : (
-            <Action label={tp("more")} onClick={onMore}>
+          ) : null}
+          {actions.onMore ? (
+            <Action label={tp("more")} onClick={actions.onMore}>
               <Sparkles className="size-6" strokeWidth={1.75} />
             </Action>
-          )}
-          {open ? (
-            <Action label={tp("open")} href={open}>
-              <ExternalLink className="size-6" strokeWidth={1.75} />
+          ) : null}
+          {actions.onAsk ? (
+            <Action label={te("ask")} onClick={actions.onAsk}>
+              <WandSparkles className="size-6" strokeWidth={1.75} />
             </Action>
           ) : null}
-          {readOnly ? null : (
-            <Action label={tp("notForMe")} onClick={onNotForMe} tone="danger">
+          <Action label={te("share")} onClick={share}>
+            <Share2 className="size-6" strokeWidth={1.75} />
+          </Action>
+          {actions.onNotForMe ? (
+            <Action label={tp("notForMe")} onClick={actions.onNotForMe} tone="danger">
               <EyeOff className="size-6" strokeWidth={1.75} />
             </Action>
-          )}
+          ) : null}
         </div>
       </div>
     </div>
+  )
+}
+
+/** The pill rows while the links are found: the same height, so nothing jumps. */
+function LinksWaiting() {
+  return (
+    <div className="flex gap-2" aria-hidden>
+      {[28, 20, 24].map((w) => (
+        <span
+          key={w}
+          className="h-10 animate-pulse rounded-pill bg-white/[0.07]"
+          style={{ width: `${w * 4}px` }}
+        />
+      ))}
+    </div>
+  )
+}
+
+/** What it is, in Qloo's words: three lines, the rest on a tap. */
+function About({ text }: { text: string }) {
+  const te = useTranslations("Entity")
+  const [open, setOpen] = useState(false)
+  return (
+    <button
+      type="button"
+      onClick={() => setOpen((o) => !o)}
+      aria-expanded={open}
+      className="flex flex-col items-start gap-1 text-start"
+    >
+      <span className={cn("text-[14px] leading-relaxed text-white/75", !open && "line-clamp-3")}>
+        {text}
+      </span>
+      {open ? null : <span className="text-[13px] font-semibold text-white">{te("more")}</span>}
+    </button>
   )
 }
 
@@ -286,13 +390,16 @@ function Backdrop({ src }: { src: string | null }) {
 /** A film or show: its trailer's still with a play button; one tap plays it right here. */
 function TrailerStage({
   trailer,
+  autoplay,
   onStart,
 }: {
   trailer: { youtube: string; title: string }
+  /** A video picked from "More videos" starts at once. */
+  autoplay: boolean
   onStart: () => void
 }) {
   const tp = useTranslations("Pick")
-  const [playing, setPlaying] = useState(false)
+  const [playing, setPlaying] = useState(autoplay)
   const [still, setStill] = useState(`https://i.ytimg.com/vi/${trailer.youtube}/maxresdefault.jpg`)
   if (playing)
     return (
@@ -321,6 +428,11 @@ function TrailerStage({
         src={still}
         alt=""
         onError={() => setStill(`https://i.ytimg.com/vi/${trailer.youtube}/hqdefault.jpg`)}
+        // With no high-res still YouTube answers with a 120px grey placeholder, not an error.
+        onLoad={(e) => {
+          if (e.currentTarget.naturalWidth <= 120)
+            setStill(`https://i.ytimg.com/vi/${trailer.youtube}/hqdefault.jpg`)
+        }}
         className="absolute inset-0 -z-10 size-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
       />
       <span
@@ -344,10 +456,10 @@ function TrailerStage({
 }
 
 /** A film while its trailer is found: the same 16:9 stage, so nothing jumps when it arrives. */
-function TrailerWaiting({ pick }: { pick: StoredPick }) {
+function TrailerWaiting({ thing }: { thing: EntityRef }) {
   return (
     <div className="relative isolate grid aspect-video w-full place-items-center overflow-hidden">
-      <Backdrop src={sized(pick.image, 600)} />
+      <Backdrop src={sized(thing.image, 600)} />
       <span className="size-16 animate-pulse rounded-full bg-white/15 ring-1 ring-white/25 backdrop-blur-md" />
     </div>
   )
@@ -358,12 +470,12 @@ function TrailerWaiting({ pick }: { pick: StoredPick }) {
  * while it plays (it stops where it was when you pause).
  */
 function RecordStage({
-  pick,
+  thing,
   tracks,
   disc,
   onPlay,
 }: {
-  pick: StoredPick
+  thing: EntityRef
   tracks: Track[]
   disc: boolean
   onPlay: (track: Track) => void
@@ -374,7 +486,7 @@ function RecordStage({
   const lead = current ?? (tracks[0] as Track)
   const spinning = Boolean(current) && player.playing
   const out = Boolean(current)
-  const art = sized(pick.image, 600) ?? lead.artwork
+  const art = sized(thing.image, 600) ?? lead.artwork
   return (
     <div className="relative isolate flex h-[18rem] items-center justify-center overflow-hidden pt-4">
       <Backdrop src={art} />
@@ -448,15 +560,15 @@ function RecordStage({
 
 /** Anything without sound: its artwork, large, on its own colour. */
 function ArtStage({
-  pick,
+  thing,
   cover,
   waiting,
 }: {
-  pick: StoredPick
+  thing: EntityRef
   cover: string | null
   waiting: boolean
 }) {
-  const art = sized(pick.image, 600) ?? cover
+  const art = sized(thing.image, 600) ?? cover
   return (
     <div className="relative isolate flex h-[17rem] items-end justify-center overflow-hidden pb-5">
       <Backdrop src={art} />
@@ -467,9 +579,9 @@ function ArtStage({
           alt=""
           className={cn(
             "rounded-[16px] object-cover shadow-[0_30px_60px_-20px_rgba(0,0,0,0.85)] ring-1 ring-white/10",
-            POSTER.has(pick.type)
+            POSTER.has(thing.type)
               ? "aspect-[2/3] h-56"
-              : WIDE.has(pick.type)
+              : WIDE.has(thing.type)
                 ? "aspect-[4/3] h-48"
                 : "size-48",
           )}
@@ -635,14 +747,12 @@ function Action({
   label,
   children,
   onClick,
-  href,
   pressed,
   tone,
 }: {
   label: string
   children: ReactNode
-  onClick?: () => void
-  href?: string
+  onClick: () => void
   pressed?: boolean
   tone?: "danger"
 }) {
@@ -650,13 +760,6 @@ function Action({
     "flex min-w-16 flex-col items-center gap-1.5 rounded-tile px-2 py-2 text-[12px] font-medium transition-colors hover:bg-white/[0.06]",
     tone === "danger" ? "text-[#FF6B7A]" : "text-white/85",
   )
-  if (href)
-    return (
-      <a className={className} href={href} target="_blank" rel="noopener noreferrer">
-        {children}
-        {label}
-      </a>
-    )
   return (
     <button type="button" className={className} onClick={onClick} aria-pressed={pressed}>
       {children}

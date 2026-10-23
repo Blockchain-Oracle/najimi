@@ -7,6 +7,19 @@ import { body, fail, json, withSession } from "@/lib/api"
 import { hidePick, selfOf } from "@/lib/people"
 import { allow } from "@/lib/rate-limit"
 
+/** Where a signal came from (the entity sheet opens from all of these). */
+const SURFACES = [
+  "feed",
+  "taste",
+  "graph",
+  "room",
+  "player",
+  "earth",
+  "plan",
+  "business",
+  "passport",
+] as const
+
 const KINDS = ["seen", "dwell", "play", "love", "unlove", "hide", "save", "unsave", "open"] as const
 
 const signal = z.object({
@@ -20,7 +33,7 @@ const signal = z.object({
     .optional(),
   name: z.string().trim().min(1).max(300).optional(),
   image: z.url().max(2000).nullable().optional(),
-  surface: z.enum(["feed", "taste", "graph", "room", "player"]).optional(),
+  surface: z.enum(SURFACES).optional(),
 })
 
 const input = z.object({ signals: z.array(signal).min(1).max(FEED.batchMax) })

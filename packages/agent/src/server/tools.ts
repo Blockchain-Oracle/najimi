@@ -108,6 +108,7 @@ function planCard(
     stops: plan.stops.map((st) => ({
       day: st.day,
       slot: st.slot,
+      qlooId: st.qlooId,
       name: st.name,
       image: st.image,
       area: st.area,
@@ -1169,6 +1170,7 @@ export function buildTools(ctx: TurnContext, messageId: () => string | undefined
         }
         // Something new to love: it joins their taste at a light weight, like a love from the feed.
         let loved: string | null = null
+        let lovedThing: { qlooId: string; type: string; image: string | null } | null = null
         if (input.love) {
           const [{ n } = { n: 0 }] = await db
             .select({ n: count() })
@@ -1190,11 +1192,18 @@ export function buildTools(ctx: TurnContext, messageId: () => string | undefined
               .onConflictDoNothing()
               .returning({ id: schema.loves.id })
             loved = input.love.name
+            lovedThing = { qlooId: input.love.qlooId, type: input.love.type, image: null }
             retune ||= added.length > 0
           }
         }
         // Loves counting more or less.
-        const weights: { name: string; weight: number }[] = []
+        const weights: {
+          name: string
+          weight: number
+          qlooId: string
+          type: string
+          image: string | null
+        }[] = []
         if (input.weights?.length) {
           const rows = await db
             .select()
@@ -1207,7 +1216,13 @@ export function buildTools(ctx: TurnContext, messageId: () => string | undefined
               .update(schema.loves)
               .set({ weight: w.weight })
               .where(eq(schema.loves.id, row.id))
-            weights.push({ name: row.name, weight: w.weight })
+            weights.push({
+              name: row.name,
+              weight: w.weight,
+              qlooId: row.qlooId,
+              type: row.type,
+              image: row.imageUrl,
+            })
             retune = true
           }
         }
@@ -1218,7 +1233,7 @@ export function buildTools(ctx: TurnContext, messageId: () => string | undefined
             FEED.retuneSeconds,
             person.id,
           )
-        return { mix, loved, weights, note }
+        return { mix, loved, lovedThing, weights, note }
       },
       toModelOutput: ({ output }) => ({
         type: "text",

@@ -5,6 +5,7 @@ import { cn } from "@najimi/ui/lib/utils"
 import { Crown } from "lucide-react"
 import { motion, useReducedMotion } from "motion/react"
 import Link from "next/link"
+import { ProfileLink } from "@/components/people/profile-link"
 import { Face } from "@/components/taste/face"
 import { NumberTicker } from "./number-ticker"
 
@@ -50,7 +51,7 @@ export function Podium({ entries, you }: { entries: BoardEntry[]; you: string })
         const rank = (i === 1 ? 1 : i === 0 ? 2 : 3) as 1 | 2 | 3
         return (
           <li key={entry.key} className="flex w-24 flex-col items-center gap-1.5">
-            <span className="relative">
+            <ProfileLink username={entry.me ? null : entry.username} className="relative">
               <span
                 className={cn("block rounded-full", entry.me && "ring-2 ring-signal ring-offset-2")}
               >
@@ -62,10 +63,13 @@ export function Podium({ entries, you }: { entries: BoardEntry[]; you: string })
                   className="absolute -top-4 start-1/2 size-5 -translate-x-1/2 fill-signal text-signal rtl:translate-x-1/2"
                 />
               ) : null}
-            </span>
-            <span className="max-w-full truncate text-[13px] font-semibold">
+            </ProfileLink>
+            <ProfileLink
+              username={entry.me ? null : entry.username}
+              className="max-w-full truncate text-[13px] font-semibold"
+            >
               {entry.me ? you : entry.name}
-            </span>
+            </ProfileLink>
             <motion.span
               initial={still ? false : { scaleY: 0 }}
               animate={{ scaleY: 1 }}

@@ -21,6 +21,7 @@ import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { useEffect, useMemo, useRef, useState } from "react"
 import { useAgent } from "@/components/agent/agent-context"
+import { OpenThing } from "@/components/entity/entity-provider"
 import { SheetForMe } from "@/components/shell/app-header"
 import { Face } from "@/components/taste/face"
 import { mapsRoute, type Spot, uberLink } from "@/lib/rides"
@@ -370,7 +371,11 @@ export function PlanView({
                       </span>
                     ) : null}
                     <article className="flex gap-3 rounded-card bg-card p-3">
-                      <span className="relative shrink-0">
+                      <OpenThing
+                        thing={{ ...s, type: "urn:entity:place" }}
+                        surface="plan"
+                        className="relative shrink-0 rounded-tile"
+                      >
                         {s.image ? (
                           // biome-ignore lint/performance/noImgElement: remote artwork
                           <img
@@ -386,13 +391,19 @@ export function PlanView({
                             {n}
                           </span>
                         ) : null}
-                      </span>
+                      </OpenThing>
                       <div className="flex min-w-0 flex-1 flex-col gap-1">
                         <span className="text-[12px] font-semibold text-text-3">
                           {s.at ? `${s.at} · ` : ""}
                           {t(`slots.${s.slot}` as "slots.drinks")}
                         </span>
-                        <span className="font-heading text-[16px] leading-tight">{s.name}</span>
+                        <OpenThing
+                          thing={{ ...s, type: "urn:entity:place" }}
+                          surface="plan"
+                          chevron
+                        >
+                          <span className="font-heading text-[16px] leading-tight">{s.name}</span>
+                        </OpenThing>
                         {s.area ? (
                           <span className="flex items-center gap-1 text-[12px] text-text-3">
                             <MapPin className="size-3" /> {s.area}

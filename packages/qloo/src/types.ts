@@ -262,12 +262,13 @@ export function captionOf(entity: QlooEntity): string | null {
 }
 
 const firstId = (value: unknown): string | null => {
-  const first = Array.isArray(value) ? value[0] : null
+  // A list of { id } (insights) or one { id } (`/entities`).
+  const first = Array.isArray(value) ? value[0] : value
   return first && typeof first === "object" && "id" in first ? String(first.id) : null
 }
 
 export function handlesOf(entity: QlooEntity): Handles {
-  const ext = entity.external ?? {}
+  const ext = externalOf(entity)
   const spotify = Array.isArray(ext.spotify) ? ext.spotify[0] : null
   const followers =
     spotify && typeof spotify === "object" && "followers" in spotify
@@ -285,6 +286,12 @@ export function handlesOf(entity: QlooEntity): Handles {
     spotifyFollowers: Number.isFinite(followers) ? followers : null,
   }
 }
+
+/** Outside ids: insights carry them at the top, `/entities` under `properties.external`. */
+const externalOf = (entity: QlooEntity): Record<string, unknown> => ({
+  ...((entity.properties as { external?: Record<string, unknown> } | undefined)?.external ?? {}),
+  ...(entity.external ?? {}),
+})
 
 export function toTasteItem(entity: QlooEntity): TasteItem {
   const kind = kindOf(entity)
@@ -316,7 +323,7 @@ export function toTasteItem(entity: QlooEntity): TasteItem {
     ].slice(0, 5),
     handles: handlesOf(entity),
     location: lat != null && lon != null ? { lat, lon } : null,
-    external: entity.external ?? {},
+    external: externalOf(entity),
     properties: entity.properties ?? {},
   }
 }
