@@ -16,6 +16,15 @@ export const APP = {
   docs: "https://docs.najimi.xyz" as string | null,
 } as const
 
+/** Reading a connected YouTube account: the read-only scope, and how much is read at once. */
+export const YOUTUBE = {
+  readonly: "https://www.googleapis.com/auth/youtube.readonly",
+  api: "https://www.googleapis.com/youtube/v3",
+  /** Pages of 50: subscriptions, then liked videos. */
+  subscriptionPages: 4,
+  likedPages: 2,
+} as const
+
 /** The privacy policy and terms: where to write, and when they last changed. */
 export const LEGAL = {
   contact: "hello@najimi.xyz",

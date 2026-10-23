@@ -19,6 +19,8 @@ export const env = createEnv({
     /** Google sign-in is offered only when both are set; guests work without it. */
     GOOGLE_CLIENT_ID: z.string().min(1).optional(),
     GOOGLE_CLIENT_SECRET: z.string().min(1).optional(),
+    TIKTOK_CLIENT_KEY: z.string().min(1).optional(),
+    TIKTOK_CLIENT_SECRET: z.string().min(1).optional(),
 
     /** Qloo hackathon key: server-side only, never in a bundle, repo or recording. */
     QLOO_API_KEY: z.string().min(1).optional(),

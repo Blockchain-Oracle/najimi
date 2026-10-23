@@ -1,11 +1,13 @@
 "use client"
 
+import { YOUTUBE } from "@najimi/config"
 import { candidatesFromExport, EXPORT_FILES, type ExportPlatform } from "@najimi/connectors/exports"
 import { SheetTitle } from "@najimi/ui/components/sheet"
 import { toast } from "@najimi/ui/components/sonner"
+import { useQuery } from "@tanstack/react-query"
 import { FileArchive, Loader2 } from "lucide-react"
 import { useTranslations } from "next-intl"
-import { useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import {
   siGoodreads,
   siInstagram,
@@ -17,6 +19,7 @@ import {
   siYoutube,
 } from "simple-icons"
 import { BrandIcon } from "@/components/brands/brand-icon"
+import { authClient } from "@/lib/auth-client"
 import { api } from "@/lib/fetcher"
 import { sound } from "@/lib/sounds"
 import { type Hit, ReviewHits } from "./review-hits"
@@ -90,11 +93,14 @@ export function BringSheet({
   source,
   personId,
   connected,
+  auto = false,
   onSwitch,
   onClose,
 }: {
   source: Source
   personId: string
+  /** Just back from connecting the account: read it straight away. */
+  auto?: boolean
   /** Their own connected account here, read straight away on request. */
   connected?: { platform: "x" | "instagram"; handle: string | null } | null
   onSwitch: (s: Source) => void
@@ -152,6 +158,44 @@ export function BringSheet({
 
   const mine = connected && source.id === connected.platform ? connected : null
 
+  // YouTube connects with Google (read-only); its Takeout file stays the second way in.
+  const youtube = useQuery({
+    queryKey: ["youtube-import"],
+    queryFn: () => api<{ available: boolean; connected: boolean }>("/api/imports/youtube"),
+    enabled: source.id === "youtube",
+  })
+  const yt = source.id === "youtube" ? youtube.data : undefined
+  const readYouTube = async () => {
+    setWorking(true)
+    try {
+      found((await api<{ hits: Hit[] }>("/api/imports/youtube", { json: {} })).hits)
+    } catch (e) {
+      toast(e instanceof Error ? e.message : t("error"))
+    } finally {
+      setWorking(false)
+    }
+  }
+  const connectYouTube = async () => {
+    setWorking(true)
+    const session = await authClient.getSession()
+    const callbackURL = `${window.location.pathname}?bring=youtube`
+    const scopes = [YOUTUBE.readonly]
+    // A guest signs in with Google (and keeps everything); someone signed in links it.
+    const r =
+      !session.data || session.data.user.isAnonymous
+        ? await authClient.signIn.social({ provider: "google", scopes, callbackURL })
+        : await authClient.linkSocial({ provider: "google", scopes, callbackURL })
+    if (r.error) {
+      setWorking(false)
+      toast(r.error.message ?? t("error"))
+    }
+  }
+  const autoRead = auto && yt?.connected && hits === null && !working
+  // biome-ignore lint/correctness/useExhaustiveDependencies: reads once, when the account is ready
+  useEffect(() => {
+    if (autoRead) void readYouTube()
+  }, [autoRead])
+
   return (
     <div className="flex flex-col gap-4 pt-5">
       <SheetTitle className="flex items-center gap-2 font-title text-[1.6rem] font-normal">
@@ -179,6 +223,25 @@ export function BringSheet({
             >
               {t("readHandle", { handle: mine.handle ?? "" })}
             </button>
+          ) : null}
+          {yt?.available ? (
+            <div className="flex flex-col gap-2">
+              <button
+                type="button"
+                disabled={working}
+                onClick={() => void (yt.connected ? readYouTube() : connectYouTube())}
+                className="flex h-12 items-center justify-center gap-2 rounded-pill bg-primary font-heading text-[15px] text-primary-foreground disabled:opacity-60"
+              >
+                {working ? (
+                  <Loader2 className="size-5 animate-spin" />
+                ) : (
+                  <BrandIcon icon={siYoutube} colored className="size-5" />
+                )}
+                {yt.connected ? t("readYouTube") : t("connectYouTube")}
+              </button>
+              <p className="text-center text-[12px] text-text-3">{t("youtubeReadOnly")}</p>
+              <p className="pt-2 text-[13px] font-semibold text-text-3">{t("orTakeout")}</p>
+            </div>
           ) : null}
           {source.kind === "export" && !mine ? (
             <>

@@ -12,9 +12,12 @@ import { nextCookies } from "better-auth/next-js"
 import { anonymous, emailOTP, username } from "better-auth/plugins"
 import { allow } from "@/lib/rate-limit"
 
-/** Google sign-in is offered only when its keys are set; guests and email codes always work. */
+/** Google and TikTok sign-in are offered only when their keys are set; guests always work. */
 export const googleEnabled = Boolean(env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET)
+export const tiktokEnabled = Boolean(env.TIKTOK_CLIENT_KEY && env.TIKTOK_CLIENT_SECRET)
 export const emailEnabled = emailReady()
+/** The ways to sign in on this server, for the sign-in sheet. */
+export const signInWith = { google: googleEnabled, tiktok: tiktokEnabled, email: emailEnabled }
 
 const HOUR_MS = 60 * 60 * 1000
 const DAY_MS = 24 * HOUR_MS
@@ -55,15 +58,32 @@ export const auth = betterAuth({
   baseURL: env.BETTER_AUTH_URL,
   secret: env.BETTER_AUTH_SECRET,
   database: drizzleAdapter(db, { provider: "pg", schema }),
-  socialProviders: googleEnabled
-    ? {
-        google: {
-          clientId: env.GOOGLE_CLIENT_ID ?? "",
-          clientSecret: env.GOOGLE_CLIENT_SECRET ?? "",
-          prompt: "select_account",
-        },
-      }
-    : {},
+  socialProviders: {
+    // Offline access, so a connected YouTube can be read again later without asking; YouTube's
+    // own scope is asked for only when someone taps Connect YouTube.
+    ...(googleEnabled
+      ? {
+          google: {
+            clientId: env.GOOGLE_CLIENT_ID ?? "",
+            clientSecret: env.GOOGLE_CLIENT_SECRET ?? "",
+            prompt: "select_account" as const,
+            accessType: "offline" as const,
+          },
+        }
+      : {}),
+    // TikTok shares no email: Better Auth gives the account a placeholder address.
+    ...(tiktokEnabled
+      ? {
+          tiktok: {
+            clientKey: env.TIKTOK_CLIENT_KEY ?? "",
+            clientSecret: env.TIKTOK_CLIENT_SECRET ?? "",
+            scope: ["user.info.basic"],
+          },
+        }
+      : {}),
+  },
+  // Someone signed in with an email code can connect a Google account under another address.
+  account: { accountLinking: { enabled: true, allowDifferentEmails: true } },
   session: {
     expiresIn: AUTH.sessionExpiresInSeconds,
     updateAge: AUTH.sessionUpdateAgeSeconds,

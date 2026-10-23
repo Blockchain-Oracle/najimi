@@ -15,7 +15,7 @@ import { useTranslations } from "next-intl"
 import { Suspense, useState } from "react"
 import { useAgent } from "@/components/agent/agent-context"
 import { AgentSheet } from "@/components/agent/agent-sheet"
-import { SignInSheet } from "@/components/auth/sign-in-sheet"
+import { SignInSheet, type SignInWays } from "@/components/auth/sign-in-sheet"
 import { LanguageMenu } from "@/components/language-menu"
 import { MiniPlayer } from "@/components/player/mini-player"
 import { authClient } from "@/lib/auth-client"
@@ -153,12 +153,11 @@ function Rail({ pathname, onSignIn }: { pathname: string | null; onSignIn: () =>
  * floating tab bar. Desktop: the rail. Content pads by RAIL_WIDTH on desktop.
  */
 export function AppHeader({
-  google,
-  email,
+  sign,
   bare = false,
 }: {
-  google: boolean
-  email: boolean
+  /** The ways to sign in on this server. */
+  sign: SignInWays
   /** Full-bleed screens (the feed) draw their own top bar on phones. */
   bare?: boolean
 }) {
@@ -187,7 +186,7 @@ export function AppHeader({
         <MiniPlayer />
       </Suspense>
       <SheetForMe />
-      <SignInSheet open={signIn} onOpenChange={setSignIn} google={google} email={email} />
+      <SignInSheet open={signIn} onOpenChange={setSignIn} ways={sign} />
     </>
   )
 }

@@ -7,8 +7,9 @@ import { cn } from "@najimi/ui/lib/utils"
 import { useQueryClient } from "@tanstack/react-query"
 import { ChevronRight, Download, Sparkles } from "lucide-react"
 import { motion } from "motion/react"
+import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { useTranslations } from "next-intl"
-import { type ReactNode, useState } from "react"
+import { type ReactNode, useEffect, useState } from "react"
 import { BrandIcon } from "@/components/brands/brand-icon"
 import { api } from "@/lib/fetcher"
 import { sound } from "@/lib/sounds"
@@ -32,7 +33,7 @@ type Open =
   | { kind: "account"; platform: Live }
   | { kind: "score" }
   | { kind: "topics"; item: TuneUpItem }
-  | { kind: "bring"; source: Source }
+  | { kind: "bring"; source: Source; auto?: boolean }
   | null
 
 function Row({ icon, label, onClick }: { icon: ReactNode; label: string; onClick: () => void }) {
@@ -61,6 +62,20 @@ export function Feeds({ personId }: { personId: string }) {
   const scores = useScores()
   const { today, items, tick } = useTuneUp()
   const live = useSocialLive(socials.data)
+  const params = useSearchParams()
+  const router = useRouter()
+  const pathname = usePathname()
+
+  // Back from connecting an account elsewhere (`?bring=youtube`): that source's sheet opens and
+  // reads it straight away.
+  const bring = params.get("bring")
+  useEffect(() => {
+    const back = SOURCES.find((s) => s.id === bring)
+    if (!back) return
+    if (PLATFORMS.some((x) => x.id === back.id)) setPlatform(back.id as Platform)
+    setOpen({ kind: "bring", source: back, auto: true })
+    router.replace(pathname, { scroll: false })
+  }, [bring, pathname, router])
 
   const p = platformOf(platform)
   const connection = socials.data?.connections.find((c) => c.platform === platform) ?? null
@@ -203,6 +218,7 @@ export function Feeds({ personId }: { personId: string }) {
             <BringSheet
               key={open.source.id}
               source={open.source}
+              auto={open.auto}
               personId={personId}
               connected={
                 connection?.status === "active" && (platform === "x" || platform === "instagram")

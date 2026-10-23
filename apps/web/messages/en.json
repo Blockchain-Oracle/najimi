@@ -494,7 +494,9 @@
     "otherEmail": "Use another email",
     "signedInAs": "Signed in as {email}",
     "guest": "You're a guest",
-    "failed": "That didn't work: {reason}"
+    "failed": "That didn't work: {reason}",
+    "tiktok": "Continue with TikTok",
+    "or": "or"
   },
   "Settings": {
     "title": "Settings",
@@ -1140,7 +1142,7 @@
     "doItForMe": "Do it for me",
     "autopilotOn": "Najimi will follow for you on {name}",
     "autopilotOff": "You're tapping on {name} again",
-    "riskLine": "{name} can limit accounts that automate; Najimi stays far below its limits.",
+    "riskLine": "{name} can limit accounts that automate. Najimi stays far below its limits, and you can disconnect at any time.",
     "disconnect": "Disconnect and forget my session",
     "disconnected": "{name} disconnected. Your session is deleted.",
     "najimiFollowed": "Najimi followed for you",
@@ -1171,7 +1173,12 @@
     "readHandle": "Read who @{handle} follows",
     "readAnyone": "Read this account",
     "alsoFrom": "Also from",
-    "bringFrom": "Bring in what you follow on {name}"
+    "bringFrom": "Bring in what you follow on {name}",
+    "connectYouTube": "Connect YouTube",
+    "readYouTube": "Read my YouTube",
+    "youtubeReadOnly": "Read-only: your subscriptions and likes. Najimi never posts, likes or subscribes for you.",
+    "orTakeout": "Or bring your Google Takeout file",
+    "whySession": "{name} has no official way for an app to follow or post for you, so Najimi uses your own signed-in session, and only acts when you say so."
   },
   "Business": {
     "title": "Your business",

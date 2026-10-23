@@ -5,7 +5,7 @@ import { SheetTitle } from "@najimi/ui/components/sheet"
 import { toast } from "@najimi/ui/components/sonner"
 import { cn } from "@najimi/ui/lib/utils"
 import { useQueryClient } from "@tanstack/react-query"
-import { X as Failed, Loader2, LockKeyhole, Plug, UserPlus } from "lucide-react"
+import { X as Failed, Loader2, LockKeyhole, Plug, ShieldAlert, UserPlus } from "lucide-react"
 import { useFormatter, useTranslations } from "next-intl"
 import { useState } from "react"
 import { BrandIcon } from "@/components/brands/brand-icon"
@@ -16,9 +16,66 @@ import { SocialRead } from "./social-read"
 import type { SocialAction } from "./use-feeds"
 
 /*
- * One connected account: connect it with your own session (two cookies for X, one for Instagram,
- * sealed the moment they arrive), then read what you follow, see what Najimi did, or forget it.
+ * One connected account, for Najimi to act for you: X and Instagram offer no official way for an
+ * app to follow or post for a person, so it acts through your own signed-in session (two cookies
+ * for X, one for Instagram, sealed the moment they arrive). The sheet says so, and shows the risk,
+ * before anything is pasted; then read what you follow, see what Najimi did, or forget it.
  */
+
+/** The cookies each platform's session lives in, and a couple of neighbours for orientation. */
+const COOKIES: Record<Live, { site: string; take: string[]; near: string[] }> = {
+  x: { site: "https://x.com", take: ["auth_token", "ct0"], near: ["guest_id", "lang"] },
+  instagram: {
+    site: "https://www.instagram.com",
+    take: ["sessionid"],
+    near: ["csrftoken", "ds_user_id"],
+  },
+}
+
+/** Each field under the cookie's own name, as the browser shows it. */
+const COOKIE_NAME: Record<string, string> = {
+  authToken: "auth_token",
+  ct0: "ct0",
+  sessionid: "sessionid",
+}
+
+/** Where to find the session: the browser's cookie table, with the ones to copy lit up. */
+function CookieGuide({ platform }: { platform: Live }) {
+  const c = COOKIES[platform]
+  const rows = [...c.near.slice(0, 1), ...c.take, ...c.near.slice(1)]
+  return (
+    <figure
+      aria-hidden
+      className="overflow-hidden rounded-tile bg-[#1b1c1f] font-mono text-[11.5px] text-white/70 ring-1 ring-white/10"
+    >
+      <div className="flex items-center gap-1.5 border-b border-white/10 px-3 py-2">
+        <span className="size-2 rounded-full bg-white/25" />
+        <span className="size-2 rounded-full bg-white/25" />
+        <span className="size-2 rounded-full bg-white/25" />
+        <span className="ms-2 truncate text-white/50">Application › Cookies › {c.site}</span>
+      </div>
+      <div className="grid grid-cols-[7.5rem_1fr] gap-x-3 px-3 py-1.5 text-white/40">
+        <span>Name</span>
+        <span>Value</span>
+      </div>
+      {rows.map((name) => {
+        const on = c.take.includes(name)
+        return (
+          <div
+            key={name}
+            className={cn(
+              "grid grid-cols-[7.5rem_1fr] gap-x-3 px-3 py-1.5",
+              on ? "bg-white/10 font-semibold text-white" : "opacity-60",
+            )}
+          >
+            <span>{name}</span>
+            <span className="truncate">{on ? "copy this value" : "…"}</span>
+          </div>
+        )
+      })}
+    </figure>
+  )
+}
 
 function ConnectForm({ platform, onConnected }: { platform: Live; onConnected: () => void }) {
   const t = useTranslations("Connect")
@@ -51,6 +108,11 @@ function ConnectForm({ platform, onConnected }: { platform: Live; onConnected: (
         if (ready) void submit()
       }}
     >
+      <p className="text-[14px] text-text-2">{t("whySession", { name })}</p>
+      <p className="flex gap-2.5 rounded-tile bg-secondary px-3.5 py-3 text-[13px] text-text-2">
+        <ShieldAlert className="mt-0.5 size-4 shrink-0" />
+        {t("riskLine", { name })}
+      </p>
       <ol className="flex flex-col gap-2 text-[14px] text-text-2">
         {[1, 2].map((n) => (
           <li key={n} className="flex gap-3">
@@ -61,11 +123,12 @@ function ConnectForm({ platform, onConnected }: { platform: Live; onConnected: (
           </li>
         ))}
       </ol>
+      <CookieGuide platform={platform} />
       {inputs.map((id) => (
         <input
           key={id}
-          aria-label={id === "key" ? t("xKey") : id}
-          placeholder={id === "key" ? t("xKey") : id}
+          aria-label={id === "key" ? t("xKey") : (COOKIE_NAME[id] ?? id)}
+          placeholder={id === "key" ? t("xKey") : (COOKIE_NAME[id] ?? id)}
           type="password"
           autoComplete="off"
           spellCheck={false}
@@ -238,7 +301,6 @@ export function AccountSheet({
             {t("readMine")}
           </button>
           <Did actions={actions.filter((a) => a.platform === platform && a.kind === "follow")} />
-          <p className="text-[12px] text-text-3">{t("riskLine", { name: p.name })}</p>
           <button
             type="button"
             disabled={busy}
