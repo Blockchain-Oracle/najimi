@@ -35,8 +35,8 @@ export function ModePicker({ initial }: { initial: Mode }) {
           className={cn(
             "flex cursor-pointer items-start gap-3 rounded-tile px-4 py-3 ring-1 transition-colors has-focus-visible:ring-2 has-focus-visible:ring-ring",
             mode === m
-              ? "bg-lime/25 ring-2 ring-lime-ink"
-              : "ring-paper-foreground/10 hover:bg-paper-foreground/5",
+              ? "bg-primary text-primary-foreground ring-primary"
+              : "bg-background ring-border hover:bg-secondary",
           )}
         >
           <input
@@ -45,11 +45,13 @@ export function ModePicker({ initial }: { initial: Mode }) {
             value={m}
             checked={mode === m}
             onChange={() => void pick(m)}
-            className="mt-1 size-4 shrink-0 accent-lime-ink [color-scheme:light]"
+            className="sr-only"
           />
           <span className="flex flex-col gap-0.5">
             <span className="font-semibold">{t(`modes.${m}`)}</span>
-            <span className="text-sm text-paper-muted">{t(`modeHints.${m}`)}</span>
+            <span className={cn("text-[13px]", mode === m ? "opacity-75" : "text-text-3")}>
+              {t(`modeHints.${m}`)}
+            </span>
           </span>
         </label>
       ))}

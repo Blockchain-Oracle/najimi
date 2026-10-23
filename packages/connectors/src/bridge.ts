@@ -68,7 +68,7 @@ export const instagram = {
       what,
       max: Math.min(SOCIAL.readMax, 100),
     }),
-  act: (settings: Settings, action: "follow" | "like" | "save", target: string) =>
+  act: (settings: Settings, action: "follow" | "like" | "save" | "like_latest", target: string) =>
     call<{ settings: Settings; ok: boolean; url: string }>("/instagram/act", {
       settings,
       action,

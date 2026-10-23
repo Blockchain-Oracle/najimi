@@ -185,6 +185,22 @@ export const xFollow = (key: string, handle: string) =>
     return { ok, already: false, url: `https://x.com/${user.userName}` }
   })
 
+/**
+ * Likes an account's newest post of its own (not a reply or a repost), for the Like agent; nothing
+ * when there's none, or it's liked already.
+ */
+export const xLikeLatest = (key: string, handle: string) =>
+  attempt(async () => {
+    const x = client(key)
+    const user = await x.user.details(handle.replace(/^@/, ""))
+    if (!user) throw new PlatformError("No X account by that name.", "not_found")
+    const recent = await x.user.timeline(user.id, 10)
+    const post = recent.list.find((t) => !t.replyTo && !t.retweetedTweet)
+    if (!post) return null
+    const ok = await x.tweet.like(post.id)
+    return { ok, url: `https://x.com/${user.userName}/status/${post.id}`, label: user.fullName }
+  })
+
 /** Posts text (and up to four uploaded pictures) as the connected account. */
 export const xPost = (key: string, text: string, images: ArrayBuffer[] = []) =>
   attempt(async () => {

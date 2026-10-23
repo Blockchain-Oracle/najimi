@@ -161,8 +161,9 @@ def instagram_read(body: IgRead) -> dict[str, Any]:
 
 class IgAct(BaseModel):
     settings: dict[str, Any]
-    action: Literal["follow", "like", "save"]
-    # A username to follow, or a post's code (from its URL) to like or save.
+    action: Literal["follow", "like", "save", "like_latest"]
+    # A username to follow or whose newest post to like, or a post's code (from its URL) to like
+    # or save.
     target: str = Field(min_length=1, max_length=120)
 
 
@@ -173,6 +174,12 @@ def instagram_act(body: IgAct) -> dict[str, Any]:
         if body.action == "follow":
             ok = cl.user_follow(cl.user_id_from_username(body.target.lstrip("@")))
             url = f"https://www.instagram.com/{body.target.lstrip('@')}/"
+        elif body.action == "like_latest":
+            medias = cl.user_medias(cl.user_id_from_username(body.target.lstrip("@")), amount=1)
+            if not medias:
+                return {"settings": cl.get_settings(), "ok": False, "url": ""}
+            ok = cl.media_like(medias[0].id)
+            url = f"https://www.instagram.com/p/{medias[0].code}/"
         else:
             media_id = cl.media_id(cl.media_pk_from_code(body.target))
             ok = cl.media_like(media_id) if body.action == "like" else cl.media_save(media_id)

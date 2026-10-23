@@ -1,7 +1,8 @@
 import { usageToday } from "@najimi/agent/server"
 import { ALLOWANCE } from "@najimi/config"
+import { connectionsOf } from "@najimi/connectors/sessions"
 import { db, schema } from "@najimi/db"
-import { and, eq, gte, sql } from "drizzle-orm"
+import { and, count, eq, gte, sql } from "drizzle-orm"
 import { redirect } from "next/navigation"
 import { getTranslations } from "next-intl/server"
 import { Suspense } from "react"
@@ -12,14 +13,20 @@ import { BlockedPeople } from "@/components/settings/blocked-people"
 import { DeleteData } from "@/components/settings/delete-data"
 import { ModePicker } from "@/components/settings/mode-picker"
 import { PushSettings } from "@/components/settings/push-settings"
+import { ProfileRow, SettingsGroup } from "@/components/settings/settings-list"
 import { ShareLinks } from "@/components/settings/share-links"
 import { linksOf } from "@/lib/links"
 import { selfOf } from "@/lib/people"
 import { getSession } from "@/lib/session"
 
-const card = "flex flex-col gap-4 rounded-card bg-card p-5 text-card-foreground"
 /** Videos are switched off (MEDIA.video.enabled), so their counter isn't shown. */
 const COUNTERS = ["turns", "images", "calls", "holds"] as const
+const PLATFORM_NAMES: Record<string, string> = {
+  x: "X",
+  instagram: "Instagram",
+  tiktok: "TikTok",
+  youtube: "YouTube",
+}
 
 /** What the models cost while working for them this month (W26), from every logged call. */
 async function spentThisMonth(userId: string): Promise<number> {
@@ -59,123 +66,243 @@ function Meter({ label, used, limit }: { label: string; used: number; limit: num
   )
 }
 
-/** The parts that depend on who's signed in: how chats make things, today's allowance, account. */
+/** Everything that depends on who's signed in, as grouped rows. */
 async function Mine() {
   const session = await getSession()
   if (!session) redirect("/start?next=%2Fsettings")
   const t = await getTranslations("Settings")
   const ta = await getTranslations("Auth")
+  const tp = await getTranslations("Profile")
+  const tc = await getTranslations("Chat")
   const user = session.user as typeof session.user & { isAnonymous?: boolean | null }
   const guest = Boolean(user.isAnonymous)
-  const [[prefs], used, spent, links, self, [account]] = await Promise.all([
-    db.select().from(schema.userPrefs).where(eq(schema.userPrefs.userId, user.id)),
-    usageToday(user.id),
-    spentThisMonth(user.id),
-    linksOf(user.id),
-    selfOf(user.id),
-    db
-      .select({ username: schema.user.displayUsername })
-      .from(schema.user)
-      .where(eq(schema.user.id, user.id)),
-  ])
+  const [[prefs], used, spent, links, self, [account], connections, [blocked], [devices]] =
+    await Promise.all([
+      db.select().from(schema.userPrefs).where(eq(schema.userPrefs.userId, user.id)),
+      usageToday(user.id),
+      spentThisMonth(user.id),
+      linksOf(user.id),
+      selfOf(user.id),
+      db
+        .select({ username: schema.user.displayUsername })
+        .from(schema.user)
+        .where(eq(schema.user.id, user.id)),
+      connectionsOf(user.id),
+      db.select({ n: count() }).from(schema.blocks).where(eq(schema.blocks.blockerId, user.id)),
+      db
+        .select({ n: count() })
+        .from(schema.pushSubscriptions)
+        .where(eq(schema.pushSubscriptions.userId, user.id)),
+    ])
   const limits = guest ? ALLOWANCE.guest : ALLOWANCE.member
+  const mode = prefs?.mode ?? "ask"
+  const agentsOn = connections.reduce(
+    (n, c) => n + Number(c.autopilot) + Number(c.likes) + Number(c.posts !== "off"),
+    0,
+  )
+  const visibility = self?.visibility ?? "public"
+  // Guests and TikTok sign-ins carry a stand-in address (…invalid), not one to show.
+  const email = user.email.endsWith(".invalid") ? null : user.email
+
   return (
     <>
       {self ? (
-        <section className={card}>
-          <div className="flex items-center gap-3">
-            <AuraFace person={self} size="md" />
-            <span className="flex min-w-0 flex-col">
-              <span className="truncate font-heading text-[17px]">{self.name}</span>
-              {account?.username ? (
-                <span className="text-[13px] text-text-3">@{account.username}</span>
-              ) : null}
-            </span>
-          </div>
-          <ProfileForm
-            person={{
-              id: self.id,
-              name: self.name,
-              city: self.city,
-              bio: self.bio,
-              visibility: self.visibility,
-              radar: self.radar,
-            }}
-          />
-        </section>
+        <ProfileRow
+          face={<AuraFace person={self} size="md" />}
+          name={self.name}
+          handle={account?.username ?? null}
+          sheet={{
+            title: t("profile"),
+            body: (
+              <ProfileForm
+                part="about"
+                person={{
+                  id: self.id,
+                  name: self.name,
+                  city: self.city,
+                  bio: self.bio,
+                  visibility: self.visibility,
+                  radar: self.radar,
+                }}
+              />
+            ),
+          }}
+        />
       ) : null}
 
-      <section className={card}>
-        <div className="flex flex-col gap-1">
-          <h2 className="font-heading text-[17px]">{t("notifications")}</h2>
-          <p className="text-sm text-text-3">{t("notificationsHint")}</p>
-        </div>
-        <PushSettings />
-      </section>
+      <SettingsGroup
+        title={t("groups.you")}
+        rows={
+          self
+            ? [
+                {
+                  id: "privacy",
+                  icon: "privacy",
+                  label: tp("whoSees"),
+                  value: tp(
+                    visibility === "public"
+                      ? "public"
+                      : visibility === "friends"
+                        ? "friends"
+                        : "private",
+                  ),
+                  sheet: {
+                    title: tp("whoSees"),
+                    body: (
+                      <ProfileForm
+                        part="privacy"
+                        person={{
+                          id: self.id,
+                          name: self.name,
+                          city: self.city,
+                          bio: self.bio,
+                          visibility: self.visibility,
+                          radar: self.radar,
+                        }}
+                      />
+                    ),
+                  },
+                },
+              ]
+            : []
+        }
+      >
+        <LanguageMenu variant="row" />
+      </SettingsGroup>
 
-      <section className={card}>
-        <div className="flex flex-col gap-1">
-          <h2 className="font-heading text-[17px]">{t("mode")}</h2>
-          <p className="text-sm text-text-3">{t("modeHint")}</p>
-        </div>
-        <ModePicker initial={prefs?.mode ?? "ask"} />
-      </section>
+      <SettingsGroup
+        title={t("groups.najimi")}
+        rows={[
+          {
+            id: "mode",
+            icon: "mode",
+            label: t("mode"),
+            value: tc(`modes.${mode}` as "modes.ask"),
+            sheet: { title: t("mode"), hint: t("modeHint"), body: <ModePicker initial={mode} /> },
+          },
+          {
+            id: "agents",
+            icon: "agents",
+            label: t("agents"),
+            value: agentsOn ? t("agentsOn", { count: agentsOn }) : t("off"),
+            href: "/agents",
+          },
+          {
+            id: "notifications",
+            icon: "notifications",
+            label: t("notifications"),
+            value: devices?.n ? t("on") : t("off"),
+            sheet: {
+              title: t("notifications"),
+              hint: t("notificationsHint"),
+              body: <PushSettings />,
+            },
+          },
+        ]}
+      />
 
-      <section className={card}>
-        <div className="flex flex-col gap-1">
-          <h2 className="font-heading text-[17px]">{t("today")}</h2>
-          <p className="text-sm text-text-3">{guest ? t("todayGuest") : t("todayMember")}</p>
-        </div>
-        {COUNTERS.map((c) => (
-          <Meter key={c} label={t(`counters.${c}`)} used={used[c]} limit={limits[c]} />
-        ))}
-        <p className="text-sm text-text-3">
-          {t("spent", { amount: spent < 0.01 ? "<$0.01" : `$${spent.toFixed(2)}` })}
-        </p>
-      </section>
+      <SettingsGroup
+        title={t("groups.elsewhere")}
+        rows={[
+          {
+            id: "feeds",
+            icon: "feeds",
+            label: t("feeds"),
+            value: connections.length
+              ? connections.map((c) => PLATFORM_NAMES[c.platform] ?? c.platform).join(" · ")
+              : null,
+            href: "/connect",
+          },
+          {
+            id: "links",
+            icon: "links",
+            label: t("links"),
+            value: links.length ? String(links.length) : null,
+            sheet: {
+              title: t("links"),
+              hint: t("linksHint"),
+              body: (
+                <ShareLinks
+                  items={links.map(({ kind, id, title, path }) => ({ kind, id, title, path }))}
+                />
+              ),
+            },
+          },
+          {
+            id: "blocked",
+            icon: "blocked",
+            label: t("blocked"),
+            value: blocked?.n ? String(blocked.n) : null,
+            sheet: { title: t("blocked"), body: <BlockedPeople /> },
+          },
+        ]}
+      />
 
-      <section className={card}>
-        <div className="flex flex-col gap-1">
-          <h2 className="font-heading text-[17px]">{t("links")}</h2>
-          <p className="text-sm text-text-3">{t("linksHint")}</p>
-        </div>
-        <ShareLinks items={links.map(({ kind, id, title, path }) => ({ kind, id, title, path }))} />
-      </section>
+      <SettingsGroup
+        title={t("groups.today")}
+        rows={[
+          {
+            id: "today",
+            icon: "today",
+            label: t("today"),
+            value: t("todayValue", { used: used.turns, limit: limits.turns }),
+            sheet: {
+              title: t("today"),
+              hint: guest ? t("todayGuest") : t("todayMember"),
+              body: (
+                <div className="flex flex-col gap-4">
+                  {COUNTERS.map((c) => (
+                    <Meter key={c} label={t(`counters.${c}`)} used={used[c]} limit={limits[c]} />
+                  ))}
+                  <p className="text-sm text-text-3">
+                    {t("spent", { amount: spent < 0.01 ? "<$0.01" : `$${spent.toFixed(2)}` })}
+                  </p>
+                </div>
+              ),
+            },
+          },
+        ]}
+      />
 
-      <section className={card}>
-        <h2 className="font-heading text-[17px]">{t("blocked")}</h2>
-        <BlockedPeople />
-      </section>
-
-      <section className={card}>
-        <h2 className="font-heading text-[17px]">{t("account")}</h2>
-        <p className="text-[15px]">
-          {guest ? ta("guest") : ta("signedInAs", { email: user.email })}
-        </p>
-        {guest ? <p className="text-sm text-text-3">{ta("hint")}</p> : null}
-      </section>
-
-      <section className={`${card} ring-1 ring-destructive/30`}>
-        <div className="flex flex-col gap-1">
-          <h2 className="font-heading text-[17px]">{t("deleteHeading")}</h2>
-          <p className="text-sm text-text-3">{t("deleteHint")}</p>
-        </div>
-        <DeleteData />
-      </section>
+      <SettingsGroup
+        title={t("groups.account")}
+        rows={[
+          {
+            id: "account",
+            icon: "account",
+            label: t("account"),
+            value: guest ? ta("guest") : (email ?? t("signedIn")),
+            sheet: {
+              title: t("account"),
+              body: (
+                <div className="flex flex-col gap-2 text-[15px]">
+                  <p>{guest ? ta("guest") : email ? ta("signedInAs", { email }) : t("signedIn")}</p>
+                  {guest ? <p className="text-sm text-text-3">{ta("hint")}</p> : null}
+                </div>
+              ),
+            },
+          },
+          { id: "privacyPolicy", icon: "legal", label: t("privacyPolicy"), href: "/privacy" },
+          { id: "terms", icon: "legal", label: t("terms"), href: "/terms" },
+          {
+            id: "delete",
+            icon: "delete",
+            label: t("deleteHeading"),
+            danger: true,
+            sheet: { title: t("deleteHeading"), hint: t("deleteHint"), body: <DeleteData /> },
+          },
+        ]}
+      />
     </>
   )
 }
 
-/** Settings: you (profile and who sees it), how Najimi acts, language, today, links, your data. */
+/** Settings: grouped one-line rows (you, Najimi, your taste elsewhere, today, account). */
 export default async function SettingsPage() {
   const t = await getTranslations("Settings")
   return (
     <div className="mx-auto flex w-full max-w-xl flex-col gap-6 px-5 pb-16 md:px-0">
       <h1 className="font-title text-title-sm">{t("title")}</h1>
-      <section className="flex items-center justify-between rounded-card bg-card p-5 text-card-foreground">
-        <span className="font-heading text-[17px]">{t("language")}</span>
-        <LanguageMenu />
-      </section>
       <Suspense fallback={<div className="h-96 animate-pulse rounded-card bg-card/10" aria-busy />}>
         <Mine />
       </Suspense>

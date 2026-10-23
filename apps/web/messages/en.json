@@ -82,7 +82,9 @@
   },
   "Language": {
     "label": "Language",
-    "beta": "beta"
+    "beta": "beta",
+    "search": "Search languages",
+    "none": "No language by that name yet."
   },
   "System": {
     "livePipe": "Live pipe",
@@ -502,8 +504,8 @@
     "title": "Settings",
     "language": "Language",
     "account": "Account",
-    "mode": "When Najimi acts for you",
-    "modeHint": "Before it makes a picture or books anything. Each chat can change its own.",
+    "mode": "Najimi asks before acting",
+    "modeHint": "Before it makes a picture, calls a venue or books anything.",
     "saved": "Saved",
     "saveFailed": "That didn't save. Try again.",
     "today": "Today",
@@ -562,7 +564,24 @@
       "plans": "Plans, bookings and business",
       "feeds": "Your daily tune-up"
     },
-    "spent": "Najimi's thinking cost {amount} for you this month."
+    "spent": "Najimi's thinking cost {amount} for you this month.",
+    "groups": {
+      "you": "You",
+      "najimi": "Najimi",
+      "elsewhere": "Your taste elsewhere",
+      "today": "Today",
+      "account": "Account"
+    },
+    "profile": "Your profile",
+    "agents": "Your agents",
+    "agentsOn": "{count} on",
+    "on": "On",
+    "off": "Off",
+    "feeds": "Your feeds",
+    "todayValue": "{used} of {limit} messages",
+    "privacyPolicy": "Privacy",
+    "terms": "Terms",
+    "signedIn": "Signed in"
   },
   "Chat": {
     "greeting": "What should we find for {name}?",
@@ -1175,7 +1194,8 @@
       "youtube": "Reads the channels you subscribe to and watch most, and what you watched.",
       "spotify": "Reads the artists and shows in your library."
     },
-    "orArchive": "Or bring your X archive"
+    "orArchive": "Or bring your X archive",
+    "allAgents": "All agents"
   },
   "Business": {
     "title": "Your business",
@@ -1477,5 +1497,62 @@
     "soundOff": "Mute",
     "openPlan": "Open the plan",
     "openThing": "Open {name}"
+  },
+  "Agents": {
+    "title": "Your agents",
+    "lead": "What acts for you on your own accounts, and what Najimi does for you on its own.",
+    "none": "Connect X or Instagram and Najimi can follow, like and post for you there, only what you switch on.",
+    "connect": "Connect an account",
+    "reconnect": "Reconnect",
+    "pausedUntil": "paused until {when}",
+    "pauseDay": "Pause a day",
+    "resume": "Resume",
+    "agent": {
+      "follow": "Follow for me",
+      "like": "Like for me",
+      "post": "Post for me"
+    },
+    "what": {
+      "follow": "Each morning at 9, today's accounts from your taste on {name}, slowly and within a daily cap.",
+      "like": "Each morning, the newest post of accounts in your taste on {name}, within a daily cap.",
+      "post": "Each Sunday evening, one post from your week in taste.",
+      "postInstagram": "Each Sunday evening, words for a post from your week in taste; Instagram needs your picture."
+    },
+    "policy": {
+      "off": "Off",
+      "ask": "Ask me first",
+      "auto": "Just do it"
+    },
+    "draftReady": "Ready for your yes",
+    "postIt": "Post on X",
+    "copyForInstagram": "Copy for Instagram",
+    "copied": "Copied",
+    "skip": "Skip",
+    "posted": "Posted on X",
+    "writeNow": "Write one now",
+    "failed": "That didn't work. Try again.",
+    "routines": "Najimi's routines for you",
+    "downloads": {
+      "x": "X archive",
+      "instagram": "Instagram download",
+      "tiktok": "TikTok data",
+      "youtube": "Google Takeout",
+      "spotify": "Spotify data"
+    },
+    "routine": {
+      "tuneUp": "Morning tune-up",
+      "tuneUpLine": "Each morning, accounts to follow from your taste, on your Feeds page.",
+      "tuneUpLast": "Each morning; the last one came {when}.",
+      "games": "Circle games",
+      "gamesLine": "{count, plural, =0 {A daily game in each circle you join.} one {A daily game in your circle.} other {A daily game in each of your # circles.}}",
+      "followUps": "How was it?",
+      "followUpsLine": "After a night, a stay or a booked table, Najimi asks how it went and learns from it.",
+      "business": "Business plans",
+      "businessLine": "{count, plural, one {Your plan is rebuilt each Monday with what changed.} other {Your # plans are rebuilt each Monday with what changed.}}",
+      "download": "Your {name}",
+      "downloadLine": "Usually ready {when}; Najimi will remind you.",
+      "push": "Notifications",
+      "pushLine": "Messages, games, plans and these agents' news, on the devices you turned them on for."
+    }
   }
 }

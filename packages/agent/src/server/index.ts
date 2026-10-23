@@ -31,6 +31,7 @@ export {
   setRoomStatus,
   toUI,
 } from "./room"
+export { draftPost } from "./social-post"
 export { buildTools, type TurnContext } from "./tools"
 export { approvalSecret, runTurn } from "./turn"
 export { charge, refund, usageToday } from "./usage"

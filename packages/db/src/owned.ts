@@ -21,6 +21,7 @@ import {
   plans,
   polls,
   pollVotes,
+  postDrafts,
   pushSubscriptions,
   qlooCalls,
   reports,
@@ -194,6 +195,7 @@ export async function reownUserData(db: Db, fromUserId: string, toUserId: string
         and not exists (select 1 from ${exportRequests} q where q.user_id = ${toUserId}
           and q.platform = r.platform)`)
     await tx.delete(exportRequests).where(eq(exportRequests.userId, fromUserId))
+    await tx.update(postDrafts).set({ userId: toUserId }).where(eq(postDrafts.userId, fromUserId))
     // Games: rounds they dealt or that are about them, and their goes (a round both accounts
     // played keeps the account's own go).
     await tx

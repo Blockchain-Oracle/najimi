@@ -21,6 +21,7 @@ const field =
 export function ProfileForm({
   person,
   onRun,
+  part = "all",
 }: {
   person: {
     id: string
@@ -32,7 +33,11 @@ export function ProfileForm({
     radar?: boolean
   }
   onRun?: (runId: string) => void
+  /** Settings opens "about you" and "who sees your taste" as two rows; elsewhere it's all one. */
+  part?: "all" | "about" | "privacy"
 }) {
+  const about = part !== "privacy"
+  const privacy = part !== "about"
   const t = useTranslations("Profile")
   const router = useRouter()
   const [name, setName] = useState(person.name)
@@ -85,69 +90,87 @@ export function ProfileForm({
       }}
       className="flex flex-col gap-4"
     >
-      <label className="flex flex-col gap-1.5 text-[13px] font-semibold text-text-2">
-        {t("name")}
-        <input
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          maxLength={80}
-          className={field}
-        />
-      </label>
-      <label className="flex flex-col gap-1.5 text-[13px] font-semibold text-text-2">
-        {t("bio")}
-        <input
-          value={bio}
-          onChange={(e) => setBio(e.target.value)}
-          maxLength={160}
-          placeholder={t("bioHint")}
-          className={field}
-        />
-      </label>
-      <label className="flex flex-col gap-1.5 text-[13px] font-semibold text-text-2">
-        {t("city")}
-        <input
-          value={city}
-          onChange={(e) => setCity(e.target.value)}
-          maxLength={120}
-          className={field}
-        />
-      </label>
-      <fieldset className="flex flex-col gap-2">
-        <legend className="mb-1.5 text-[13px] font-semibold text-text-2">{t("whoSees")}</legend>
-        {options.map((o) => (
-          <button
-            key={o.value}
-            type="button"
-            aria-pressed={visibility === o.value}
-            onClick={() => setVisibility(o.value)}
-            className={cn(
-              "flex items-center gap-3 rounded-tile px-3.5 py-3 text-start ring-1 transition-colors",
-              visibility === o.value
-                ? "bg-primary text-primary-foreground ring-primary"
-                : "bg-background ring-border",
-            )}
-          >
-            <o.icon className="size-5 shrink-0" />
-            <span className="flex flex-col">
-              <span className="text-[15px] font-semibold">{o.label}</span>
-              <span
-                className={cn("text-[13px]", visibility === o.value ? "opacity-75" : "text-text-3")}
+      {about ? (
+        <>
+          <label className="flex flex-col gap-1.5 text-[13px] font-semibold text-text-2">
+            {t("name")}
+            <input
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              maxLength={80}
+              className={field}
+            />
+          </label>
+          <label className="flex flex-col gap-1.5 text-[13px] font-semibold text-text-2">
+            {t("bio")}
+            <input
+              value={bio}
+              onChange={(e) => setBio(e.target.value)}
+              maxLength={160}
+              placeholder={t("bioHint")}
+              className={field}
+            />
+          </label>
+          <label className="flex flex-col gap-1.5 text-[13px] font-semibold text-text-2">
+            {t("city")}
+            <input
+              value={city}
+              onChange={(e) => setCity(e.target.value)}
+              maxLength={120}
+              className={field}
+            />
+          </label>
+        </>
+      ) : null}
+      {privacy ? (
+        <>
+          <fieldset className="flex flex-col gap-2">
+            <legend
+              className={cn(
+                "mb-1.5 text-[13px] font-semibold text-text-2",
+                part === "privacy" && "sr-only",
+              )}
+            >
+              {t("whoSees")}
+            </legend>
+            {options.map((o) => (
+              <button
+                key={o.value}
+                type="button"
+                aria-pressed={visibility === o.value}
+                onClick={() => setVisibility(o.value)}
+                className={cn(
+                  "flex items-center gap-3 rounded-tile px-3.5 py-3 text-start ring-1 transition-colors",
+                  visibility === o.value
+                    ? "bg-primary text-primary-foreground ring-primary"
+                    : "bg-background ring-border",
+                )}
               >
-                {o.hint}
+                <o.icon className="size-5 shrink-0" />
+                <span className="flex flex-col">
+                  <span className="text-[15px] font-semibold">{o.label}</span>
+                  <span
+                    className={cn(
+                      "text-[13px]",
+                      visibility === o.value ? "opacity-75" : "text-text-3",
+                    )}
+                  >
+                    {o.hint}
+                  </span>
+                </span>
+              </button>
+            ))}
+          </fieldset>
+          {person.radar !== undefined ? (
+            <div className="flex items-center justify-between gap-4 rounded-tile bg-background px-3.5 py-3 ring-1 ring-border">
+              <span className="flex flex-col">
+                <span className="text-[15px] font-semibold">{t("radar")}</span>
+                <span className="text-[13px] text-text-3">{t("radarHint")}</span>
               </span>
-            </span>
-          </button>
-        ))}
-      </fieldset>
-      {person.radar !== undefined ? (
-        <div className="flex items-center justify-between gap-4 rounded-tile bg-background px-3.5 py-3 ring-1 ring-border">
-          <span className="flex flex-col">
-            <span className="text-[15px] font-semibold">{t("radar")}</span>
-            <span className="text-[13px] text-text-3">{t("radarHint")}</span>
-          </span>
-          <Switch checked={radar} onCheckedChange={setRadar} aria-label={t("radar")} />
-        </div>
+              <Switch checked={radar} onCheckedChange={setRadar} aria-label={t("radar")} />
+            </div>
+          ) : null}
+        </>
       ) : null}
       <button
         type="submit"

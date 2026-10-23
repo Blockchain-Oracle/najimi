@@ -13,7 +13,7 @@ import { dailyDrop } from "./jobs/daily-drop"
 import { exportNudges } from "./jobs/export-nudges"
 import { guestsCleanup } from "./jobs/forget"
 import { mediaGenerate, pollVideos } from "./jobs/media"
-import { socialMornings, socialRun } from "./jobs/social"
+import { socialMornings, socialPosts, socialRun } from "./jobs/social"
 import { storiesExpire, storyVideo } from "./jobs/stories"
 import { tasteRefresh, tasteRetune } from "./jobs/taste-refresh"
 import { tuneUpNudge } from "./jobs/tune-up-nudge"
@@ -188,6 +188,11 @@ async function main() {
     await socialMornings()
   })
   await queues.schedule(QUEUES.socialMornings.name, "5 * * * *", {}, { tz: "UTC" })
+  await queues.work(QUEUES.socialPosts.name, async ([job]) => {
+    if (!job) return
+    await socialPosts()
+  })
+  await queues.schedule(QUEUES.socialPosts.name, "25 * * * *", {}, { tz: "UTC" })
 
   // People's news, pushed to the phones they turned push on for (W24).
   await startPush().catch((error) => console.error("[push] start", error))

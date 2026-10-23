@@ -21,6 +21,8 @@ export type ConnectionView = {
   image: string | null
   status: Connection["status"]
   autopilot: boolean
+  likes: boolean
+  posts: Connection["posts"]
   pausedUntil: string | null
   lastError: string | null
   lastUsedAt: string | null
@@ -33,6 +35,8 @@ export const viewOf = (c: Connection): ConnectionView => ({
   image: c.image,
   status: c.status,
   autopilot: c.autopilot,
+  likes: c.likes,
+  posts: c.posts,
   pausedUntil: c.pausedUntil && c.pausedUntil > new Date() ? c.pausedUntil.toISOString() : null,
   lastError: c.lastError,
   lastUsedAt: c.lastUsedAt?.toISOString() ?? null,
@@ -174,15 +178,21 @@ export async function noteConnection(
     .where(eq(schema.connectorSessions.id, c.id))
 }
 
-export async function setAutopilot(
+/** Switches a connection's agents (follow, like, post) and pauses or resumes them. */
+export async function setAgents(
   userId: string,
   platform: SocialPlatform,
-  on: boolean,
+  change: {
+    autopilot?: boolean
+    likes?: boolean
+    posts?: Connection["posts"]
+    pausedUntil?: Date | null
+  },
   tz?: string | null,
 ) {
   const [row] = await db
     .update(schema.connectorSessions)
-    .set({ autopilot: on, ...(tz ? { tz } : {}), updatedAt: new Date() })
+    .set({ ...change, ...(tz ? { tz } : {}), updatedAt: new Date() })
     .where(
       and(
         eq(schema.connectorSessions.userId, userId),

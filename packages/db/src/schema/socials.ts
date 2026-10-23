@@ -100,6 +100,10 @@ export const connectorSessions = pgTable(
     status: text().$type<"active" | "expired" | "locked">().notNull().default("active"),
     /** "Do it for me": the agent runs this platform's tune-up itself. */
     autopilot: boolean().notNull().default(false),
+    /** The Like agent: each morning, likes the newest post of accounts in the person's taste. */
+    likes: boolean().notNull().default(false),
+    /** The Post agent: off, drafts a weekly post and asks first, or posts it itself. */
+    posts: text().$type<"off" | "ask" | "auto">().notNull().default("off"),
     /** Where the person is, so their tune-up runs on their day. */
     tz: text(),
     /** The platform pushed back: nothing is done for them until then. */
@@ -164,4 +168,26 @@ export const exportRequests = pgTable(
     uniqueIndex("export_requests_user_platform").on(t.userId, t.platform),
     index("export_requests_ready_idx").on(t.readyAt),
   ],
+)
+
+/**
+ * A post the Post agent wrote from someone's week in taste: waiting for their yes (or posted by
+ * itself when they said "just do it"), then what happened to it.
+ */
+export const postDrafts = pgTable(
+  "post_drafts",
+  {
+    id: uuid().defaultRandom().primaryKey(),
+    userId: text()
+      .references(() => user.id, { onDelete: "cascade" })
+      .notNull(),
+    platform: text().$type<SocialPlatform>().notNull(),
+    text: text().notNull(),
+    status: text().$type<"ready" | "posted" | "skipped" | "failed">().notNull().default("ready"),
+    url: text(),
+    detail: text(),
+    createdAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
+    postedAt: timestamp({ withTimezone: true }),
+  },
+  (t) => [index("post_drafts_user_idx").on(t.userId, t.createdAt)],
 )

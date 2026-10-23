@@ -140,7 +140,7 @@ function Rail({ pathname, onSignIn }: { pathname: string | null; onSignIn: () =>
         )
       })}
       <div className="mt-auto flex flex-col items-center gap-2">
-        <LanguageMenu compact />
+        <LanguageMenu variant="compact" />
         <SettingsLink />
         <Account onSignIn={onSignIn} />
       </div>

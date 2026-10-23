@@ -137,6 +137,13 @@ export const QUEUES = {
     options: { retryLimit: 1, retryDelay: 600, expireInSeconds: 15 * 60 },
     send: {},
   },
+  /** Hourly: the Post agent writes each person's weekly post on their Sunday evening. */
+  socialPosts: {
+    name: "social-posts",
+    payload: z.object({}),
+    options: { retryLimit: 1, retryDelay: 600, expireInSeconds: 15 * 60 },
+    send: {},
+  },
   /** Every half hour: Najimi asks how the nights, stays and shows that just happened went. */
   followUps: {
     name: "follow-ups",

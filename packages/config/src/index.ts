@@ -507,6 +507,9 @@ export const SOCIAL = {
   readsPerHour: 6,
   /** The bridge (Instagram) answers within this, or the call is given up. */
   bridgeTimeoutMs: 90_000,
+  /** The Post agent drafts on this local weekday and hour (Sunday evening). */
+  postDay: "Sun",
+  postHour: 18,
   /** "Do it for me" runs at this local hour (the tune-up nudge comes first). */
   morningHour: 9,
 } as const

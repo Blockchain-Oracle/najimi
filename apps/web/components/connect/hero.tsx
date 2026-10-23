@@ -5,6 +5,7 @@ import { Switch } from "@najimi/ui/components/switch"
 import { cn } from "@najimi/ui/lib/utils"
 import { ArrowUpRight, Bot, FileArchive } from "lucide-react"
 import { motion, useReducedMotion } from "motion/react"
+import Link from "next/link"
 import { useTranslations } from "next-intl"
 import { BrandIcon } from "@/components/brands/brand-icon"
 import { NumberTicker } from "@/components/games/number-ticker"
@@ -176,6 +177,12 @@ export function Hero({
                 disabled={switching}
                 onCheckedChange={onAutopilot}
               />
+              <Link
+                href="/agents"
+                className="shrink-0 text-[12px] font-semibold text-text-2 underline-offset-4 hover:underline"
+              >
+                {t("allAgents")}
+              </Link>
             </div>
           ) : (
             <button

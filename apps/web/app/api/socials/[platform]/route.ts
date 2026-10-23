@@ -4,7 +4,7 @@ import { PlatformError } from "@najimi/connectors/errors"
 import {
   disconnect,
   saveConnection,
-  setAutopilot,
+  setAgents,
   vaultReady,
   viewOf,
 } from "@najimi/connectors/sessions"
@@ -86,9 +86,19 @@ export async function POST(request: Request, { params }: Params) {
   }
 }
 
-const patch = z.object({ autopilot: z.boolean(), tz })
+const patch = z.object({
+  autopilot: z.boolean().optional(),
+  likes: z.boolean().optional(),
+  posts: z.enum(["off", "ask", "auto"]).optional(),
+  /** Pause every agent on this platform for a day, or carry on. */
+  paused: z.boolean().optional(),
+  tz,
+})
 
-/** "Do it for me" on or off; turning it on starts today's run straight away. */
+/**
+ * The agents on this account: follow ("Do it for me"), like and post, on or off, or all paused
+ * for a day. Switching follow or like on starts today's run straight away.
+ */
 export async function PATCH(request: Request, { params }: Params) {
   const auth = await withSession()
   if ("error" in auth) return auth.error
@@ -97,12 +107,25 @@ export async function PATCH(request: Request, { params }: Params) {
   const parsed = await body(request, patch)
   if ("error" in parsed) return parsed.error
   const me = auth.session.user.id
-  const row = await setAutopilot(me, platform, parsed.data.autopilot, parsed.data.tz)
+  const { autopilot, likes, posts, paused, tz: zone } = parsed.data
+  const row = await setAgents(
+    me,
+    platform,
+    {
+      autopilot,
+      likes,
+      posts,
+      ...(paused === undefined
+        ? {}
+        : { pausedUntil: paused ? new Date(Date.now() + SOCIAL.backoffHours * 3_600_000) : null }),
+    },
+    zone,
+  )
   if (!row) return fail(`Connect your ${platform === "x" ? "X" : "Instagram"} first`, 409)
-  if (row.autopilot && SOCIAL.pacing[platform].followsPerDay > 0)
+  if ((autopilot === true && row.autopilot) || (likes === true && row.likes))
     await enqueue(
       "socialRun",
-      { userId: me, platform, day: dayIn(parsed.data.tz ?? row.tz) },
+      { userId: me, platform, day: dayIn(zone ?? row.tz) },
       `${me}:${platform}`,
     )
   return json({ connection: viewOf(row) })
