@@ -283,12 +283,12 @@ export default function Home() {
           />
           <Tile
             className="md:col-span-2"
-            kind="wide"
-            title="Passport and Wrapped"
-            line="A year of stamps, and five story slides of your year in taste."
-            href="/docs/guide/passport"
-            src="/shots/wide/wrapped-slides.webp"
-            alt="Wrapped slides"
+            kind="phone"
+            title="Stories, Passport, Wrapped"
+            line="A photo with a song, a pick or a plan for a day; your year in five slides."
+            href="/docs/guide/stories"
+            src="/shots/wrapped/wrapped-1.webp"
+            alt="A Wrapped slide: a year in taste"
           />
         </div>
       </section>
