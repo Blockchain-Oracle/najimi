@@ -4,6 +4,7 @@ import { toast } from "@najimi/ui/components/sonner"
 import { Switch } from "@najimi/ui/components/switch"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { Download, Share, SquarePlus } from "lucide-react"
+import Link from "next/link"
 import { useTranslations } from "next-intl"
 import { useEffect, useState } from "react"
 import { api } from "@/lib/fetcher"
@@ -96,6 +97,14 @@ export function PushSettings() {
           <Download className="size-4" /> {t("install")}
         </button>
       ) : null}
+      {env.standalone ? null : (
+        <Link
+          href="/download"
+          className="text-[13px] font-semibold text-text-2 underline-offset-4 hover:text-foreground hover:underline focus-visible:underline"
+        >
+          {t("phoneApp")} →
+        </Link>
+      )}
 
       {!env.supported || needsHome ? null : (
         <>

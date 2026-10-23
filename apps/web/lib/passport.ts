@@ -2,7 +2,7 @@ import "server-only"
 import { db, schema } from "@najimi/db"
 import type { TasteWords } from "@najimi/db/schema"
 import { TITLES } from "@najimi/games/round"
-import { and, desc, eq, gte, inArray, isNotNull, isNull, lt, ne, or, sql } from "drizzle-orm"
+import { and, asc, desc, eq, gte, inArray, isNotNull, isNull, lt, ne, or, sql } from "drizzle-orm"
 
 /*
  * The Taste Passport (W21): a year of culture, stamped as it happened. Every stamp is something
@@ -160,6 +160,70 @@ export function movement(stamps: Stamp[]) {
 
 /** The story set's slides (cover, loves, words, people, passport). */
 export const WRAPPED_SLIDES = 5
+
+/** What's coming: plans and bookings that haven't happened yet (each opens its plan or its chat). */
+export type Upcoming = {
+  id: string
+  kind: "night" | "trip" | "stay" | "table" | "show"
+  title: string
+  at: string
+  image: string | null
+  href: string | null
+}
+
+export async function upcomingOf(userId: string): Promise<Upcoming[]> {
+  const now = Date.now()
+  const [plans, bookings] = await Promise.all([
+    db
+      .select()
+      .from(schema.plans)
+      .where(
+        and(
+          eq(schema.plans.ownerId, userId),
+          isNull(schema.plans.outcome),
+          isNotNull(schema.plans.startsAt),
+          gte(schema.plans.startsAt, new Date(now - 12 * 3600_000)),
+        ),
+      )
+      .orderBy(asc(schema.plans.startsAt))
+      .limit(6),
+    db
+      .select()
+      .from(schema.bookings)
+      .where(
+        and(
+          eq(schema.bookings.ownerId, userId),
+          inArray(schema.bookings.status, ["paid", "confirmed", "calling"]),
+          isNotNull(schema.bookings.startsAt),
+          gte(schema.bookings.startsAt, new Date(now - 6 * 3600_000)),
+        ),
+      )
+      .orderBy(asc(schema.bookings.startsAt))
+      .limit(6),
+  ])
+  return [
+    ...plans.map((p) => ({
+      id: `plan:${p.id}`,
+      kind: (p.kind === "trip" ? "trip" : "night") as Upcoming["kind"],
+      title: p.title,
+      at: (p.startsAt as Date).toISOString(),
+      image: p.stops.find((s) => s.image)?.image ?? null,
+      href: `/plan/${p.token}`,
+    })),
+    ...bookings.map((b) => ({
+      id: `booking:${b.id}`,
+      kind: (b.kind === "hotel"
+        ? "stay"
+        : b.kind === "show"
+          ? "show"
+          : "table") as Upcoming["kind"],
+      title: b.venue ?? b.title,
+      at: (b.startsAt as Date).toISOString(),
+      image: b.image,
+      href: b.chatId ? `/c/${b.chatId}` : null,
+    })),
+  ].sort((a, b) => a.at.localeCompare(b.at))
+}
 
 export type Wrapped = {
   name: string

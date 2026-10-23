@@ -146,6 +146,12 @@ export default async function Landing({ params }: PageProps<"/[locale]">) {
 
       <footer className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-3 border-t border-white/10 px-6 py-8 text-sm text-text-3">
         <span>{t("footer")}</span>
+        <Link
+          href="/download"
+          className="font-semibold text-text-2 underline-offset-4 hover:text-foreground hover:underline focus-visible:underline"
+        >
+          {t("getApp")} →
+        </Link>
         <span className="font-semibold text-text-2">
           {t.rich("builtOn", qlooTag("ms-0.5 h-[0.9em] text-foreground"))}
         </span>

@@ -2,6 +2,8 @@
 
 import type { StoredPick } from "@najimi/db/schema"
 import { cn } from "@najimi/ui/lib/utils"
+import { ArrowRight } from "lucide-react"
+import Link from "next/link"
 import { useTranslations } from "next-intl"
 import { createRef, type RefObject, useMemo, useRef } from "react"
 import { AnimatedBeam } from "./animated-beam"
@@ -27,11 +29,14 @@ export function TasteMap({
   loves,
   bridges,
   picks,
+  graphHref,
 }: {
   person: { name: string; look: string | null }
   loves: Love[]
   bridges: Bridge[]
   picks: Record<string, StoredPick[]>
+  /** Your own taste: the preview opens the full graph. */
+  graphHref?: string
 }) {
   const t = useTranslations("Taste")
   const td = useTranslations("Domains")
@@ -80,9 +85,19 @@ export function TasteMap({
 
   return (
     <section className="flex flex-col gap-3">
-      <p className="text-[11px] font-medium tracking-[0.08em] text-text-3 uppercase">
-        {t("bridges")}
-      </p>
+      <div className="flex items-center justify-between gap-3">
+        <p className="text-[11px] font-medium tracking-[0.08em] text-text-3 uppercase">
+          {t("bridges")}
+        </p>
+        {graphHref ? (
+          <Link
+            href={graphHref}
+            className="flex items-center gap-1 text-[13px] font-semibold text-foreground underline-offset-4 hover:underline focus-visible:underline"
+          >
+            {t("openGraph")} <ArrowRight className="size-3.5 rtl:rotate-180" />
+          </Link>
+        ) : null}
+      </div>
       <div
         ref={box}
         className="relative flex items-center justify-between gap-2 py-2 text-foreground"

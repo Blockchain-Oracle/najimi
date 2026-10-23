@@ -54,6 +54,7 @@
     "closing": "Your people are already here.",
     "footer": "Najimi, made for the Qloo hackathon.",
     "builtOn": "Built on <qloo>Qloo</qloo>",
+    "getApp": "Najimi on your phone",
     "openShort": "Open"
   },
   "Download": {
@@ -381,6 +382,7 @@
     "updating": "Updating with your changes…",
     "bridged": "{from} led to {to}",
     "bridges": "What your taste connects",
+    "openGraph": "Open the graph",
     "empty": "Qloo has nothing here for this taste yet.",
     "needsCity": "Add a city to see places.",
     "failed": "That didn't finish. Try again.",
@@ -542,6 +544,7 @@
     "pushOn": "Push on this phone",
     "pushDenied": "Notifications are blocked for Najimi in this browser's settings.",
     "install": "Install Najimi",
+    "phoneApp": "Najimi on your phone",
     "homeTitle": "Add Najimi to your Home Screen for notifications",
     "homeStep1": "Tap Share in Safari",
     "homeStep2": "Choose Add to Home Screen, then open Najimi from there",
@@ -1229,6 +1232,15 @@
     "yourOwn": "Get a plan for your business"
   },
   "Passport": {
+    "comingUp": "Coming up",
+    "open": "Open",
+    "kinds": {
+      "night": "Night out",
+      "trip": "Trip",
+      "stay": "Stay",
+      "table": "Table",
+      "show": "Show"
+    },
     "title": "Passport",
     "loves": "new loves",
     "nights": "nights out",

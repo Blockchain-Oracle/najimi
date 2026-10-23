@@ -18,7 +18,7 @@ import { useFormatter, useTranslations } from "next-intl"
 import { useState } from "react"
 import { sized } from "@/components/connect/platforms"
 import { api } from "@/lib/fetcher"
-import type { Stamp, StampKind } from "@/lib/passport"
+import type { Stamp, StampKind, Upcoming } from "@/lib/passport"
 import { sound } from "@/lib/sounds"
 
 /*
@@ -168,9 +168,12 @@ export function PassportView({
   movement,
   wrappedToken,
   personId,
+  upcoming,
 }: {
   year: number
   stamps: Stamp[]
+  /** Plans and bookings still to come. */
+  upcoming: Upcoming[]
   movement: Record<string, number>[]
   wrappedToken: string | null
   personId: string
@@ -210,6 +213,62 @@ export function PassportView({
           ))}
         </div>
       </header>
+
+      {upcoming.length ? (
+        <section className="flex flex-col gap-3">
+          <h2 className="font-heading text-[17px]">{t("comingUp")}</h2>
+          <ul className="flex flex-col gap-2">
+            {upcoming.map((u) => {
+              const body = (
+                <>
+                  {u.image ? (
+                    // biome-ignore lint/performance/noImgElement: remote artwork
+                    <img
+                      src={u.image}
+                      alt=""
+                      className="size-12 shrink-0 rounded-tile object-cover"
+                    />
+                  ) : (
+                    <span className="size-12 shrink-0 rounded-tile bg-white/5" />
+                  )}
+                  <span className="flex min-w-0 flex-1 flex-col">
+                    <span className="truncate font-heading text-[15px]">{u.title}</span>
+                    <span className="text-[12px] text-text-3">
+                      {t(`kinds.${u.kind}`)} ·{" "}
+                      {format.dateTime(new Date(u.at), {
+                        weekday: "short",
+                        day: "numeric",
+                        month: "short",
+                        hour: "numeric",
+                        minute: "2-digit",
+                      })}
+                    </span>
+                  </span>
+                  {u.href ? (
+                    <span className="text-[13px] font-semibold text-text-2">{t("open")} →</span>
+                  ) : null}
+                </>
+              )
+              return (
+                <li key={u.id}>
+                  {u.href ? (
+                    <Link
+                      href={u.href}
+                      className="flex items-center gap-3 rounded-card bg-card p-2.5 ring-1 ring-border transition-colors hover:bg-secondary"
+                    >
+                      {body}
+                    </Link>
+                  ) : (
+                    <div className="flex items-center gap-3 rounded-card bg-card p-2.5 ring-1 ring-border">
+                      {body}
+                    </div>
+                  )}
+                </li>
+              )
+            })}
+          </ul>
+        </section>
+      ) : null}
 
       <Wrapped token={wrappedToken} personId={personId} />
 

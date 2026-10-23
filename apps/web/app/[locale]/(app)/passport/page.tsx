@@ -5,7 +5,7 @@ import { redirect } from "next/navigation"
 import { getTranslations } from "next-intl/server"
 import { Suspense } from "react"
 import { PassportView } from "@/components/passport/passport-view"
-import { movement, selfIdOf, stampsOf } from "@/lib/passport"
+import { movement, selfIdOf, stampsOf, upcomingOf } from "@/lib/passport"
 import { getSession } from "@/lib/session"
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -19,8 +19,9 @@ async function Passport() {
   const personId = await selfIdOf(session.user.id)
   if (!personId) redirect(`/start?next=${encodeURIComponent("/passport")}`)
   const year = new Date().getUTCFullYear()
-  const [stamps, [share]] = await Promise.all([
+  const [stamps, upcoming, [share]] = await Promise.all([
     stampsOf(session.user.id, year),
+    upcomingOf(session.user.id),
     db
       .select({ token: schema.shares.token })
       .from(schema.shares)
@@ -37,6 +38,7 @@ async function Passport() {
     <PassportView
       year={year}
       stamps={stamps}
+      upcoming={upcoming}
       movement={movement(stamps)}
       wrappedToken={share?.token ?? null}
       personId={personId}

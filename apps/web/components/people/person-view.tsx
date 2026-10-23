@@ -459,6 +459,7 @@ export function PersonView({ data, other }: { data: PersonViewData; other?: Othe
             loves={data.loves}
             bridges={bridges}
             picks={picks}
+            graphHref={mine ? "/graph" : undefined}
           />
         </section>
       ) : null}
