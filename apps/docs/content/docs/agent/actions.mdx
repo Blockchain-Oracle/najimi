@@ -35,14 +35,14 @@ and the rules: *a real phone call, between 8am and 9pm; Najimi never pays or agr
 
 ### It calls
 
-An ElevenLabs voice agent dials from a Twilio number and opens by saying it's an AI calling on your behalf and that the call is recorded, then asks for your table. It's instructed to confirm the date, time, party size and your name, to ask for the nearest time without accepting it if yours isn't possible, and never to pay, share card details or agree to a deposit. The card says *Calling…*.
+An ElevenLabs voice agent dials from a Twilio number and opens by saying it's an AI calling on your behalf and that the call is recorded, then asks for your table. It speaks in short sentences, confirms the date, time, party size and your name once, asks for the nearest time without accepting it if yours isn't possible, and never pays, shares card details or agrees to a deposit. It presses keys to get through a phone menu, hangs up without a message if it reaches voicemail, and ends the call itself once the booking is settled or as soon as they say goodbye (or after 20 seconds of silence). The card says *Calling…*, then *Called* with the outcome.
 
 </Step>
 <Step>
 
 ### The answer comes back
 
-A few minutes later, a booking card in the chat: **booked** (with the name it's under, **Add to calendar**), or the time they offered instead, or *the line was busy, want me to try again later?* You also get a notification. Results arrive by a signed webhook from ElevenLabs, and Najimi checks every few minutes in case the webhook doesn't come.
+A few minutes later, a booking card in the chat: **booked** (with the name it's under, **Add to calendar**), or the time they offered instead, or *the line was busy* or *I reached their voicemail*, with *want me to try again later?* You also get a notification. Results arrive by a signed webhook from ElevenLabs, and Najimi checks every few minutes in case the webhook doesn't come.
 
 </Step>
 <Step>
@@ -54,7 +54,7 @@ Three hours after your table, Najimi asks how it was.
 </Step>
 </Steps>
 
-Calls only go out between 8am and 9pm in your time zone. Guests can't make calls; sign in first.
+Calls only go out between 8am and 9pm **where the venue is** (read from its number's country; your own time zone when the country spans several). A venue that asks not to be called by an AI again is never called again: Najimi gives you its number instead. Guests can't make calls; sign in first.
 
 ## Hotels
 

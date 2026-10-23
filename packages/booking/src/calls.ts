@@ -13,6 +13,42 @@ const BASE = "https://api.elevenlabs.io"
 /** Calls go out between these local hours (TCPA's 8am–9pm, kept everywhere). */
 export const CALL_HOURS = { from: 8, to: 21 } as const
 
+/**
+ * Where a venue's number rings, for calling hours in its own time: countries with one time zone,
+ * by calling code (longest first). Others (the US, Canada, Brazil, Australia…) fall back to the
+ * person's own zone.
+ */
+const ZONES: [string, string][] = [
+  ["+234", "Africa/Lagos"],
+  ["+233", "Africa/Accra"],
+  ["+254", "Africa/Nairobi"],
+  ["+255", "Africa/Dar_es_Salaam"],
+  ["+256", "Africa/Kampala"],
+  ["+27", "Africa/Johannesburg"],
+  ["+20", "Africa/Cairo"],
+  ["+212", "Africa/Casablanca"],
+  ["+221", "Africa/Dakar"],
+  ["+225", "Africa/Abidjan"],
+  ["+250", "Africa/Kigali"],
+  ["+44", "Europe/London"],
+  ["+353", "Europe/Dublin"],
+  ["+33", "Europe/Paris"],
+  ["+49", "Europe/Berlin"],
+  ["+34", "Europe/Madrid"],
+  ["+39", "Europe/Rome"],
+  ["+31", "Europe/Amsterdam"],
+  ["+351", "Europe/Lisbon"],
+  ["+971", "Asia/Dubai"],
+  ["+966", "Asia/Riyadh"],
+  ["+91", "Asia/Kolkata"],
+  ["+81", "Asia/Tokyo"],
+  ["+65", "Asia/Singapore"],
+]
+
+export function venueZone(phone: string): string | null {
+  return ZONES.find(([code]) => phone.startsWith(code))?.[1] ?? null
+}
+
 export const callsOn = () =>
   Boolean(
     env.ELEVENLABS_API_KEY && env.ELEVENLABS_CALLER_AGENT_ID && env.ELEVENLABS_PHONE_NUMBER_ID,
@@ -94,6 +130,10 @@ export type CallResult = {
   confirmation: string | null
   /** A time the venue offered instead, if they couldn't do the one asked. */
   offered: string | null
+  /** It reached a voicemail, not a person. */
+  voicemail: boolean
+  /** The venue asked not to be called by an AI again. */
+  doNotCall: boolean
   seconds: number | null
 }
 
@@ -125,6 +165,8 @@ export const resultOf = (c: Conversation): CallResult => {
     summary: c.analysis?.transcript_summary ?? null,
     confirmation: (value("confirmation_name") as string | null) ?? null,
     offered: (value("alternative_time") as string | null) ?? null,
+    voicemail: value("reached_voicemail") === true,
+    doNotCall: value("do_not_call") === true,
     seconds: c.metadata?.call_duration_secs ?? null,
   }
 }
@@ -136,45 +178,89 @@ export async function callResult(conversationId: string): Promise<CallResult> {
   )
 }
 
+/** ElevenLabs' own system tools, switched on by name. */
+const system = (name: string, params: Record<string, unknown> = {}) => ({
+  type: "system",
+  name,
+  description: "",
+  params: { system_tool_type: name, ...params },
+})
+
 /**
- * The caller itself, made once (ElevenLabs keeps it): its brief, the disclosure, and the facts its
- * analysis pulls from every call (booked or not, under what name, a time offered instead).
+ * Everything the caller is, in one place, for making it and for keeping it up to date: its brief
+ * (brief turns, confirm once, hang up when it's settled or when asked), the disclosure, the tools
+ * it may use (hang up, leave voicemail without a message, press keys through a phone menu), and
+ * the facts its analysis pulls from every call.
  */
-export async function createCaller() {
-  return el<{ agent_id: string }>("/v1/convai/agents/create", {
-    body: {
-      name: "Najimi table booking",
-      conversation_config: {
-        agent: {
-          first_message:
-            "Hello, I'm Najimi, an AI assistant calling on behalf of {{guest_name}}. This call is recorded. I'd like to book a table for {{party_size}} on {{when}}.",
-          language: "en",
-          prompt: {
-            prompt:
-              "You are Najimi, a polite AI assistant phoning {{venue}} to book a table for {{guest_name}}: {{party_size}} people, {{when}}. Extra requests: {{notes}}. Callback number if they ask: {{callback}}. Be brief and warm. Confirm the date, time, party size and the name the table is under. If that time isn't possible, ask for the nearest time they can do and note it, without accepting it. Never pay, never share card details, never agree to a deposit; say the guest will confirm. If you reach voicemail, leave no message and end the call. Thank them and end the call once it's settled.",
-            temperature: 0.2,
-          },
+const CALLER = {
+  name: "Najimi table booking",
+  conversation_config: {
+    agent: {
+      first_message:
+        "Hello, I'm Najimi, an AI assistant calling on behalf of {{guest_name}}. This call is recorded. I'd like to book a table for {{party_size}} on {{when}}.",
+      language: "en",
+      prompt: {
+        prompt: [
+          "You are Najimi, a polite AI assistant phoning {{venue}} to book a table for {{guest_name}}: {{party_size}} people, {{when}}. Extra requests: {{notes}}. Callback number if they ask: {{callback}}.",
+          "Speak in short sentences, one thing at a time, and never repeat what's already been agreed.",
+          "Confirm the date, time, party size and the name the table is under once, in one sentence, when they agree. If they ask for any of it again, say it once more plainly.",
+          "If that time isn't possible, ask for the nearest time they can do and note it, without accepting it.",
+          "Never pay, never share card details, never agree to a deposit; say the guest will confirm.",
+          "If an automated menu answers, use the keypad tool to reach a person or reservations.",
+          "If you reach voicemail, leave no message and end the call.",
+          "As soon as the booking is settled (booked, or not possible), thank them in one short sentence and end the call with the end_call tool. If they say goodbye, ask you to hang up, or the call is clearly over, say a short goodbye and end the call straight away.",
+          "If they ask not to be called by an AI again, apologise, say it won't happen again, and end the call.",
+        ].join(" "),
+        temperature: 0.2,
+        built_in_tools: {
+          end_call: system("end_call"),
+          voicemail_detection: system("voicemail_detection", { voicemail_message: "" }),
+          play_keypad_touch_tone: system("play_keypad_touch_tone"),
         },
-        conversation: { max_duration_seconds: 240 },
-      },
-      platform_settings: {
-        data_collection: {
-          booking_confirmed: {
-            type: "boolean",
-            description: "Did the venue confirm the table at the time asked?",
-          },
-          confirmation_name: {
-            type: "string",
-            description: "The name the table is under, as the venue said it.",
-          },
-          alternative_time: {
-            type: "string",
-            description: "A different time the venue offered, if any.",
-          },
-        },
-        overrides: { conversation_config_override: { agent: { first_message: true } } },
       },
     },
+    conversation: { max_duration_seconds: 240 },
+    // Twenty seconds of silence and it hangs up, rather than holding a dead line.
+    turn: { silence_end_call_timeout: 20 },
+  },
+  platform_settings: {
+    data_collection: {
+      booking_confirmed: {
+        type: "boolean",
+        description: "Did the venue confirm the table at the time asked?",
+      },
+      confirmation_name: {
+        type: "string",
+        description: "The name the table is under, as the venue said it.",
+      },
+      alternative_time: {
+        type: "string",
+        description: "A different time the venue offered, if any.",
+      },
+      reached_voicemail: {
+        type: "boolean",
+        description: "Did the call reach a voicemail or answering machine instead of a person?",
+      },
+      do_not_call: {
+        type: "boolean",
+        description: "Did the venue ask not to be called by an AI again?",
+      },
+    },
+    overrides: { conversation_config_override: { agent: { first_message: true } } },
+  },
+}
+
+/** The caller itself, made once (ElevenLabs keeps it). */
+export async function createCaller() {
+  return el<{ agent_id: string }>("/v1/convai/agents/create", { body: CALLER })
+}
+
+/** Brings the caller ElevenLabs keeps up to date with the definition above. */
+export async function updateCaller() {
+  if (!env.ELEVENLABS_CALLER_AGENT_ID) throw new Error("There's no caller to update yet")
+  return el<{ agent_id: string }>(`/v1/convai/agents/${env.ELEVENLABS_CALLER_AGENT_ID}`, {
+    method: "PATCH",
+    body: CALLER,
   })
 }
 

@@ -193,10 +193,22 @@ export async function applyCallResult(
     summary: string | null
     confirmation: string | null
     offered: string | null
+    voicemail?: boolean
+    doNotCall?: boolean
   },
 ) {
   if (booking.status !== "calling" || result.status !== "done") return booking
   const when = (booking.data as { when?: string }).when ?? ""
+  const phone = (booking.data as { phone?: string }).phone ?? null
+  // They asked not to be called by an AI again: the number goes on the list for good.
+  if (result.doNotCall && phone)
+    await db.insert(schema.callBlocks).values({ phone, venue: booking.venue }).onConflictDoNothing()
+  if (result.voicemail && !result.booked)
+    return setBooking(
+      booking.id,
+      { status: "failed", note: "Reached voicemail" },
+      `I reached ${booking.venue ?? "the venue"}'s voicemail and hung up without leaving a message. Want me to try again later?`,
+    )
   if (result.booked) {
     return setBooking(
       booking.id,
@@ -216,7 +228,7 @@ export async function applyCallResult(
   return setBooking(
     booking.id,
     { status: "failed", note: result.summary },
-    `${booking.venue ?? "The venue"} couldn't do ${when}${result.offered ? `; they offered ${result.offered}` : ""}.${result.summary ? ` ${result.summary}` : ""}`,
+    `${booking.venue ?? "The venue"} couldn't do ${when}${result.offered ? `; they offered ${result.offered}` : ""}.${result.summary ? ` ${result.summary}` : ""}${result.doNotCall ? " They asked not to be called by an AI again, so I won't call them." : ""}`,
   )
 }
 

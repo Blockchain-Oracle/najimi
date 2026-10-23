@@ -1,5 +1,5 @@
 import { safeZone, todayIn, zonedTime } from "@najimi/booking"
-import { CALL_HOURS, callsOn, placeCall } from "@najimi/booking/calls"
+import { CALL_HOURS, callsOn, placeCall, venueZone } from "@najimi/booking/calls"
 import { hotelsNear, hotelsOn } from "@najimi/booking/nuitee"
 import { locate, planNight, planTrip } from "@najimi/booking/plan"
 import { FEED, MEDIA, TASTE, TASTE_DOMAINS } from "@najimi/config"
@@ -960,8 +960,31 @@ export function buildTools(ctx: TurnContext, messageId: () => string | undefined
             phone: null,
             note: "Calling venues isn't switched on yet.",
           }
-        const tz = safeZone(ctx.tz)
-        // Calls only within calling hours where they are.
+        const phone =
+          (input.phone ? normalisePhone(input.phone) : null) ??
+          (input.website ? await venuePhone(input.website).catch(() => null) : null)
+        if (!phone)
+          return {
+            bookingId: null,
+            status: "needs-number" as const,
+            phone: null,
+            note: `I couldn't find ${input.venue}'s number. What is it?`,
+          }
+        // A venue that asked not to be called by an AI is never rung again.
+        const [blocked] = await db
+          .select({ phone: schema.callBlocks.phone })
+          .from(schema.callBlocks)
+          .where(eq(schema.callBlocks.phone, phone))
+        if (blocked)
+          return {
+            bookingId: null,
+            status: "unavailable" as const,
+            phone,
+            note: `${input.venue} asked not to be called by an AI, so I won't. You can call them on ${phone}.`,
+          }
+        // Calls only within calling hours where the venue is (its number's country), else where
+        // the person is; the time asked for is the venue's local time too.
+        const tz = venueZone(phone) ?? safeZone(ctx.tz)
         const hour = Number(
           new Intl.DateTimeFormat("en-GB", {
             timeZone: tz,
@@ -973,18 +996,8 @@ export function buildTools(ctx: TurnContext, messageId: () => string | undefined
           return {
             bookingId: null,
             status: "closed-hours" as const,
-            phone: null,
-            note: `It's outside calling hours (${CALL_HOURS.from}am–9pm). Ask me again then.`,
-          }
-        const phone =
-          (input.phone ? normalisePhone(input.phone) : null) ??
-          (input.website ? await venuePhone(input.website).catch(() => null) : null)
-        if (!phone)
-          return {
-            bookingId: null,
-            status: "needs-number" as const,
-            phone: null,
-            note: `I couldn't find ${input.venue}'s number. What is it?`,
+            phone,
+            note: `It's outside calling hours where ${input.venue} is (${CALL_HOURS.from}am–9pm). Ask me again then.`,
           }
         const startsAt = zonedTime(input.date, input.time.padStart(5, "0"), tz)
         const when = startsAt.toLocaleString("en-GB", {

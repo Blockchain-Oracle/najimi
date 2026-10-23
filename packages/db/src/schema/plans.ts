@@ -162,3 +162,13 @@ export const bookings = pgTable(
     index("bookings_follow_idx").on(t.followUpAt),
   ],
 )
+
+/**
+ * Numbers that asked not to be called by an AI again: Najimi never rings them, and offers the
+ * number for the person to call themselves instead.
+ */
+export const callBlocks = pgTable("call_blocks", {
+  phone: text().primaryKey(),
+  venue: text(),
+  createdAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
+})
