@@ -1,7 +1,7 @@
 import { locate } from "@najimi/booking/plan"
 import { BUSINESS } from "@najimi/config"
 import { db, schema } from "@najimi/db"
-import type { BusinessIdea, BusinessReport, BusinessThing, StoredPick } from "@najimi/db/schema"
+import type { BusinessMove, BusinessReport, BusinessThing, StoredPick } from "@najimi/db/schema"
 import { enqueue } from "@najimi/jobs"
 import { emit, publish, setRunStatus, topic } from "@najimi/live"
 import {
@@ -140,30 +140,61 @@ async function readSite(url: string, userId: string) {
 
 // ── The plan ───────────────────────────────────────────────────────────────────────────────
 
+const KINDS = ["menu", "music", "night", "stock", "partner", "space", "service"] as const
+
 const planShape = z.object({
-  summary: z
+  people: z
     .string()
-    .max(420)
-    .describe("Two or three sentences: who its people are, in their own taste terms."),
-  ideas: z
+    .max(200)
+    .describe(
+      "One sentence, at most 140 characters: who its people are, in their own taste terms.",
+    ),
+  moves: z
     .array(
       z.object({
-        kind: z.enum(["menu", "music", "night", "stock", "partner", "space", "service"]),
-        title: z.string().max(80),
-        why: z.string().max(320),
+        kind: z.enum(KINDS),
+        title: z
+          .string()
+          .max(90)
+          .describe("The move itself in at most eight words (60 characters). No colon."),
+        why: z
+          .string()
+          .max(220)
+          .describe("One sentence, at most 140 characters, naming what its people love."),
         evidence: z.array(z.string()).min(1).max(4).describe("Qloo ids from the evidence."),
+        next: z.object({
+          type: z
+            .enum(["post", "invite", "plan", "play"])
+            .describe(
+              "The one thing to do next: post (a post to put out), invite (message a partner), plan (ask Najimi to plan the night or event), play (hear the set: the move's evidence includes artists).",
+            ),
+          text: z
+            .string()
+            .max(320)
+            .describe(
+              "post: the post in the business's voice. invite: a short, warm first message to the partner from the owner. plan: what to ask Najimi to plan, in the owner's words (what, which day, for whom). play: one line on when the set plays.",
+            ),
+          partner: z
+            .string()
+            .nullable()
+            .describe("invite only: the Qloo id of who to invite, from the evidence. Else null."),
+        }),
       }),
     )
-    .max(6),
+    .min(1)
+    .max(3)
+    .describe("Exactly three moves for this week, the strongest first, each a different kind."),
   partners: z
-    .array(z.object({ qlooId: z.string(), why: z.string().max(160) }))
+    .array(z.object({ qlooId: z.string(), why: z.string().max(220) }))
     .max(4)
-    .describe("Brands, artists or places from the evidence to team up with."),
+    .describe(
+      "Brands, artists or places from the evidence to team up with; why in 140 characters.",
+    ),
   posts: z.array(z.string().max(280)).max(3).describe("Posts in the business's voice."),
   targets: z
-    .array(z.object({ area: z.string().max(60), why: z.string().max(160) }))
+    .array(z.object({ area: z.string().max(60), why: z.string().max(220) }))
     .max(3)
-    .describe("Areas from the evidence to reach people in."),
+    .describe("Areas from the evidence to reach people in; why in 140 characters."),
 })
 
 async function writePlan(b: BusinessRow, report: Omit<BusinessReport, "plan" | "builtAt">) {
@@ -173,6 +204,7 @@ async function writePlan(b: BusinessRow, report: Omit<BusinessReport, "plan" | "
     `Business: ${b.name}, a ${b.kind}${b.city ? ` in ${b.city}` : ""}.`,
     b.audienceGuess ? `The owner thinks their customers are: ${b.audienceGuess}.` : "",
     b.decision ? `The owner is deciding: ${b.decision}.` : "",
+    b.links.instagram ? `Its Instagram: @${b.links.instagram}.` : "",
     report.site
       ? `Their site offers: ${report.site.offer.join(", ") || "—"}; they call themselves ${report.site.vibe.join(", ") || "—"}.`
       : "",
@@ -209,33 +241,52 @@ async function writePlan(b: BusinessRow, report: Omit<BusinessReport, "plan" | "
     model: agentModel(modelId),
     schema: planShape,
     system:
-      "You are a sharp, practical consultant for small businesses. Write a plan only from the evidence given (Qloo's cultural taste data); never invent facts, names or numbers. Every idea and partner must cite Qloo ids that appear in the evidence. Be concrete: a dish, a drink, a night, an artist to book, a brand to team up with, a post to make. Plain words, no buzzwords.",
+      "You are a sharp, practical consultant for small businesses. Write a plan only from the evidence given (Qloo's cultural taste data); never invent facts, names or numbers. Every move and partner must cite Qloo ids that appear in the evidence. Be concrete: a dish, a drink, a night, an artist to play, a brand to team up with, a post to make. Keep it short: an owner reads the whole plan on one phone screen, and each move ends in one thing they can do today. Plain words, no buzzwords.",
     prompt: evidence,
     maxOutputTokens: 1800,
     providerOptions: { openai: { reasoningEffort: "low" } },
   })
   await logCall(b.ownerId, "business-plan", modelId, started, read.usage)
-  const known = new Set([
-    ...Object.values(report.fans).flatMap((items) => items.map((i) => i.qlooId)),
-    ...report.comparables.map((c) => c.qlooId),
-    ...(report.match ? [report.match.qlooId] : []),
-    ...(report.scene
-      ? [...report.scene.artists, ...report.scene.brands, ...report.scene.places].map(
-          (i) => i.qlooId,
-        )
-      : []),
-    ...report.rising.map((r) => r.qlooId),
+  const things = new Map<string, BusinessThing>()
+  for (const list of [
+    ...Object.values(report.fans),
+    report.comparables,
+    report.match ? [report.match] : [],
+    report.scene ? [...report.scene.artists, ...report.scene.brands, ...report.scene.places] : [],
+    report.rising,
   ])
+    for (const i of list) things.set(i.qlooId, i)
   const areaNames = new Set(report.areas.map((a) => a.name.toLowerCase()))
   // Models sometimes trail a stray ";" or "*" when they hit a length; a sentence ends cleanly.
   const tidy = (text: string) => text.replace(/[\s;:*,—-]+$/, "").replace(/([^.!?])$/, "$1.")
-  const ideas: BusinessIdea[] = read.object.ideas
-    .map((i) => ({ ...i, why: tidy(i.why), evidence: i.evidence.filter((id) => known.has(id)) }))
-    .filter((i) => i.evidence.length)
+  const isArtist = (id: string) => things.get(id)?.type === "urn:entity:artist"
+  const moves: BusinessMove[] = read.object.moves.flatMap((m) => {
+    const evidence = m.evidence.filter((id) => things.has(id))
+    if (!evidence.length) return []
+    const partner = m.next.partner && things.has(m.next.partner) ? m.next.partner : null
+    // An action the evidence can't carry becomes a plan for Najimi: an invite needs someone to
+    // invite, a set needs artists to play.
+    const type =
+      (m.next.type === "invite" && !partner) || (m.next.type === "play" && !evidence.some(isArtist))
+        ? "plan"
+        : m.next.type
+    const text = type === m.next.type ? m.next.text.trim() : `Plan this at ${b.name}: ${m.title}`
+    return [
+      {
+        kind: m.kind,
+        title: m.title.replace(/[.:]+$/, "").trim(),
+        why: tidy(m.why),
+        evidence,
+        next: { type, text, partner: type === "invite" ? partner : null },
+      },
+    ]
+  })
   return {
-    summary: read.object.summary,
-    ideas,
-    partners: read.object.partners.filter((p) => known.has(p.qlooId)),
+    summary: tidy(read.object.people),
+    moves,
+    partners: read.object.partners
+      .filter((p) => things.has(p.qlooId))
+      .map((p) => ({ ...p, why: tidy(p.why) })),
     posts: read.object.posts,
     targets: read.object.targets.filter((tg) => areaNames.has(tg.area.toLowerCase())),
   }
@@ -330,7 +381,7 @@ async function tellInChat(b: BusinessRow, runId: string, report: BusinessReport)
     .from(schema.runs)
     .where(eq(schema.runs.id, runId))
   if (!run?.chatId) return
-  const first = report.plan?.ideas[0]
+  const first = report.plan?.moves?.[0] ?? report.plan?.ideas?.[0]
   const where = report.areas.slice(0, 2).map((a) => a.name)
   const text = [
     `${b.name}'s plan is ready.`,
@@ -621,7 +672,7 @@ export async function buildBusiness(businessId: string, opts: { notify?: boolean
       console.error("[business] plan", e)
       return null
     })
-    await step("plan", plan ? "done" : "skipped", plan ? `${plan.ideas.length} ideas` : null)
+    await step("plan", plan ? "done" : "skipped", plan ? `${plan.moves.length} moves` : null)
     const report: BusinessReport = {
       ...base,
       plan,

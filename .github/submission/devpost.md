@@ -41,7 +41,7 @@ That taste becomes a whole app:
 - **Graph:** pull a love's weight, expand a node into other categories, overlay a friend's taste, and revisit how yours changed.
 - **Plans:** ask for a night out or a trip. Najimi uses Qloo to choose areas and stops, shows how each stop fits the people involved, builds a route, adds nearby shows, and gives you a shareable plan and calendar link.
 - **Your feeds:** examine X, Instagram, TikTok, or YouTube one platform at a time. Bring in what you already follow, score a screenshot of your feed against your taste, see accounts and topics to try, and connect X or Instagram for a scheduled “Do it for me” follow flow.
-- **Business mode:** give Najimi a place you run. It reads the site, identifies the business or comparable places in Qloo, and builds a shareable plan around who its people are, what else they love, where they cluster, the street's scene, and ideas to try.
+- **Business mode:** give Najimi a place you run. It reads the site, identifies the business or comparable places in Qloo, and builds a shareable plan: who its people are in one card, then three moves for the week, each with one next step (post it, invite the partner, plan it, play the set).
 - **Passport and Wrapped:** see the loves, nights, trips, and games that marked your year, then make story slides from them.
 
 Najimi works on desktop and mobile. A guest can start without an account, then keep their taste if they sign in later.

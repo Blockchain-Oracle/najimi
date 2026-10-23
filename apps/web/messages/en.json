@@ -1208,15 +1208,10 @@
       "rising": "What's rising nearby",
       "plan": "Writing the plan"
     },
-    "statWhere": "Its people cluster in",
-    "statWho": "Leaning",
-    "statRising": "Rising nearby",
     "gender": {
       "male": "men",
       "female": "women"
     },
-    "ideas": "What to do",
-    "fansLove": "Its people also love",
     "kind": {
       "music": "Music",
       "film": "Film",
@@ -1226,14 +1221,12 @@
       "brands": "Brands",
       "places": "Places"
     },
-    "street": "You and the street around you",
+    "street": "Your people and the street ({area})",
     "onlyFans": "Only your people",
     "both": "Both",
     "onlyStreet": "Only the street",
-    "streetPlaces": "Around you: {names}",
     "rising": "Rising near you",
     "partners": "Who to team up with",
-    "posts": "Posts to try",
     "copy": "Copy",
     "copied": "Copied",
     "postOnX": "Post",
@@ -1243,7 +1236,49 @@
     "rebuild": "Build it again",
     "ask": "Ask Najimi",
     "askAbout": "Talk me through the plan for {name}. Where should I start this week?",
-    "yourOwn": "Get a plan for your business"
+    "yourOwn": "Get a plan for your business",
+    "yourPeople": "Your people",
+    "tab": {
+      "week": "This week",
+      "people": "People",
+      "places": "Places",
+      "posts": "Posts"
+    },
+    "moveKind": {
+      "menu": "Menu",
+      "music": "Music",
+      "night": "A night",
+      "stock": "Stock",
+      "partner": "Team up",
+      "space": "The room",
+      "service": "Service"
+    },
+    "next": {
+      "post": "Post it",
+      "invite": "Invite",
+      "plan": "Plan it",
+      "play": "Play the set"
+    },
+    "standsOn": "What it stands on",
+    "draft": {
+      "post": "The post",
+      "invite": "Your message to {name}",
+      "plan": "What Najimi will plan"
+    },
+    "planWithNajimi": "Plan it with Najimi",
+    "inviteVia": "Copy the message, open {where}",
+    "openOn": "Open {where}",
+    "inviteCopied": "Message copied. Paste it in {where}.",
+    "theirSite": "their site",
+    "openThing": "Open {name}",
+    "playSet": "Play the set",
+    "pauseSet": "Pause the set",
+    "setOf": "{count, plural, one {# song} other {# songs}} · {names}",
+    "theirWords": "In their words",
+    "clusters": "Where they cluster",
+    "yours": "Yours",
+    "likeYours": "Places like yours",
+    "aroundYou": "Around you"
   },
   "Passport": {
     "comingUp": "Coming up",

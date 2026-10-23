@@ -52,7 +52,7 @@ import { uberLink } from "@/lib/rides"
  */
 
 /** Each site's mark and name (brand names stay as they are in every language). */
-const SITES: Record<Site, { brand?: SimpleIcon; icon?: LucideIcon; label?: string }> = {
+export const SITES: Record<Site, { brand?: SimpleIcon; icon?: LucideIcon; label?: string }> = {
   apple_music: { brand: siApplemusic, label: "Apple Music" },
   spotify: { brand: siSpotify, label: "Spotify" },
   youtube_music: { brand: siYoutubemusic, label: "YouTube Music" },

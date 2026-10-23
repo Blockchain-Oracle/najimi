@@ -1,11 +1,13 @@
 "use client"
 
+import { Orb } from "@najimi/ui/components/orb"
 import { toast } from "@najimi/ui/components/sonner"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
-import { Link2, Loader2, MessageCircle, RefreshCw } from "lucide-react"
+import { Link2, Loader2, RefreshCw } from "lucide-react"
 import { useTranslations } from "next-intl"
 import { useState } from "react"
 import { useAgent, useReportScreen } from "@/components/agent/agent-context"
+import { Tip } from "@/components/tip"
 import type { BusinessView } from "@/lib/business"
 import { api } from "@/lib/fetcher"
 import { sound } from "@/lib/sounds"
@@ -17,8 +19,8 @@ import { PlanView } from "./plan-view"
  * a link to share it, a fresh build, and Najimi to talk it through.
  */
 
-const glass =
-  "flex h-10 items-center gap-1.5 rounded-pill bg-black/55 px-3.5 text-[13px] font-semibold text-white ring-1 ring-white/15 backdrop-blur-md"
+const round =
+  "grid size-10 place-items-center rounded-full bg-secondary text-foreground transition-colors hover:bg-secondary/70 disabled:opacity-60"
 
 export function BusinessPage({ initial }: { initial: BusinessView }) {
   const t = useTranslations("Business")
@@ -95,27 +97,44 @@ export function BusinessPage({ initial }: { initial: BusinessView }) {
   return (
     <PlanView
       business={{ ...b, report: b.report }}
+      owner
       actions={
         <>
-          <button type="button" onClick={() => void share()} className={glass}>
-            <Link2 className="size-4" /> {t("share")}
-          </button>
-          <button
-            type="button"
-            aria-label={t("rebuild")}
-            disabled={busy}
-            onClick={() => void rebuild()}
-            className={glass}
-          >
-            {busy ? <Loader2 className="size-4 animate-spin" /> : <RefreshCw className="size-4" />}
-          </button>
-          <button
-            type="button"
-            onClick={() => agent.ask(t("askAbout", { name: b.name }))}
-            className={glass}
-          >
-            <MessageCircle className="size-4" /> {t("ask")}
-          </button>
+          <Tip label={t("share")}>
+            <button
+              type="button"
+              aria-label={t("share")}
+              onClick={() => void share()}
+              className={round}
+            >
+              <Link2 className="size-4" />
+            </button>
+          </Tip>
+          <Tip label={t("rebuild")}>
+            <button
+              type="button"
+              aria-label={t("rebuild")}
+              disabled={busy}
+              onClick={() => void rebuild()}
+              className={round}
+            >
+              {busy ? (
+                <Loader2 className="size-4 animate-spin" />
+              ) : (
+                <RefreshCw className="size-4" />
+              )}
+            </button>
+          </Tip>
+          <Tip label={t("ask")}>
+            <button
+              type="button"
+              aria-label={t("ask")}
+              onClick={() => agent.ask(t("askAbout", { name: b.name }))}
+              className={round}
+            >
+              <Orb size={22} />
+            </button>
+          </Tip>
         </>
       }
     />

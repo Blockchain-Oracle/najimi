@@ -32,7 +32,9 @@ async function Shared({ params }: Pick<Props, "params">) {
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-col gap-10 px-5 pb-16 md:px-0 md:pt-6">
       <PlanView
+        shareToken={b.shareToken}
         business={{
+          id: b.id,
           name: b.name,
           kind: b.kind,
           city: b.city,

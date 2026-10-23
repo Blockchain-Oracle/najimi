@@ -23,13 +23,27 @@ export type BusinessThing = {
   callId: string | null
 }
 
-/** One idea in the plan, with the Qloo results behind it. */
+/** One idea in the plan, with the Qloo results behind it (plans built before moves). */
 export type BusinessIdea = {
   kind: "menu" | "music" | "night" | "stock" | "partner" | "space" | "service"
   title: string
   why: string
   /** Qloo ids from the evidence it rests on. */
   evidence: string[]
+}
+
+/**
+ * One of the week's moves: a short title, one line of why, the Qloo results it stands on, and the
+ * one thing to do next (post it, invite the partner, plan the night with Najimi, play the set).
+ */
+export type BusinessMove = BusinessIdea & {
+  next: {
+    type: "post" | "invite" | "plan" | "play"
+    /** The post, the message to the partner, or what to ask Najimi to plan. */
+    text: string
+    /** Who to invite (a Qloo id from the evidence), for an invite. */
+    partner: string | null
+  }
 }
 
 /**
@@ -64,8 +78,12 @@ export type BusinessReport = {
   /** Places near it whose audience is growing among the fans (Qloo's audience_growth). */
   rising: (BusinessThing & { growth: number })[]
   plan: {
+    /** One sentence: who its people are. */
     summary: string
-    ideas: BusinessIdea[]
+    /** This week's three moves. */
+    moves?: BusinessMove[]
+    /** The longer list plans had before moves; read only when there are no moves. */
+    ideas?: BusinessIdea[]
     partners: { qlooId: string; why: string }[]
     posts: string[]
     targets: { area: string; why: string }[]

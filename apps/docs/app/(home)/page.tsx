@@ -330,10 +330,10 @@ export default function Home() {
             className="md:col-span-2"
             kind="wide"
             title="Business"
-            line="Who your people are, where they cluster, what's rising. Every idea cites Qloo."
+            line="Who your people are, and three moves for this week. Every move cites Qloo."
             href="/docs/guide/business"
             src="/shots/wide/business-recommendation.webp"
-            alt="A business plan's ideas"
+            alt="A business plan's move, ready to send"
           />
           <Tile
             className="md:col-span-2"
