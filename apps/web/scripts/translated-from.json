@@ -1426,7 +1426,8 @@
     "Run.planning": "Planning",
     "Run.stops": "{count, plural, one {# stop} other {# stops}}",
     "Run.dealing": "Dealing a game",
-    "Call.justTalk": "Just talk: Najimi answers everything you say, and puts what it finds in the chat."
+    "Call.justTalk": "Just talk: Najimi answers everything you say, and puts what it finds in the chat.",
+    "Call.thinking": "Thinking…"
   },
   "es": {
     "Landing.kicker": "Taste AI by <qloo>Qloo</qloo>",
@@ -2855,7 +2856,8 @@
     "Run.planning": "Planning",
     "Run.stops": "{count, plural, one {# stop} other {# stops}}",
     "Run.dealing": "Dealing a game",
-    "Call.justTalk": "Just talk: Najimi answers everything you say, and puts what it finds in the chat."
+    "Call.justTalk": "Just talk: Najimi answers everything you say, and puts what it finds in the chat.",
+    "Call.thinking": "Thinking…"
   },
   "ha": {
     "Landing.kicker": "Taste AI by <qloo>Qloo</qloo>",
@@ -4284,7 +4286,8 @@
     "Run.planning": "Planning",
     "Run.stops": "{count, plural, one {# stop} other {# stops}}",
     "Run.dealing": "Dealing a game",
-    "Call.justTalk": "Just talk: Najimi answers everything you say, and puts what it finds in the chat."
+    "Call.justTalk": "Just talk: Najimi answers everything you say, and puts what it finds in the chat.",
+    "Call.thinking": "Thinking…"
   },
   "yo": {
     "Landing.kicker": "Taste AI by <qloo>Qloo</qloo>",
@@ -5713,7 +5716,8 @@
     "Run.planning": "Planning",
     "Run.stops": "{count, plural, one {# stop} other {# stops}}",
     "Run.dealing": "Dealing a game",
-    "Call.justTalk": "Just talk: Najimi answers everything you say, and puts what it finds in the chat."
+    "Call.justTalk": "Just talk: Najimi answers everything you say, and puts what it finds in the chat.",
+    "Call.thinking": "Thinking…"
   },
   "hi": {
     "Landing.kicker": "Taste AI by <qloo>Qloo</qloo>",
@@ -7142,7 +7146,8 @@
     "Run.planning": "Planning",
     "Run.stops": "{count, plural, one {# stop} other {# stops}}",
     "Run.dealing": "Dealing a game",
-    "Call.justTalk": "Just talk: Najimi answers everything you say, and puts what it finds in the chat."
+    "Call.justTalk": "Just talk: Najimi answers everything you say, and puts what it finds in the chat.",
+    "Call.thinking": "Thinking…"
   },
   "sw": {
     "Landing.kicker": "Taste AI by <qloo>Qloo</qloo>",
@@ -8571,7 +8576,8 @@
     "Run.planning": "Planning",
     "Run.stops": "{count, plural, one {# stop} other {# stops}}",
     "Run.dealing": "Dealing a game",
-    "Call.justTalk": "Just talk: Najimi answers everything you say, and puts what it finds in the chat."
+    "Call.justTalk": "Just talk: Najimi answers everything you say, and puts what it finds in the chat.",
+    "Call.thinking": "Thinking…"
   },
   "ig": {
     "Landing.kicker": "Taste AI by <qloo>Qloo</qloo>",
@@ -10000,7 +10006,8 @@
     "Run.planning": "Planning",
     "Run.stops": "{count, plural, one {# stop} other {# stops}}",
     "Run.dealing": "Dealing a game",
-    "Call.justTalk": "Just talk: Najimi answers everything you say, and puts what it finds in the chat."
+    "Call.justTalk": "Just talk: Najimi answers everything you say, and puts what it finds in the chat.",
+    "Call.thinking": "Thinking…"
   },
   "ja": {
     "Landing.kicker": "Taste AI by <qloo>Qloo</qloo>",
@@ -11429,7 +11436,8 @@
     "Run.planning": "Planning",
     "Run.stops": "{count, plural, one {# stop} other {# stops}}",
     "Run.dealing": "Dealing a game",
-    "Call.justTalk": "Just talk: Najimi answers everything you say, and puts what it finds in the chat."
+    "Call.justTalk": "Just talk: Najimi answers everything you say, and puts what it finds in the chat.",
+    "Call.thinking": "Thinking…"
   },
   "zh": {
     "Landing.kicker": "Taste AI by <qloo>Qloo</qloo>",
@@ -12858,7 +12866,8 @@
     "Run.planning": "Planning",
     "Run.stops": "{count, plural, one {# stop} other {# stops}}",
     "Run.dealing": "Dealing a game",
-    "Call.justTalk": "Just talk: Najimi answers everything you say, and puts what it finds in the chat."
+    "Call.justTalk": "Just talk: Najimi answers everything you say, and puts what it finds in the chat.",
+    "Call.thinking": "Thinking…"
   },
   "fr": {
     "Landing.kicker": "Taste AI by <qloo>Qloo</qloo>",
@@ -14287,7 +14296,8 @@
     "Run.planning": "Planning",
     "Run.stops": "{count, plural, one {# stop} other {# stops}}",
     "Run.dealing": "Dealing a game",
-    "Call.justTalk": "Just talk: Najimi answers everything you say, and puts what it finds in the chat."
+    "Call.justTalk": "Just talk: Najimi answers everything you say, and puts what it finds in the chat.",
+    "Call.thinking": "Thinking…"
   },
   "ar": {
     "Landing.kicker": "Taste AI by <qloo>Qloo</qloo>",
@@ -15716,6 +15726,7 @@
     "Run.planning": "Planning",
     "Run.stops": "{count, plural, one {# stop} other {# stops}}",
     "Run.dealing": "Dealing a game",
-    "Call.justTalk": "Just talk: Najimi answers everything you say, and puts what it finds in the chat."
+    "Call.justTalk": "Just talk: Najimi answers everything you say, and puts what it finds in the chat.",
+    "Call.thinking": "Thinking…"
   }
 }

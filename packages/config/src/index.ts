@@ -77,7 +77,14 @@ export const CALLS = {
   /** Najimi's voice in calls (ElevenLabs). */
   voiceId: "cjVigY5qzO86Huf0OWal",
   /** An utterance ends this long after its speaker stops (LiveKit's active-speaker signal). */
-  endOfSpeechMs: 700,
+  /** A pause this long ends what someone was saying (shorter pauses are mid-sentence). */
+  endOfSpeechMs: 1100,
+  /** Najimi answers once the call has been quiet this long, so it never talks over a thought. */
+  answerGapMs: 1300,
+  /** Audio kept from before someone is heard to start (10 ms frames): the first word survives. */
+  preRollFrames: 100,
+  /** Someone talking this long while Najimi speaks stops it, the way a person would. */
+  bargeInMs: 450,
   minUtteranceMs: 450,
   maxUtteranceMs: 25_000,
   /** Najimi waits this long for its answer before saying it's still looking. */

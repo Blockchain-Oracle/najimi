@@ -1606,7 +1606,8 @@
     "incoming": "{who} está ligando",
     "incomingIn": "{who} está ligando · {chat}",
     "decline": "Agora não",
-    "justTalk": "É só conversar: Najimi responde a tudo que você diz e coloca no chat o que encontrar."
+    "justTalk": "É só conversar: Najimi responde a tudo que você diz e coloca no chat o que encontrar.",
+    "thinking": "Pensando…"
   },
   "Phone": {
     "off": "As ligações telefônicas ainda não estão ativadas.",

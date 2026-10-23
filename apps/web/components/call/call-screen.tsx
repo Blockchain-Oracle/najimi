@@ -4,6 +4,7 @@ import {
   LiveKitRoom,
   RoomAudioRenderer,
   StartAudio,
+  useDataChannel,
   useIsSpeaking,
   useLocalParticipant,
   useParticipants,
@@ -48,7 +49,16 @@ const leave = (chatId: string) => {
   void fetch(url, { method: "POST", keepalive: true }).catch(() => undefined)
 }
 
-function Tile({ participant, member }: { participant: Participant; member?: Member }) {
+function Tile({
+  participant,
+  member,
+  thinking = false,
+}: {
+  participant: Participant
+  member?: Member
+  /** Najimi is working out an answer (it says so here instead of out loud). */
+  thinking?: boolean
+}) {
   const t = useTranslations("Call")
   const speaking = useIsSpeaking(participant)
   const muted = !participant.isMicrophoneEnabled
@@ -56,11 +66,11 @@ function Tile({ participant, member }: { participant: Participant; member?: Memb
     return (
       <li className="flex flex-col items-center gap-2">
         <span className={cn("rounded-full transition-transform", speaking && "scale-110")}>
-          <Orb size={92} working={speaking} />
+          <Orb size={92} working={speaking || thinking} />
         </span>
         <span className="text-[14px] font-semibold">Najimi</span>
         <span className="text-[12px] text-white/50">
-          {speaking ? t("speaking") : t("listening")}
+          {speaking ? t("speaking") : thinking ? t("thinking") : t("listening")}
         </span>
       </li>
     )
@@ -118,6 +128,16 @@ function Room({
   const byId = new Map(members.map((m) => [m.userId, m]))
   const najimiHere = people.some((p) => p.isAgent)
   const others = people.filter((p) => !p.isAgent && !p.isLocal).length
+  // Najimi says when it's thinking over the room's data channel.
+  const [thinking, setThinking] = useState(false)
+  useDataChannel("najimi", (message) => {
+    try {
+      const { state } = JSON.parse(new TextDecoder().decode(message.payload)) as { state?: string }
+      setThinking(state === "thinking")
+    } catch {
+      // Not ours to read.
+    }
+  })
 
   // Najimi on its way: shown for a while, then the button comes back if it never arrived.
   const [asking, setAsking] = useState(false)
@@ -211,7 +231,12 @@ function Room({
     <div className="flex h-full flex-col">
       <ul className="grid flex-1 content-center justify-items-center gap-x-6 gap-y-10 px-6 [grid-template-columns:repeat(auto-fit,minmax(7rem,1fr))]">
         {people.map((p) => (
-          <Tile key={p.identity} participant={p} member={byId.get(p.identity)} />
+          <Tile
+            key={p.identity}
+            participant={p}
+            member={byId.get(p.identity)}
+            thinking={p.isAgent && thinking}
+          />
         ))}
       </ul>
       <p className="px-6 pb-4 text-center text-[13px] text-white/60" aria-live="polite">

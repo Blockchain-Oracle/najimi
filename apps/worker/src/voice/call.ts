@@ -43,11 +43,16 @@ const HEARING_HINT = "A voice call with Najimi, an AI. People say its name: Naji
 type Speaker = {
   identity: string
   name: string
-  /** The last ~300 ms, kept so an utterance's first word isn't lost. */
+  /**
+   * The last second of audio before they were heard to start: the call server notices speech a
+   * moment late, and without it the first word goes ("Najimi" came back as "Jimmy").
+   */
   pre: Int16Array[]
   frames: Int16Array[] | null
   startedAt: number
   stoppedAt: number | null
+  /** When they started talking (null while quiet): Najimi waits, and yields, while anyone talks. */
+  talkingSince: number | null
 }
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
@@ -100,8 +105,11 @@ async function transcribe(samples: Int16Array): Promise<string> {
   return body.text?.trim() ?? ""
 }
 
-/** Speaks a line through the room: ElevenLabs' raw 24 kHz audio, 10 ms at a time. */
-async function speak(source: AudioSource, text: string) {
+/**
+ * Speaks a line through the room: ElevenLabs' raw 24 kHz audio, 10 ms at a time. It stops the
+ * moment `stop` says someone has started talking (what was queued is dropped too).
+ */
+async function speak(source: AudioSource, text: string, stop: () => boolean = () => false) {
   if (!env.ELEVENLABS_API_KEY || !text.trim()) return
   const r = await fetch(
     `https://api.elevenlabs.io/v1/text-to-speech/${CALLS.voiceId}/stream?output_format=pcm_24000`,
@@ -125,6 +133,10 @@ async function speak(source: AudioSource, text: string) {
     bytes.set(chunk, rest.length)
     const whole = Math.floor(bytes.length / (SPEAK_FRAME * 2)) * SPEAK_FRAME * 2
     for (let o = 0; o < whole; o += SPEAK_FRAME * 2) {
+      if (stop()) {
+        source.clearQueue()
+        return
+      }
       const pcm = new Int16Array(bytes.slice(o, o + SPEAK_FRAME * 2).buffer)
       await source.captureFrame(new AudioFrame(pcm, SPEAK_RATE, 1, SPEAK_FRAME))
     }
@@ -178,23 +190,46 @@ export async function joinCall({ room: roomName, chatId }: Payload<"callJoin">) 
 
   const speakers = new Map<string, Speaker>()
   let busy = false
-  const queue: { speaker: Speaker; text: string }[] = []
+  // What's been said for Najimi since it last answered: one question however many pauses it took,
+  // answered once the call goes quiet (never mid-thought, never once per fragment).
+  let pending: { speaker: Speaker; text: string }[] = []
+  let lastHeardAt = 0
+  const anyoneTalking = () => [...speakers.values()].some((s) => s.talkingSince != null)
+  const bargedIn = () =>
+    [...speakers.values()].some(
+      (s) => s.talkingSince != null && Date.now() - s.talkingSince > CALLS.bargeInMs,
+    )
+  // The call screen shows "Thinking…" under the orb while Najimi works (no spoken filler).
+  const state = (now: "thinking" | "idle") =>
+    room.localParticipant
+      ?.publishData(new TextEncoder().encode(JSON.stringify({ state: now })), {
+        reliable: true,
+        topic: "najimi",
+      })
+      .catch(() => undefined)
 
-  const answerNext = async () => {
-    if (busy) return
-    const next = queue.shift()
-    if (!next) return
+  const answer = async () => {
+    const asked = pending
+    pending = []
+    const last = asked.at(-1)
+    if (!last) return
     busy = true
+    // One speaker's fragments read as one sentence; several people's as who said what.
+    const text = asked.every((a) => a.speaker === last.speaker)
+      ? asked.map((a) => a.text).join(" ")
+      : asked.map((a) => `${a.speaker.name}: ${a.text}`).join("\n")
     try {
-      await speak(source, "One sec.")
+      await state("thinking")
       const reply = await askAloud({
         chatId,
-        userId: next.speaker.identity,
-        text: next.text,
-        where: "a voice call with this chat's members",
+        userId: last.speaker.identity,
+        text,
+        where:
+          "a voice call, spoken out loud. If they ask you to choose or decide, choose and say what you picked; ask at most one question, and never ask again what they already told you",
       })
+      await state("idle")
       if (reply) {
-        await speak(source, reply)
+        await speak(source, reply, bargedIn)
         await addLine(roomName, {
           at: new Date().toISOString(),
           userId: null,
@@ -204,9 +239,9 @@ export async function joinCall({ room: roomName, chatId }: Payload<"callJoin">) 
       }
     } catch (error) {
       console.error("[call] answer", (error as Error).message)
+      await state("idle")
     } finally {
       busy = false
-      void answerNext()
     }
   }
 
@@ -230,8 +265,8 @@ export async function joinCall({ room: roomName, chatId }: Payload<"callJoin">) 
     // with more, Najimi answers only when someone says its name.
     const alone = room.remoteParticipants.size <= 1
     if ((alone && text.split(/\s+/).length >= 2) || ADDRESSED.test(text)) {
-      queue.push({ speaker: s, text })
-      void answerNext()
+      pending.push({ speaker: s, text })
+      lastHeardAt = Date.now()
     }
   }
 
@@ -243,6 +278,7 @@ export async function joinCall({ room: roomName, chatId }: Payload<"callJoin">) 
       frames: null,
       startedAt: 0,
       stoppedAt: null,
+      talkingSince: null,
     }
     speakers.set(p.identity, s)
     for await (const frame of new AudioStream(track, { sampleRate: HEAR_RATE, numChannels: 1 })) {
@@ -253,7 +289,7 @@ export async function joinCall({ room: roomName, chatId }: Payload<"callJoin">) 
         if (ms > CALLS.maxUtteranceMs) void finish(s)
       } else {
         s.pre.push(pcm)
-        if (s.pre.length > 30) s.pre.shift()
+        if (s.pre.length > CALLS.preRollFrames) s.pre.shift()
       }
     }
   }
@@ -266,6 +302,7 @@ export async function joinCall({ room: roomName, chatId }: Payload<"callJoin">) 
     const now = Date.now()
     const talking = new Set(active.map((p) => p.identity))
     for (const s of speakers.values()) {
+      s.talkingSince = talking.has(s.identity) ? (s.talkingSince ?? now) : null
       if (talking.has(s.identity)) {
         s.stoppedAt = null
         if (!s.frames) {
@@ -297,6 +334,8 @@ export async function joinCall({ room: roomName, chatId }: Payload<"callJoin">) 
     const now = Date.now()
     for (const s of speakers.values())
       if (s.frames && s.stoppedAt && now - s.stoppedAt > CALLS.endOfSpeechMs) void finish(s)
+    if (!busy && pending.length && !anyoneTalking() && now - lastHeardAt > CALLS.answerGapMs)
+      void answer()
     const humans = [...room.remoteParticipants.values()].filter(
       (p) => !p.identity.startsWith("najimi"),
     )

@@ -1606,7 +1606,8 @@
     "incoming": "{who} 正在呼叫",
     "incomingIn": "{who} 正在呼叫 · {chat}",
     "decline": "现在不方便",
-    "justTalk": "随便聊聊：你说什么，Najimi 都会回答，并把发现的内容放进聊天。"
+    "justTalk": "随便聊聊：你说什么，Najimi 都会回答，并把发现的内容放进聊天。",
+    "thinking": "思考中…"
   },
   "Phone": {
     "off": "电话功能尚未开启。",

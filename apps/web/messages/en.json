@@ -1606,7 +1606,8 @@
     "incoming": "{who} is calling",
     "incomingIn": "{who} is calling · {chat}",
     "decline": "Not now",
-    "justTalk": "Just talk: Najimi answers everything you say, and puts what it finds in the chat."
+    "justTalk": "Just talk: Najimi answers everything you say, and puts what it finds in the chat.",
+    "thinking": "Thinking…"
   },
   "Phone": {
     "off": "Phone calls aren't switched on yet.",

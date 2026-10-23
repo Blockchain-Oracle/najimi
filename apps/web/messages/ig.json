@@ -1606,7 +1606,8 @@
     "incoming": "{who} na-akpọ gị",
     "incomingIn": "{who} na-akpọ gị · {chat}",
     "decline": "Ọ bụghị ugbu a",
-    "justTalk": "Naanị kparịta ụka: Najimi na-aza ihe niile i kwuru, tinyekwa ihe ọ chọtara na nkata."
+    "justTalk": "Naanị kparịta ụka: Najimi na-aza ihe niile i kwuru, tinyekwa ihe ọ chọtara na nkata.",
+    "thinking": "Na-eche…"
   },
   "Phone": {
     "off": "Emebeghị ka oku ekwentị rụọ ọrụ.",
