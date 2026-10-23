@@ -52,6 +52,8 @@ export const CALLS = {
   joinGraceMs: 2 * 60 * 1000,
   /** Najimi on a phone call you added it to: the longest it stays, and how long an answer may take. */
   phoneMaxSeconds: 20 * 60,
+  /** The model the phone agent thinks with (ElevenLabs' name for it): quick, and good at keeping quiet. */
+  phoneLlm: "gpt-6-luna",
   phoneAnswerWaitMs: 50_000,
   /** The voice agent's name, for LiveKit's explicit dispatch. */
   agentName: "najimi",
