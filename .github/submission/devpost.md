@@ -1,20 +1,22 @@
-# Najimi · The group-chat agent that plans for everyone's taste
+# Najimi · Make more of what you love
 
-![Najimi: the group-chat agent that plans for everyone's taste](https://raw.githubusercontent.com/Blockchain-Oracle/najimi/main/.github/assets/banner.png)
+![Najimi banner showing the group-chat agent and the live app](https://raw.githubusercontent.com/Blockchain-Oracle/najimi/main/.github/assets/banner.png)
 
-*Everyone's taste, one plan.* Najimi reads each friend's taste through Qloo, then picks the film, plans the night and routes the trip, showing why each pick fits.
+**Najimi turns what you love into a living taste:** a feed, people, games, places and plans. Qloo powers every match, and an agent helps you and your friends act on it. Open any pick to see *why* it fits.
 
 **Try it:** [najimi.xyz](https://najimi.xyz) · **Code:** [GitHub](https://github.com/Blockchain-Oracle/najimi) · **Docs:** [docs.najimi.xyz](https://docs.najimi.xyz) · **Qloo integration:** [API map](https://docs.najimi.xyz/docs/qloo)
 
 ## Inspiration
 
-Every group chat has the same thread: "where should we go tonight?", "what are we watching?". Someone suggests their own favourite, someone else is too polite to object, and the plan ends up fitting nobody in particular. A general assistant can't fix that: it guesses a crowd-pleaser. It doesn't know that Juno leans eclectic and Kemi artful-indie.
+What we love is scattered across playlists, watchlists, books, places and people. Most apps see only one slice. We wanted to make taste feel alive across all of them: something you can explore, play with, share with a friend, and use to decide what to do next.
 
-Qloo does. Its taste graph connects what each person loves across music, film, books, places and more, and it can score any candidate against any one person's taste. *Najimi* (馴染み) means someone you know well. We wanted an agent that knows everyone in the chat that way, and plans for all of them at once.
+Qloo's taste graph connects those slices and explains how a pick relates to someone's loves. *Najimi* (馴染み) means someone you know well. The name fits an app that learns your taste, then helps you find your people and make plans together. One hard test is the group chat: when friends ask "where should we go tonight?", a general assistant guesses a crowd-pleaser. Najimi can ask Qloo what fits *each* person and show its working.
 
 ## What it does
 
-**Say `@najimi` in a group chat.** The agent blends everyone's loves into one Qloo signal, scores every candidate against each person's own taste, and answers with a card the whole room sees live, each pick with its *because*.
+Start with three things you love, or bring a Letterboxd, Goodreads, Last.fm, X or Instagram name. Najimi builds a taste profile across music, films, TV, books, podcasts, brands, places, destinations, games and people. That taste drives a playable feed, an explorable graph and globe, people and circles, social games, and plans you can actually use. Open any pick for its own sheet: a film's trailer and where to stream it, an artist's songs and next concerts, a book's reading links, or a place's directions, hours and a ride. A *Why this?* chip shows the Qloo relationship behind the pick.
+
+The agent lives in your own chat and in every circle. **Say `@najimi` in a group chat:** it blends everyone's loves into one Qloo signal, scores every candidate against each person's own taste, and answers with a card the whole room sees live, each pick with its *because*.
 
 In the *Friday crew* circle, Juno wrote "@najimi find us a spot tonight". Najimi asked Qloo for places in Lagos for both members' tastes, then scored the same five places once per member:
 
@@ -30,9 +32,7 @@ It picked NOK by Alara, "an equally strong match for Juno and Kemi at 74% each, 
 
 ![Najimi's night plan card: three stops in order, each with its time and because](https://raw.githubusercontent.com/Blockchain-Oracle/najimi/main/.github/assets/submission/fullwide/19-agent-night-plan.jpg)
 
-Around the agent sits a whole app built on the same taste. You start with three things you love (or bring Letterboxd, Goodreads, Last.fm, X or Instagram), and Najimi builds a profile across music, films, TV, books, podcasts, brands, places, destinations, games and people, each pick showing *why* it appeared. Open any pick for its own sheet: a film's trailer and where to stream it, an artist's songs and next concerts, a book's reading links, or a place's directions, hours and a ride.
-
-That taste becomes a whole app:
+That taste keeps working across the app:
 
 - **Feed:** a full-screen mix of songs, trailers, podcasts, books, and places. Play a preview or trailer, love or skip a pick, or tune the mix. A “Why this?” chip connects the card to one of your loves and its Qloo call.
 - **People and circles:** find people with overlapping taste, compare with a friend, make a circle, and ask Najimi in the group chat. The agent can suggest something for everyone and show each person's fit.

@@ -9,14 +9,14 @@
 <h1 align="center">Najimi · 馴染み</h1>
 
 <p align="center">
-  <i>Everyone's taste, one plan.</i><br>
-  <b>The group-chat agent that plans for everyone's taste.</b>
+  <i>Make more of what you love.</i><br>
+  <b>A living taste: things to discover, people to meet, games to play, places to go, and plans to make.</b>
 </p>
 
 <p align="center">
   <a href="https://najimi.xyz"><b>Open the app</b></a>
   &nbsp;·&nbsp;
-  <a href="#demo-video"><b>Demo</b></a>
+  <a href="#try-the-demo"><b>Demo</b></a>
   &nbsp;·&nbsp;
   <a href="https://docs.najimi.xyz"><b>Docs</b></a>
   &nbsp;·&nbsp;
@@ -33,7 +33,7 @@
   </a>
 </p>
 
-Najimi reads each friend's taste through **Qloo**, then picks the film, plans the night and routes the trip, showing why each pick fits. Say `@najimi` in a group chat and the agent blends everyone's loves into one Qloo signal, scores every candidate against each person's own taste, and answers with a card the whole room sees live, each pick carrying its *because* from Qloo's explainability. It can then route the night, find the shows on, and book the table by phone once someone says yes. A general model alone would guess a crowd-pleaser; Najimi only recommends what Qloo returned for these people.
+Najimi turns what you love into a living taste through **Qloo**. Start with three loves and explore a playable feed, people and circles, social games, an Earth map of local scenes, a graph of your influences, and picks that explain *why* they fit. Open a film for its trailer, an artist for their songs and shows, or a place for its map, hours and a ride. Then ask the agent to find something for you or plan with your friends. In a group chat, `@najimi` blends everyone's loves, scores candidates for each person, and plans a night that the whole room can see and act on. Every recommendation comes from Qloo, not a model's guess.
 
 Built for the **[Qloo Agentic Hackathon](https://qloo.devpost.com/)** · [how it meets the brief](#how-najimi-meets-the-hackathon). *Najimi* (馴染み) means **someone you know well**.
 
@@ -66,11 +66,11 @@ Juno and Kemi share a circle called *Friday crew*. Juno writes one line; Najimi 
   <img src=".github/assets/submission/fullwide/20-plan-route.jpg" alt="The plan page: the route on the map, calendar, Uber and Ask Najimi to book" width="49%">
 </p>
 
-## Demo video
+## Try the demo
 
 <p align="center">
   <a href="https://najimi.xyz">
-    <img src=".github/assets/demo-cover.png" alt="Play: see Najimi plan a night for two tastes" width="100%">
+    <img src=".github/assets/demo-cover.png" alt="Open the live Najimi walkthrough" width="100%">
   </a>
 </p>
 
