@@ -1,67 +1,249 @@
 @import "tailwindcss";
 @import "fumadocs-ui/css/neutral.css";
 @import "fumadocs-ui/css/preset.css";
+@import "@najimi/tokens/tokens.css";
 
-/* The design lock (context/design/README.md): black ink on white, a real dark mode from black
-   bands, Inter with open tracking, no colour in the chrome. */
+/* The app's design lock, "Your taste is the colour" (context/11-design): a neutral frame, white or
+   black, that follows the device; ink-filled actions; Funnel Display for titles, Funnel Sans for
+   reading, Geist Mono for what the agent did. Colour comes only from culture: the screenshots and
+   artwork, and the agent's aura (pink, violet, amber) on the orb and the soft wash behind a title. */
+
+@source "../components/**/*.tsx";
+@source "../lib/**/*.tsx";
+@source "../content/**/*.mdx";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-antonio), "Arial Narrow", sans-serif;
+  --font-sans: var(--font-funnel-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-funnel-display), var(--font-funnel-sans), ui-sans-serif, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, "SFMono-Regular", monospace;
+
+  --color-canvas: var(--canvas);
+  --color-panel: var(--panel);
+  --color-raised: var(--raised);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-ink: var(--ink);
+  --color-on-ink: var(--on-ink);
+  --color-text-2: var(--text-2);
+  --color-text-3: var(--text-3);
+  --color-text-4: var(--text-4);
+  --color-glass: var(--glass);
+  --color-glass-line: var(--glass-line);
+  --color-aura-1: var(--aura-1);
+  --color-aura-2: var(--aura-2);
+  --color-aura-3: var(--aura-3);
+  --color-success: var(--success);
+  --color-warn: var(--warn);
+  --color-danger: var(--danger);
+
+  --radius-tile: 12px;
+  --radius-card: 20px;
+  --radius-sheet: 28px;
+  --shadow-float: 0 0 0 1px var(--color-glass-line), 0 10px 30px -6px rgb(0 0 0 / 0.22);
+  --shadow-lift: 0 1px 2px rgb(0 0 0 / 0.06), 0 8px 24px -8px rgb(0 0 0 / 0.18);
 }
 
-:root {
-  --color-fd-background: #ffffff;
-  --color-fd-foreground: #000000;
-  --color-fd-muted: #eeeeee;
-  --color-fd-muted-foreground: #595959;
-  --color-fd-popover: #ffffff;
-  --color-fd-popover-foreground: #000000;
-  --color-fd-card: #ffffff;
-  --color-fd-card-foreground: #000000;
-  --color-fd-border: #d9d9d9;
-  --color-fd-primary: #000000;
-  --color-fd-primary-foreground: #ffffff;
-  --color-fd-secondary: #eeeeee;
-  --color-fd-secondary-foreground: #000000;
-  --color-fd-accent: #eeeeee;
-  --color-fd-accent-foreground: #000000;
-  --color-fd-ring: #000000;
-}
-
+/* Fumadocs' palette, mapped onto the app's tokens (which switch with the .dark class). */
+:root,
 .dark {
-  --color-fd-background: #000000;
-  --color-fd-foreground: #ffffff;
-  --color-fd-muted: #1a1a1a;
-  --color-fd-muted-foreground: #8c8c8c;
-  --color-fd-popover: #111111;
-  --color-fd-popover-foreground: #ffffff;
-  --color-fd-card: #111111;
-  --color-fd-card-foreground: #ffffff;
-  --color-fd-border: #333333;
-  --color-fd-primary: #ffffff;
-  --color-fd-primary-foreground: #000000;
-  --color-fd-secondary: #1a1a1a;
-  --color-fd-secondary-foreground: #ffffff;
-  --color-fd-accent: #1a1a1a;
-  --color-fd-accent-foreground: #ffffff;
-  --color-fd-ring: #ffffff;
+  --color-fd-background: var(--canvas);
+  --color-fd-foreground: var(--ink);
+  --color-fd-muted: var(--panel);
+  --color-fd-muted-foreground: var(--text-3);
+  --color-fd-popover: var(--popover);
+  --color-fd-popover-foreground: var(--ink);
+  --color-fd-card: var(--panel);
+  --color-fd-card-foreground: var(--ink);
+  --color-fd-border: var(--line-strong);
+  --color-fd-primary: var(--ink);
+  --color-fd-primary-foreground: var(--on-ink);
+  --color-fd-secondary: var(--secondary);
+  --color-fd-secondary-foreground: var(--ink);
+  --color-fd-accent: var(--secondary);
+  --color-fd-accent-foreground: var(--ink);
+  --color-fd-ring: var(--ink);
 }
 
 body {
   background: var(--color-fd-background);
-  letter-spacing: 0.06em;
-}
-
-/* Page titles are poster titles: Antonio, stacked and tight. */
-#nd-page h1 {
-  font-family: var(--font-display);
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0;
-  line-height: 0.9;
-  font-size: clamp(2.6rem, 5vw, 3.6rem);
+  font-feature-settings: "ss01";
+  -webkit-font-smoothing: antialiased;
 }
 
 html {
   scrollbar-gutter: stable;
+}
+
+/* Titles: Funnel Display, heavy and tight, never shouting in capitals. */
+#nd-page h1,
+.prose h2,
+.prose h3 {
+  font-family: var(--font-display);
+  letter-spacing: -0.02em;
+}
+#nd-page h1 {
+  font-weight: 800;
+  font-size: clamp(2.1rem, 4.2vw, 2.9rem);
+  line-height: 1.02;
+}
+.prose h2 {
+  font-weight: 700;
+}
+.prose h3 {
+  font-weight: 700;
+}
+.prose code {
+  font-family: var(--font-mono);
+}
+
+/* A soft aura behind each page's title: the agent's colours, faint, fading into the frame. */
+#nd-page {
+  position: relative;
+  isolation: isolate;
+}
+#nd-page::before {
+  content: "";
+  position: absolute;
+  inset: -6rem -4rem auto;
+  height: 22rem;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      40% 60% at 18% 30%,
+      color-mix(in oklab, var(--aura-1) 16%, transparent),
+      transparent 70%
+    ),
+    radial-gradient(
+      38% 55% at 50% 10%,
+      color-mix(in oklab, var(--aura-2) 14%, transparent),
+      transparent 70%
+    ),
+    radial-gradient(
+      34% 50% at 82% 34%,
+      color-mix(in oklab, var(--aura-3) 12%, transparent),
+      transparent 70%
+    );
+  filter: blur(8px);
+  mask-image: linear-gradient(to bottom, black, transparent);
+}
+.dark #nd-page::before {
+  opacity: 0.85;
+}
+
+/* The orb (components/orb.tsx), the same as the app's: after 21st.dev's Siri Orb by educalvolpz. */
+@property --orb-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+@layer components {
+  .najimi-orb {
+    display: inline-grid;
+    grid-template-areas: "stack";
+    flex-shrink: 0;
+    overflow: hidden;
+    border-radius: 50%;
+    position: relative;
+    isolation: isolate;
+  }
+  .najimi-orb::before,
+  .najimi-orb::after {
+    content: "";
+    display: block;
+    grid-area: stack;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+  }
+  .najimi-orb::before {
+    background:
+      conic-gradient(
+        from calc(var(--orb-angle) * 2) at 25% 70%,
+        var(--orb-c3),
+        transparent 20% 80%,
+        var(--orb-c3)
+      ),
+      conic-gradient(
+        from calc(var(--orb-angle) * 2) at 45% 75%,
+        var(--orb-c2),
+        transparent 30% 60%,
+        var(--orb-c2)
+      ),
+      conic-gradient(
+        from calc(var(--orb-angle) * -3) at 80% 20%,
+        var(--orb-c1),
+        transparent 40% 60%,
+        var(--orb-c1)
+      ),
+      conic-gradient(
+        from calc(var(--orb-angle) * 2) at 15% 5%,
+        var(--orb-c2),
+        transparent 10% 90%,
+        var(--orb-c2)
+      ),
+      conic-gradient(
+        from calc(var(--orb-angle) * 1) at 20% 80%,
+        var(--orb-c1),
+        transparent 10% 90%,
+        var(--orb-c1)
+      ),
+      conic-gradient(
+        from calc(var(--orb-angle) * -2) at 85% 10%,
+        var(--orb-c3),
+        transparent 20% 80%,
+        var(--orb-c3)
+      );
+    box-shadow: inset var(--orb-bg) 0 0 var(--orb-spread) calc(var(--orb-spread) * 0.2);
+    filter: blur(var(--orb-blur)) contrast(var(--orb-contrast));
+    animation: orb-turn var(--orb-duration) linear infinite;
+  }
+  .najimi-orb::after {
+    background-image: radial-gradient(
+      circle at center,
+      var(--orb-bg) var(--orb-dot),
+      transparent var(--orb-dot)
+    );
+    background-size: calc(var(--orb-dot) * 2) calc(var(--orb-dot) * 2);
+    -webkit-backdrop-filter: blur(calc(var(--orb-blur) * 2)) contrast(calc(var(--orb-contrast) * 2));
+    backdrop-filter: blur(calc(var(--orb-blur) * 2)) contrast(calc(var(--orb-contrast) * 2));
+    mix-blend-mode: overlay;
+    mask-image: radial-gradient(black var(--orb-mask), transparent 75%);
+  }
+  .najimi-orb[data-mask="none"]::after {
+    mask-image: none;
+  }
+}
+@keyframes orb-turn {
+  to {
+    --orb-angle: 360deg;
+  }
+}
+
+/* The logo cloud's endless row (components/logo-cloud.tsx). */
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* The agent's run: a step fades in as if it just streamed. */
+@keyframes step-in {
+  from {
+    opacity: 0;
+    translate: 0 4px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+/* The marquee and the run's steps only move under motion-safe; the orb stops here. */
+@media (prefers-reduced-motion: reduce) {
+  .najimi-orb::before {
+    animation: none;
+  }
 }

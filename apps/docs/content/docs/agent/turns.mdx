@@ -1,0 +1,69 @@
+---
+title: How a turn runs
+description: From your message to Najimi's answer streaming into the room, in the background, so it finishes even if everyone leaves.
+icon: Activity
+---
+
+A **turn** is one answer from Najimi. It runs in the background worker, never inside your page, and streams to everyone in the room as it goes.
+
+<Flow
+  label="One turn in a room"
+  steps={[
+    { title: "You send", note: "Saved and shown to the room at once", mono: "POST /api/rooms/<id>/messages" },
+    { title: "Queued", note: "One turn per room at a time; at most one waiting", mono: "pg-boss · agent-turn · stately" },
+    { title: "Najimi works", note: "Your taste, the room, the screen; tools composed, up to ten steps", mono: "AI SDK streamText", accent: true },
+    { title: "Live to the room", note: "Text, steps and cards stream to every member", mono: "live_events · LISTEN/NOTIFY · SSE" },
+  ]}
+/>
+
+## Step by step
+
+<Steps>
+<Step>
+**Your message is saved** and announced on the room's live channel. If it calls Najimi (always in your own chat; `@najimi` or "Najimi…" in a circle or DM), one turn of your daily allowance is used and a turn is queued for that room.
+</Step>
+<Step>
+**The worker picks it up.** Each room runs one turn at a time, so answers never cross. Up to eight rooms are answered at once.
+</Step>
+<Step>
+**Najimi reads the room**: your taste and, in a circle, everyone's; the screen you were on; your plans, bookings and connected accounts; the room's polls; photos shared here; the whole conversation.
+</Step>
+<Step>
+**It works**: tool calls, several at once when they're independent, up to ten steps. The growing answer is saved and sent to the room about every 150 milliseconds.
+</Step>
+<Step>
+**Cards that wait.** A call, a post, a picture in *Ask me first*, or a question card pauses the turn. When it's answered (an approval only by the person who asked), a new turn picks up exactly where it stopped. Approvals are signed, so nobody can forge a yes.
+</Step>
+<Step>
+**Done.** The answer is final, the run folds into one line (*5 steps · 5 Qloo calls*), and a new chat gets a title in your language.
+</Step>
+</Steps>
+
+Because the turn lives in the worker, it finishes even if you close the app; anyone who opens the room later sees it.
+
+## Stop and try again
+
+- **Stop** ends a turn within a second and keeps what was already said.
+- **Try again** removes the last answer and runs it fresh. It doesn't use a turn of your allowance.
+- If the AI provider fails, the answer says so, with **Try again**.
+
+## What it knows each turn
+
+| | |
+| --- | --- |
+| **You** | name, city, every love with its weight, your taste's words |
+| **The room** | in a circle or DM: each member's name, city and top five loves |
+| **Where you are** | the screen you opened it from and the thing on it (a feed card, a pick, a square on Earth, a graph node, a plan, a business plan) |
+| **Your life in Najimi** | plans and bookings from the last 30 days, and how they went; your connected accounts |
+| **The room's latest** | the last three polls with their votes; photos shared; what Najimi made here |
+| **When** | today's date in your time zone; it replies in your language |
+
+## Models and cost
+
+| Work | Model |
+| --- | --- |
+| Every answer in every room, reading a feed screenshot, writing a business plan | `gpt-6.1-sol` (OpenAI) |
+| Chat titles, reading a business's website, picking culture names out of posts | `gpt-6-luna` (OpenAI), a small, cheap model |
+| Web search | OpenAI's hosted search, with your city as a rough location |
+
+Every model call is logged with its tokens, time and cost in dollars, and **Settings** shows what Najimi's thinking cost you this month.

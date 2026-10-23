@@ -1,0 +1,7 @@
+{
+  "title": "The agent",
+  "description": "What Najimi does for you",
+  "icon": "Sparkles",
+  "root": true,
+  "pages": ["index", "tools", "actions", "turns", "follow-ups"]
+}

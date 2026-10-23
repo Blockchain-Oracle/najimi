@@ -1,0 +1,65 @@
+---
+title: Integrations
+description: Every outside service Najimi calls, what it's for, and the setting that switches it on.
+icon: Plug
+---
+
+<Brands />
+
+Qloo is the core; everything else makes its answers playable, mappable and bookable. Only three settings are required to start (`DATABASE_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`); every service below is optional, and a feature that needs one says so, or quietly stays off, until it's set.
+
+## The taste graph
+
+| Service | What for | Setting |
+| --- | --- | --- |
+| <QlooLogo /> **Qloo** | Search, entities, insights (picks, words, heatmaps, demographics), tags, compare, audiences. See [How Najimi uses Qloo](/docs/qloo). | `QLOO_API_KEY` |
+
+## The agent
+
+| Service | What for | Setting |
+| --- | --- | --- |
+| <Logo name="openai" /> **OpenAI** | Every answer in every room (`gpt-6.1-sol`), light work (`gpt-6-luna`), hosted web search, reading feed screenshots, and pictures when there's no fal key | `OPENAI_API_KEY`, `AGENT_MODEL` (light work) |
+| **fal** | Pictures: FLUX 2 for new ones, FLUX 2 Edit for restyling your photo | `FAL_KEY` |
+| <Logo name="elevenlabs" /> **ElevenLabs** | Voice dictation (Scribe v2), and the voice agent that phones venues | `ELEVENLABS_API_KEY`, `ELEVENLABS_CALLER_AGENT_ID`, `ELEVENLABS_PHONE_NUMBER_ID`, `ELEVENLABS_WEBHOOK_SECRET` |
+| <Logo name="twilio" /> **Twilio** | The phone number the caller dials from | connected inside ElevenLabs |
+
+## Booking and going out
+
+| Service | What for | Setting |
+| --- | --- | --- |
+| **Nuitee** (LiteAPI) | Real hotel rates, holds, bookings and cancellations; Nuitee's own payment sheet takes the card | `NUITEE_API_KEY`, `NUITEE_MARGIN` |
+| <Logo name="mapbox" /> **Mapbox** | Routes between plan stops; the map picture on a plan's link preview | `MAPBOX_TOKEN` |
+| <Logo name="ticketmaster" /> **Ticketmaster** | Shows near a plan; an artist's next concerts | `TICKETMASTER_API_KEY` |
+| <Logo name="openstreetmap" /> **OpenStreetMap** | Finding a place by name (Nominatim), a venue's website and accounts, and the map tiles (OpenFreeMap) | none |
+| <Logo name="uber" /> **Uber**, Google Maps, <Logo name="googlecalendar" /> Google Calendar, Outlook | Ride, directions and add-to-calendar links | none |
+
+## Media
+
+| Service | What for | Setting |
+| --- | --- | --- |
+| <Logo name="applemusic" /> **Apple** | 30-second song previews, music videos, podcast lookups, store links | none |
+| Podcast feeds | Each show's latest episode, from its own RSS | none |
+| <Logo name="themoviedatabase" /> **TMDB** | Trailers, more videos, where to watch, a film's accounts | `TMDB_READ_TOKEN` |
+| <Logo name="youtube" /> **YouTube** | Trailers play in its privacy-enhanced player | none |
+| <Logo name="wikidata" /> **Wikidata** | An artist's Apple Music id; a thing's X, Instagram, TikTok and YouTube handles | none |
+| Open Library, Google Books | Book covers and links | none |
+
+## Your accounts and imports
+
+| Service | What for | Setting |
+| --- | --- | --- |
+| <Logo name="x" /> **X** | Connect with your own session: read who you follow, follow, post. Through `rettiwt-api`. | `CONNECTOR_SECRET` |
+| <Logo name="instagram" /> **Instagram** | Connect with your own session: read, follow, like, save, post. Through `instagrapi` in the social bridge. | `CONNECTOR_SECRET`, `SOCIAL_BRIDGE_URL`, `SOCIAL_BRIDGE_TOKEN` |
+| <Logo name="tiktok" /> **TikTok**, <Logo name="youtube" /> YouTube, <Logo name="spotify" /> Spotify | Your data exports, read in your browser | none |
+| <Logo name="letterboxd" /> **Letterboxd**, <Logo name="goodreads" /> **Goodreads** | Import by username (diary, shelf) | none |
+| <Logo name="lastdotfm" /> **Last.fm** | Import your top artists by username | `LASTFM_API_KEY` |
+
+## The platform
+
+| Service | What for | Setting |
+| --- | --- | --- |
+| <Logo name="postgresql" /> **Postgres** | Everything: data, the Qloo cache, the queues, the live pipe | `DATABASE_URL` |
+| S3-compatible storage | Photos, pictures, files (RustFS locally) | `S3_ENDPOINT`, `S3_REGION`, `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY` |
+| **Better Auth** | Sessions, guests, usernames, email codes, Google sign-in | `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` |
+| <Logo name="resend" /> **Resend** | Sign-in codes; reports to the owner | `RESEND_API_KEY`, `EMAIL_FROM`, `REPORTS_EMAIL` |
+| Web Push | Notifications to installed phones | `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT` |

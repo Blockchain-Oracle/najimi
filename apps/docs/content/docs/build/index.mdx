@@ -1,0 +1,91 @@
+---
+title: Architecture
+description: How Najimi is built and run, from the phone in your hand to Qloo and back.
+icon: Boxes
+---
+
+<Layers
+  label="The system, top to bottom"
+  rows={[
+    { name: "Clients", parts: ["Phones (installable web app, Web Push)", "Desktop browsers", "Link previews and story slides (next/og)", "These docs"] },
+    { name: "Web", parts: ["Next.js 16 App Router, partial prerendering", "Better Auth: guests, usernames, email codes", "Live rooms over Server-Sent Events", "next-intl, 12 languages"] },
+    { name: "Worker", accent: true, parts: ["pg-boss queues and schedules", "Agent turns (AI SDK)", "Taste, business plans", "Do it for me, bookings, follow-ups", "Push sender", "ffmpeg"] },
+    { name: "Social bridge", parts: ["Python FastAPI, internal only", "instagrapi for Instagram"] },
+    { name: "Data", parts: ["Postgres 17 + Drizzle", "LISTEN/NOTIFY live pipe", "S3-compatible storage for photos and pictures"] },
+    { name: "Outside", parts: ["Qloo, the taste graph", "OpenAI (agent, vision, web search)", "Nuitee (hotels)", "ElevenLabs + Twilio (calls, dictation)", "fal (pictures)", "Mapbox, Ticketmaster, Apple, TMDB, Wikidata, OpenStreetMap"] },
+  ]}
+/>
+
+<Stats items={[
+  { value: "43", label: "Postgres tables" },
+  { value: "34", label: "migrations, applied by the worker at start" },
+  { value: "18", label: "background queues" },
+  { value: "101", label: "API routes" },
+]} />
+
+## The repository
+
+A pnpm and Turborepo monorepo.
+
+| Path | What |
+| --- | --- |
+| `apps/web` | The product: pages, API routes, cards, link previews. |
+| `apps/worker` | Every slow job, the schedules and the push sender. Runs migrations at start. |
+| `apps/social-bridge` | Instagram for the worker (Python, internal, stateless). |
+| `apps/docs` | This site (Fumadocs, a static export). |
+| `packages/qloo` | The Qloo client: cache, concurrency limit, call log, taste and explore helpers. |
+| `packages/agent` | The agent: instructions, tools, turns, business plans, booking follow-ups. |
+| `packages/booking` | Plans, routes, shows, Nuitee, phone calls, calendar files. |
+| `packages/connectors` | Imports, the daily tune-up, X, sealed sessions, the bridge client. |
+| `packages/games` | Rounds built from Qloo with hidden answers, scoring, the daily drop. |
+| `packages/db` | Schema, migrations, moving a guest's data on sign-in, deleting everything. |
+| `packages/live`, `jobs`, `sources`, `media`, `storage`, `email`, `geo` | Live events, queues, outside fetching and caching, pictures, storage, email, map maths. |
+| `packages/config`, `env`, `tokens`, `ui` | Every tunable, typed environment, design tokens, shared components. |
+
+Most product constants (limits, timeouts, sizes, models, prices) live in `packages/config`, so a number has a name and one place to change it.
+
+## Rooms and the agent
+
+Every chat (yours with Najimi, a DM, a circle) is a room with its own messages. A message is saved, announced on the room's live topic, and if it calls Najimi, an agent turn is queued for the worker: one per room at a time, never retried (a turn may have acted). The turn streams its answer to everyone through the same live pipe, so it finishes even if everyone leaves. See [How a turn runs](/docs/agent/turns).
+
+<Flow
+  label="One turn in a room"
+  steps={[
+    { title: "POST /api/rooms/<id>/messages", note: "Saved and announced at once" },
+    { title: "Worker: agent turn", note: "Room, tastes, screen, plans, connections", accent: true },
+    { title: "Tools run", note: "Qloo calls, plans, bookings, games, posts" },
+    { title: "Live to the room", note: "Text and cards stream to every member" },
+  ]}
+/>
+
+## The live pipe
+
+One Postgres channel carries every live event. Each event is a row in `live_events`, written in the same transaction as its `NOTIFY`, so nobody hears about a row they can't read yet. Topics are `room:<id>`, `run:<id>` (a visible run, like a taste being built) and `user:<id>` (your own news). A page that reconnects replays what it missed by id. The worker listens on the same channel to turn your news into Web Push.
+
+## Taste
+
+A person's taste is their loves with weights. Qloo turns it into picks per kind (with explainability), words, and where it lives in a city; the worker stores them and streams the reveal live. A circle's taste is its members' loves blended so each counts the same. A business's taste is its own Qloo entity, or the places most like it. The same lenses (feed, map, graph, games, plans) take any of them.
+
+## Background work
+
+| Queue | What it does | When |
+| --- | --- | --- |
+| `agent-turn` | Najimi's answer in a room | each message that calls it |
+| `taste-refresh`, `taste-retune` | Build or recompute a taste | sign-up, and 30 s after changes settle |
+| `media-generate` | One picture | when Najimi makes one |
+| `business-build`, `business-weekly` | Build a business plan; rebuild them all | on request; Mondays 09:00 UTC |
+| `booking-check`, `follow-ups` | Call and hotel outcomes; "How was it?" | scheduled per booking; every 30 min |
+| `daily-drop` | Today's game in each active circle | hourly, at 9am local |
+| `social-mornings`, `social-run` | "Do it for me" follows | hourly, at 9am local |
+| `tune-up-nudge` | The morning tune-up notice | hourly, at 8am local |
+| `guests-cleanup` | Delete guests unused for 30 days; sweep old live events | nightly |
+
+Paid or outbound work is never retried automatically.
+
+## Real, not pretend
+
+There is no demo mode. Hotel bookings are real Nuitee bookings; calls ring real venues; posts go out from your real account. Calls and posts always wait for a yes, and so do pictures in *Ask me first*; hotels are paid only by you. Calls, holds and pictures have daily allowances, and everything is logged.
+
+## Running it
+
+Everything runs on one Coolify server: web, worker, the social bridge, the docs and Postgres, each a container. The worker applies migrations at start. The proxy's compression is off for the web app on purpose, so live events aren't held back. To run your own, see [Run it yourself](/docs/build/self-host).

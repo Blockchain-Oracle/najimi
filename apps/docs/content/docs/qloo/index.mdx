@@ -1,0 +1,71 @@
+---
+title: How Najimi uses Qloo
+description: Qloo's taste graph is the engine under every screen. Every endpoint Najimi calls, what it asks, and how the agent gets the whole surface.
+icon: Waypoints
+---
+
+<div className="not-prose my-6 flex flex-wrap items-center gap-3 text-[15px] text-fd-muted-foreground">
+  Built on <QlooLogo className="h-[1.15em] text-fd-foreground" />, the taste graph that knows how the things people love connect across culture.
+</div>
+
+Najimi would not work without [Qloo](https://www.qloo.com). Someone who loves *Insecure* and *Americanah* tends to love Jorja Smith, a certain kind of restaurant, a certain kind of room: Qloo knows those links across music, film, TV, books, podcasts, brands, places, destinations, games and people. Every pick, word, map, match and plan stop in Najimi is a Qloo answer, and so are the hidden answers in *Guess my wavelength* and *Blind Taste*.
+
+<Stats items={[
+  { value: "6", label: "Qloo endpoints, used for everything" },
+  { value: "10", label: "kinds of culture in every taste" },
+  { value: "5", label: "Qloo tools the agent composes freely" },
+  { value: "100%", label: "of calls logged, with who, why and how long" },
+]} />
+
+## The endpoints
+
+| Endpoint | What Najimi asks it |
+| --- | --- |
+| `GET /search` | Turn a name into a Qloo id: the loves you pick, cities, a business near its address, imports, the agent's lookups. |
+| `GET /entities` | One thing's full record (the [sheet](/docs/guide/things) for anything you tap); imports matched exactly by Goodreads, MusicBrainz, X or Instagram id; poll options' artwork. |
+| `POST /v2/insights` | The workhorse. Your loves go in as weighted `{ id, weight }` signals with **explainability** on. See the uses below. |
+| `GET /v2/tags` | Find tags by meaning: "candlelit", "jazz bar", "rainy day", a business's kind. |
+| `GET /v2/analysis/compare` | What two tastes share and what's only each one's: your match with anyone, a business against its street, the agent's comparisons. |
+| `GET /v2/audiences` | Audiences the agent can lean a taste with. |
+
+### The many shapes of `/v2/insights`
+
+| Ask | Used for |
+| --- | --- |
+| `filter.type` = an entity kind, weighted signal | Your picks in ten kinds, every page of the feed, more like this, the graph's growth, games, tune-up accounts |
+| `filter.type` = `urn:tag` | Your taste's words: aesthetics, decor, ambience, style, cuisines, dishes |
+| `filter.type` = `urn:heatmap` | Where a taste lives in a city, square by square: Earth, trip areas, a business's people |
+| `filter.type` = `urn:demographics` | Who a taste leans toward by age and gender: business plans, the agent |
+| `signal.location`, no person | A spot's own scene within 2.5 km: Earth's scene sheet, a business's street |
+| `filter.results.entities` | How well a shortlist fits someone: *Guess my wavelength* and *Blind Taste* answers, each friend's fit in a group, the feed score |
+| `audience_growth` | Places rising among a business's fans |
+
+## The agent gets the whole surface
+
+Najimi isn't handed a "recommend" button. Its five Qloo tools mirror the API itself, and it composes them for each ask:
+
+| Tool | Endpoint | |
+| --- | --- | --- |
+| `qlooSearch` | `/search` | names → ids |
+| `qlooTags` | `/v2/tags` | meanings → tags |
+| `qlooInsights` | `/v2/insights` | picks, words, heatmaps, demographics, with Qloo's signals and a wide set of its filters |
+| `qlooCompare` | `/v2/analysis/compare` | two tastes side by side |
+| `qlooAudiences` | `/v2/audiences` | audiences to lean with |
+
+See [Every tool](/docs/agent/tools#qloo) for every filter and how it composes them ("hidden-gem music" is artists with a low popularity ceiling; "is Burna Boy for me?" scores exactly his id against your taste).
+
+## Fast, cached and fair
+
+<Accordions type="multiple">
+<Accordion title="One pipe">
+Every call goes through one client: at most four at a time per process, three tries on `429`, `500`, `502`, `503` and `504` with jittered backoff (honouring `Retry-After`), a 20-second timeout. Identical requests already in flight share one call.
+</Accordion>
+<Accordion title="Cached by meaning">
+Answers are kept in Postgres under a key made of the path, the parameters and the body: 30 days for search, entities, tags and audiences; 7 days for insights and compare. A reload or a retry costs Qloo nothing. Only successful answers are kept.
+</Accordion>
+<Accordion title="Logged, every time">
+Every request (cached or not) is logged with who it was for, the chat and message, a plain-words purpose, the time and the result count. That log is what the Qloo chips and *Why this?* in the app open. Qloo's answers stay on the server; the public repository holds none of its data.
+</Accordion>
+</Accordions>
+
+Next: [feature by feature](/docs/qloo/features), and [explainability](/docs/qloo/explainability).

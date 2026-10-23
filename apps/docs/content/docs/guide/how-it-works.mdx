@@ -1,0 +1,54 @@
+---
+title: How it works
+description: One taste, made by Qloo from the things you love, and everything Najimi does with it.
+icon: Waypoints
+---
+
+Your **taste** in Najimi is a short list of things you love, each with a weight from 1 to 10. That's all you give it. Qloo's taste graph does the rest: it knows how the things people love connect across every kind of culture, so three loves become a whole picture.
+
+<Flow
+  label="From a few loves to everything in the app"
+  steps={[
+    { title: "Your loves", note: "Picked, imported, or added from the feed", mono: "Qloo ids · weights 1–10" },
+    { title: "Qloo reads the taste", note: "Picks of every kind, each with the love that led to it", mono: "POST /v2/insights · explainability", accent: true },
+    { title: "Words, places, colours", note: "Your taste's words, where it lives in your city, its colours" },
+    { title: "Everything else", note: "Feed, Earth, Graph, games, plans, the agent's answers" },
+  ]}
+/>
+
+## What Qloo gives back
+
+<Accordions type="multiple">
+<Accordion title="Picks of every kind">
+For each kind (music, film, TV, books, podcasts, brands, places, destinations, video games and people) Qloo returns what fits your taste. Every request asks for **explainability**, so each pick knows which of your loves pulled it in and by how much. That's the **because** you see everywhere: *because you love Fleabag*.
+</Accordion>
+<Accordion title="The words of your taste">
+Qloo's tags for your taste: its aesthetics, moods, styles, decor, ambience, cuisines and dishes. They shape your profile's summary, the prompt for a restyled photo, and what Najimi says about you.
+</Accordion>
+<Accordion title="Where it lives">
+A Qloo **heatmap** of your city: a score for every small square of the map. Najimi names the strongest areas from Qloo's own places. That's Earth, the "your people" line on your profile, the areas of a trip, and where a business's people cluster.
+</Accordion>
+<Accordion title="How well anything fits anyone">
+Ask Qloo to score a shortlist against a taste and you get a number per thing. That's how a group plan shows each friend's fit, how *Guess my wavelength* and *Blind Taste* know the right answer, and how your feed score knows how much of your feed is you.
+</Accordion>
+</Accordions>
+
+## One taste, everywhere
+
+The same taste flows through every screen, so changing it in one place changes everything:
+
+- **Love** a card in the feed and it joins your taste. **Not for me** hides it for good.
+- Drag a love's weight on the **Graph** or in the feed's tune sheet: what's ahead re-ranks at once, then Qloo refines it.
+- Tell Najimi "less films" or "more like this": it changes your mix, or adds the thing to your loves.
+
+Your taste is recomputed in the background whenever it changes; a burst of changes is folded into one update.
+
+## Other people's tastes
+
+- **You and a friend:** Qloo compares the two tastes and Najimi turns it into one **match** number, the loves you share, and the words you both are.
+- **A circle:** its taste is every member's loves blended so each person counts the same. Earth can show a circle's taste, Najimi plans for it, and it has its own soundtrack.
+- **A business:** its taste is the business itself in Qloo, or the places most like it, and its people's.
+
+## Shown, never hidden
+
+Every Qloo request is logged: the endpoint, what was asked, the time, whether it was cached, how many results came back. The **<QlooLogo />** chip on a card in the chat, the **Why this?** chip on a pick and **Built on <QlooLogo />** on your profile each open the exact call behind what you're looking at. Read more in [Explainability](/docs/qloo/explainability).

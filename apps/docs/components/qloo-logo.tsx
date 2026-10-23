@@ -2,7 +2,10 @@
  * Qloo's own wordmark (from qloo.com, the same paths as the app's QlooLogo): the letters take
  * the text colour, so it reads in light and dark; the bar over the "oo" keeps Qloo's lavender.
  */
-const MARK = {
+export const QLOO_MARK = {
+  viewBox: "0 0 64 22",
+  ratio: 64 / 22,
+  accent: "#8C8CC8",
   bar: "M56.67 0H40.17V3.67H56.67V0Z",
   ink: [
     "M29.34 0H25.67V22H29.34V0Z",
@@ -15,16 +18,16 @@ const MARK = {
 export function QlooLogo({ className = "h-[0.8em]" }: { className?: string }) {
   return (
     <svg
-      viewBox="0 0 64 22"
+      viewBox={QLOO_MARK.viewBox}
       role="img"
       aria-label="Qloo"
       fill="currentColor"
       className={`inline-block w-auto align-[-0.06em] ${className}`}
     >
-      {MARK.ink.map((d) => (
+      {QLOO_MARK.ink.map((d) => (
         <path key={d} d={d} />
       ))}
-      <path d={MARK.bar} fill="#8C8CC8" />
+      <path d={QLOO_MARK.bar} fill={QLOO_MARK.accent} />
     </svg>
   )
 }

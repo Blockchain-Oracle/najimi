@@ -1,0 +1,32 @@
+---
+title: Explainability
+description: Every pick knows which of your loves led to it and by how much, and the Qloo call behind a pick, a chat card or your taste opens right where you see it.
+icon: ScanSearch
+---
+
+Every weighted request for picks that Najimi sends to Qloo switches **explainability** on: for each result, Qloo says which of your loves pulled it in, and by how much. Najimi carries that all the way to the screen.
+
+<Shot src="/shots/wide/qloo-explanation.webp" alt="Why it's here: match percentage, a share bar per love, and the Qloo request" caption="Why it's here: one pick's match, each love's share, and the exact request." />
+
+## Where you see it
+
+- **Because** chips everywhere: *because you love Fleabag*.
+- **Why this?** on a feed card or a pick opens **Why it's here**: the match, a bar per love, and the Qloo call it came from.
+- **Made of your loves** on [any thing's sheet](/docs/guide/things): the faces of the loves behind it; tap for each one's share.
+- Your profile's line of what your taste connects: *Fleabag led to Billie Eilish*.
+- The **Graph**: every tie is as strong as its share. Drag a love's weight and every pick re-ranks from the shares at once, before Qloo refines it.
+
+## Opening the call itself
+
+Every Qloo request is logged with its path, parameters, status, time, cache hit and result count (the request only; Qloo's answer never leaves the server).
+
+| Where | What it opens |
+| --- | --- |
+| The **<QlooLogo />** chip on a chat card (picks, words, maps, a comparison) and on its run step | *The Qloo call behind this*: the endpoint, the signal, the answer's size, cache, milliseconds |
+| **Why this?** on a feed card or a pick | the call it came from |
+| **Built on <QlooLogo />** on your profile | every call your taste's reveal made, in order |
+| A business plan's footer | how many Qloo calls built it |
+
+## Why it matters
+
+A recommendation you can't question is hard to trust. Because every pick in Najimi stands on a logged Qloo result, the agent can't quietly invent one: its rule is *Qloo or nothing*, and when Qloo has nothing, it says so.

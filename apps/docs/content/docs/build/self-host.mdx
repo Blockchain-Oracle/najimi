@@ -1,0 +1,76 @@
+---
+title: Run it yourself
+description: Clone Najimi, start Postgres and storage, add a Qloo key, and run the app, the worker and these docs on your machine.
+icon: Terminal
+---
+
+The code is open source (MIT): [github.com/Blockchain-Oracle/najimi](https://github.com/Blockchain-Oracle/najimi).
+
+## You'll need
+
+- Node.js 22.18 or newer, and pnpm 11
+- Docker, for Postgres and storage
+- A **Qloo** API key and an **OpenAI** key (the agent's answers run on OpenAI)
+
+<Steps>
+<Step>
+
+### Get the code
+
+```bash
+git clone https://github.com/Blockchain-Oracle/najimi.git
+cd najimi
+pnpm install
+```
+
+</Step>
+<Step>
+
+### Fill in `.env`
+
+```bash
+cp .env.example .env
+```
+
+Only three settings are required: `DATABASE_URL` (already pointing at the local Postgres), `BETTER_AUTH_SECRET` (any random 32+ characters) and `BETTER_AUTH_URL` (`http://localhost:3310`). Add `QLOO_API_KEY` and `OPENAI_API_KEY` for the taste and the agent. Everything else switches on a feature; see [Integrations](/docs/build/integrations) for the full list.
+
+</Step>
+<Step>
+
+### Start Postgres and storage
+
+```bash
+pnpm services:up
+```
+
+Postgres 17 on port 54330 and RustFS (S3-compatible) on 9300.
+
+</Step>
+<Step>
+
+### Run everything
+
+```bash
+pnpm dev
+```
+
+The app on [localhost:3310](http://localhost:3310), these docs on [localhost:3311](http://localhost:3311), and the worker, which applies the database migrations when it starts.
+
+</Step>
+</Steps>
+
+## Checks
+
+```bash
+pnpm run ci
+```
+
+Biome, type checks across every package, and every production build.
+
+## Deploying
+
+Each app has its own Dockerfile: `apps/web` (Next.js standalone, health at `/api/health`), `apps/worker` (with ffmpeg; runs migrations at start), `apps/social-bridge` (Python) and `apps/docs` (a static export served by nginx). `infra/compose.prod.yaml` runs Postgres, a one-shot migration, the web app, the worker and the docs together. Najimi itself runs on a single Coolify server.
+
+<Callout title="Two things to know" type="warn">
+Live events use Server-Sent Events: if your proxy compresses responses, switch compression off for `text/event-stream` (or for the web app), or live updates will arrive late. And hotels only switch on with a live Nuitee key; a sandbox key keeps them off.
+</Callout>

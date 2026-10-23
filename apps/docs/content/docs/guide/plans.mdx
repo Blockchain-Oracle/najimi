@@ -1,0 +1,64 @@
+---
+title: Plans, hotels and tables
+description: Ask for a night out or a trip and Najimi plans it from Qloo, routes it, scores it for everyone, then books the hotel and phones for the table.
+icon: Route
+---
+
+Plans start with a sentence to Najimi, in your own chat or a circle: *"9pm in Lekki, we want to go out"*, *"Lisbon for three days"*. Here's a real one:
+
+<Run
+  ask="Plan a night out around Ikoyi, Lagos, Nigeria for my taste: a few stops, in order, with why each one."
+  steps={[
+    { icon: "brief", label: "Read Momo's taste", meta: "3 families · 4 loves · food" },
+  ]}
+  card="planNight → a plan card: 3 stops, 7.9 km, 23 min driving, Add to calendar"
+>
+I've set a **7pm start tonight**, with one opening stop on Victoria Island before heading into Ikoyi. **7pm, Cabaret Avignon:** drinks to ease into the evening; Qloo connects it to your love of Tems. **8:30pm, Ikoyi Club Suya:** the food stop… **10:30pm, Lagos Jet Ski Riders – The Club:** finish here for the club portion of the night. The mapped route totals roughly **23 minutes of driving**, before Lagos traffic.
+</Run>
+
+## A night out
+
+Three stops in order, each from Qloo's places near the area you named, filtered for that part of the night:
+
+| Stop | When | What |
+| --- | --- | --- |
+| **Drinks** | your start time | cocktail bars, bars, lounges |
+| **Food** | 90 minutes later | restaurants |
+| **Late** | 3½ hours after the start | night clubs, live music venues and live-music bars |
+
+In a circle every stop is scored for **each person**, with their face and fit, from everyone's blended taste. The route is real (walking when the stops are close, driving across a city), and **shows that night** near the plan come with tickets.
+
+<Shot src="/shots/wide/plan-route.webp" alt="A plan page: the route on a map, three numbered stops, add to calendar, the whole route, Uber" caption="Every plan has its own page and link." />
+
+## A trip
+
+One to five days. Qloo's heatmap of the city for your taste picks a different area for each day, and each day gets a morning stop (a café, a museum, a gallery), an afternoon one (a park, a bookshop) and dinner, all routed.
+
+## The plan page
+
+Every plan has a link anyone can open: the route on a map with numbered stops, **Add to calendar** (Google, Outlook or a calendar file), **The whole route** in Google Maps, **Uber** for the whole night, an Uber for each leg, and per stop **Directions** and (signed in) **Ask Najimi to book**, which hands the stop to Najimi to phone. **Somewhere to stay** asks Najimi for hotels nearby.
+
+## Hotels, booked for real
+
+<Steps>
+<Step>
+**Ask.** "Somewhere to stay near Ikoyi Friday, two nights." Najimi shows real rooms and prices near there, best rated first.
+</Step>
+<Step>
+**Book.** Tapping **Book** holds the price with Nuitee. Nothing is charged yet.
+</Step>
+<Step>
+**Pay in Nuitee's own sheet.** Your details, then Nuitee's payment form. Nuitee is the merchant; Najimi never sees your card.
+</Step>
+<Step>
+**Confirmed.** The booking lands in the chat as a card with the confirmation, **Add to calendar**, and **Cancel** while it's free to. If the hotel is slow to confirm, Najimi keeps checking and tells you.
+</Step>
+</Steps>
+
+## Tables, booked by phone
+
+Ask Najimi to book a table and it shows how its AI caller will open the call. When you tap **Call**, it phones the venue, says it's an AI calling on your behalf and that the call is recorded, and asks for your table. The card's promise: Najimi never pays or agrees to a deposit. The answer comes back into the chat: booked (under your name), or the time they offered instead. Calls only go out between 8am and 9pm your time. See [Real-world actions](/docs/agent/actions#phone-calls).
+
+## Afterwards
+
+Najimi asks **How was it?**: three hours after a table, the morning after a hotel stay, twelve hours after a night out starts, and the day after a one- or two-day trip ends. Tell it you loved a place you booked and Najimi can add it to your taste. Nights, trips, stays and tables become stamps in your [Passport](/docs/guide/passport).

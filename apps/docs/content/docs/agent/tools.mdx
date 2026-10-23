@@ -1,0 +1,90 @@
+---
+title: Every tool
+description: The nineteen tools Najimi composes for each ask, what each one does, what it needs from you, and how its result shows up.
+icon: Wrench
+---
+
+Najimi gets **18 tools of its own plus web search**, and composes them freely for each ask: several at once when they don't depend on each other, up to ten steps per answer. Qloo lookups, the taste brief, pictures, questions and web searches show as steps in the answer's **run**; the other tools hand you a **card** you can act on.
+
+<Stats items={[
+  { value: "19", label: "tools, including web search" },
+  { value: "5", label: "of them are Qloo itself" },
+  { value: "2", label: "always wait for your yes: a phone call and a post" },
+  { value: "10", label: "steps at most per answer" },
+]} />
+
+## Qloo
+
+Not a narrow "recommend" button: Qloo's own surface, so the agent can compose any question the graph can answer. Your loves are the default signal; the agent adds to them.
+
+| Tool | What it does | Shows as |
+| --- | --- | --- |
+| `qlooSearch` | Turns a name ("Fela", "Kyoto", an album) into Qloo ids, filtered by kind. | a step with the things it found |
+| `qlooTags` | Finds Qloo tags by meaning: a mood ("rainy day"), a genre, a cuisine, a diet, a kind of place. | a step with the tags |
+| `qlooInsights` | Anything the graph answers: **picks** of any of ten kinds, the **words** of a taste, a **heatmap** of a city, or a **demographic** lean. | a card: picks, a word cloud, a map, or a lean |
+| `qlooCompare` | Two tastes side by side: what's shared, and what's only each side's. | a comparison card |
+| `qlooAudiences` | Lists Qloo audiences of one kind (communities, hobbies, life stage…) to lean a taste with. Never political ones. | a step |
+
+`qlooInsights` takes Qloo's signals and a wide set of its filters:
+
+<TypeTable
+  type={{
+    signal: { type: "entities · tags · boostLove · age · gender · audiences · location", description: "What the answer is for. Plain-word tags are looked up first; boostLove turns one of your loves up to full weight." },
+    "filter: place": { type: "city · radiusMeters · excludeCity · countryCode", description: "Places and heatmaps default to your city." },
+    "filter: tags": { type: "tags · tagsMode · excludeTags · tagTypes · parentTypes", description: "Narrow by genre, mood, cuisine, decor and more." },
+    "filter: time and taste": { type: "popularity · releaseYear · publicationYear · finaleYear", description: "A low popularity ceiling finds hidden gems." },
+    "filter: quality": { type: "rating · contentRating · releaseCountry · priceLevel · hotelClass · businessRating", description: "" },
+    "filter: places": { type: "openOn · externalExists (Michelin, Resy, Tablet)", description: "Open on a given day; listed on a booking service." },
+    "filter: fit": { type: "onlyIds · exclude", description: "Score exactly these things (\"is Burna Boy for me?\"), or leave some out. Your own loves are always left out of picks." },
+    diversifyBy: { type: "city", description: "One result per city, for trips." },
+  }}
+/>
+
+How it composes them, from its own instructions:
+
+| You ask | It does |
+| --- | --- |
+| "Something like *Harold and Maude* but newer" | `qlooSearch` the film → `qlooInsights` films, that id as the signal, release year from 2010 |
+| "Hidden-gem music" | artists with popularity at most 0.5 |
+| "Where in Lagos are my people?" | a heatmap of Lagos, its areas named |
+| "Dinner in Paris on Sunday, not expensive" | `qlooTags` "restaurant" → places with it, open on Sunday, price level at most 2 |
+| "A rainy-Sunday playlist" | `qlooTags` "rainy day" → artists with that mood |
+| "Is Burna Boy for me?" | artists, `onlyIds` his id |
+| "Plan a trip" | destinations, one per city |
+| "Who in culture shares my taste?" | people |
+
+## Plans and bookings
+
+| Tool | What it does | Asks first? | Shows as |
+| --- | --- | --- | --- |
+| `tasteBrief` | Shows the words and loves a plan or picture will be built from, before it's built. | no | a brief card |
+| `planNight` | Drinks, then food, then somewhere late near an area, at your time, for you or the whole room; routed, with that night's shows. | no | a plan card and its own page |
+| `planTrip` | One to five days in a city: an area per day from your taste's heatmap, three stops a day, routed. | no | a plan card and its own page |
+| `findHotels` | Real rooms and prices near an area, best rated first. | **you** tap Book and pay in Nuitee's sheet | a hotels card |
+| `callToBook` | Phones a venue to book a table, with an AI voice. Finds the number on the venue's website if needed. | **always** | a call card with the script, then the result |
+| `businessPlan` | Builds a plan for your business from Qloo, step by step, in the background. | no | a business card that fills in live |
+
+## In the room
+
+| Tool | What it does | Asks first? | Shows as |
+| --- | --- | --- | --- |
+| `groupFit` | Picks for the whole room from everyone's blended taste, then each pick scored for each person. Needs two or more people. | no | every pick with each member's face and fit |
+| `startPoll` | Puts two to four options to a vote; options can be real things with their artwork. Circles and DMs only. | no | a live poll |
+| `startGame` | Deals Guess my wavelength, How well do you know me, Taste twins or Blind Taste. Najimi plays too. | no | a game card with Play and a challenge link |
+| `askUser` | One card with up to three multiple-choice questions, when the answer really changes the result. Anyone in the room can answer. | it waits for an answer | a question card |
+
+## Your taste and feed
+
+| Tool | What it does | Shows as |
+| --- | --- | --- |
+| `steerFeed` | Turns kinds up, down or off in your feed, adds a love, or changes how much a love counts. Your feed starts over and your taste is recomputed. | a card that restarts an open feed |
+
+## Make and find
+
+| Tool | What it does | Asks first? | Shows as |
+| --- | --- | --- | --- |
+| `makeImage` | Restyles a photo you shared (keeping the room exactly as it is) or makes a new picture from your taste's words. Only when you ask. | in *Ask me first* mode | a card with before and after, download and share |
+| `postToX` | Posts in your voice from your connected X; without a connection, a one-tap link that opens X with the words filled in. | **always** | a post preview, then the posted card |
+| `webSearch` | Facts Qloo doesn't carry: opening hours, a phone number, what's on this week, news, the weather. Never for picks; it says where a fact came from. | no | a step with the sites it read |
+
+The ones that act in the real world are on [Real-world actions](/docs/agent/actions).

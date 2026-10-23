@@ -9,9 +9,11 @@
     "typecheck": "fumadocs-mdx && tsc --noEmit"
   },
   "dependencies": {
+    "@najimi/tokens": "workspace:*",
     "fumadocs-core": "16.17.5",
     "fumadocs-mdx": "15.4.7",
     "fumadocs-ui": "16.17.5",
+    "lucide-react": "catalog:",
     "next": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:"

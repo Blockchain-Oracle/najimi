@@ -1,0 +1,130 @@
+---
+title: Najimi, the agent
+description: An agent in every chat that knows your taste and your friends', reads Qloo for every pick, shows its work, and does real things once you say yes.
+icon: Sparkles
+---
+
+<div className="not-prose my-6 flex items-center gap-4">
+  <Orb size={72} />
+  <p className="m-0 max-w-md text-[15px] leading-snug text-fd-muted-foreground">Najimi is one of the room. It lives in your own chat, in every circle and DM, and one tap away on every screen as the orb.</p>
+</div>
+
+## Where it lives
+
+- **Your own chat** (the orb in the middle of the tab bar): it answers every message.
+- **Circles and DMs**: it answers when someone writes `@najimi` or starts with "Najimi…", and speaks for the whole room, by name.
+- **Over any screen**: tap the orb and it opens as a sheet that already knows what you're looking at: the card on your feed, a square on Earth, a node in your graph, the plan you're reading, a business plan. "More like this" means *that*.
+
+## What it knows
+
+Your loves and their weights, your taste's words, and in a room every member's top loves and city. The screen you opened it from, your plans and bookings from the last month (and how they went), the room's latest polls, your connected accounts, the photos shared in the chat, and today's date in your time zone. It replies in your language.
+
+## What it can do
+
+<Cards>
+  <Card icon={<Icon name="Waypoints" />} title="Read Qloo's whole graph" href="/docs/agent/tools#qloo">
+    Search, tags, audiences, comparisons, and insights with Qloo's signals and a wide set of its filters: picks of any kind, taste words, city heatmaps, demographics.
+  </Card>
+  <Card icon={<Icon name="Phone" />} title="Phone a venue for a table" href="/docs/agent/actions#phone-calls">
+    A real AI voice call after you approve how it opens. It says it's an AI and that the call is recorded, and the answer lands in the chat.
+  </Card>
+  <Card icon={<Icon name="BedDouble" />} title="Book a hotel" href="/docs/agent/actions#hotels">
+    Real rooms and prices. You hold one and pay in Nuitee's own sheet; Najimi watches until it's confirmed.
+  </Card>
+  <Card icon={<Icon name="Send" />} title="Post on X for you" href="/docs/agent/actions#posts-on-x">
+    A post in your voice, from your connected X, once you say yes.
+  </Card>
+  <Card icon={<Icon name="Route" />} title="Plan a night or a trip" href="/docs/guide/plans">
+    Drinks, food, somewhere late, every stop scored for every friend, a real route, shows that night, a calendar link.
+  </Card>
+  <Card icon={<Icon name="Users" />} title="Settle it for the group" href="/docs/agent/tools#in-the-room">
+    Picks for the whole circle with each person's fit, or a poll when the room can't decide.
+  </Card>
+  <Card icon={<Icon name="Gamepad2" />} title="Start a game, and play" href="/docs/guide/games">
+    Four taste games against the room. Najimi plays along in three of them; in Blind Taste, Qloo predicts you.
+  </Card>
+  <Card icon={<Icon name="Store" />} title="Build a business plan" href="/docs/guide/business">
+    Seven steps, five of them straight from Qloo; every idea cites what it stands on.
+  </Card>
+  <Card icon={<Icon name="SlidersHorizontal" />} title="Tune your feed by talking" href="/docs/agent/tools#your-taste-and-feed">
+    "Less films", "no podcasts", "more like this": the feed restarts on the new mix.
+  </Card>
+  <Card icon={<Icon name="Globe" />} title="Look things up" href="/docs/agent/tools#make-and-find">
+    Opening hours, a venue's number, what's on this week, the weather, with the source named. Never for picks.
+  </Card>
+  <Card icon={<Icon name="ImagePlus" />} title="Restyle your room" href="/docs/agent/actions#pictures">
+    A photo of your space, kept exactly as it is, restyled in your taste's words. Only when you ask.
+  </Card>
+  <Card icon={<Icon name="BellRing" />} title="Follow up on its own" href="/docs/agent/follow-ups">
+    Call results, hotel confirmations, "How was it?", a daily game drop, a Monday business refresh.
+  </Card>
+</Cards>
+
+## Real answers
+
+Three real runs from the app. The steps are what you see above each answer (its Qloo lookups, web searches and questions); the other tools hand you a card.
+
+<Tabs items={["Albums for the rain", "A spot for the circle", "A night in Ikoyi"]}>
+<Tab value="Albums for the rain">
+<Run
+  ask="Three albums for a rainy evening, and why they fit me"
+  steps={[
+    { icon: "tags", label: "“rainy evening”", meta: "qloo.tags · 3 tags · rainy night, downpour, rainy day", qloo: true },
+    { icon: "insights", label: "Rainy-evening music for you", meta: "qloo.insights · artist · rainy day · The Shins → 3", qloo: true },
+    { icon: "search", label: "“TV on the Radio Return to Cookie Mountain”", meta: "qloo.search · 1 found", qloo: true },
+    { icon: "search", label: "“Paolo Nutini Caustic Love”", meta: "qloo.search · 1 found", qloo: true },
+    { icon: "search", label: "“The Killers Sam's Town”", meta: "qloo.search · 1 found", qloo: true },
+  ]}
+>
+For you, I'd play these in order: **Return To Cookie Mountain — TV on the Radio.** Layered, atmospheric, and slightly restless… **Caustic Love — Paolo Nutini.** Warm, smoky soul for when the evening settles in… **Sam's Town — The Killers.** The dramatic finish… Qloo connected the first two artists to your love of The Shins, and The Killers to your affinity for *The Social Network*.
+</Run>
+It turned "rainy evening" into Qloo's own mood tags, asked for artists with that mood boosted by the love it fits, then found each album by name. No pick came from memory.
+</Tab>
+<Tab value="A spot for the circle">
+<Run
+  room="Friday crew · a circle with Juno and Kemi"
+  who="Juno"
+  ask="@najimi find us a spot tonight"
+  steps={[]}
+  card={<>groupFit → A spot for tonight in Lagos<br />Afrinolly Creative Hub · Juno 75% · Kemi 75%<br />Rele Gallery · Juno 74% · Kemi 76%<br />NOK by Alara · Juno 74% · Kemi 74%<br />Crescendo Lounge And Bar · Juno 74% · Kemi 73%<br />Ikoyi Club Suya · Juno 74% · Kemi 73%</>}
+>
+I'd pick **NOK by Alara** tonight—an equally strong match for Juno and Kemi at 74% each, so neither person's taste takes a back seat.
+</Run>
+It blended both members' loves so each counts the same, asked Qloo for places, then scored every place against each person's own taste.
+</Tab>
+<Tab value="A night in Ikoyi">
+<Run
+  ask="Plan a night out around Ikoyi, Lagos, Nigeria for my taste: a few stops, in order, with why each one."
+  steps={[
+    { icon: "brief", label: "Read Momo's taste", meta: "3 families · 4 loves · food" },
+  ]}
+  card="planNight → Ikoyi, Lagos · 7pm Cabaret Avignon · 8:30pm Ikoyi Club Suya · 10:30pm Lagos Jet Ski Riders – The Club · 7.9 km, 23 min driving"
+>
+I've set a **7pm start tonight**, with one opening stop on Victoria Island before heading into Ikoyi… The mapped route totals roughly **23 minutes of driving**, before Lagos traffic.
+</Run>
+Plans start by reading the taste they're built from, then the plan arrives as a card with the route, the calendar link and its own page.
+</Tab>
+</Tabs>
+
+## The rules it follows
+
+<Accordions type="multiple">
+<Accordion title="Qloo or nothing">
+Every recommendation comes from a Qloo result in this chat. It never names a pick from memory. If Qloo has nothing, it says so and tries another way.
+</Accordion>
+<Accordion title="It asks before anything real">
+A phone call and a post in your name always wait for your yes, with exactly what will happen shown first. In *Ask me first* mode, so does a picture. In a circle, only the person who asked can say yes. Hotels are only ever paid by you, in Nuitee's sheet. If you say no, it doesn't ask again.
+</Accordion>
+<Accordion title="It never claims what isn't done">
+Nothing is "booked" until the booking card says confirmed, and nothing is "posted" until the post card says so.
+</Accordion>
+<Accordion title="It asks only when it matters">
+At most one card with up to three questions, and only when the answer would really change the result. Anyone in the room can answer it.
+</Accordion>
+<Accordion title="Brief and warm">
+One or two sentences that connect the results to what you love ("because you love Fleabag…"). The cards carry the detail; it never repeats them as a list.
+</Accordion>
+<Accordion title="It follows up">
+Calls report back into the chat. After a night, a table or a stay, it asks how it was; tell it you loved a place you booked and it can add it to your taste.
+</Accordion>
+</Accordions>

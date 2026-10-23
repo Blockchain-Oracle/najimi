@@ -1,0 +1,28 @@
+{
+  "title": "Guide",
+  "description": "What Najimi is and every screen",
+  "icon": "Compass",
+  "root": true,
+  "pages": [
+    "index",
+    "quickstart",
+    "how-it-works",
+    "---The app---",
+    "profile",
+    "feed",
+    "things",
+    "people",
+    "chats",
+    "games",
+    "earth",
+    "graph",
+    "plans",
+    "feeds",
+    "business",
+    "passport",
+    "---Your account---",
+    "sharing",
+    "settings",
+    "privacy"
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "title": "Qloo",
+  "description": "Every Qloo call, and why",
+  "icon": "Waypoints",
+  "root": true,
+  "pages": ["index", "features", "explainability"]
+}

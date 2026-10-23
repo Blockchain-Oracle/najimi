@@ -1,0 +1,39 @@
+---
+title: Feature by feature
+description: What Qloo does on every screen of Najimi, from the taste reveal to the feed, Earth, games, plans and business.
+icon: LayoutGrid
+---
+
+<Flow
+  label="The taste reveal"
+  steps={[
+    { title: "Your loves + weights", note: "Qloo ids from /search, weights 1–10" },
+    { title: "Insights × 10 kinds", note: "Weighted signal, explainability on, your city for places", mono: "POST /v2/insights", accent: true },
+    { title: "Words + heatmap", note: "Tag insights; urn:heatmap and its areas named" },
+    { title: "Your taste", note: "Picks with because, words, your people's neighbourhoods" },
+  ]}
+/>
+
+| Screen | What Qloo does there |
+| --- | --- |
+| **Your taste** | The reveal above: a weighted insights call per kind (music, film, TV, books, podcasts, brands, places, destinations, games, people), calls for your words (brands, then style, decor, ambience, cuisine and dish tags), and a heatmap of your city with its strongest areas named. It reruns whenever your loves, their weights or your city change. |
+| **Feed** | The first page is your stored picks; every page after asks Qloo for the next page of the same weighted signal. A love you add from the feed joins your taste, and the next update reshapes what's ahead. |
+| **More like this** | Your taste with that thing added at full weight. |
+| **Tap anything** | `/entities` for the thing's own record: its description, hours, links, external ids. **Made of your loves** shows the explainability shares that pick came with. |
+| **Earth** | A `urn:heatmap` for the lens you choose (you, a friend, or a circle with everyone's loves blended equally); the strongest knots of squares are named from Qloo's own places inside each. |
+| **Scenes** | Tap a square: location-only insights for artists, brands, places and words within 2.5 km of that point. |
+| **Graph** | Grow a node: insights seeded by that one thing, for its own kind and one related kind. |
+| **Match** | `/v2/analysis/compare` on both people's loves: shared words with scores, and what's only each one's. |
+| **Games** | *Guess my wavelength* and *Blind Taste* score a pool against the subject's taste with `filter.results.entities`; the answer stays hidden until you've answered. |
+| **Group fit** | Picks from the circle's blended taste, then each member's own fit for every pick. |
+| **Night plans** | For each stop (drinks, food, late), place insights around the spot you named with that slot's place tags, then each person's fit. |
+| **Trips** | The city's heatmap for your taste picks one area per day; morning, afternoon and evening stops come from place insights around each. |
+| **Business** | Find the business near its address (or the places most like it, by its genre tag), what its fans love across seven kinds, their words and demographic lean, where they cluster, the street's own scene, a compare of fans against the street, and places nearby with rising `audience_growth`. The plan shows **Built on <QlooLogo /> · N calls**. |
+| **Your feeds** | Tune-up accounts are people, artists and brands for your taste, with the X and Instagram handles Qloo carries; TikTok and YouTube through the Wikidata ids Qloo returns. |
+| **Imports** | Handles and ids go to `/entities` first (exact), the rest to `/search` by name. |
+| **Feed score** | Names read from your screenshot, found in Qloo, then scored against your taste; a fit of 0.8 or more counts as "you". |
+| **Circle soundtrack** | Artists for the circle's blended taste, each with Apple previews. |
+
+Twins, the radar and a circle's overlap are worked out from the Qloo picks already stored for each person, with no new call.
+
+<Shot src="/shots/wide/blind-taste-qloo-called-it.webp" alt="Blind Taste: Qloo called it" caption="Blind Taste: Qloo predicted how you'd feel before you swiped." />

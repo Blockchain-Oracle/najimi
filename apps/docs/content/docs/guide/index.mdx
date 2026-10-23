@@ -1,0 +1,71 @@
+---
+title: Introduction
+description: Find your people by what you love. A social app where your taste is who you are, built on Qloo's taste graph, with an agent in every chat that plans, plays, calls and books.
+icon: Sparkles
+---
+
+**Najimi** (馴染み, *someone you know well*) starts with a few things you love: an artist, a show, a book, a place. [Qloo](https://www.qloo.com)'s taste graph turns them into a taste that reaches every kind of culture: music, film, TV, books, podcasts, brands, places, destinations, games and people. Everything in the app is that one taste, seen a different way, and **Najimi**, the agent, uses it to do real things for you and your friends.
+
+<Phones>
+  <Phone src="/shots/phone/m-feed.webp" alt="The feed playing a song preview with its Why this chip" caption="A feed that plays: songs, trailers, episodes, places." />
+  <Phone src="/shots/phone/c-earth.webp" alt="Earth over Lagos with named areas and lenses for a friend and a circle" caption="Earth: where your taste lives in a city." />
+  <Phone src="/shots/phone/l-game.webp" alt="Guess my wavelength against Najimi" caption="Games your friends play against Najimi." />
+</Phones>
+
+## What it does
+
+<Cards>
+  <Card icon={<Icon name="Disc3" />} title="A feed that is you" href="/docs/guide/feed">
+    Full-screen songs, trailers, podcasts, books and places, most with the love they came from. One player follows you everywhere.
+  </Card>
+  <Card icon={<Icon name="Users" />} title="People and circles" href="/docs/guide/people">
+    Your match with anyone, taste twins, group chats with Najimi in them, invites by link or QR.
+  </Card>
+  <Card icon={<Icon name="Gamepad2" />} title="Games" href="/docs/guide/games">
+    Four taste games against your friends and Najimi, two of them scored by Qloo. A daily drop in every active circle.
+  </Card>
+  <Card icon={<Icon name="Globe" />} title="Earth" href="/docs/guide/earth">
+    Your taste over a city, square by square. Tap one to read its scene and plan a night there.
+  </Card>
+  <Card icon={<Icon name="Route" />} title="Nights, trips and bookings" href="/docs/guide/plans">
+    A routed night out scored for every friend, real hotel rooms, and tables booked by phone.
+  </Card>
+  <Card icon={<Icon name="Store" />} title="Business" href="/docs/guide/business">
+    A plan for the place you run: who its people are, where they cluster, what's rising nearby.
+  </Card>
+  <Card icon={<Icon name="Rss" />} title="Your feeds" href="/docs/guide/feeds">
+    Score your X, Instagram, TikTok or YouTube feed against your taste; on X and Instagram, Najimi can follow your daily picks each morning.
+  </Card>
+  <Card icon={<Icon name="Stamp" />} title="Passport and Wrapped" href="/docs/guide/passport">
+    A year of stamps (loves, nights, trips, games) and five story slides of your year in taste.
+  </Card>
+</Cards>
+
+## The agent, doing the work
+
+Najimi lives in your own chat, in every circle and DM (call it with `@najimi`), and one tap away on every screen as the orb. It reads Qloo for every pick it makes and shows each step as it works. This is a real answer from the app, step for step:
+
+<Run
+  ask="Three albums for a rainy evening, and why they fit me"
+  steps={[
+    { icon: "tags", label: "“rainy evening”", meta: "qloo.tags · 3 tags · rainy night, downpour, rainy day", qloo: true },
+    { icon: "insights", label: "Rainy-evening music for you", meta: "qloo.insights · artist · rainy day · The Shins → 3", qloo: true },
+    { icon: "search", label: "“TV on the Radio Return to Cookie Mountain”", meta: "qloo.search · 1 found", qloo: true },
+    { icon: "search", label: "“Paolo Nutini Caustic Love”", meta: "qloo.search · 1 found", qloo: true },
+    { icon: "search", label: "“The Killers Sam's Town”", meta: "qloo.search · 1 found", qloo: true },
+  ]}
+>
+  **Return To Cookie Mountain — TV on the Radio.** Layered, atmospheric, and slightly restless: a rain-darkened extension of the textured indie sound you love in The Shins. … Qloo connected the first two artists to your love of The Shins, and The Killers to your affinity for *The Social Network*.
+</Run>
+
+It can also **phone a restaurant** for a table, **book a hotel** you pay for in Nuitee's own sheet, **post on X** in your voice, plan a whole night for a group, start a game or a poll, search the web for opening hours, and restyle a photo of your room. Anything that acts in your name waits for your yes. See [The agent](/docs/agent).
+
+## Built on Qloo
+
+<p className="not-prose flex flex-wrap items-center gap-2 text-fd-muted-foreground">Every pick, word, map and match in Najimi is a Qloo result. Every call is logged, and you can open the one behind a pick, a chat card or your taste.</p>
+
+Your loves are sent to Qloo as weighted signals with **explainability** switched on, so every pick knows which of your loves led to it ("because you love *Fleabag*"). The same taste becomes a heatmap of your city, the scene around any spot, a score for each friend in a group plan, and the hidden answer in *Guess my wavelength*. [How Najimi uses Qloo](/docs/qloo) maps every call to its screen.
+
+<Callout title="Try it now" type="info">
+Open [najimi.xyz](https://najimi.xyz) on your phone or computer. No account needed: you start as a guest, and signing in later keeps everything. The [quickstart](/docs/guide/quickstart) takes two minutes.
+</Callout>
