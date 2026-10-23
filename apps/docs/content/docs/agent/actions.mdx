@@ -42,14 +42,14 @@ An ElevenLabs voice agent dials from a Twilio number and opens by saying it's an
 
 ### The answer comes back
 
-A few minutes later, a booking card in the chat: **booked** (with the name it's under, **Add to calendar**), or the time they offered instead, or *the line was busy* or *I reached their voicemail*, with *want me to try again later?* You also get a notification. Results arrive by a signed webhook from ElevenLabs, and Najimi checks every few minutes in case the webhook doesn't come.
+As soon as the call is over, a booking card in the chat: **booked** (with the name it's under, **Google Calendar** and **Other calendars**), or the time they offered instead, or *they didn't confirm a table, so nothing is booked*, or *the line was busy*, *nobody picked up* or *I reached their voicemail*, with *want me to try again?* **Listen to the call** plays the recording in Najimi's player. The same news comes as a notification and by email. Results arrive by a signed webhook from ElevenLabs; Najimi also follows the line itself with Twilio every minute, so a busy or unanswered call is reported within a minute even without it.
 
 </Step>
 <Step>
 
 ### Afterwards
 
-Three hours after your table, Najimi asks how it was.
+The day before and two hours before, Najimi reminds you (in the chat, as a notification and by email). Three hours after your table, it asks how it was.
 
 </Step>
 </Steps>
