@@ -13,12 +13,17 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: t("title") }
 }
 
-async function Passport() {
+async function Passport({ searchParams }: { searchParams: Promise<{ year?: string }> }) {
   const session = await getSession()
   if (!session) redirect(`/start?next=${encodeURIComponent("/passport")}`)
   const personId = await selfIdOf(session.user.id)
   if (!personId) redirect(`/start?next=${encodeURIComponent("/passport")}`)
-  const year = new Date().getUTCFullYear()
+  const now = new Date().getUTCFullYear()
+  // Every year they've had an account, newest first; a year asked for outside them shows this one.
+  const since = new Date(session.user.createdAt).getUTCFullYear()
+  const years = Array.from({ length: Math.max(1, now - since + 1) }, (_, i) => now - i)
+  const asked = Number((await searchParams).year)
+  const year = years.includes(asked) ? asked : now
   const [stamps, upcoming, [share]] = await Promise.all([
     stampsOf(session.user.id, year),
     upcomingOf(session.user.id),
@@ -37,6 +42,7 @@ async function Passport() {
   return (
     <PassportView
       year={year}
+      years={years}
       stamps={stamps}
       upcoming={upcoming}
       movement={movement(stamps)}
@@ -47,11 +53,15 @@ async function Passport() {
 }
 
 /** Your Taste Passport (W21) and your Wrapped (W22). */
-export default function PassportPage() {
+export default function PassportPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ year?: string }>
+}) {
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-col px-5 pb-16 md:px-0">
       <Suspense fallback={<div className="h-96 animate-pulse rounded-card bg-card" />}>
-        <Passport />
+        <Passport searchParams={searchParams} />
       </Suspense>
     </div>
   )
