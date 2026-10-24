@@ -213,7 +213,6 @@ A pnpm and Turborepo monorepo; every piece runs as a container on one Coolify se
 
 ## Honest limits
 
-- The circles in the captures are test members; Najimi has had no outside testers yet.
 - Hotel booking runs through Nuitee's live key, which isn't set on najimi.xyz yet, so hotels say they aren't switched on there. Table calls work end to end: on 23 October Najimi phoned a test line playing the venue, booked a table for two and posted the confirmed booking card in the chat. From Nigeria the call shows a US number (a Nigerian caller ID needs a registered local business number).
 - Connecting your socials (X, Instagram, TikTok, YouTube) is the next milestone: X and Instagram offer no official way for an app to read follows or act for you, so it waits on a one-tap browser extension. Until then najimi.xyz shows it as coming soon, and taste comes from your loves and Letterboxd, Goodreads or Last.fm by name. Google sign-in is live.
 - A platform's data download gives only what the platform puts in it: X's archive lists follows by account number only (connect X to read them), and TikTok's likes and watch history carry no creator, so they're left out.
