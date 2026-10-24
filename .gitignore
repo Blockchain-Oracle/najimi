@@ -35,3 +35,6 @@ refs/
 
 # MapLibre's worker, copied from node_modules before dev and build
 apps/web/public/vendor/
+
+# Demo scripts stay local
+docs/demo/

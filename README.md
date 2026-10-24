@@ -35,11 +35,29 @@
   </a>
 </p>
 
-Through **Qloo**, what you love becomes a feed, friends, games and a map, and an agent in every chat plans nights and trips for everyone's taste. Start with three loves (or bring your data from X, Instagram, TikTok, YouTube or Spotify): Najimi builds your taste from Qloo, then plays it back as a feed of songs, trailers, episodes and places; matches you with people and circles who share it; deals games about it; shows where your people are on an Earth map; and keeps your year in a Passport. **Najimi, the agent, is the engine.** In your own chat and in every circle it reads each person's taste from Qloo, scores every pick for every member, plans and routes the night or the trip, and asks before it calls, posts or books, showing *why* each pick fits. A general model alone would guess a crowd-pleaser; Najimi only recommends what Qloo returned for these people.
+Through **Qloo**, what you love becomes a feed, friends, games and a map, and an agent in every chat plans nights and trips for everyone's taste. Start with three loves (or a Letterboxd, Last.fm or Goodreads name): Najimi builds your taste from Qloo, then plays it back as a feed of songs, trailers, episodes and places; matches you with people and circles who share it; deals games about it; shows where your people are on an Earth map; and keeps your year in a Passport. **Najimi, the agent, is the engine.** In your own chat and in every circle it reads each person's taste from Qloo, scores every pick for every member, plans and routes the night or the trip, and asks before it calls, posts or books, showing *why* each pick fits. A general model alone would guess a crowd-pleaser; Najimi only recommends what Qloo returned for these people.
 
 Built for the **[Qloo Agentic Hackathon](https://qloo.devpost.com/)** · [how it meets the brief](#how-najimi-meets-the-hackathon). *Najimi* (馴染み) means **someone you know well**.
 
-## One ask, two tastes
+## The problem
+
+Friends plan in their group chat: where to eat on Friday, what to watch on Sunday. Each person knows what they like. Nobody knows what everyone likes. So it usually goes like this:
+
+1. Someone asks "where should we go tonight?"
+2. The replies: "idk", "anywhere", "you pick".
+3. The loudest person, or whoever's feed showed them something last, names a place.
+4. The rest go along, or the chat goes quiet.
+5. Someone still has to look it up, call and book. Often nobody does.
+
+The night fits one person's taste, or it never happens.
+
+The apps that know your taste each know one slice of one person: your music app knows your music, your streaming app your films. Spotify's Blend mixes up to ten friends' music into one playlist, but stops at music. A group-chat poll counts votes, but someone has to come up with the options. ChatGPT can join a group chat now, but it leaves everyone's memory out, so it knows only what's typed there. The group still guesses, and one person still does the booking.
+
+## The idea
+
+Najimi reads each friend's taste from the things they love, through Qloo, and puts an agent in the group chat that knows all of them. One line, "@najimi find us a spot tonight", and it scores every place for each person, shows whose taste it fits and why, routes the night and, with a yes, phones the venue and books it. Nobody has to be the organiser; the group just says yes. Between plans, the same taste is a feed, games and a map you share with your friends.
+
+### One ask, two tastes
 
 Juno and Kemi share a circle called *Friday crew*. Juno writes one line; Najimi answers for both of them.
 
@@ -145,7 +163,7 @@ The brief, *Agents, but with taste*: a working application that integrates Qloo'
 
 ### The rest of Najimi
 
-- **Your taste in a minute:** pick three loves, or bring a Letterboxd, Last.fm or Goodreads name, X and Instagram handles, or your data from X, Instagram, TikTok, YouTube or Spotify (each platform's download page one tap away, a reminder when the file is ready, read in your browser). [Quickstart](https://docs.najimi.xyz/docs/guide/quickstart) · [Your feeds](https://docs.najimi.xyz/docs/guide/feeds)
+- **Your taste in a minute:** pick three loves, or bring a Letterboxd, Last.fm or Goodreads name. [Quickstart](https://docs.najimi.xyz/docs/guide/quickstart)
 - **One sheet for any thing:** a film's trailer and where to watch it, an artist's songs, music videos and next concerts, a place's map, phone and socials, what people say on TikTok, YouTube and X. [Profile](https://docs.najimi.xyz/docs/guide/profile)
 - **Feed:** full-screen cards with Apple previews, trailers, podcast episodes and places, tuned like a mixing desk, one player across the app. [Feed](https://docs.najimi.xyz/docs/guide/feed)
 - **Circles and chats:** voice calls with Najimi in the room (it answers when named and posts its cards in the chat; it can join a phone call you're on too), an @ menu for Najimi and everyone in the room, polls, the circle's soundtrack, QR invites, games with a daily drop and a weekly board. [Chats](https://docs.najimi.xyz/docs/guide/chats) · [Games](https://docs.najimi.xyz/docs/guide/games)

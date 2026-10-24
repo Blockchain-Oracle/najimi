@@ -29,4 +29,6 @@ Video demo: Leave blank unless a verified YouTube or Vimeo demo is available. Th
 
 Existing project question: Leave blank. The first repository commit was on 2026-10-20, within the hackathon submission period.
 
-Gallery uploaded: 15 images covering the desktop profile, graph, film, artist, book, place, feed, Qloo explanation, Earth map and scene, route, business result, Instagram discovery, plus mobile profile and Blind Taste. Captions are entered. The Markdown story includes the banner and additional desktop and mobile captures. The Instagram demo account is explicitly shown as not connected. The profile and business in the captures are illustrative test data.
+Gallery uploaded: 15 images covering the desktop profile, graph, film, artist, book, place, feed, Qloo explanation, Earth map and scene, route, business result, Instagram discovery, plus mobile profile and Blind Taste. Captions are entered. The Markdown story includes the banner and additional desktop and mobile captures. The profile and business in the captures are illustrative test data.
+
+To do on Devpost: add LiveKit and Resend to the Built-with tags; in the gallery, remove the Instagram discovery image (connecting socials is coming soon, so that screen now says so), and put the group-fit capture first (`.github/assets/captures/group-fit.jpg`: one ask, five places, each scored for Juno and Kemi). It is the moment the brief exists to see.
