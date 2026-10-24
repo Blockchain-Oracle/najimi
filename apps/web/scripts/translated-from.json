@@ -1427,7 +1427,16 @@
     "Run.stops": "{count, plural, one {# stop} other {# stops}}",
     "Run.dealing": "Dealing a game",
     "Call.justTalk": "Just talk: Najimi answers everything you say, and puts what it finds in the chat.",
-    "Call.thinking": "Thinking…"
+    "Call.thinking": "Thinking…",
+    "Soon.badge": "Coming soon",
+    "Soon.feeds.title": "Connect your socials",
+    "Soon.feeds.body": "Soon Najimi reads who you follow and what you like on X, Instagram, TikTok and YouTube in one tap, and your taste grows with them.",
+    "Soon.agents.title": "Agents on your socials",
+    "Soon.agents.body": "Soon Najimi follows, likes and posts for you on X, Instagram and TikTok, the way you'd do it, asking first.",
+    "Soon.today": "Today",
+    "Soon.todayBody": "Your taste comes from the things you love, and from Letterboxd, Goodreads or Last.fm by name. Everything you add makes your feed, your matches and Najimi's plans sharper.",
+    "Soon.back": "Back to your taste",
+    "Soon.short": "Soon"
   },
   "es": {
     "Landing.kicker": "Taste AI by <qloo>Qloo</qloo>",
@@ -2857,7 +2866,16 @@
     "Run.stops": "{count, plural, one {# stop} other {# stops}}",
     "Run.dealing": "Dealing a game",
     "Call.justTalk": "Just talk: Najimi answers everything you say, and puts what it finds in the chat.",
-    "Call.thinking": "Thinking…"
+    "Call.thinking": "Thinking…",
+    "Soon.badge": "Coming soon",
+    "Soon.feeds.title": "Connect your socials",
+    "Soon.feeds.body": "Soon Najimi reads who you follow and what you like on X, Instagram, TikTok and YouTube in one tap, and your taste grows with them.",
+    "Soon.agents.title": "Agents on your socials",
+    "Soon.agents.body": "Soon Najimi follows, likes and posts for you on X, Instagram and TikTok, the way you'd do it, asking first.",
+    "Soon.today": "Today",
+    "Soon.todayBody": "Your taste comes from the things you love, and from Letterboxd, Goodreads or Last.fm by name. Everything you add makes your feed, your matches and Najimi's plans sharper.",
+    "Soon.back": "Back to your taste",
+    "Soon.short": "Soon"
   },
   "ha": {
     "Landing.kicker": "Taste AI by <qloo>Qloo</qloo>",
@@ -4287,7 +4305,16 @@
     "Run.stops": "{count, plural, one {# stop} other {# stops}}",
     "Run.dealing": "Dealing a game",
     "Call.justTalk": "Just talk: Najimi answers everything you say, and puts what it finds in the chat.",
-    "Call.thinking": "Thinking…"
+    "Call.thinking": "Thinking…",
+    "Soon.badge": "Coming soon",
+    "Soon.feeds.title": "Connect your socials",
+    "Soon.feeds.body": "Soon Najimi reads who you follow and what you like on X, Instagram, TikTok and YouTube in one tap, and your taste grows with them.",
+    "Soon.agents.title": "Agents on your socials",
+    "Soon.agents.body": "Soon Najimi follows, likes and posts for you on X, Instagram and TikTok, the way you'd do it, asking first.",
+    "Soon.today": "Today",
+    "Soon.todayBody": "Your taste comes from the things you love, and from Letterboxd, Goodreads or Last.fm by name. Everything you add makes your feed, your matches and Najimi's plans sharper.",
+    "Soon.back": "Back to your taste",
+    "Soon.short": "Soon"
   },
   "yo": {
     "Landing.kicker": "Taste AI by <qloo>Qloo</qloo>",
@@ -5717,7 +5744,16 @@
     "Run.stops": "{count, plural, one {# stop} other {# stops}}",
     "Run.dealing": "Dealing a game",
     "Call.justTalk": "Just talk: Najimi answers everything you say, and puts what it finds in the chat.",
-    "Call.thinking": "Thinking…"
+    "Call.thinking": "Thinking…",
+    "Soon.badge": "Coming soon",
+    "Soon.feeds.title": "Connect your socials",
+    "Soon.feeds.body": "Soon Najimi reads who you follow and what you like on X, Instagram, TikTok and YouTube in one tap, and your taste grows with them.",
+    "Soon.agents.title": "Agents on your socials",
+    "Soon.agents.body": "Soon Najimi follows, likes and posts for you on X, Instagram and TikTok, the way you'd do it, asking first.",
+    "Soon.today": "Today",
+    "Soon.todayBody": "Your taste comes from the things you love, and from Letterboxd, Goodreads or Last.fm by name. Everything you add makes your feed, your matches and Najimi's plans sharper.",
+    "Soon.back": "Back to your taste",
+    "Soon.short": "Soon"
   },
   "hi": {
     "Landing.kicker": "Taste AI by <qloo>Qloo</qloo>",
@@ -7147,7 +7183,16 @@
     "Run.stops": "{count, plural, one {# stop} other {# stops}}",
     "Run.dealing": "Dealing a game",
     "Call.justTalk": "Just talk: Najimi answers everything you say, and puts what it finds in the chat.",
-    "Call.thinking": "Thinking…"
+    "Call.thinking": "Thinking…",
+    "Soon.badge": "Coming soon",
+    "Soon.feeds.title": "Connect your socials",
+    "Soon.feeds.body": "Soon Najimi reads who you follow and what you like on X, Instagram, TikTok and YouTube in one tap, and your taste grows with them.",
+    "Soon.agents.title": "Agents on your socials",
+    "Soon.agents.body": "Soon Najimi follows, likes and posts for you on X, Instagram and TikTok, the way you'd do it, asking first.",
+    "Soon.today": "Today",
+    "Soon.todayBody": "Your taste comes from the things you love, and from Letterboxd, Goodreads or Last.fm by name. Everything you add makes your feed, your matches and Najimi's plans sharper.",
+    "Soon.back": "Back to your taste",
+    "Soon.short": "Soon"
   },
   "sw": {
     "Landing.kicker": "Taste AI by <qloo>Qloo</qloo>",
@@ -8577,7 +8622,16 @@
     "Run.stops": "{count, plural, one {# stop} other {# stops}}",
     "Run.dealing": "Dealing a game",
     "Call.justTalk": "Just talk: Najimi answers everything you say, and puts what it finds in the chat.",
-    "Call.thinking": "Thinking…"
+    "Call.thinking": "Thinking…",
+    "Soon.badge": "Coming soon",
+    "Soon.feeds.title": "Connect your socials",
+    "Soon.feeds.body": "Soon Najimi reads who you follow and what you like on X, Instagram, TikTok and YouTube in one tap, and your taste grows with them.",
+    "Soon.agents.title": "Agents on your socials",
+    "Soon.agents.body": "Soon Najimi follows, likes and posts for you on X, Instagram and TikTok, the way you'd do it, asking first.",
+    "Soon.today": "Today",
+    "Soon.todayBody": "Your taste comes from the things you love, and from Letterboxd, Goodreads or Last.fm by name. Everything you add makes your feed, your matches and Najimi's plans sharper.",
+    "Soon.back": "Back to your taste",
+    "Soon.short": "Soon"
   },
   "ig": {
     "Landing.kicker": "Taste AI by <qloo>Qloo</qloo>",
@@ -10007,7 +10061,16 @@
     "Run.stops": "{count, plural, one {# stop} other {# stops}}",
     "Run.dealing": "Dealing a game",
     "Call.justTalk": "Just talk: Najimi answers everything you say, and puts what it finds in the chat.",
-    "Call.thinking": "Thinking…"
+    "Call.thinking": "Thinking…",
+    "Soon.badge": "Coming soon",
+    "Soon.feeds.title": "Connect your socials",
+    "Soon.feeds.body": "Soon Najimi reads who you follow and what you like on X, Instagram, TikTok and YouTube in one tap, and your taste grows with them.",
+    "Soon.agents.title": "Agents on your socials",
+    "Soon.agents.body": "Soon Najimi follows, likes and posts for you on X, Instagram and TikTok, the way you'd do it, asking first.",
+    "Soon.today": "Today",
+    "Soon.todayBody": "Your taste comes from the things you love, and from Letterboxd, Goodreads or Last.fm by name. Everything you add makes your feed, your matches and Najimi's plans sharper.",
+    "Soon.back": "Back to your taste",
+    "Soon.short": "Soon"
   },
   "ja": {
     "Landing.kicker": "Taste AI by <qloo>Qloo</qloo>",
@@ -11437,7 +11500,16 @@
     "Run.stops": "{count, plural, one {# stop} other {# stops}}",
     "Run.dealing": "Dealing a game",
     "Call.justTalk": "Just talk: Najimi answers everything you say, and puts what it finds in the chat.",
-    "Call.thinking": "Thinking…"
+    "Call.thinking": "Thinking…",
+    "Soon.badge": "Coming soon",
+    "Soon.feeds.title": "Connect your socials",
+    "Soon.feeds.body": "Soon Najimi reads who you follow and what you like on X, Instagram, TikTok and YouTube in one tap, and your taste grows with them.",
+    "Soon.agents.title": "Agents on your socials",
+    "Soon.agents.body": "Soon Najimi follows, likes and posts for you on X, Instagram and TikTok, the way you'd do it, asking first.",
+    "Soon.today": "Today",
+    "Soon.todayBody": "Your taste comes from the things you love, and from Letterboxd, Goodreads or Last.fm by name. Everything you add makes your feed, your matches and Najimi's plans sharper.",
+    "Soon.back": "Back to your taste",
+    "Soon.short": "Soon"
   },
   "zh": {
     "Landing.kicker": "Taste AI by <qloo>Qloo</qloo>",
@@ -12867,7 +12939,16 @@
     "Run.stops": "{count, plural, one {# stop} other {# stops}}",
     "Run.dealing": "Dealing a game",
     "Call.justTalk": "Just talk: Najimi answers everything you say, and puts what it finds in the chat.",
-    "Call.thinking": "Thinking…"
+    "Call.thinking": "Thinking…",
+    "Soon.badge": "Coming soon",
+    "Soon.feeds.title": "Connect your socials",
+    "Soon.feeds.body": "Soon Najimi reads who you follow and what you like on X, Instagram, TikTok and YouTube in one tap, and your taste grows with them.",
+    "Soon.agents.title": "Agents on your socials",
+    "Soon.agents.body": "Soon Najimi follows, likes and posts for you on X, Instagram and TikTok, the way you'd do it, asking first.",
+    "Soon.today": "Today",
+    "Soon.todayBody": "Your taste comes from the things you love, and from Letterboxd, Goodreads or Last.fm by name. Everything you add makes your feed, your matches and Najimi's plans sharper.",
+    "Soon.back": "Back to your taste",
+    "Soon.short": "Soon"
   },
   "fr": {
     "Landing.kicker": "Taste AI by <qloo>Qloo</qloo>",
@@ -14297,7 +14378,16 @@
     "Run.stops": "{count, plural, one {# stop} other {# stops}}",
     "Run.dealing": "Dealing a game",
     "Call.justTalk": "Just talk: Najimi answers everything you say, and puts what it finds in the chat.",
-    "Call.thinking": "Thinking…"
+    "Call.thinking": "Thinking…",
+    "Soon.badge": "Coming soon",
+    "Soon.feeds.title": "Connect your socials",
+    "Soon.feeds.body": "Soon Najimi reads who you follow and what you like on X, Instagram, TikTok and YouTube in one tap, and your taste grows with them.",
+    "Soon.agents.title": "Agents on your socials",
+    "Soon.agents.body": "Soon Najimi follows, likes and posts for you on X, Instagram and TikTok, the way you'd do it, asking first.",
+    "Soon.today": "Today",
+    "Soon.todayBody": "Your taste comes from the things you love, and from Letterboxd, Goodreads or Last.fm by name. Everything you add makes your feed, your matches and Najimi's plans sharper.",
+    "Soon.back": "Back to your taste",
+    "Soon.short": "Soon"
   },
   "ar": {
     "Landing.kicker": "Taste AI by <qloo>Qloo</qloo>",
@@ -15727,6 +15817,15 @@
     "Run.stops": "{count, plural, one {# stop} other {# stops}}",
     "Run.dealing": "Dealing a game",
     "Call.justTalk": "Just talk: Najimi answers everything you say, and puts what it finds in the chat.",
-    "Call.thinking": "Thinking…"
+    "Call.thinking": "Thinking…",
+    "Soon.badge": "Coming soon",
+    "Soon.feeds.title": "Connect your socials",
+    "Soon.feeds.body": "Soon Najimi reads who you follow and what you like on X, Instagram, TikTok and YouTube in one tap, and your taste grows with them.",
+    "Soon.agents.title": "Agents on your socials",
+    "Soon.agents.body": "Soon Najimi follows, likes and posts for you on X, Instagram and TikTok, the way you'd do it, asking first.",
+    "Soon.today": "Today",
+    "Soon.todayBody": "Your taste comes from the things you love, and from Letterboxd, Goodreads or Last.fm by name. Everything you add makes your feed, your matches and Najimi's plans sharper.",
+    "Soon.back": "Back to your taste",
+    "Soon.short": "Soon"
   }
 }

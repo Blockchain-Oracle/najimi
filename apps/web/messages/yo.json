@@ -1642,5 +1642,20 @@
     "badLink": "Link yẹn kò ṣiṣẹ́.",
     "changeBack": "O lè tún tan án nígbàkigbà nínú Ètò.",
     "openSettings": "Ṣí Ètò"
+  },
+  "Soon": {
+    "badge": "Ń bọ̀ láìpẹ́",
+    "feeds": {
+      "title": "Sopọ̀ mọ́ àwọn social rẹ",
+      "body": "Láìpẹ́, Najimi yóò ka àwọn ẹni tí o ń tọ̀ lé àti ohun tí o fẹ́ràn lórí X, Instagram, TikTok àti YouTube pẹ̀lú ìfọwọ́kan kan, ìfẹ́ràn rẹ yóò sì máa gbòòrò sí i pẹ̀lú wọn."
+    },
+    "agents": {
+      "title": "Àwọn aṣojú lórí social rẹ",
+      "body": "Láìpẹ́, Najimi yóò máa tọ̀ lé, fẹ́ràn àti fi ìfiránṣẹ́ ránṣẹ́ fún ọ lórí X, Instagram àti TikTok, gẹ́gẹ́ bí ìwọ fúnra rẹ ṣe máa ṣe é, ṣùgbọ́n yóò kọ́kọ́ béèrè."
+    },
+    "today": "Lónìí",
+    "todayBody": "Ìfẹ́ràn rẹ wá láti inú àwọn ohun tí o fẹ́ràn àti láti Letterboxd, Goodreads tàbí Last.fm nípa orúkọ. Ohun gbogbo tí o bá fi kún un ń mú kí feed rẹ, àwọn ìbáramu rẹ àti àwọn ètò Najimi túbọ̀ péye.",
+    "back": "Padà sí àwọn ohun tí o fẹ́ràn",
+    "short": "Láìpẹ́"
   }
 }

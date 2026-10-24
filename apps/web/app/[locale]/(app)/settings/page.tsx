@@ -1,5 +1,5 @@
 import { usageToday } from "@najimi/agent/server"
-import { ALLOWANCE } from "@najimi/config"
+import { ALLOWANCE, SOCIAL } from "@najimi/config"
 import { connectionsOf } from "@najimi/connectors/sessions"
 import { db, schema } from "@najimi/db"
 import { and, count, eq, gte, sql } from "drizzle-orm"
@@ -76,6 +76,7 @@ async function Mine() {
   const ta = await getTranslations("Auth")
   const tp = await getTranslations("Profile")
   const tc = await getTranslations("Chat")
+  const tsoon = await getTranslations("Soon")
   const user = session.user as typeof session.user & { isAnonymous?: boolean | null }
   const guest = Boolean(user.isAnonymous)
   const [[prefs], used, spent, links, self, [account], connections, [blocked], [devices]] =
@@ -186,7 +187,11 @@ async function Mine() {
             id: "agents",
             icon: "agents",
             label: t("agents"),
-            value: agentsOn ? t("agentsOn", { count: agentsOn }) : t("off"),
+            value: SOCIAL.connectSoon
+              ? tsoon("short")
+              : agentsOn
+                ? t("agentsOn", { count: agentsOn })
+                : t("off"),
             href: "/agents",
           },
           {
@@ -241,9 +246,11 @@ async function Mine() {
             id: "feeds",
             icon: "feeds",
             label: t("feeds"),
-            value: connections.length
-              ? connections.map((c) => PLATFORM_NAMES[c.platform] ?? c.platform).join(" · ")
-              : null,
+            value: SOCIAL.connectSoon
+              ? tsoon("short")
+              : connections.length
+                ? connections.map((c) => PLATFORM_NAMES[c.platform] ?? c.platform).join(" · ")
+                : null,
             href: "/connect",
           },
           {

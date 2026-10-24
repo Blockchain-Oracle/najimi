@@ -1642,5 +1642,20 @@
     "badLink": "Njikọ ahụ arụghị ọrụ.",
     "changeBack": "Ị nwere ike ịgbanye ya ọzọ n’oge ọ bụla na Settings.",
     "openSettings": "Mepee Settings"
+  },
+  "Soon": {
+    "badge": "Ọ na-abịa n’oge na-adịghị anya",
+    "feeds": {
+      "title": "Jikọọ akaụntụ mmekọrịta gị",
+      "body": "N’oge na-adịghị anya, Najimi ga-agụ ndị ị na-eso na ihe na-amasị gị na X, Instagram, TikTok na YouTube n’otu mmetụ, ụtọ gị ga-esokwa eto."
+    },
+    "agents": {
+      "title": "Agents na akaụntụ mmekọrịta gị",
+      "body": "N’oge na-adịghị anya, Najimi ga-eso ndị mmadụ, nwee mmasị ma bipụta ihe n’aha gị na X, Instagram na TikTok dịka ị ga-eme ya, ma buru ụzọ jụọ gị."
+    },
+    "today": "Taa",
+    "todayBody": "Ihe ndị ị hụrụ n’anya na-akpụ ụtọ gị, tinyere ihe ị họrọ n’aha na Letterboxd, Goodreads ma ọ bụ Last.fm. Ihe ọ bụla ị gbakwunyere na-eme ka feed gị, ndị gị na ha dabara na atụmatụ Najimi doo anya karị.",
+    "back": "Laghachi na ụtọ gị",
+    "short": "N’oge na-adịghị anya"
   }
 }

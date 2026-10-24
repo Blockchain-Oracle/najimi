@@ -43,7 +43,7 @@ That taste keeps working across the app:
 - **Plans:** ask for a night out or a trip. Najimi uses Qloo to choose areas and stops, shows how each stop fits the people involved, builds a route, adds nearby shows, and gives you a shareable plan and calendar link.
 - **Booking by phone:** with your yes, Najimi phones the venue, says it's an AI, and asks for the table. Within a minute the chat shows the outcome (booked, a time they offered, busy, no answer) with the call's recording; you get it by email too, a reminder the day before, and one tap into Google Calendar.
 - **Calls:** call your circle or a friend in the app, bring Najimi in, and it answers out loud when you say its name, puts its cards in the chat, and leaves a summary. You can also add Najimi to a phone call you're already on.
-- **Your feeds:** examine X, Instagram, TikTok, or YouTube one platform at a time. Bring in what you already follow, score a screenshot of your feed against your taste, see accounts and topics to try, and connect X or Instagram for a scheduled “Do it for me” follow flow.
+- **Your feeds (coming soon):** connecting X, Instagram, TikTok and YouTube so what you follow and like becomes taste, with agents that follow and like for you. It's built, and switched off on najimi.xyz until connecting is one tap; it's our next milestone.
 - **Business mode:** give Najimi a place you run. It reads the site, identifies the business or comparable places in Qloo, and builds a shareable plan: who its people are in one card, then three moves for the week, each with one next step (post it, invite the partner, plan it, play the set).
 - **Passport and Wrapped:** see the loves, nights, trips, and games that marked your year, then make story slides from them.
 

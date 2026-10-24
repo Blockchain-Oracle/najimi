@@ -1,6 +1,6 @@
 "use client"
 
-import { TASTE_DOMAINS } from "@najimi/config"
+import { SOCIAL, TASTE_DOMAINS } from "@najimi/config"
 import type { StoredPick, TasteArea, TasteWords } from "@najimi/db/schema"
 import { Button } from "@najimi/ui/components/button"
 import { Orb } from "@najimi/ui/components/orb"
@@ -99,6 +99,7 @@ export function PersonView({ data, other }: { data: PersonViewData; other?: Othe
   const askAbout = useAskAbout()
   const tp = useTranslations("Pick")
   const ts = useTranslations("Social")
+  const tsoon = useTranslations("Soon")
   const router = useRouter()
   const { person } = data
   // Najimi knows whose profile is open ("what would she love?", "plan something for us").
@@ -422,8 +423,13 @@ export function PersonView({ data, other }: { data: PersonViewData; other?: Othe
                   title={t(full)}
                   className="group flex flex-col items-center gap-1.5"
                 >
-                  <span className="grid size-14 place-items-center rounded-[20px] bg-card text-foreground ring-1 ring-white/[0.06] transition-[background-color,transform] duration-200 group-hover:bg-secondary group-active:scale-95">
+                  <span className="relative grid size-14 place-items-center rounded-[20px] bg-card text-foreground ring-1 ring-white/[0.06] transition-[background-color,transform] duration-200 group-hover:bg-secondary group-active:scale-95">
                     {icon}
+                    {href === "/connect" && SOCIAL.connectSoon ? (
+                      <span className="absolute -top-1.5 -end-1.5 rounded-pill bg-foreground px-1.5 py-0.5 text-[9px] font-bold tracking-wide text-background uppercase">
+                        {tsoon("short")}
+                      </span>
+                    ) : null}
                   </span>
                   <span className="text-[12px] font-medium text-text-2 group-hover:text-foreground">
                     {t(`short.${short}`)}

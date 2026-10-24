@@ -1642,5 +1642,20 @@
     "badLink": "Kiungo hicho hakikufanya kazi.",
     "changeBack": "Unaweza kuiwasha tena wakati wowote kwenye Mipangilio.",
     "openSettings": "Fungua Mipangilio"
+  },
+  "Soon": {
+    "badge": "Inakuja hivi karibuni",
+    "feeds": {
+      "title": "Unganisha mitandao yako ya kijamii",
+      "body": "Hivi karibuni Najimi itasoma unaowafuata na unachopenda kwenye X, Instagram, TikTok na YouTube kwa mguso mmoja, na ladha yako itakua pamoja nao."
+    },
+    "agents": {
+      "title": "Mawakala kwenye mitandao yako ya kijamii",
+      "body": "Hivi karibuni Najimi itakufuata, kupenda machapisho na kuchapisha kwa niaba yako kwenye X, Instagram na TikTok, kama ungefanya wewe, lakini itakuuliza kwanza."
+    },
+    "today": "Leo",
+    "todayBody": "Ladha yako inatokana na vitu unavyopenda, na pia Letterboxd, Goodreads au Last.fm kwa kutaja jina. Kila unachoongeza huboresha mpasho wako, watu mnaolingana nao na mipango ya Najimi.",
+    "back": "Rudi kwenye ladha yako",
+    "short": "Hivi karibuni"
   }
 }

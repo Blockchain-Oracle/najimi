@@ -1642,5 +1642,20 @@
     "badLink": "Wannan hanyar haɗin ba ta yi aiki ba.",
     "changeBack": "Za ka iya sake kunna shi a kowane lokaci a Saituna.",
     "openSettings": "Buɗe Saituna"
+  },
+  "Soon": {
+    "badge": "Yana nan ba da daɗewa ba",
+    "feeds": {
+      "title": "Haɗa asusunka na social media",
+      "body": "Ba da daɗewa ba Najimi zai duba waɗanda kake bi da abubuwan da kake so a X, Instagram, TikTok da YouTube da taɓawa ɗaya, kuma abubuwan da kake so za su ƙaru tare da su."
+    },
+    "agents": {
+      "title": "Agents a social media ɗinka",
+      "body": "Ba da daɗewa ba Najimi zai bi, ya yi like, ya kuma yi posting a madadinka a X, Instagram da TikTok yadda kai za ka yi, tare da neman izininka tukuna."
+    },
+    "today": "Yau",
+    "todayBody": "Abubuwan da kake so sun samo asali daga abubuwan da kake ƙauna, da kuma Letterboxd, Goodreads ko Last.fm idan ka shigar da sunansu. Duk abin da ka ƙara yana inganta feed ɗinka, matches ɗinka da tsare-tsaren Najimi.",
+    "back": "Koma ga abubuwan da kake so",
+    "short": "Ba da daɗewa ba"
   }
 }

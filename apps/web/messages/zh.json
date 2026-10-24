@@ -1642,5 +1642,20 @@
     "badLink": "链接无法使用。",
     "changeBack": "你可以随时在设置中重新开启。",
     "openSettings": "打开设置"
+  },
+  "Soon": {
+    "badge": "即将推出",
+    "feeds": {
+      "title": "连接你的社交账号",
+      "body": "很快，Najimi 就能一键读取你在 X、Instagram、TikTok 和 YouTube 上关注的人和喜欢的内容，让你的品味随之成长。"
+    },
+    "agents": {
+      "title": "社交账号上的智能助手",
+      "body": "很快，Najimi 就能按你的方式在 X、Instagram 和 TikTok 上关注、点赞和发帖，并事先征求你的同意。"
+    },
+    "today": "今天",
+    "todayBody": "你的品味源自你热爱的事物，也可以按名称从 Letterboxd、Goodreads 或 Last.fm 导入。你添加的每一项内容，都会让你的动态、匹配和 Najimi 的计划更贴合你。",
+    "back": "返回你的品味",
+    "short": "即将推出"
   }
 }

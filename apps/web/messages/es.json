@@ -1642,5 +1642,20 @@
     "badLink": "Ese enlace no funcionó.",
     "changeBack": "Puedes volver a activarlo cuando quieras en Ajustes.",
     "openSettings": "Abrir Ajustes"
+  },
+  "Soon": {
+    "badge": "Muy pronto",
+    "feeds": {
+      "title": "Conecta tus redes sociales",
+      "body": "Pronto Najimi verá a quién sigues y qué te gusta en X, Instagram, TikTok y YouTube con un solo toque, y tu gusto crecerá con ellas."
+    },
+    "agents": {
+      "title": "Agentes en tus redes sociales",
+      "body": "Pronto Najimi seguirá, dará «Me gusta» y publicará por ti en X, Instagram y TikTok, como lo harías tú, pero preguntándote primero."
+    },
+    "today": "Hoy",
+    "todayBody": "Tu gusto nace de las cosas que te encantan y también de Letterboxd, Goodreads o Last.fm, solo tienes que indicar sus nombres. Todo lo que añades afina tu feed, tus matches y los planes de Najimi.",
+    "back": "Volver a tus gustos",
+    "short": "Pronto"
   }
 }

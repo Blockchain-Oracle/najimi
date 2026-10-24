@@ -1,4 +1,4 @@
-import { IMPORTS, TASTE_DOMAINS } from "@najimi/config"
+import { IMPORTS, SOCIAL, TASTE_DOMAINS } from "@najimi/config"
 import {
   candidatesFrom,
   IMPORT_SOURCES,
@@ -19,7 +19,11 @@ const input = z.object({
 
 /** Which sources this server can read (Last.fm needs its key). */
 export async function GET() {
-  return json({ sources: IMPORT_SOURCES.filter((s) => s !== "lastfm" || lastfmReady()) })
+  return json({
+    sources: IMPORT_SOURCES.filter(
+      (s) => (s !== "lastfm" || lastfmReady()) && !(s === "handles" && SOCIAL.connectSoon),
+    ),
+  })
 }
 
 /**

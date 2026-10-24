@@ -1,7 +1,9 @@
+import { SOCIAL } from "@najimi/config"
 import type { Metadata } from "next"
 import { redirect } from "next/navigation"
 import { getTranslations } from "next-intl/server"
 import { Suspense } from "react"
+import { ComingSoon } from "@/components/connect/coming-soon"
 import { Feeds } from "@/components/connect/feeds"
 import { selfOf } from "@/lib/people"
 import { getSession } from "@/lib/session"
@@ -19,7 +21,11 @@ async function Connect() {
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-col gap-5 px-5 pb-12 md:px-0">
       <h1 className="font-title text-[2rem] leading-none">{t("title")}</h1>
-      <Feeds personId={self.id} />
+      {SOCIAL.connectSoon ? (
+        <ComingSoon kind="feeds" personId={self.id} />
+      ) : (
+        <Feeds personId={self.id} />
+      )}
     </div>
   )
 }

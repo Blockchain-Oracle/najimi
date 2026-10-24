@@ -1642,5 +1642,20 @@
     "badLink": "リンクを開けませんでした。",
     "changeBack": "設定からいつでもオンに戻せます。",
     "openSettings": "設定を開く"
+  },
+  "Soon": {
+    "badge": "近日公開",
+    "feeds": {
+      "title": "SNSを連携",
+      "body": "近日、NajimiがX、Instagram、TikTok、YouTubeでフォローしている人や好きなものをワンタップで読み取り、あなたの好みを広げます。"
+    },
+    "agents": {
+      "title": "SNSでエージェントが活躍",
+      "body": "近日、Najimiがあなたに代わってX、Instagram、TikTokをフォローしたり、いいねや投稿をしたりします。あなたらしく、事前に確認してから行います。"
+    },
+    "today": "今日",
+    "todayBody": "あなたの好みは、好きなものや、名前で追加できるLetterboxd、Goodreads、Last.fmから生まれます。追加するほど、フィードやマッチ、Najimiのプランがよりあなたにぴったりになります。",
+    "back": "好みに戻る",
+    "short": "近日"
   }
 }

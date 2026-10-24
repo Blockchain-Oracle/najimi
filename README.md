@@ -153,7 +153,7 @@ The brief, *Agents, but with taste*: a working application that integrates Qloo'
 - **Earth and the graph:** where your taste lives, square by square; your taste as a web you can pull. [Earth](https://docs.najimi.xyz/docs/guide/earth) · [Graph](https://docs.najimi.xyz/docs/guide/graph)
 - **Business mode:** "I run a café in Yaba" becomes a plan you read in one screen: who its people are, then three moves for the week, each with one next step (post it, invite the partner, plan it with Najimi, play the set). Rebuilt every Monday. [Business](https://docs.najimi.xyz/docs/guide/business)
 - **Passport and Wrapped:** the year at a glance, five slides to share to Instagram Stories. [Passport](https://docs.najimi.xyz/docs/guide/passport)
-- **Your feeds:** a score for how much of your For You page is you, and accounts to follow from your taste. [Your feeds](https://docs.najimi.xyz/docs/guide/feeds)
+- **Your feeds (coming soon):** connecting X, Instagram, TikTok and YouTube so their follows and likes become taste, with agents that follow and like for you. Built; switched off on najimi.xyz until it's one tap. [Your feeds](https://docs.najimi.xyz/docs/guide/feeds)
 - **Email:** a welcome once your taste is read, a Sunday "week in taste", and booking news with the call's recording and reminders, each with one-click unsubscribe. [Settings](https://docs.najimi.xyz/docs/guide/settings)
 
 ## Run it locally
@@ -197,7 +197,7 @@ A pnpm and Turborepo monorepo; every piece runs as a container on one Coolify se
 
 - The circles in the captures are test members; Najimi has had no outside testers yet.
 - Hotel booking runs through Nuitee's live key, which isn't set on najimi.xyz yet, so hotels say they aren't switched on there. Table calls work end to end: on 23 October Najimi phoned a test line playing the venue, booked a table for two and posted the confirmed booking card in the chat. From Nigeria the call shows a US number (a Nigerian caller ID needs a registered local business number).
-- Acting on X and Instagram for you needs your own signed-in session, which those platforms can lock; reading your taste never does. Google sign-in and Connect YouTube are live; TikTok sign-in switches on once TikTok approves its developer app.
+- Connecting your socials (X, Instagram, TikTok, YouTube) is the next milestone: X and Instagram offer no official way for an app to read follows or act for you, so it waits on a one-tap browser extension. Until then najimi.xyz shows it as coming soon, and taste comes from your loves and Letterboxd, Goodreads or Last.fm by name. Google sign-in is live.
 - A platform's data download gives only what the platform puts in it: X's archive lists follows by account number only (connect X to read them), and TikTok's likes and watch history carry no creator, so they're left out.
 - The interface is in twelve languages; the eleven besides English were machine-translated (each checked against the English message's shape) and haven't been read by native speakers yet.
 

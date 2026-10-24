@@ -540,6 +540,11 @@ export const IMPORTS = {
  * and stops for the day at the first sign the platform objects.
  */
 export const SOCIAL = {
+  /**
+   * Connecting X, Instagram, TikTok and YouTube is a milestone for now: the feeds and agents pages
+   * say "coming soon" instead of offering it, and onboarding doesn't offer handles.
+   */
+  connectSoon: true,
   /** Most accounts one read brings back (following, likes, bookmarks). */
   readMax: 200,
   /** Candidates one connected read sends to Qloo. */

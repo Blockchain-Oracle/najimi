@@ -1642,5 +1642,20 @@
     "badLink": "Ce lien n’a pas marché.",
     "changeBack": "Tu peux le réactiver à tout moment dans les paramètres.",
     "openSettings": "Ouvrir les paramètres"
+  },
+  "Soon": {
+    "badge": "Bientôt",
+    "feeds": {
+      "title": "Connecte tes réseaux",
+      "body": "Bientôt, Najimi saura en un clic qui tu suis et ce que tu aimes sur X, Instagram, TikTok et YouTube. Ton goût évoluera avec eux."
+    },
+    "agents": {
+      "title": "Des agents sur tes réseaux",
+      "body": "Bientôt, Najimi suivra, aimera et publiera pour toi sur X, Instagram et TikTok, comme tu le ferais, en te demandant d’abord."
+    },
+    "today": "Aujourd’hui",
+    "todayBody": "Tes goûts viennent de ce que tu aimes, mais aussi de Letterboxd, Goodreads ou Last.fm, que tu peux ajouter par leur nom. Chaque ajout affine ton fil, tes rencontres et les plans de Najimi.",
+    "back": "Retour à tes goûts",
+    "short": "Bientôt"
   }
 }

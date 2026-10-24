@@ -1642,5 +1642,20 @@
     "badLink": "That link didn't work.",
     "changeBack": "You can turn it back on any time in Settings.",
     "openSettings": "Open Settings"
+  },
+  "Soon": {
+    "badge": "Coming soon",
+    "feeds": {
+      "title": "Connect your socials",
+      "body": "Soon Najimi reads who you follow and what you like on X, Instagram, TikTok and YouTube in one tap, and your taste grows with them."
+    },
+    "agents": {
+      "title": "Agents on your socials",
+      "body": "Soon Najimi follows, likes and posts for you on X, Instagram and TikTok, the way you'd do it, asking first."
+    },
+    "today": "Today",
+    "todayBody": "Your taste comes from the things you love, and from Letterboxd, Goodreads or Last.fm by name. Everything you add makes your feed, your matches and Najimi's plans sharper.",
+    "back": "Back to your taste",
+    "short": "Soon"
   }
 }
