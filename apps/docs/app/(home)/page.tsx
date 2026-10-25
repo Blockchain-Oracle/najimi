@@ -8,6 +8,7 @@ import {
   ImagePlus,
   type LucideIcon,
   Phone as PhoneIcon,
+  Play,
   Route,
   Send,
   Sparkles,
@@ -176,6 +177,12 @@ export default function Home() {
             >
               Read the guide
             </Link>
+            <a
+              href={SITE.demo}
+              className="inline-flex h-12 items-center gap-2 rounded-full border border-fd-border bg-fd-background/60 px-6 text-[15px] font-semibold backdrop-blur transition-colors hover:bg-fd-accent"
+            >
+              <Play className="size-4" /> Watch the demo
+            </a>
           </div>
           <p className="mt-6 flex items-center gap-2 text-[13px] text-fd-muted-foreground">
             Built on <QlooLogo className="h-[1.05em] text-fd-foreground" /> · free, no account

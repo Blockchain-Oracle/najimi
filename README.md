@@ -84,7 +84,7 @@ Asked to plan the night, Najimi puts three stops in order. On najimi.xyz it plan
   </a>
 </p>
 
-The recorded walkthrough will play at [najimi.xyz/demo](https://najimi.xyz/demo). Until then, follow the proof on the live app (the demo page walks the same steps with links):
+**[Watch the demo on YouTube](https://youtu.be/0xcauEZtqWY)** (4:54), or on [najimi.xyz/demo](https://najimi.xyz/demo) with a link into every step. You can also follow the proof on the live app:
 
 1. Start, pick three things you love, and watch Qloo build your taste live (picks in ten kinds, your taste words, where your people cluster).
 2. Join the public [Najimi Lounge](https://najimi.xyz/join/najimilounge) (or start a circle with a friend), and ask "@najimi find us a spot tonight". The card shows each member's fit.

@@ -4,7 +4,7 @@
 
 **Your taste, made social, with an agent that plans for everyone.** Through Qloo, what you love becomes a feed, friends, games and a map, and an agent in every chat plans nights and trips for everyone's taste. Open any pick to see *why* it fits.
 
-**Try it:** [najimi.xyz](https://najimi.xyz) · **Code:** [GitHub](https://github.com/Blockchain-Oracle/najimi) · **Docs:** [docs.najimi.xyz](https://docs.najimi.xyz) · **Qloo integration:** [API map](https://docs.najimi.xyz/docs/qloo)
+**Try it:** [najimi.xyz](https://najimi.xyz) · **Demo video:** [YouTube](https://youtu.be/0xcauEZtqWY) · **Code:** [GitHub](https://github.com/Blockchain-Oracle/najimi) · **Docs:** [docs.najimi.xyz](https://docs.najimi.xyz) · **Qloo integration:** [API map](https://docs.najimi.xyz/docs/qloo)
 
 ## Inspiration
 

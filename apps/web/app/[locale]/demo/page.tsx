@@ -8,13 +8,13 @@ import { pageLocale } from "@/lib/page-locale"
 export const metadata: Metadata = {
   title: "Demo",
   description:
-    "Najimi in three minutes: one ask in a circle, every friend scored by Qloo, and a night that books itself.",
+    "Watch Najimi: your taste from three loves through Qloo, a feed you scroll, friends and circles, and an agent that plans the night and phones the venue to book it.",
   openGraph: { images: ["/demo/cover.png"] },
   twitter: { card: "summary_large_image", images: ["/demo/cover.png"] },
 }
 
-/** The demo film's YouTube id once it's recorded; until then the page leads with the live app. */
-const FILM: string | null = null
+/** The demo film's YouTube id (it leads the page; without one, the page leads with the live app). */
+const FILM: string | null = "0xcauEZtqWY"
 
 /** The judge's path through the live app, each step opening that screen. */
 const STEPS = [
@@ -99,11 +99,11 @@ export default async function DemoPage({ params }: { params: Promise<{ locale: s
         <section className="flex flex-col gap-6">
           <p className="text-[12px] font-bold tracking-[0.12em] text-text-3 uppercase">The demo</p>
           <h1 className="max-w-3xl font-title text-[2.6rem] leading-[1.04] tracking-[-0.02em] md:text-[4rem]">
-            One ask. Everyone's taste.
+            An agent that knows you well.
           </h1>
           <p className="max-w-2xl text-[17px] leading-relaxed text-text-2">
-            Juno and Kemi share a circle. One line, and Najimi answers with places Qloo scored for
-            both of them, plans the night, and phones the venue to book it.
+            From three loves to a booked night: Qloo reads your taste, your feed plays it back, your
+            friends share it, and Najimi plans the night and phones the venue to book it.
           </p>
           <div className="overflow-hidden rounded-card ring-1 ring-white/10">
             {FILM ? (
@@ -149,6 +149,16 @@ export default async function DemoPage({ params }: { params: Promise<{ locale: s
               </Link>
             )}
           </div>
+          {FILM ? (
+            <a
+              href={`https://youtu.be/${FILM}`}
+              target="_blank"
+              rel="noreferrer"
+              className="flex w-fit items-center gap-1.5 text-[14px] font-semibold text-text-2 hover:text-foreground"
+            >
+              Watch on YouTube <ArrowUpRight className="size-4" />
+            </a>
+          ) : null}
         </section>
 
         <section className="flex flex-col gap-6">

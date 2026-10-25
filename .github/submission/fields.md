@@ -25,7 +25,7 @@ Try it out links:
 
 Built with tags entered in Devpost: Qloo, Next.js, React, TypeScript, OpenAI, PostgreSQL, Drizzle, pg-boss, Tailwind, MapLibre, Mapbox, TMDB, Ticketmaster, ElevenLabs, Twilio, Docker, Coolify, Nuitee, Vercel-AI-SDK. Devpost splits tags on spaces; the story names the full library and API names.
 
-Video demo: Leave blank unless a verified YouTube or Vimeo demo is available. This hackathon does not require one.
+Video demo: https://youtu.be/0xcauEZtqWY (4:54, public on YouTube). Also embedded at https://najimi.xyz/demo.
 
 Existing project question: Leave blank. The first repository commit was on 2026-10-20, within the hackathon submission period.
 

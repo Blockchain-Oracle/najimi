@@ -11,6 +11,9 @@ export const SITE = {
   url: "https://docs.najimi.xyz",
   app: "https://najimi.xyz",
   appStart: "https://najimi.xyz/start",
+  /** The demo film, on the app's own page (it plays there, with every step linked). */
+  demo: "https://najimi.xyz/demo",
+  film: "https://youtu.be/0xcauEZtqWY",
   repo: "https://github.com/Blockchain-Oracle/najimi",
   qloo: "https://www.qloo.com",
 } as const
