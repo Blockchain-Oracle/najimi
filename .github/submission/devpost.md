@@ -8,19 +8,19 @@
 
 ## Inspiration
 
-Friends plan in their group chat: where to eat on Friday, what to watch on Sunday. Each person knows what they like. Nobody knows what everyone likes. So it usually goes like this:
+Friends plan in their group chat: where to eat on Friday, what to watch on Sunday. Each person knows what they like. Nobody knows what everyone likes. So it goes like this:
 
 1. Someone asks "where should we go tonight?"
-2. The replies: "idk", "anywhere", "you pick".
-3. The loudest person, or whoever's feed showed them something last, names a place.
+2. Everyone says "idk" or "you pick".
+3. The loudest person names a place.
 4. The rest go along, or the chat goes quiet.
-5. Someone still has to look it up, call and book. Often nobody does.
+5. Someone still has to call and book. Often nobody does.
 
-The night fits one person's taste, or it never happens.
+The night fits one person, or it never happens.
 
-The apps that know your taste each know one slice of one person: your music app knows your music, your streaming app your films. Spotify's Blend mixes up to ten friends' music into one playlist, but stops at music. A group-chat poll counts votes, but someone has to come up with the options. ChatGPT can join a group chat now, but it leaves everyone's memory out, so it knows only what's typed there. The group still guesses, and one person still does the booking.
+Today's apps don't solve this. Your music app knows your music and your streaming app knows your films, but each knows only you. Spotify's Blend mixes friends' music into one playlist, but stops at music. A poll in the chat counts votes, but someone has to come up with the options. ChatGPT can join a group chat, but it leaves everyone's memory out, so it knows only what's typed there.
 
-So we built Najimi. It reads each friend's taste from the things they love, through Qloo, and puts an agent in the group chat that knows all of them. One line, "@najimi find us a spot tonight", and it scores every place for each person, shows whose taste it fits and why, routes the night and, with a yes, phones the venue and books it. Nobody has to be the organiser; the group just says yes. *Najimi* (馴染み) means someone you know well.
+Najimi learns each friend's taste from the things they love, using Qloo, and puts an agent in the group chat that knows all of them. You ask once. Najimi finds places that fit everyone, shows how well each one fits each person, plans the night and, when you say yes, phones the venue to book it. Nobody has to be the organiser. *Najimi* (馴染み) means someone you know well.
 
 ## What it does
 

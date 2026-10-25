@@ -41,45 +41,41 @@ Built for the **[Qloo Agentic Hackathon](https://qloo.devpost.com/)** · [how it
 
 ## The problem
 
-Friends plan in their group chat: where to eat on Friday, what to watch on Sunday. Each person knows what they like. Nobody knows what everyone likes. So it usually goes like this:
+Friends plan in their group chat: where to eat on Friday, what to watch on Sunday. Each person knows what they like. Nobody knows what everyone likes. So it goes like this:
 
 1. Someone asks "where should we go tonight?"
-2. The replies: "idk", "anywhere", "you pick".
-3. The loudest person, or whoever's feed showed them something last, names a place.
+2. Everyone says "idk" or "you pick".
+3. The loudest person names a place.
 4. The rest go along, or the chat goes quiet.
-5. Someone still has to look it up, call and book. Often nobody does.
+5. Someone still has to call and book. Often nobody does.
 
-The night fits one person's taste, or it never happens.
+The night fits one person, or it never happens.
 
-The apps that know your taste each know one slice of one person: your music app knows your music, your streaming app your films. Spotify's Blend mixes up to ten friends' music into one playlist, but stops at music. A group-chat poll counts votes, but someone has to come up with the options. ChatGPT can join a group chat now, but it leaves everyone's memory out, so it knows only what's typed there. The group still guesses, and one person still does the booking.
+Today's apps don't solve this. Your music app knows your music and your streaming app knows your films, but each knows only you. Spotify's Blend mixes friends' music into one playlist, but stops at music. A poll in the chat counts votes, but someone has to come up with the options. ChatGPT can join a group chat, but it leaves everyone's memory out, so it knows only what's typed there.
 
 ## The idea
 
-Najimi reads each friend's taste from the things they love, through Qloo, and puts an agent in the group chat that knows all of them. One line, "@najimi find us a spot tonight", and it scores every place for each person, shows whose taste it fits and why, routes the night and, with a yes, phones the venue and books it. Nobody has to be the organiser; the group just says yes. Between plans, the same taste is a feed, games and a map you share with your friends.
+Najimi learns each friend's taste from the things they love, using Qloo, and puts an agent in the group chat that knows all of them. You ask once. Najimi finds places that fit everyone, shows how well each one fits each person, plans the night and, when you say yes, phones the venue to book it. Nobody has to be the organiser.
 
 ### One ask, two tastes
 
-Juno and Kemi share a circle called *Friday crew*. Juno writes one line; Najimi answers for both of them.
+Juno and Kemi share a circle called *Friday crew*. Juno types "@najimi find us a spot tonight". Najimi asks Qloo for places in Lagos that suit them both, then checks every place against each person's own taste.
 
 <p align="center">
   <img src=".github/assets/captures/group-fit.jpg" alt="In the Friday crew circle, '@najimi find us a spot tonight' returns five Lagos places, each scored for Juno and for Kemi" width="100%">
 </p>
 
-1. **The ask.** "@najimi find us a spot tonight." The message is saved, announced to the room, and Najimi's turn is queued (one per room, so two asks never collide).
-2. **Everyone's taste, blended.** `groupFit` gathers both members' loves, weights them so each person counts the same, and asks Qloo for places in Lagos.
-3. **Each person, scored.** The same five places go back to Qloo once per member (`filter.results.entities`), so every pick carries each person's own fit:
+| Place | Area | Juno | Kemi |
+| --- | --- | ---: | ---: |
+| Afrinolly Creative Hub | Oregun | 75% | 75% |
+| Rele Gallery | Art gallery | 74% | 76% |
+| **NOK by Alara** | Victoria Island | **74%** | **74%** |
+| Crescendo Lounge And Bar | Bar | 74% | 73% |
+| Ikoyi Club Suya | Ikoyi | 74% | 73% |
 
-   | Place | Area | Juno | Kemi |
-   | --- | --- | ---: | ---: |
-   | Afrinolly Creative Hub | Oregun | 75% | 75% |
-   | Rele Gallery | Art gallery | 74% | 76% |
-   | **NOK by Alara** | Victoria Island | **74%** | **74%** |
-   | Crescendo Lounge And Bar | Bar | 74% | 73% |
-   | Ikoyi Club Suya | Ikoyi | 74% | 73% |
+It picks NOK by Alara: "an equally strong match for Juno and Kemi at 74% each, so neither person's taste takes a back seat." Tap any place for directions, an Uber, its phone number and its site.
 
-4. **One pick, with the reason.** "I'd pick NOK by Alara tonight: an equally strong match for Juno and Kemi at 74% each, so neither person's taste takes a back seat." Every place on the card opens its own sheet: Directions, Uber, Call, its site and socials.
-5. **The night, planned.** Asked for a night out, `planNight` puts three Qloo places in order with the real route. On najimi.xyz: *A night around Victoria Island*, THE HOUSE Lagos at 20:00, NOK by Alara at 21:30, Lagos Jet Ski Riders at 23:30, 71 minutes and 6 km between them, each "because you love Burna Boy".
-6. **Booked, then followed up.** The plan page has the route, an Uber per leg, Google and Outlook calendar links, and *Ask Najimi to book*, a phone call that waits for a yes. The next morning Najimi asks how it was, and the answer steers what it suggests next.
+Asked to plan the night, Najimi puts three stops in order. On najimi.xyz it planned *A night around Victoria Island*: THE HOUSE Lagos at 8pm, NOK by Alara at 9:30pm and Lagos Jet Ski Riders at 11:30pm, 6 km in all, with an Uber for each leg and a calendar link. *Ask Najimi to book* shows exactly what Najimi will say on the phone; after a yes, it calls the venue, and the answer and the call's recording come back to the chat. The next morning it asks how the night went, and the answer shapes what it suggests next.
 
 <p align="center">
   <img src=".github/assets/submission/fullwide/19-agent-night-plan.jpg" alt="Najimi's night plan card: three stops in order, each with its time and because" width="49%">
