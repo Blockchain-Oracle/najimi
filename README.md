@@ -41,21 +41,13 @@ Built for the **[Qloo Agentic Hackathon](https://qloo.devpost.com/)** · [how it
 
 ## The problem
 
-Friends plan in their group chat: where to eat on Friday, what to watch on Sunday. Each person knows what they like. Nobody knows what everyone likes. So it goes like this:
+Every group chat has the same question: where are we going tonight? Everyone says "you pick", the loudest person decides, and the night fits one person. Or nobody books, and it never happens.
 
-1. Someone asks "where should we go tonight?"
-2. Everyone says "idk" or "you pick".
-3. The loudest person names a place.
-4. The rest go along, or the chat goes quiet.
-5. Someone still has to call and book. Often nobody does.
-
-The night fits one person, or it never happens.
-
-Today's apps don't solve this. Your music app knows your music and your streaming app knows your films, but each knows only you. Spotify's Blend mixes friends' music into one playlist, but stops at music. A poll in the chat counts votes, but someone has to come up with the options. ChatGPT can join a group chat, but it leaves everyone's memory out, so it knows only what's typed there.
+Your music app knows your music. Your streaming app knows your films. Each one knows only you. Spotify's Blend mixes friends' music, but stops at music. A poll needs someone to come up with the options. ChatGPT can join a group chat, but it starts with no idea what anyone in it likes. Nothing knows the group.
 
 ## The idea
 
-Najimi learns each friend's taste from the things they love, using Qloo, and puts an agent in the group chat that knows all of them. You ask once. Najimi finds places that fit everyone, shows how well each one fits each person, plans the night and, when you say yes, phones the venue to book it. Nobody has to be the organiser.
+Najimi does. It learns each friend's taste from the things they love, using Qloo, and lives in your group chat. Ask once, and it finds places that fit everyone, shows how well each one fits each person, plans the night and, when you say yes, calls the venue to book it.
 
 ### One ask, two tastes
 
