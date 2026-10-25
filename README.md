@@ -41,13 +41,15 @@ Built for the **[Qloo Agentic Hackathon](https://qloo.devpost.com/)** · [how it
 
 ## The problem
 
-Every group chat has the same question: where are we going tonight? Everyone says "you pick", the loudest person decides, and the night fits one person. Or nobody books, and it never happens.
+Your taste is everywhere. Your music app knows your music. Your streaming app knows your films. Instagram knows what you stop to watch. But each one knows only a slice of you, and keeps it to itself.
 
-Your music app knows your music. Your streaming app knows your films. Each one knows only you. Spotify's Blend mixes friends' music, but stops at music. A poll needs someone to come up with the options. ChatGPT can join a group chat, but it starts with no idea what anyone in it likes. Nothing knows the group.
+AI assistants can plan things for you now, but they don't know your taste. They know only what you've typed to them, so ask for a spot tonight and you get a crowd-pleaser. Planning with friends is worse: nobody knows what everyone likes, so the loudest one picks.
+
+The apps that know you can't do anything for you. The AI that can do things doesn't know you.
 
 ## The idea
 
-Najimi does. It learns each friend's taste from the things they love, using Qloo, and lives in your group chat. Ask once, and it finds places that fit everyone, shows how well each one fits each person, plans the night and, when you say yes, calls the venue to book it.
+Najimi is an AI agent that knows you well. Give it three things you love, and through Qloo it learns your taste across music, films, books, places and more. You can scroll it as a feed, play games with it and find people who share it. Then hand it the work: plan my night, plan our trip, book the table. It plans for you or your whole group, then calls the venue and books it.
 
 ### One ask, two tastes
 
