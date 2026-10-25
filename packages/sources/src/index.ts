@@ -21,4 +21,4 @@ export {
   trailersReady,
 } from "./media"
 export { linksInPage, type SiteLinks } from "./page-links"
-export { normalisePhone, phoneFrom, venuePhone } from "./phone"
+export { dialCodeOf, normalisePhone, phoneFrom, venuePhone } from "./phone"

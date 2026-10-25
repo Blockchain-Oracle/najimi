@@ -24,7 +24,7 @@ import {
   profilePicks,
   search,
 } from "@najimi/qloo"
-import { normalisePhone, venuePhone } from "@najimi/sources"
+import { dialCodeOf, normalisePhone, venuePhone, venueTags } from "@najimi/sources"
 import { tool } from "ai"
 import { and, asc, count, eq, or } from "drizzle-orm"
 import type { z } from "zod"
@@ -164,8 +164,44 @@ function askedOf(input: InsightsInput, city: string | null) {
   return out
 }
 
+/**
+ * A place's number for a booking call: Qloo's own record first (it has one for most places),
+ * then the place's site, then OpenStreetMap's entry for it. Local numbers get the country's code.
+ */
+async function placeNumber(
+  placeId: string,
+  ctx: Parameters<typeof entities>[1],
+): Promise<string | null> {
+  const found = await entities({ ids: [placeId] }, ctx).catch(() => null)
+  const item = found?.data[0]
+  if (!item) return null
+  const p = item.properties as {
+    phone?: string
+    website?: string
+    official_site?: string
+    geocode?: { country_code?: string }
+  }
+  const dial = dialCodeOf(p.geocode?.country_code)
+  const own = p.phone ? normalisePhone(p.phone, dial) : null
+  if (own) return own
+  const site = p.website ?? p.official_site ?? item.handles.website
+  const fromSite = site ? await venuePhone(site, dial).catch(() => null) : null
+  if (fromSite) return fromSite
+  const loc = item.location
+  const osm = loc ? await venueTags(item.name, loc.lat, loc.lon).catch(() => null) : null
+  if (osm?.phone) {
+    const mapped = normalisePhone(osm.phone.split(";")[0] ?? "", dial)
+    if (mapped) return mapped
+  }
+  return osm?.website ? await venuePhone(osm.website, dial).catch(() => null) : null
+}
+
+/** A place's number as the model reads it in a list ("· phone +234…"). */
+const phoneOf = (p: Pick) =>
+  p.links?.phone ? ` · phone ${p.links.phone.replace(/^tel:/, "")}` : ""
+
 const pickLine = (p: Pick, i: number) =>
-  `${i + 1}. ${p.name} [id ${p.qlooId}]${p.caption ? ` (${p.caption})` : ""}${p.details?.length ? ` known for ${p.details.join(", ")}` : ""}${p.because ? ` — because they love ${p.because.name}` : ""}${p.affinity != null ? ` — ${Math.round(p.affinity * 100)}% match` : ""}`
+  `${i + 1}. ${p.name} [id ${p.qlooId}]${p.caption ? ` (${p.caption})` : ""}${p.details?.length ? ` known for ${p.details.join(", ")}` : ""}${p.because ? ` — because they love ${p.because.name}` : ""}${p.affinity != null ? ` — ${Math.round(p.affinity * 100)}% match` : ""}${phoneOf(p)}`
 
 const ENTITY_ASKS = new Set(TASTE_DOMAINS.map((d) => d.key as string))
 const FILTER_TYPE: Record<string, string> = {
@@ -742,7 +778,7 @@ export function buildTools(ctx: TurnContext, messageId: () => string | undefined
           ? `For everyone (shown as a card): ${output.picks
               .map(
                 (p, i) =>
-                  `${i + 1}. ${p.name}${p.area ? ` (${p.area})` : ""} — ${p.fits.map((f) => `${f.name} ${f.fit != null ? `${Math.round(f.fit * 100)}%` : "?"}`).join(", ")}`,
+                  `${i + 1}. ${p.name} [id ${p.qlooId}]${p.area ? ` (${p.area})` : ""}${phoneOf(p)} — ${p.fits.map((f) => `${f.name} ${f.fit != null ? `${Math.round(f.fit * 100)}%` : "?"}`).join(", ")}`,
               )
               .join("; ")}. Say which one you'd pick for the room and who it fits best, by name.`
           : (output.note ?? "Nothing found."),
@@ -961,15 +997,19 @@ export function buildTools(ctx: TurnContext, messageId: () => string | undefined
             phone: null,
             note: "Calling venues isn't switched on yet.",
           }
+        const notes = input.notes ? input.notes.slice(0, 200) : null
         const phone =
           (input.phone ? normalisePhone(input.phone) : null) ??
+          (input.placeId
+            ? await placeNumber(input.placeId, call(`${input.venue}'s number`))
+            : null) ??
           (input.website ? await venuePhone(input.website).catch(() => null) : null)
         if (!phone)
           return {
             bookingId: null,
             status: "needs-number" as const,
             phone: null,
-            note: `I couldn't find ${input.venue}'s number. What is it?`,
+            note: `No number on record for ${input.venue}. Search the web for its phone and call again with it; ask them only if that finds nothing.`,
           }
         // A venue that asked not to be called by an AI is never rung again.
         const [blocked] = await db
@@ -1024,7 +1064,7 @@ export function buildTools(ctx: TurnContext, messageId: () => string | undefined
             venue: input.venue,
             startsAt,
             party: input.party,
-            data: { phone, notes: input.notes ?? null, when },
+            data: { phone, notes, when },
           })
           .returning()
         if (!booking)
@@ -1041,7 +1081,7 @@ export function buildTools(ctx: TurnContext, messageId: () => string | undefined
             guestName: ctx.person.name,
             party: input.party,
             when,
-            notes: input.notes ?? null,
+            notes,
             callback: null,
           })
           await db

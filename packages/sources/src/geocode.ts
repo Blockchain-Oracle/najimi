@@ -77,6 +77,8 @@ export async function geocode(query: string): Promise<Geocoded | null> {
 /** What OpenStreetMap knows about a venue: its own site and social accounts, when mapped. */
 export type VenueTags = {
   website: string | null
+  /** As OpenStreetMap has it (often local form). Older cached entries have none. */
+  phone?: string | null
   instagram: string | null
   facebook: string | null
   tiktok: string | null
@@ -134,6 +136,7 @@ export async function venueTags(name: string, lat: number, lon: number): Promise
     const tag = (...keys: string[]) => keys.map((k) => tags[k]).find(Boolean)
     const website = tag("website", "contact:website", "url") ?? null
     return {
+      phone: tag("phone", "contact:phone", "contact:mobile") ?? null,
       // A Facebook page given as the website is an account, not a site.
       website: website && !/facebook\.com|instagram\.com/i.test(website) ? website : null,
       instagram: handleOf(tag("contact:instagram", "instagram"), /instagram\.com/),

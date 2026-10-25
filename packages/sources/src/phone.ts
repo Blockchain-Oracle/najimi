@@ -8,6 +8,32 @@ import { fetchPublic } from "./fetch"
 
 const digits = (s: string) => s.replace(/[^\d+]/g, "")
 
+/** Dial codes by country (ISO 3166 alpha-2), for numbers a site or map writes in local form. */
+const DIAL: Record<string, string> = {
+  NG: "234",
+  GH: "233",
+  KE: "254",
+  ZA: "27",
+  GB: "44",
+  IE: "353",
+  US: "1",
+  CA: "1",
+  FR: "33",
+  ES: "34",
+  PT: "351",
+  NL: "31",
+  DE: "49",
+  IT: "39",
+  AE: "971",
+  SA: "966",
+  IN: "91",
+  JP: "81",
+  SG: "65",
+}
+
+export const dialCodeOf = (country?: string | null) =>
+  country ? (DIAL[country.toUpperCase()] ?? null) : null
+
 /** "+234 803 123 4567", "0803 123 4567" (with dial code 234) → "+2348031234567". */
 export function normalisePhone(raw: string, dialCode?: string | null): string | null {
   let n = digits(raw)

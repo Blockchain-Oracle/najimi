@@ -456,9 +456,14 @@ export const toolDefs = {
 
   callToBook: tool({
     description:
-      "Phone a restaurant, bar or club to book a table when it has no online booking: a short AI voice call that says up front it's an AI calling for them and that it's recorded, only between 8am and 9pm. Pass the venue's website (Najimi reads its number there) or the number itself; if neither works, ask them for the number. They approve the call first; the result comes back into this chat.",
+      "Phone a restaurant, bar or club to book a table when it has no online booking: a short AI voice call that says up front it's an AI calling for them and that it's recorded, only between 8am and 9pm. For a place from a card, a plan or the screen, pass its Qloo id as placeId: Najimi finds its number (Qloo's record, its site, the map). Otherwise pass the number or the venue's website. If it still comes back needing a number, search the web for the venue's phone and call again with it; ask them only when that finds nothing. They approve the call first; the result comes back into this chat.",
     inputSchema: z.object({
       venue: z.string().max(120),
+      placeId: z
+        .string()
+        .max(64)
+        .optional()
+        .describe("The place's Qloo id, when it came from a card, a plan stop or the screen."),
       website: z.string().url().max(300).optional(),
       phone: z
         .string()
@@ -468,7 +473,8 @@ export const toolDefs = {
       date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
       time: z.string().regex(/^\d{1,2}:\d{2}$/),
       party: z.number().int().min(1).max(20),
-      notes: z.string().max(200).optional(),
+      // Kept to 200 characters on the call; a longer note is cut, never refused.
+      notes: z.string().max(1000).optional(),
     }),
     outputSchema: z.object({
       bookingId: z.string().nullable(),

@@ -440,7 +440,14 @@ export function PlanView({
                           {signedIn && ["food", "drinks", "late", "evening"].includes(s.slot) ? (
                             <button
                               type="button"
-                              onClick={() =>
+                              onClick={() => {
+                                // Najimi knows which stop (its Qloo id finds the number).
+                                agent.setScreen({
+                                  where: "plan",
+                                  label: s.name,
+                                  qlooId: s.qlooId ?? undefined,
+                                  type: "urn:entity:place",
+                                })
                                 agent.ask(
                                   t("askBook", {
                                     name: s.name,
@@ -449,7 +456,7 @@ export function PlanView({
                                     date: dateOf(s.startsAt ?? plan.startsAt),
                                   }),
                                 )
-                              }
+                              }}
                               className="flex h-8 items-center gap-1.5 rounded-pill bg-white/8 px-3 text-[12px] font-semibold"
                             >
                               <Phone className="size-3.5" /> {t("callToBook")}
