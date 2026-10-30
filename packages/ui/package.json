@@ -11,7 +11,7 @@
     "@najimi/config": "workspace:*",
     "@najimi/tokens": "workspace:*",
     "class-variance-authority": "0.7.1",
-    "cn": "0.4.0",
+    "cn": "0.5.0",
     "input-otp": "1.5.0",
     "lucide-react": "catalog:",
     "motion": "catalog:",
