@@ -17,7 +17,7 @@
     "services:down": "docker compose -f infra/compose.yaml --env-file .env down"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.5.15",
+    "@biomejs/biome": "2.6.2",
     "@najimi/typescript-config": "workspace:*",
     "@types/node": "catalog:",
     "tsx": "catalog:",
